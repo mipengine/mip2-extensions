@@ -4,9 +4,7 @@
     "description": "Custom MIP Components Repository",
     "main": "index.js",
     "scripts": {
-        "dev": "mip2 dev",
-        "build": "node tools/build",
-        "release": "node tools/release"
+        "dev": "mip2 dev"
     },
     "repository": {
         "type": "git",
