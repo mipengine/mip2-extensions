@@ -1,0 +1,33 @@
+{
+    "name": "mip-components",
+    "version": "1.0.0",
+    "description": "Custom MIP Components Repository",
+    "main": "index.js",
+    "scripts": {
+        "dev": "mip2 dev",
+        "build": "node tools/build",
+        "release": "node tools/release"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mip-project/mip-components.git"
+    },
+    "keywords": [
+        "MIP"
+    ],
+    "author": "MIP",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/mip-project/mip-components/issues"
+    },
+    "homepage": "https://github.com/mip-project/mip-components#readme",
+    "dependencies": {
+        "async": "^2.6.0",
+        "baidubce-sdk": "0.0.23",
+        "execa": "^0.10.0",
+        "fs-extra": "^6.0.1",
+        "glob": "^7.1.2",
+        "mime": "^2.3.1",
+        "user-home": "^2.0.0"
+    }
+}
