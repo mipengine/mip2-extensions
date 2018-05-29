@@ -3,21 +3,88 @@
  */
 
 <template>
-    <div class="mip-appdl-box" :class="{'mip-appdl-pm10': !hasImage}" v-show="!closed">
+    <div
+        v-show="!closed"
+        class="mip-appdl-box"
+        :class="{'mip-appdl-pm10': !hasImage}"
+    >
         <div class="mip-appdl-content">
-            <div class="mip-appdl-imgbox" v-if="hasImage">
-                <img class="mip-appdl-downimg" :src="src">
+            <div
+                v-if="hasImage"
+                class="mip-appdl-imgbox"
+            >
+                <img
+                    class="mip-appdl-downimg"
+                    :src="src"
+                >
             </div>
             <div class="mip-appdl-textbox">
-                <p v-for="text in textLines" :key="text">{{text}}</p>
+                <p
+                    v-for="text in textLines"
+                    :key="text"
+                >{{text}}</p>
             </div>
             <div class="mip-appdl-downbtn">
-                <a target="_blank" :href="downloadUrl">{{downbtntext}}</a>
+                <a
+                    target="_blank"
+                    :href="downloadUrl"
+                >{{downbtntext}}</a>
             </div>
-            <div class="mip-appdl-closebutton" @click="closeBanner"></div>
+            <div
+                class="mip-appdl-closebutton"
+                @click="closeBanner"
+            ></div>
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            closed: false
+        };
+    },
+    props: {
+        src: String,
+        texttip: String,
+        downbtntext: String,
+        androidDownsrc: String,
+        iosDownsrc: String,
+        otherDownsrc: String
+    },
+    computed: {
+        downloadUrl() {
+            if (MIP.util.platform.isIos()) {
+                return this.iosDownsrc;
+            }
+            if (MIP.util.platform.isAndroid()) {
+                return this.androidDownsrc;
+            }
+            return this.otherDownsrc;
+        },
+        textLines() {
+            let lines = [this.texttip];
+            try {
+                lines = MIP.util.json5.parse(this.texttip);
+            }
+            catch (e) {
+                console.warn('[mip-appdl] texttip 属性格式不正确', e);
+            }
+            lines = lines.slice(0, 2);
+            return lines;
+        },
+        hasImage() {
+            return !!this.src;
+        }
+    },
+    methods: {
+        closeBanner() {
+            this.closed = true;
+        }
+    }
+};
+</script>
 
 <style lang="less" scoped>
 mip-appdl {
@@ -106,51 +173,3 @@ mip-appdl {
     }
 }
 </style>
-
-<script>
-export default {
-    data() {
-        return {
-            closed: false
-        };
-    },
-    props: {
-        src: String,
-        texttip: String,
-        downbtntext: String,
-        androidDownsrc: String,
-        iosDownsrc: String,
-        otherDownsrc: String
-    },
-    computed: {
-        downloadUrl() {
-            if (MIP.util.platform.isIos()) {
-                return this.iosDownsrc;
-            }
-            if (MIP.util.platform.isAndroid()) {
-                return this.androidDownsrc;
-            }
-            return this.otherDownsrc;
-        },
-        textLines() {
-            let lines = [this.texttip];
-            try {
-                lines = MIP.util.json5.parse(this.texttip);
-            }
-            catch (e) {
-                console.warn('[mip-appdl] texttip 属性格式不正确', e);
-            }
-            lines = lines.slice(0, 2);
-            return lines;
-        },
-        hasImage() {
-            return !!this.src;
-        }
-    },
-    methods: {
-        closeBanner() {
-            this.closed = true;
-        }
-    }
-};
-</script>
