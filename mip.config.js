@@ -24,6 +24,6 @@ module.exports = {
          *
          * @type {string}
          */
-        autoopen: '/test/index.html'
+        autoopen: false
     }
 };

@@ -8,6 +8,10 @@
         "rules": {
             "no-console": 0,
             "fecs-no-require": "off"
+        },
+
+        "globals": {
+            "MIP": true
         }
     }
 }
