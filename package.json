@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "mip2 dev",
     "build": "mip2 build",
-    "lint": "eslint --ext .js,.vue **/*"
+    "lint": "eslint --ext .js,.vue **/* --ignore-pattern dist"
   },
   "repository": {
     "type": "git",
