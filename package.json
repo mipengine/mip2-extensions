@@ -22,13 +22,6 @@
   },
   "homepage": "https://github.com/mip-project/mip-components#readme",
   "dependencies": {
-    "async": "^2.6.0",
-    "baidubce-sdk": "0.0.23",
-    "execa": "^0.10.0",
-    "fs-extra": "^6.0.1",
-    "glob": "^7.1.2",
-    "mime": "^2.3.1",
-    "user-home": "^2.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
