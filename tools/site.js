@@ -30,7 +30,7 @@ const htmlTemplate = `
     <title>MIP 2.0 组件列表</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0">
-    <style>a{margin-left: 10px;}</style>
+    <style>a{margin-left:10px;}</style>
 </head>
 <body>
     <h1>MIP 组件列表</h1>
