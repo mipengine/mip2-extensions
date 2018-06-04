@@ -46,4 +46,4 @@ glob.sync('components/**/example/*.html', {realpath: true})
     fs.copySync(file, path.join(dist, 'examples', path.basename(file)))
   })
 
-console.log('static page generated!')
+console.log('Static page generated!')
