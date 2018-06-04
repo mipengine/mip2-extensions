@@ -30,15 +30,15 @@ App 下载，可区分 Android 和 iOS。
 
 ```html
 <mip-fixed type="bottom">
-	<mip-appdl 
-		tpl="imageText" 
-		src="http://ms0.meituan.net/touch/css/i/logo.png" 
-		texttip= "['积分能当钱花了','下载百度浏览器','下载百度浏览器']" 
-		downbtntext="立即使用" 
-		other-downsrc="http://sqdd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
-		android-downsrc="http://sqdd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk" 
-		ios-downsrc="itms-apps://itunes.apple.com/app/id452186370" postiontye="fixed"
-	></mip-appdl>
+  <mip-appdl 
+    tpl="imageText" 
+    src="http://ms0.meituan.net/touch/css/i/logo.png" 
+    texttip= "['积分能当钱花了','下载百度浏览器','下载百度浏览器']" 
+    downbtntext="立即使用" 
+    other-downsrc="http://sqdd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
+    android-downsrc="http://sqdd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk" 
+    ios-downsrc="itms-apps://itunes.apple.com/app/id452186370" postiontye="fixed"
+  ></mip-appdl>
 </mip-fixed>
 ```
 
