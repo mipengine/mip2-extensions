@@ -13,11 +13,14 @@ const dist = path.resolve(__dirname, '../dist')
 const components = fs.readdirSync(dist).map(comp => {
   return {
     name: comp,
-    path: path.join(comp, `${comp}.js`)
+    sourcePath: path.join(comp, `${comp}.js`),
+    examplePath: path.join('examples', `${comp}.html`)
   }
 })
 
-const componentListDom = components.map(comp => `<li><a href="${comp.path}" target="_blank">${comp.name}</a></li>`)
+const componentListDom = components.map(comp =>
+  `<li><b>${comp.name}</b><a href="${comp.sourcePath}" target="_blank">源码</a><a href="${comp.examplePath}" target="_blank">示例</a></li>`
+)
 
 const htmlTemplate = `
 <!DOCTYPE html>
@@ -27,9 +30,10 @@ const htmlTemplate = `
     <title>MIP 2.0 组件列表</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0">
+    <style>a{margin-left: 10px;}</style>
 </head>
 <body>
-    <h1>MIP 组件列表 <a href="examples/">查看示例</a></h1>
+    <h1>MIP 组件列表</h1>
     <ul>
         ${componentListDom.join('')}
     </ul>
