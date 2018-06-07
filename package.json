@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "mip2 dev",
-    "build": "mip2 build",
+    "build": "rm -rf dist && mip2 build",
+    "site": "npm run build && node tools/site",
     "lint": "eslint --ext .js,.vue **/* --ignore-pattern dist"
   },
   "repository": {
@@ -33,6 +34,9 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-standard": "^3.1.0",
-    "eslint-plugin-vue": "^4.5.0"
+    "eslint-plugin-vue": "^4.5.0",
+    "fs-extra": "^6.0.1",
+    "glob": "^7.1.2",
+    "mip2": "^1.0.0"
   }
 }
