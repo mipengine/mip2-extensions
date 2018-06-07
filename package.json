@@ -21,7 +21,9 @@
     "url": "https://github.com/mip-project/mip-components/issues"
   },
   "homepage": "https://github.com/mip-project/mip-components#readme",
-  "dependencies": {},
+  "dependencies": {
+    "mip-sandbox": "^1.0.1"
+  },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
     "eslint": "^4.19.1",
