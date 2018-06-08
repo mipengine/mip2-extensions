@@ -1,45 +1,43 @@
 <script>
-import replace from 'mip-sandbox/lib/unsafe-replace'
+import generate from 'mip-sandbox/lib/generate-lite'
 import detect from 'mip-sandbox/lib/unsafe-detect'
 /* global mipDataPromises */
 /* global Promise */
 
 export default {
-  created() {
+  created () {
     let script
     let code
 
-    try{
+    try {
       script = this.$slots.default[0].data.domProps.innerHTML
-    }
-    catch (e) {
+    } catch (e) {
       script = ''
     }
 
     if (/MIP.watch/.test(script)) {
       Promise.all(mipDataPromises)
         .then(() => {
-          mipDataPromises = []
+          mipDataPromises = [] // eslint-disable-line no-global-assign
           this.detect(script)
-          code = replace(script)
+          code = generate(script)
           this.execute(code)
         })
         .catch(err => {
           console.error('Fail to execute: ', err)
         })
-    }
-    else {
+    } else {
       this.detect(script)
-      code = replace(script)
+      code = generate(script)
       this.execute(code)
     }
   },
 
   methods: {
-    detect(script) {
+    detect (script) {
       let result = detect(script)
 
-      if (result.length) {
+      if (result && result.length) {
         let list = result.reduce((total, current) => {
           total.push(`${current.name}: start[${JSON.stringify(current.loc.start)}] end[${JSON.stringify(current.loc.end)}]`)
           return total
@@ -48,8 +46,8 @@ export default {
       }
     },
 
-    execute(code) {
-      eval(code)
+    execute (code) {
+      eval(code) // eslint-disable-line no-eval
     }
   }
 }
