@@ -6,7 +6,7 @@
 ----|----
 类型|通用
 支持布局|N/S
-所需脚本|
+所需脚本|https://c.mipcdn.com/static/v2/mip-script/mip-script.js
 
 ## 说明
 
@@ -14,148 +14,8 @@
 
 JS 代码会运行在沙盒环境中，仅开放部分全局对象供开发者使用，非白名单内的对象的行为将不能正常执行
 
-白名单列表：
-```javascript
-// window 下允许访问的变量
-[
-  'Array',
-  'ArrayBuffer',
-  'Blob',
-  'Boolean',
-  'DOMError',
-  'DOMException',
-  'Date',
-  'Error',
-  'File',
-  'FileList',
-  'FileReader',
-  'Float32Array',
-  'Float64Array',
-  'FormData',
-  'Headers',
-  'Image',
-  'ImageBitmap',
-  'Infinity',
-  'Int16Array',
-  'Int32Array',
-  'Int8Array',
-  'JSON',
-  'Map',
-  'Math',
-  'MutationObserver',
-  'NaN',
-  'Notification',
-  'Number',
-  'Object',
-  'Promise',
-  'Proxy',
-  'ReadableStream',
-  'ReferenceError',
-  'Reflect',
-  'RegExp',
-  'Request',
-  'Response',
-  'Set',
-  'String',
-  'Symbol',
-  'SyntaxError',
-  'TypeError',
-  'URIError',
-  'URL',
-  'URLSearchParams',
-  'Uint16Array',
-  'Uint32Array',
-  'Uint8Array',
-  'Uint8ClampedArray',
-  'WritableStream',
-  'addEventListener',
-  'cancelAnimationFrame',
-  'clearInterval',
-  'clearTimeout',
-  'console',
-  'createImageBitmap',
-  'decodeURI',
-  'decodeURIComponent',
-  'devicePixelRatio',
-  'encodeURI',
-  'encodeURIComponent',
-  'escape',
-  'fetch',
-  'getComputedStyle',
-  // 待定
-  'history',
-  'innerHeight',
-  'innerWidth',
-  'isFinite',
-  'isNaN',
-  'isSecureContext',
-  'localStorage',
-  // 待定
-  'location',
-  'length',
-  'matchMedia',
-  'navigator',
-  'outerHeight',
-  'outerWidth',
-  'parseFloat',
-  'parseInt',
-  'removeEventListener',
-  'requestAnimationFrame',
-  'screen',
-  'screenLeft',
-  'screenTop',
-  'screenX',
-  'screenY',
-  'scroll',
-  'scrollBy',
-  'scrollTo',
-  'scrollX',
-  'scrollY',
-  'scrollbars',
-  'sessionStorage',
-  'setInterval',
-  'setTimeout',
-  'undefined',
-  'unescape',
-  'webkitCancelAnimationFrame',
-  'webkitRequestAnimationFrame'
-]
-
-// 沙盒中的全局变量
-[
-  'document',
-  'window',
-  'MIP'
-]
-
-// 保留字段
-[
-  'arguments',
-  'MIP',
-  'require',
-  'module',
-  'exports',
-  'define'
-]
-
-// document 下允许访问的变量
-[
-  'head',
-  'body',
-  'title',
-  'cookie',
-  'referrer',
-  'readyState',
-  'documentElement',
-  'createElement',
-  'createDcoumentFragment',
-  'getElementById',
-  'getElementsByClassName',
-  'getElementsByTagName',
-  'querySelector',
-  'querySelectorAll'
-]
-```
+[可用全局变量列表](
+https://www.npmjs.com/package/mip-sandbox#%E5%8F%AF%E7%94%A8%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F)
 
 ## 示例
 
