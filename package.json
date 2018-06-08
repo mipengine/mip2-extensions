@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "mip2 dev",
-    "build": "rm -rf dist && mip2 build",
+    "build": "rm -rf dist && mip2 build -i",
     "site": "npm run build && node tools/site",
     "lint": "eslint --ext .js,.vue **/* --ignore-pattern dist"
   },
