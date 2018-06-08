@@ -5,7 +5,7 @@ import detect from 'mip-sandbox/lib/unsafe-detect'
 /* global Promise */
 
 export default {
-  beforeCreate() {
+  created() {
     let script
     let code
 
@@ -44,7 +44,7 @@ export default {
           total.push(`${current.name}: start[${JSON.stringify(current.loc.start)}] end[${JSON.stringify(current.loc.end)}]`)
           return total
         }, [])
-        console.error(`WARNING: Forbidden global variable[s] included ! List as below\n\n${list.join('\n')}`)
+        console.error(`WARNING: Forbidden global variable[s] included in <mip-script>! Variable[s] Listed as below\n\n${list.join('\n')}`)
       }
     },
 
