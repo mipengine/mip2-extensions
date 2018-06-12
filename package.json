@@ -9,6 +9,9 @@
     "site": "npm run build && node tools/site",
     "lint": "eslint --ext .js,.vue **/* --ignore-pattern dist"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mip-project/mip-components.git"
@@ -37,6 +40,7 @@
     "eslint-plugin-vue": "^4.5.0",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
-    "mip2": "^1.0.2"
+    "mip2": "^1.0.4",
+    "pre-commit": "^1.2.2"
   }
 }
