@@ -1,13 +1,16 @@
 <script>
+import mark from 'mip-sandbox/lib/global-mark'
 import generate from 'mip-sandbox/lib/generate-lite'
 import detect from 'mip-sandbox/lib/unsafe-detect'
+import keywords from 'mip-sandbox/lib/keywords'
 /* global mipDataPromises */
 /* global Promise */
+
+const MAX_SIZE = 2048
 
 export default {
   created () {
     let script
-    let code
 
     try {
       script = this.$slots.default[0].data.domProps.innerHTML
@@ -15,30 +18,38 @@ export default {
       script = ''
     }
 
+    if (this.getSize(script) > MAX_SIZE) {
+      console.error(`WARNING: <mip-script> is out of range.Please keep it under 2KB`)
+      return
+    }
+
+    let ast = mark(script)
+    let unsafeList = detect(ast, keywords.WHITELIST_STRICT)
+    let generated = generate(ast, keywords.WHITELIST_STRICT_RESERVED, {prefix: 'MIP.sandbox.strict'})
+    this.detect(unsafeList)
+
     if (/MIP.watch/.test(script)) {
       Promise.all(mipDataPromises)
         .then(() => {
           mipDataPromises = [] // eslint-disable-line no-global-assign
-          this.detect(script)
-          code = generate(script)
-          this.execute(code)
+          this.execute(generated)
         })
         .catch(err => {
           console.error('Fail to execute: ', err)
         })
     } else {
-      this.detect(script)
-      code = generate(script)
-      this.execute(code)
+      this.execute(generated)
     }
   },
 
   methods: {
-    detect (script) {
-      let result = detect(script)
+    getSize(script) {
+      return script.replace(/[^\x00-\xff]/g, 'aa').length
+    },
 
-      if (result && result.length) {
-        let list = result.reduce((total, current) => {
+    detect (unsafeList) {
+      if (unsafeList && unsafeList.length) {
+        let list = unsafeList.reduce((total, current) => {
           total.push(`${current.name}: start[${JSON.stringify(current.loc.start)}] end[${JSON.stringify(current.loc.end)}]`)
           return total
         }, [])
@@ -47,7 +58,10 @@ export default {
     },
 
     execute (code) {
-      eval(code) // eslint-disable-line no-eval
+      let scriptEle = document.createElement('script')
+      scriptEle.innerHTML = code
+      document.body.appendChild(scriptEle)
+      this.$element.remove()
     }
   }
 }
