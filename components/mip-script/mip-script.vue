@@ -43,8 +43,8 @@ export default {
   },
 
   methods: {
-    getSize(script) {
-      return script.replace(/[^\x00-\xff]/g, 'aa').length
+    getSize (script) {
+      return script.replace(/[^\x00-\xff]/g, 'aa').length // eslint-disable-line no-control-regex
     },
 
     detect (unsafeList) {
