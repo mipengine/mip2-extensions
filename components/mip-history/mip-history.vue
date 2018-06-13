@@ -1,0 +1,75 @@
+<template>
+  <div
+    :class="defaultClass"
+    @click="closeBanner"
+  >
+    <slot/>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    history: {
+      type: String,
+      default: null
+    },
+    defaultClass: {
+      type: String,
+      default: ''
+    }
+  },
+  created () {
+    this.initDefaultClass(this.$element)
+  },
+  methods: {
+    initDefaultClass ($element) {
+      if ($element &&
+        $element.className &&
+        $element.className.indexOf &&
+        $element.className.indexOf('mip-history-default') > -1
+      ) {
+        this.defaultClass = 'mip-history-default'
+      }
+    },
+    closeBanner () {
+      if (this.history) {
+        let historyArr = this.history.split(',')
+        let func = historyArr[0]
+        switch (func) {
+          case 'go':
+            let step = historyArr[1]
+            if (step) {
+              window.history.go(step - 0)
+            } else {
+              console.warn('history.go() 需要填写第二个参数')
+            }
+            break
+          case 'back':
+            window.history.back()
+            break
+          case 'forward':
+            window.history.forward()
+            break
+        }
+      }
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+  mip-history {
+    .mip-history-default {
+      display: block;
+      padding: 10px;
+      margin: 10px;
+      background: #eee;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+      tap-highlight-color: rgba(0,0,0,0.1);
+    }
+    .mip-history-default:hover {
+      background-color: rgba(0,0,0,0.1);
+    }
+  }
+</style>
