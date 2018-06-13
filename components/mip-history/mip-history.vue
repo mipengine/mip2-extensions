@@ -13,25 +13,22 @@ export default {
     history: {
       type: String,
       default: null
-    },
-    defaultClass: {
-      type: String,
-      default: ''
     }
   },
-  created () {
-    this.initDefaultClass(this.$element)
+  computed: {
+    defaultClass () {
+      let defaultClass
+      if (this.$element &&
+        this.$element.className &&
+        this.$element.className.indexOf &&
+        this.$element.className.indexOf('mip-history-default') > -1
+      ) {
+        defaultClass = 'mip-history-default'
+        return defaultClass
+      }
+    }
   },
   methods: {
-    initDefaultClass ($element) {
-      if ($element &&
-        $element.className &&
-        $element.className.indexOf &&
-        $element.className.indexOf('mip-history-default') > -1
-      ) {
-        this.defaultClass = 'mip-history-default'
-      }
-    },
     closeBanner () {
       if (this.history) {
         var historyArr = this.history.split(',')
