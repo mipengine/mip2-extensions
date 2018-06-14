@@ -30,7 +30,7 @@ export default {
     try {
       ast = mark(script)
     } catch (e) {
-      console.error(e)
+      console.error('Fail to generate AST of script: ', e)
       return
     }
     this.detect(ast)
@@ -67,6 +67,7 @@ export default {
       let generated = generate(ast, MIP.sandbox.WHITELIST_STRICT_RESERVED, {prefix: 'MIP.sandbox.strict'})
       let scriptEle = document.createElement('script')
       scriptEle.innerHTML = generated
+      scriptEle.setAttribute('class', 'mip-script')
       document.body.appendChild(scriptEle)
       this.$element.remove()
     }

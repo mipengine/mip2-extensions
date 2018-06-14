@@ -16,6 +16,10 @@
       margin-bottom: 15px
     }
 
+    span {
+      color: red;
+      opacity: 0.7;
+    }
     input {
       width: 200px;
       line-height: 24px;
@@ -29,10 +33,6 @@
       font-size: 22px;
       margin-top: 30px;
       font-weight: bold;
-    }
-
-    .header:nth-of-type(1) {
-      margin-top: 0;
     }
 
     ul {
@@ -56,6 +56,9 @@
         }
       </script>
     </mip-data>
+
+    <h3><span>【注】</span>本示例与 mip-bind 组件有较多关联，请先学习 mip-bind 相关内容。mip-script 在本示例中的用法，请查看源代码学习</会>
+
     <p m-text="title" class="header"></p>
     
     输入数字，单击回车可改变 price 的值<br />（price = input.value * price）:
