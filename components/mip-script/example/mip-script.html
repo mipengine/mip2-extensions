@@ -16,13 +16,31 @@
       margin-bottom: 15px
     }
 
-    .script {
-      margin-top: 40px;
-      line-height: 30px;
+    input {
+      width: 200px;
+      line-height: 24px;
+      border-color: #999;
+      margin-top: 12px;
+      padding: 2px;
     }
 
-    pre {
-      font-size: 13px;
+    .header {
+      line-height: 34px;
+      font-size: 22px;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+
+    .header:nth-of-type(1) {
+      margin-top: 0;
+    }
+
+    ul {
+      padding: 0 25px;
+    }
+
+    li {
+      line-height: 20px;
     }
   </style>
 </head>
@@ -33,38 +51,44 @@
       <script type="application/json">
         {
           "price": 20,
-          "title": "It's title here"
+          "title": "初始值 Price = 20",
+          "userList": []
         }
       </script>
     </mip-data>
-    <h1 m-text="title"></h1>
+    <p m-text="title" class="header"></p>
     
-    <mip-form url="https://www.mipengine.org/" class="button">
-      input number to change price(=20 initial):
-      <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
-    </mip-form>
+    输入数字，单击回车可改变 price 的值<br />（price = input.value * price）:
+    <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
 
-    <h3 class="script">scripts as below:</h3>
-    <pre>
-&lt;mip-script&gt;
-  console.log(&#x27;mip-script executed&#x27;)
-
-  MIP.watch(&#x27;price&#x27;, (newVal, oldVal) => {
-    MIP.setData({
-      title: &#x27;price changed to &#x27; + newVal
-    })
-  })
-&lt;/mip-script&gt;
-    </pre>
+    <p class="header">以下是异步获取的数据列表：</p>
+    <ul>
+      <li m-text="userList[0].name"></li>
+      <li m-text="userList[1].name"></li>
+      <li m-text="userList[2].name"></li>
+    </ul>
 
     <mip-script>
       console.log('mip-script executed')
 
       MIP.watch('price', (newVal, oldVal) => {
         MIP.setData({
-          title: `price changed to ${newVal}`
+          title: `price = ${newVal}`
         })
       })
+
+      fetch('./list.json')
+        .then(data => {
+          return data.json()
+        })
+        .then(data => {
+          MIP.setData({
+            userList: data.userList
+          })
+        })  
+        .catch(e => {
+          console.error(e.message); 
+        })
     </mip-script>
   </div>
   <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>

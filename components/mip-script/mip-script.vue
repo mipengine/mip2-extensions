@@ -14,7 +14,6 @@ const MAX_SIZE = 2048
 export default {
   created () {
     let script
-    let ast
 
     try {
       script = this.$slots.default[0].text
@@ -27,6 +26,7 @@ export default {
       return
     }
 
+    let ast
     try {
       ast = mark(script)
     } catch (e) {
@@ -35,7 +35,7 @@ export default {
     }
     this.detect(ast)
 
-    if (/MIP.watch/.test(script)) {
+    if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
       Promise.all(mipDataPromises)
         .then(() => {
           mipDataPromises = [] // eslint-disable-line no-global-assign
