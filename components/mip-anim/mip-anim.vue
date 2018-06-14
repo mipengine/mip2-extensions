@@ -4,7 +4,6 @@
       <mip-img
         v-show="placeholderShow"
         ref="placeholder"
-        alt="alt"
       />
     </transition>
     <transition name="fade">
