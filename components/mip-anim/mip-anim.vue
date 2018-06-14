@@ -12,7 +12,7 @@
         v-show="imgShow"
         ref="gif"
         :src="src"
-        alt=""
+        :alt="alt"
       >
     </transition>
   </div>
