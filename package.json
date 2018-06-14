@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/mip-project/mip-components#readme",
   "dependencies": {
-    "mip-sandbox": "^1.0.8"
+    "mip-sandbox": "^1.0.9"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

@@ -1,3 +1,7 @@
+<template>
+  <div><slot /></div>
+</template>
+
 <script>
 import mark from 'mip-sandbox/lib/global-mark'
 import generate from 'mip-sandbox/lib/generate-lite'
@@ -13,7 +17,7 @@ export default {
     let script
 
     try {
-      script = this.$slots.default[0].data.domProps.innerHTML
+      script = this.$slots.default[0].text
     } catch (e) {
       script = ''
     }
@@ -63,6 +67,10 @@ export default {
       document.body.appendChild(scriptEle)
       this.$element.remove()
     }
+  },
+
+  prerenderAllowed () {
+    return true
   }
 }
 </script>
