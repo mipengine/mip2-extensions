@@ -6,7 +6,6 @@
 import mark from 'mip-sandbox/lib/global-mark'
 import generate from 'mip-sandbox/lib/generate-lite'
 import detect from 'mip-sandbox/lib/unsafe-detect'
-import keywords from 'mip-sandbox/lib/keywords'
 /* global mipDataPromises */
 /* global Promise */
 
@@ -15,6 +14,7 @@ const MAX_SIZE = 2048
 export default {
   created () {
     let script
+    let ast
 
     try {
       script = this.$slots.default[0].text
@@ -27,22 +27,22 @@ export default {
       return
     }
 
-    let ast = mark(script)
-    let unsafeList = detect(ast, keywords.WHITELIST_STRICT)
-    let generated = generate(ast, keywords.WHITELIST_STRICT_RESERVED, {prefix: 'MIP.sandbox.strict'})
-    this.detect(unsafeList)
+    try {
+      ast = mark(script)
+    } catch (e) {
+      console.error(e)
+      return
+    }
+    this.detect(ast)
 
     if (/MIP.watch/.test(script)) {
       Promise.all(mipDataPromises)
         .then(() => {
           mipDataPromises = [] // eslint-disable-line no-global-assign
-          this.execute(generated)
-        })
-        .catch(err => {
-          console.error('Fail to execute: ', err)
+          this.execute(ast)
         })
     } else {
-      this.execute(generated)
+      this.execute(ast)
     }
   },
 
@@ -51,7 +51,9 @@ export default {
       return script.replace(/[^\x00-\xff]/g, 'aa').length // eslint-disable-line no-control-regex
     },
 
-    detect (unsafeList) {
+    detect (ast) {
+      let unsafeList = detect(ast, MIP.sandbox.WHITELIST_STRICT)
+
       if (unsafeList && unsafeList.length) {
         let list = unsafeList.reduce((total, current) => {
           total.push(`${current.name}: start[${JSON.stringify(current.loc.start)}] end[${JSON.stringify(current.loc.end)}]`)
@@ -61,9 +63,10 @@ export default {
       }
     },
 
-    execute (code) {
+    execute (ast) {
+      let generated = generate(ast, MIP.sandbox.WHITELIST_STRICT_RESERVED, {prefix: 'MIP.sandbox.strict'})
       let scriptEle = document.createElement('script')
-      scriptEle.innerHTML = code
+      scriptEle.innerHTML = generated
       document.body.appendChild(scriptEle)
       this.$element.remove()
     }
