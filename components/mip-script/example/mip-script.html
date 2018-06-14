@@ -4,11 +4,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <title>MIP appdl</title>
+  <title>MIP script example</title>
   <link rel="canonical" href="">
   <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
   <style mip-custom>
-    /* 自定义样式 */
+    body {
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 15px
+    }
+
+    .script {
+      margin-top: 40px;
+      line-height: 30px;
+    }
+
+    pre {
+      font-size: 13px;
+    }
   </style>
 </head>
 
@@ -17,23 +32,38 @@
     <mip-data>
       <script type="application/json">
         {
-          "price": 20
+          "price": 20,
+          "title": "It's title here"
         }
       </script>
     </mip-data>
-    <p>
-      DOM.value*m.price =
-      <span m-text="price"></span>
-    </p>
+    <h1 m-text="title"></h1>
+    
     <mip-form url="https://www.mipengine.org/" class="button">
-      <input type='text' on="change:MIP.setData({price:DOM.value*m.price})" style="width:150px;">
+      input number to change price:
+      <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
     </mip-form>
+
+    <h3 class="script">scripts as below:</h3>
+    <pre>
+&lt;mip-script&gt;
+  console.log(&#x27;mip-script executed&#x27;)
+
+  MIP.watch(&#x27;price&#x27;, (newVal, oldVal) => {
+    MIP.setData({
+      title: &#x27;price changed to &#x27; + newVal
+    })
+  })
+&lt;/mip-script&gt;
+    </pre>
 
     <mip-script>
       console.log('mip-script executed')
 
-      MIP.watch('price', function () {
-        console.log('price changed')
+      MIP.watch('price', (newVal, oldVal) => {
+        MIP.setData({
+          title: `price changed to ${newVal}`
+        })
       })
     </mip-script>
   </div>
