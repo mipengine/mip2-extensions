@@ -89,10 +89,10 @@ export default {
       function promiseIf (data) {
         let promise = new Promise((resolve, reject) => {
           let images = document.createElement('img')
-          images.src = data.src
           images.onload = () => {
             resolve()
           }
+          images.src = data.src
         })
         return promise
       }
