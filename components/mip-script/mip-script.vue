@@ -19,7 +19,7 @@ export default {
     try {
       script = this.$slots.default[0].text
     } catch (e) {
-      script = ''
+      return
     }
 
     if (this.getSize(script) > MAX_SIZE) {
@@ -54,7 +54,7 @@ export default {
     detect (ast) {
       let unsafeList = detect(ast, MIP.sandbox.WHITELIST_STRICT)
 
-      if (unsafeList && unsafeList.length) {
+      if (unsafeList.length) {
         let list = unsafeList.reduce((total, current) => {
           total.push(`${current.name}: start[${JSON.stringify(current.loc.start)}] end[${JSON.stringify(current.loc.end)}]`)
           return total

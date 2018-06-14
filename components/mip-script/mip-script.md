@@ -26,8 +26,10 @@ https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E
 <mip-script>
   console.log('mip-script executed')
 
-  MIP.watch('price', function (newVal, oldVal) {
-    console.log('price changed')
+  MIP.watch('price', (newVal, oldVal) => {
+    MIP.setData({
+      title: `price changed to ${newVal}`
+    })
   })
 </mip-script>
 ```
