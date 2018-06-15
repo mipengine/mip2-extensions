@@ -4,6 +4,7 @@
       <mip-img
         v-show="placeholderShow"
         ref="placeholder"
+        class="mip-hidden"
       />
     </transition>
     <transition name="fade">
@@ -21,13 +22,10 @@
 .background {
   background-color: #aaa;
 }
-
-.concent{
-  min-width: 100%;
-  max-width: 100%;
-  height: 100%;
-  margin: auto;
+.mip-hidden {
+  display: none;
 }
+
 .fade-enter-active {
   opacity: 0;
 }
@@ -74,11 +72,13 @@ export default {
     }
   },
   firstInviewCallback () {
+    this.$refs.placeholder.classList.remove('mip-hidden')
     this.init()
   },
   methods: {
     init () {
       let gif = this.$refs.gif
+
       // 判断组件内是否有dom 是否有默认pic 复制默认pic属性到模板mip-img中
       if (Object.keys(this.$slots).length !== 0 && this.$slots.default.length) {
         let placeholder = this.$refs.placeholder
@@ -87,7 +87,6 @@ export default {
         for (let attr in obj) {
           placeholder.setAttribute(attr, obj[attr])
         }
-        placeholder.classList.add('concent')
       } else {
         this.placeholderShow = false
       }
