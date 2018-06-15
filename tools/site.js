@@ -9,18 +9,35 @@ const fs = require('fs-extra')
 const path = require('path')
 const glob = require('glob')
 const dist = path.resolve(__dirname, '../dist')
+const examplesPath = path.resolve(dist, 'examples')
 
-const components = fs.readdirSync(dist).map(comp => {
+// copy example files from /components dir to dist/examples
+glob.sync('components/mip-*/example/*.*', {realpath: true})
+  .forEach(file => {
+    let compName = file.match(/components\/(mip-.+)\/example/)[1]
+    fs.copySync(file, path.join(dist, 'examples', compName, path.basename(file)))
+  })
+
+const components = fs.readdirSync(examplesPath).map(comp => {
+  // example dir may contains multiple pages
+  let examplePaths = []
+  glob.sync('*.html', {cwd: path.resolve(examplesPath, comp)})
+    .forEach(file => {
+      let htmlEgPath = path.join('examples', `${comp}/${file}`)
+      examplePaths.push(htmlEgPath)
+    })
+
   return {
     name: comp,
     sourcePath: path.join(comp, `${comp}.js`),
-    examplePath: path.join('examples', `${comp}.html`)
+    examplePaths
   }
 })
 
-const componentListDom = components.map(comp =>
-  `<li><b>${comp.name}</b><a href="${comp.sourcePath}" target="_blank">源码</a><a href="${comp.examplePath}" target="_blank">示例</a></li>`
-)
+const componentListDom = components.map(comp => {
+  const exampleLinksDom = comp.examplePaths.map(path => `<a href="${path}" target="_blank">示例</a>`).join('')
+  return `<li><b>${comp.name}</b><a href="${comp.sourcePath}" target="_blank">源码</a>${exampleLinksDom}</li>`
+})
 
 const htmlTemplate = `
 <!DOCTYPE html>
@@ -43,11 +60,5 @@ const htmlTemplate = `
 
 // generate html file
 fs.writeFileSync(path.join(dist, 'index.html'), htmlTemplate)
-
-// copy example pages
-glob.sync('components/**/example/*.html', {realpath: true})
-  .forEach(file => {
-    fs.copySync(file, path.join(dist, 'examples', path.basename(file)))
-  })
 
 console.log('Static page generated!')
