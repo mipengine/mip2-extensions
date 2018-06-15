@@ -64,7 +64,7 @@ export default {
   data () {
     return {
       imgShow: false,
-      placeholderShow: false
+      placeholderShow: true
     }
   },
   firstInviewCallback () {
@@ -72,52 +72,47 @@ export default {
   },
   methods: {
     init () {
-      let me = this
       let gif = this.$refs.gif
       // 判断组件内是否有dom 是否有默认pic 复制默认pic属性到模板mip-img中
       if (Object.keys(this.$slots).length !== 0 && this.$slots.default.length) {
-        this.placeholderShow = true
         let placeholder = this.$refs.placeholder
         this.srcPlaceholder = this.$slots.default[0].data.attrs.src
         let obj = this.$slots.default[0].data.attrs
         for (let attr in obj) {
           placeholder.setAttribute(attr, obj[attr])
         }
+      } else {
+        this.placeholderShow = false
       }
-
+      // 有默认图情况
+      if (this.srcPlaceholder) {
+        // 有默认图且有gif图情况  gif加载成功前显示默认图
+        if (this.src) {
+          promiseIf({ img: gif, src: this.src, alt: this.alt }).then(() => {
+            this.placeholderShow = false
+            this.imgShow = true
+          })
+          //  只有默认图情况 只显示默认图
+        } else {
+          this.placeholderShow = true
+          this.imgShow = false
+        }
+        //  只有gif图
+      } else {
+        this.placeholderShow = false
+        this.imgShow = true
+        promiseIf({ img: gif, src: this.src, alt: this.alt }).then(() => {
+          this.imgShow = true
+        })
+      }
       // 判断图片是否加载成功
       function promiseIf (data) {
-        let promise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
           let images = document.createElement('img')
           images.onload = () => {
             resolve()
           }
           images.src = data.src
-        })
-        return promise
-      }
-
-      // 有默认图情况
-      if (this.srcPlaceholder) {
-        // 有默认图且有gif图情况  gif加载成功前显示默认图
-        if (this.src) {
-          let promise = promiseIf({ img: gif, src: this.src, alt: this.alt })
-          promise.then(() => {
-            me.placeholderShow = false
-            me.imgShow = true
-          })
-          //  只有默认图情况 只显示默认图
-        } else {
-          me.placeholderShow = true
-          me.imgShow = false
-        }
-        //  只有gif图
-      } else {
-        me.placeholderShow = false
-        me.imgShow = true
-        let promise = promiseIf({ img: gif, src: this.src, alt: this.alt })
-        promise.then(() => {
-          me.imgShow = true
         })
       }
     }
