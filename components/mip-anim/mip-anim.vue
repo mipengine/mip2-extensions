@@ -22,10 +22,6 @@
 .background {
   background-color: #aaa;
 }
-.mip-hidden {
-  display: none;
-}
-
 .fade-enter-active {
   opacity: 0;
 }
@@ -72,13 +68,11 @@ export default {
     }
   },
   firstInviewCallback () {
-    this.$refs.placeholder.classList.remove('mip-hidden')
     this.init()
   },
   methods: {
     init () {
       let gif = this.$refs.gif
-
       // 判断组件内是否有dom 是否有默认pic 复制默认pic属性到模板mip-img中
       if (Object.keys(this.$slots).length !== 0 && this.$slots.default.length) {
         let placeholder = this.$refs.placeholder
