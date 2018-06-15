@@ -22,6 +22,12 @@
   background-color: #aaa;
 }
 
+.concent{
+  min-width: 100%;
+  max-width: 100%;
+  height: 100%;
+  margin: auto;
+}
 .fade-enter-active {
   opacity: 0;
 }
@@ -81,6 +87,7 @@ export default {
         for (let attr in obj) {
           placeholder.setAttribute(attr, obj[attr])
         }
+        placeholder.classList.add('concent')
       } else {
         this.placeholderShow = false
       }
