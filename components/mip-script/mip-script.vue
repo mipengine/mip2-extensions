@@ -11,6 +11,31 @@ import detect from 'mip-sandbox/lib/unsafe-detect'
 
 const MAX_SIZE = 2048
 
+function getSize (script) {
+  return script.replace(/[^\x00-\xff]/g, 'aa').length // eslint-disable-line no-control-regex
+}
+
+function detectUnsafe (ast) {
+  let unsafeList = detect(ast, MIP.sandbox.WHITELIST_STRICT)
+
+  if (unsafeList.length) {
+    let list = unsafeList.reduce((total, current) => {
+      total.push(`${current.name}: start[${JSON.stringify(current.loc.start)}] end[${JSON.stringify(current.loc.end)}]`)
+      return total
+    }, [])
+    console.error(`WARNING: Forbidden global variable[s] included in <mip-script>! Variable[s] Listed as below\n\n${list.join('\n')}`)
+  }
+}
+
+function execute (ast, element) {
+  let generated = generate(ast, MIP.sandbox.WHITELIST_STRICT_RESERVED, {prefix: 'MIP.sandbox.strict'})
+  let scriptEle = document.createElement('script')
+  scriptEle.innerHTML = generated
+  scriptEle.setAttribute('class', 'mip-script')
+  document.body.appendChild(scriptEle)
+  element.remove()
+}
+
 export default {
   created () {
     let script
@@ -21,7 +46,7 @@ export default {
       return
     }
 
-    if (this.getSize(script) > MAX_SIZE) {
+    if (getSize(script) > MAX_SIZE) {
       console.error(`WARNING: <mip-script> is out of range.Please keep it under 2KB`)
       return
     }
@@ -33,43 +58,16 @@ export default {
       console.error('Fail to generate AST of script: ', e)
       return
     }
-    this.detect(ast)
+    detectUnsafe(ast)
 
     if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
       Promise.all(mipDataPromises)
         .then(() => {
           mipDataPromises = [] // eslint-disable-line no-global-assign
-          this.execute(ast)
+          execute(ast, this.$element)
         })
     } else {
-      this.execute(ast)
-    }
-  },
-
-  methods: {
-    getSize (script) {
-      return script.replace(/[^\x00-\xff]/g, 'aa').length // eslint-disable-line no-control-regex
-    },
-
-    detect (ast) {
-      let unsafeList = detect(ast, MIP.sandbox.WHITELIST_STRICT)
-
-      if (unsafeList.length) {
-        let list = unsafeList.reduce((total, current) => {
-          total.push(`${current.name}: start[${JSON.stringify(current.loc.start)}] end[${JSON.stringify(current.loc.end)}]`)
-          return total
-        }, [])
-        console.error(`WARNING: Forbidden global variable[s] included in <mip-script>! Variable[s] Listed as below\n\n${list.join('\n')}`)
-      }
-    },
-
-    execute (ast) {
-      let generated = generate(ast, MIP.sandbox.WHITELIST_STRICT_RESERVED, {prefix: 'MIP.sandbox.strict'})
-      let scriptEle = document.createElement('script')
-      scriptEle.innerHTML = generated
-      scriptEle.setAttribute('class', 'mip-script')
-      document.body.appendChild(scriptEle)
-      this.$element.remove()
+      execute(ast, this.$element)
     }
   },
 
