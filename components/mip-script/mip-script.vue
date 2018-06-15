@@ -19,11 +19,11 @@ function detectUnsafe (ast) {
   let unsafeList = detect(ast, MIP.sandbox.WHITELIST_STRICT)
 
   if (unsafeList.length) {
-    let list = unsafeList.reduce((total, current) => {
-      total.push(`${current.name}: start[${JSON.stringify(current.loc.start)}] end[${JSON.stringify(current.loc.end)}]`)
-      return total
-    }, [])
-    console.error(`WARNING: Forbidden global variable[s] included in <mip-script>! Variable[s] Listed as below\n\n${list.join('\n')}`)
+    console.error(`WARNING: Forbidden global variable[s] included in <mip-script>! Variable[s] Listed as below\n\n${
+      unsafeList.map(identify => {
+        return `${identify.name}: start[${JSON.stringify(identify.loc.start)}] end[${JSON.stringify(identify.loc.end)}]`
+      }).join('\n')
+    }`)
   }
 }
 
@@ -62,9 +62,6 @@ export default {
 
     if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
       Promise.all(mipDataPromises)
-        .then(() => {
-          mipDataPromises = [] // eslint-disable-line no-global-assign
-        })
         .finally(() => {
           execute(ast, this.$element)
         })
