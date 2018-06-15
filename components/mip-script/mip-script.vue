@@ -64,6 +64,8 @@ export default {
       Promise.all(mipDataPromises)
         .then(() => {
           mipDataPromises = [] // eslint-disable-line no-global-assign
+        })
+        .finally(() => {
           execute(ast, this.$element)
         })
     } else {
