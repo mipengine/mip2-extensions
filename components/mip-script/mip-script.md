@@ -53,7 +53,7 @@ https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E
 `mip-script` 组件执行后，（以 Chrome 浏览器为例），开发者可以在 Elements 面板中查找 DOM 节点树中 `class="mip-script"`  的 script 节点，查看运行在沙盒环境中的 JS 代码。
 
 ## 示例二
-通过 `mip-script` 编写 JS 代码，观察 price 的数据变化，从而触发 title 的更新v。同时利用 fetch API 异步获取数据，更新页面
+通过 `mip-script` 编写 JS 代码，观察 price 的数据变化，从而触发 title 的更新。同时利用 fetch API 异步获取数据，更新页面
 
 ```html
 <mip-data>
