@@ -17,25 +17,23 @@ export default {
   },
   computed: {
     defaultClass () {
-      let defaultClass
       if (this.$element &&
         this.$element.className &&
         this.$element.className.indexOf &&
         this.$element.className.indexOf('mip-history-default') > -1
       ) {
-        defaultClass = 'mip-history-default'
-        return defaultClass
+        return 'mip-history-default'
       }
     }
   },
   methods: {
     closeBanner () {
       if (this.history) {
-        var historyArr = this.history.split(',')
-        var func = historyArr[0]
+        let historyArr = this.history.split(',')
+        let func = historyArr[0]
         switch (func) {
           case 'go':
-            var step = historyArr[1]
+            let step = historyArr[1]
             if (step) {
               window.history.go(step - 0)
             } else {
@@ -62,11 +60,11 @@ export default {
       padding: 10px;
       margin: 10px;
       background: #eee;
-      -webkit-tap-highlight-color: rgba(0,0,0,0.1);
-      tap-highlight-color: rgba(0,0,0,0.1);
+      -webkit-tap-highlight-color: rgba(0, 0, 0, .1);
+      tap-highlight-color: rgba(0, 0, 0, .1);
     }
     .mip-history-default:hover {
-      background-color: rgba(0,0,0,0.1);
+      background-color: rgba(0, 0, 0, .1);
     }
   }
 </style>
