@@ -31,7 +31,6 @@
     "mip-sandbox": "^1.0.10"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.3",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.12.0",
@@ -43,6 +42,6 @@
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
     "husky": "^1.0.0-rc.8",
-    "mip2": "^1.0.4"
+    "mip2": "^1.0.10"
   }
 }
