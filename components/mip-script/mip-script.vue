@@ -61,10 +61,7 @@ export default {
     detectUnsafe(ast)
 
     if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
-      Promise.all(mipDataPromises)
-        .finally(() => {
-          execute(ast, this.$element)
-        })
+      Promise.all(mipDataPromises).finally(() => execute(ast, this.$element))
     } else {
       execute(ast, this.$element)
     }
