@@ -1,6 +1,5 @@
 <template>
   <div
-    :class="defaultClass"
     @click="closeBanner"
   >
     <slot/>
@@ -12,18 +11,7 @@ export default {
   props: {
     history: {
       type: String,
-      default: null
-    }
-  },
-  computed: {
-    defaultClass () {
-      if (this.$element &&
-        this.$element.className &&
-        this.$element.className.indexOf &&
-        this.$element.className.indexOf('mip-history-default') > -1
-      ) {
-        return 'mip-history-default'
-      }
+      default: ''
     }
   },
   methods: {
@@ -33,11 +21,11 @@ export default {
         let func = historyArr[0]
         switch (func) {
           case 'go':
-            let step = historyArr[1]
+            let step = Number(historyArr[1])
             if (step) {
-              window.history.go(step - 0)
+              window.history.go(step)
             } else {
-              console.warn('history.go() 需要填写第二个参数')
+              console.warn('history.go() 需要填写第二个参数且为数字')
             }
             break
           case 'back':
@@ -53,18 +41,16 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-  mip-history {
-    .mip-history-default {
-      display: block;
-      padding: 10px;
-      margin: 10px;
-      background: #eee;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, .1);
-      tap-highlight-color: rgba(0, 0, 0, .1);
-    }
-    .mip-history-default:hover {
-      background-color: rgba(0, 0, 0, .1);
-    }
+<style lang="less">
+  mip-history.mip-history-default > div {
+    display: block;
+    padding: 10px;
+    margin: 10px;
+    background: #eee;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, .1);
+    tap-highlight-color: rgba(0, 0, 0, .1);
+  }
+  mip-history.mip-history-default > div :hover {
+    background-color: rgba(0, 0, 0, .1);
   }
 </style>
