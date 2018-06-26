@@ -179,18 +179,36 @@ const payInfos = [
   }
 ]
 
-// // 微信环境、safari下进行跳出sf
-// if ((platform.isWechatApp() || platform.isSafari()) && MIP.viewer.isIframed) {
-//   let reflushUrl =
-//     window.location.origin +
-//     window.location.pathname +
-//     '?' +
-//     window.location.search.replace('?', '') +
-//     '&_r=' +
-//     new Date().getTime() +
-//     window.location.hash
-//   window.top.location.replace(this.decodeCacheUrl(reflushUrl))
-// }
+var decodeCacheUrl = (url) => {
+  const cachePrefix = new RegExp(
+    '^(https?\\:)?//' +
+          '(mipcache\\.bdstatic\\.com|' +
+          '[^.]+\\.mipcdn.com)'
+  )
+  if (!url) {
+    return ''
+  }
+
+  if (!cachePrefix.exec(url)) {
+    return url
+  }
+  return url
+    .replace(cachePrefix, '')
+    .replace(/^\/c\/s\//, 'https://')
+    .replace(/^\/c\//, 'http://')
+}
+
+// 微信环境、safari下进行跳出sf
+if ((platform.isWechatApp() || platform.isSafari()) && MIP.viewer.isIframed) {
+  let reflushUrl =
+    window.location.origin +
+    window.location.pathname +
+    '?' +
+    window.location.search.replace('?', '') +
+     '&_r=' +
+     new Date().getTime() + window.location.hash
+  window.top.location.replace(decodeCacheUrl(reflushUrl))
+}
 
 export default {
   props: {
@@ -424,25 +442,6 @@ export default {
         this.loading = false
       })
       return presult
-    },
-
-    decodeCacheUrl (url) {
-      const cachePrefix = new RegExp(
-        '^(https?\\:)?//' +
-          '(mipcache\\.bdstatic\\.com|' +
-          '[^.]+\\.mipcdn.com)'
-      )
-      if (!url) {
-        return ''
-      }
-
-      if (!cachePrefix.exec(url)) {
-        return url
-      }
-      return url
-        .replace(cachePrefix, '')
-        .replace(/^\/c\/s\//, 'https://')
-        .replace(/^\/c\//, 'http://')
     }
   }
 }
