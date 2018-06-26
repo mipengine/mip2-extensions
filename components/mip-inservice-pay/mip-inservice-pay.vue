@@ -6,8 +6,7 @@
     <transition name="fade">
       <div
         v-if="visibleCon"
-        class="payContain"
-        @click="$emit('abc', {})">
+        class="payContain">
         <div class="payContain__shadow"/>
         <span
           class="payContain__close btn"
@@ -34,7 +33,7 @@
         <div class="payContain__header">
           <h3>支付订单</h3>
           <div class="info">
-            订单信息： {{ payConfig.subject }}
+            支付信息： {{ payConfig.subject }}
           </div>
         </div>
         <div class="payTypeList">
@@ -179,7 +178,7 @@ const payInfos = [
   }
 ]
 
-var decodeCacheUrl = (url) => {
+let decodeCacheUrl = (url) => {
   const cachePrefix = new RegExp(
     '^(https?\\:)?//' +
           '(mipcache\\.bdstatic\\.com|' +
@@ -279,42 +278,8 @@ export default {
         })
     },
 
-    // 拉取订单状态
-    // searchOrderStatus() {
-    //   return new Promise((resolve, reject) => {
-    //     this.request(this.payConfig.searchStatus, this.getPostData())
-    //       .then(res => {
-    //         if (res.status === 1 ) {
-    //           reject()
-    //         } else {
-    //           resolve()
-    //         }
-    //       })
-    //       .catch(function() {
-    //         resolve()
-    //       });
-    //   });
-    // },
-
     redirect (data) {
-      var toSF = true
-      var url = data.url
-      // 非 SF
-      if (!MIP.viewer.isIframed) {
-        toSF = false
-      } else if (platform.isIos() && platform.isBaiduApp()) {
-        // iOS 的手百降级
-        toSF = false
-      }
-
-      if (toSF) {
-        // return MIP.viewer.sendMessage("simple-pay", {
-        //   url: url
-        // });
-      }
-
-      return MIP.viewer.open(url, { isMipLink: false })
-      // window.top.location.href = url;
+      return MIP.viewer.open(data.url, { isMipLink: false })
     },
 
     // 微信支付
@@ -402,27 +367,6 @@ export default {
       }
 
       return result
-    },
-    locationAddHash (key, value) {
-      var result = ['']
-      var location = window.location
-      var hashTree = MIP.hash.hashTree
-      Object.keys(hashTree).forEach(function (haskey) {
-        // if( MIP.hashTree[haskey] )
-        key !== haskey &&
-          hashTree[haskey] &&
-          result.push(haskey + '=' + hashTree[haskey].value)
-      })
-      result.push('&' + key + '=' + value)
-      return (
-        location.protocol +
-        '//' +
-        location.host +
-        location.pathname +
-        location.search +
-        '#' +
-        result.join('&')
-      )
     },
 
     request (url, postData) {
@@ -517,6 +461,9 @@ export default {
       height: 12px;
       background-size: contain;
     }
+    &:active{
+          background-color: rgb(235, 235, 235);
+    }
   }
   &__header {
     // margin-bottom: 28px;
@@ -542,6 +489,9 @@ export default {
       height: 57px;
       border-bottom: 1px solid @border-color;
       box-sizing: border-box;
+      &:last-child{
+        border: none;
+      }
     }
     &__listIcon {
       width: 27px;
