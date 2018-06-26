@@ -4,10 +4,15 @@
   "description": "Custom MIP Components Repository",
   "main": "index.js",
   "scripts": {
-    "dev": "mip2 dev",
+    "dev": "mip2 dev -i",
     "build": "rm -rf dist && mip2 build -i",
     "site": "npm run build && node tools/site",
     "lint": "eslint --ext .js,.vue **/* --ignore-pattern dist"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
   },
   "repository": {
     "type": "git",
@@ -23,10 +28,9 @@
   },
   "homepage": "https://github.com/mip-project/mip-components#readme",
   "dependencies": {
-    "mip-sandbox": "^1.0.4"
+    "mip-sandbox": "^1.0.10"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.3",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.12.0",
@@ -37,6 +41,7 @@
     "eslint-plugin-vue": "^4.5.0",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
-    "mip2": "^1.0.2"
+    "husky": "^1.0.0-rc.8",
+    "mip2": "^1.0.10"
   }
 }
