@@ -2,7 +2,7 @@
   <div
     v-if="visible"
     class="paybox" >
-    <div class="paybox__shadow" />
+    <div class="paybox__shadow"/>
     <transition name="fade">
       <div
         v-if="visibleCon"
@@ -167,24 +167,20 @@ const payInfos = [
   {
     id: 'alipay',
     name: '支付宝',
-    icon: ``
+    icon: ''
   },
   {
     id: 'weixin',
     name: '微信',
-    icon: ``
+    icon: ''
   }
 ]
 
 let decodeCacheUrl = (url) => {
-  const cachePrefix = new RegExp(
-    '^(https?\\:)?//' +
-          '(mipcache\\.bdstatic\\.com|' +
-          '[^.]+\\.mipcdn.com)'
-  )
   if (!url) {
     return ''
   }
+  const cachePrefix = /^(https?:)?\/\/(mipcache\.bdstatic\.com|[^.]+\.mipcdn.com)/
 
   if (!cachePrefix.exec(url)) {
     return url
@@ -358,8 +354,8 @@ export default {
         .join('&')
     },
     getWechatVer () {
-      var result = 0
-      var weiMatch = navigator.userAgent.match(/\bmicromessenger\/([\d.]+)/i)
+      let result = 0
+      let weiMatch = navigator.userAgent.match(/\bmicromessenger\/([\d.]+)/i)
       if (weiMatch && weiMatch[1]) {
         result = +weiMatch[1].replace(/([\d+]\.[\d+])(\.)([\d+])(.*)/, '$1$3')
       }
@@ -369,7 +365,7 @@ export default {
 
     request (url, postData) {
       this.loading = true
-      var presult = fetch(url, {
+      let presult = fetch(url, {
         method: 'post',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
