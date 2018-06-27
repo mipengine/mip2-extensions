@@ -143,12 +143,10 @@
           @click="payAction">确认支付¥{{ payConfig.fee }}</div>
         <div
           v-if="!errorInfo && loading"
-          class="mipPayBtn loading"
-          @click="payAction">请求中...</div>
+          class="mipPayBtn loading">请求中...</div>
         <div
           v-if="errorInfo"
-          class="mipPayBtn error"
-          @click="payAction">{{ errorInfo }}</div>
+          class="mipPayBtn error">{{ errorInfo }}</div>
 
       </div>
     </transition>
@@ -198,7 +196,7 @@ let decodeCacheUrl = (url) => {
 }
 
 // 微信环境、safari下进行跳出sf
-if ((platform.isWechatApp() || platform.isSafari()) && MIP.viewer.isIframed) {
+if ((platform.isWechatApp()) && MIP.viewer.isIframed) {
   let reflushUrl =
     window.location.origin +
     window.location.pathname +
@@ -341,7 +339,7 @@ export default {
     },
 
     getPostData () {
-      return MIP.util.fn.extend({}, this.payConfig.postData, {
+      return Object.assign({}, this.payConfig.postData, {
         sessionId: this.payConfig.sessionId,
         state: JSON.stringify({
           r: Date.now(),
@@ -490,7 +488,7 @@ export default {
       border-bottom: 1px solid @border-color;
       box-sizing: border-box;
       &:last-child{
-        border: none;
+        border: none
       }
     }
     &__listIcon {
