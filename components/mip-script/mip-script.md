@@ -12,7 +12,13 @@
 
 ## 说明
 
-形式上，只需要在 `<mip-script></mip-script>` 内正常书写 JS 代码即可。如同在 `<script></script>` 中写代码一样。
+形式上，只需要在 `<mip-script></mip-script>` 内正常书写 JS 代码即可。如同在 `<script></script>` 中写代码一样。如：
+
+```html
+<mip-script>
+  console.log('mip-script executed')
+</mip-script>
+```
 
 #### 要求：
 
@@ -26,7 +32,7 @@ mip-script 中对开发者的 JS 将用沙盒的 **严格模式** 进行全局�
 https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%B2%99%E7%9B%92%E5%AE%89%E5%85%A8%E5%8F%98%E9%87%8F)
 
 ## 示例一
-基础用法：
+基础用法，例如：
 
 开发者编写的 JS 代码：
 
@@ -38,8 +44,8 @@ https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E
   var ele = document.getElementById('test')
 </mip-script>
 ```
-<br />
-运行中的 JS 代码（沙盒环境包裹）：
+
+运行时的 JS 代码（沙盒环境包裹）：
 
 ```html
 <script class="mip-script">
@@ -49,6 +55,10 @@ https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E
   var ele = MIP.sandbox.strict.document.getElementById('test');
 </script>
 ```
+
+可以看出，`console` 是安全的全局变量，可以正常使用；`window` 是受限制的全局变量，具体行为取决于 `MIP.sandbox.strict.window` 的开放程度（同理有 `document`）。
+
+以上代码片段运行后，由于 `document.getElementById` 已被列为危险行为（涉及 DOM 操作），在沙盒中没有对应实现，因此运行时会报错，开发者需从代码中删除此语句，不允许调用该 API。
 
 `mip-script` 组件执行后，（以 Chrome 浏览器为例），开发者可以在 Elements 面板中查找 DOM 节点树中 `class="mip-script"`  的 script 节点，查看运行在沙盒环境中的 JS 代码。
 
@@ -73,9 +83,9 @@ https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E
 
 <p class="header">以下是异步获取的数据列表：</p>
 <ul>
-  <li m-text="userList[0].name"></li>
-  <li m-text="userList[1].name"></li>
-  <li m-text="userList[2].name"></li>
+  <li m-text="userList[0]"></li>
+  <li m-text="userList[1]"></li>
+  <li m-text="userList[2]"></li>
 </ul>
 
 <mip-script>
