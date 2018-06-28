@@ -24,7 +24,7 @@ MIP网站中百度pass账号的登录&授权
 
 父容器`mip-container`代码示意：
 
-```javascript
+```html
 <template>
   <div class="wrapper">
     <h1>我是父组件</h1>
@@ -49,7 +49,7 @@ export default {
     components: {
         Oauth
     },
-    data: function () {
+    data() {
         return {
             // mip-inservice-login组件的属性数据
             config: {
@@ -106,7 +106,7 @@ this.$refs.oauth.logout();
 父容器`mip-container-auto`代码示意：
 
 
-```javascript
+```html
 <template>
   <div class="wrapper">
     <Oauth :config="config" ref="oauth" @login="login" @logout="logout">
@@ -189,7 +189,7 @@ export default {
 mip-container代码示例
 
 
-```javascript
+```html
 <template>
   <div class="wrapper">
     <Oauth :config="config" ref="oauth" @login="login" @logout="logout">

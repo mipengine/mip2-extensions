@@ -3,9 +3,6 @@
  * @author huangjing
  */
 
-let {parseCacheUrl, fn} = window.MIP.util
-let extend = fn.extend
-
 const util = {
 
   loadJS (src, success = () => {}, fail = () => {}) {
@@ -62,7 +59,7 @@ const util = {
       url = url.replace(/^http:/, '')
     }
 
-    return parseCacheUrl(url)
+    return window.MIP.util.parseCacheUrl(url)
       .replace(/#.*$/, '')
       .replace(/([&?])((code|state)=[^&$]+)/g, function (matched, prefix) {
         return prefix === '?' ? '?' : ''
@@ -180,7 +177,7 @@ const util = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: util.querystring.stringify(extend({}, data || {}, {
+      body: util.querystring.stringify(Object.assign({}, data || {}, {
         sessionId: util.store.get(url)
       })),
       credentials: 'include'
