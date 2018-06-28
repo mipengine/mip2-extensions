@@ -23,24 +23,24 @@ export default {
   data () {
     return {
       /**
-             * 用户信息
-             *
-             * @type {Object}
-             */
+       * 用户信息
+       *
+       * @type {Object}
+       */
       userInfo: null,
 
       /**
-             * 会话标识
-             *
-             * @type {string}
-             */
+       * 会话标识
+       *
+       * @type {string}
+       */
       sessionId: null,
 
       /**
-             * 默认为未登录
-             *
-             * @type {boolean}
-             */
+       * 默认为未登录
+       *
+       * @type {boolean}
+       */
       isLogin: false
     }
   },
@@ -51,21 +51,20 @@ export default {
   mounted () {
     // 熊掌号sdk
     let url = 'https://xiongzhang.baidu.com/sdk/c.js?appid=' + this.config.appid
-    let self = this
 
     util.loadJS(
       url,
       () => {
         // 如果是自动登录，在检查完用户信息后没有登录时要求立即登录
-        if (self.config.autologin) {
-          return self.getUserInfo().then(() => {
-            if (!self.isLogin) {
-              self.login()
+        if (this.config.autologin) {
+          return this.getUserInfo().then(() => {
+            if (!this.isLogin) {
+              this.login()
             }
           })
         }
-        self.getUserInfo()
-        self.bindEvents()
+        this.getUserInfo()
+        this.bindEvents()
       },
       () => {
         throw new Error('加载资源出错')
@@ -82,8 +81,8 @@ export default {
       })
     },
     /**
-         * 检查配置
-         */
+     * 检查配置
+     */
     checkConfig () {
       let config = this.config
       let hasError = false
@@ -111,18 +110,18 @@ export default {
       }
     },
     /**
-         * 输出错误信息到控制台
-         *
-         * @param {string} text 输出文本
-         */
+     * 输出错误信息到控制台
+     *
+     * @param {string} text 输出文本
+     */
     error (text) {
       console.error('[mip-inservice-login] ', text, this)
     },
     /**
-         * 用户登录
-         *
-         * @return {undefined}
-         */
+     * 用户登录
+     *
+     * @return {undefined}
+     */
     login () {
       if (this.isLogin) {
         return
@@ -141,21 +140,21 @@ export default {
           ifSilent: false,
           client_id: this.config.clientId
         },
-        success: function (data) {
+        success (data) {
           viewer.open(
             util.getRedirectUrl(sourceUrl, data.result, 'query'),
-            {isMipLink: true, replace: true}
+            { isMipLink: true, replace: true }
           )
         },
-        fail: function (data) {
+        fail (data) {
           console.error(data.msg)
         }
       })
     },
 
     /**
-         * 用户退出
-         */
+     * 用户退出
+     */
     logout () {
       let self = this
 
@@ -170,7 +169,7 @@ export default {
         util.store.remove(self.config.endpoint)
 
         if (res.data && res.data.url) {
-          viewer.open(res.data.url, {isMipLink: true})
+          viewer.open(res.data.url, { isMipLink: true })
         } else {
           // 是否，需要补充多一点信息
           self.loginHandle('logout', false)
@@ -186,12 +185,12 @@ export default {
     },
 
     /**
-         * 登录统一处理
-         *
-         * @param  {string}  name    事件名称
-         * @param  {boolean} isLogin 是否登录
-         * @param  {Object|undefined}  data    用户数据
-         */
+     * 登录统一处理
+     *
+     * @param  {string}  name    事件名称
+     * @param  {boolean} isLogin 是否登录
+     * @param  {Object|undefined}  data    用户数据
+     */
     loginHandle (name, isLogin, data) {
       this.isLogin = isLogin
       this.userInfo = data || null
@@ -199,10 +198,10 @@ export default {
     },
 
     /**
-         * 触发事件
-         *
-         * @param  {string} name  事件名称
-         */
+     * 触发事件
+     *
+     * @param  {string} name  事件名称
+     */
     trigger (name) {
       let event = {
         userInfo: this.userInfo,
@@ -213,10 +212,10 @@ export default {
     },
 
     /**
-         * 获取用户信息
-         *
-         * @return {Promise} 用户信息
-         */
+     * 获取用户信息
+     *
+     * @return {Promise} 用户信息
+     */
     getUserInfo () {
       let data = {
         type: 'check'
@@ -267,8 +266,8 @@ export default {
     },
 
     /**
-         * 配合 mip-bind 设置数据
-         */
+     * 配合 mip-bind 设置数据
+     */
     setData () {
       if (typeof MIP.setData !== 'function') {
         return
