@@ -83,6 +83,17 @@ export default {
     handleResult () {
       let BMap = window.BMap
 
+      // BMap注入沙盒
+      Object.defineProperty(MIP.sandbox, 'BMap', {
+        value: BMap,
+        writable: false,
+        enumerable: true,
+        configurable: true
+      })
+
+      // 派发事件
+      this.$emit('loaded', {})
+
       // 初始化地图
       this.map = new BMap.Map('allmap')
       this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 15)
@@ -170,7 +181,7 @@ export default {
      * 工具方法 拼接键值对
      *
      * @param {Object} obj 需要处理的对象
-     * @returns {Object} 拼接字符串
+     * @returns {String} 拼接字符串
      */
     traverseAndConcat (obj) {
       let output = ''
