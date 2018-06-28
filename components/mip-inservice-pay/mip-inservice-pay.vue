@@ -399,7 +399,6 @@ export default {
   opacity: 0;
 }
 .btn {
-  // cursor: pointer;
   &:active {
     opacity: 0.8;
   }
@@ -558,8 +557,8 @@ export default {
 
   @keyframes layout-fade-in {
       from {
-          transform: scale(1.3);
-          -webkit-transform: scale(1.3);
+          transform: scale(0.7);
+          -webkit-transform: scale(0.7);
       }
       to {
           transform: scale(1);
