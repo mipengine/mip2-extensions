@@ -9,7 +9,7 @@ import './mip-inservice-shell.less'
 const URL_SITE = 'https://xiongzhang.baidu.com/opensc/cambrian/card'
 const fetchJsonp = window.fetchJsonp || {}
 
-export default class MipInserviceShell extends window.MIP.builtinComponents.MipShell {
+export default class MipShellInservice extends MIP.builtinComponents.MipShell {
   constructor (...args) {
     super(...args)
 
@@ -30,7 +30,7 @@ export default class MipInserviceShell extends window.MIP.builtinComponents.MipS
 
     // wise搜索环境页带入熊掌号信息
     try {
-      let {isTitle} = MIP.hash.hashTree
+      let { isTitle } = MIP.hash.hashTree
       let hashHeader = isTitle && JSON.parse(decodeURIComponent(isTitle && isTitle.value))
       if (hashHeader && hashHeader.type === 'cambrian') {
         Object.assign(headerInfo, {title: hashHeader.title, logo: hashHeader.logo})
@@ -58,7 +58,7 @@ export default class MipInserviceShell extends window.MIP.builtinComponents.MipS
     if (isId) {
       headerInfo.isId = isId
       isasync = true
-      headerInfo = await fetchJsonp(`${URL_SITE}?cambrian_id=${isId}`).then((res) => res.json()).then((data) => {
+      headerInfo = await fetchJsonp(`${URL_SITE}?cambrian_id=${isId}`).then(res => res.json()).then(data => {
         if (data.code === 0 && data.data.name) {
           return {
             title: data.data.name,
@@ -127,20 +127,19 @@ export default class MipInserviceShell extends window.MIP.builtinComponents.MipS
    * 是否显示 关闭button, 不能返回搜索结果页时进行处理
    */
   showHeaderCloseButton () {
-    let {canClose} = MIP.hash.hashTree || {}
+    let { canClose } = MIP.hash.hashTree || {}
     return canClose === 'true'
   }
   /**
    * 关于我们处理逻辑
    */
   aboutAction () {
-    /* eslint-disable */
     let cambrianUrl = this.headerInfo.cambrianUrl
     let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^http(s)?:\/\//, ''))}`
     if (MIP.standalone) {
       MIP.viewer.open(mipUrl, { isMipLink: false })
     } else {
-      window.MIP.viewer.sendMessage('loadiframe', { 'url': cambrianUrl, title: this.headerInfo.title })
+      MIP.viewer.sendMessage('loadiframe', { 'url': cambrianUrl, title: this.headerInfo.title })
     }
   }
   /**
@@ -201,7 +200,7 @@ export default class MipInserviceShell extends window.MIP.builtinComponents.MipS
       this.shareWarp.shareWrapper.classList.add('show')
     }
     this.shareWarp.show = !this.shareWarp.show
-    window.MIP.viewer.page.togglePageMask(this.shareWarp.show, {
+    MIP.viewer.page.togglePageMask(this.shareWarp.show, {
       skipTransition: true
     })
   }
