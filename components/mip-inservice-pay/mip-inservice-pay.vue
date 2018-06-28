@@ -238,6 +238,10 @@ export default {
   },
 
   methods: {
+
+    /**
+     * 支付弹窗切换功能函数
+     */
     toggleVisible () {
       this.visible = !this.visible
       setTimeout(() => {
@@ -249,11 +253,18 @@ export default {
       })
     },
 
-    // 选择支付方式
+    /**
+     * 选择支付方式
+     *
+     * @param {string} selectId 支付方式ID
+     */
     changePayType (selectId) {
       this.selectId = selectId
     },
 
+    /**
+     * 支付请求函数
+     */
     payAction () {
       this.request(this.payConfig.endpoint[this.selectId], this.getPostData())
         .then(res => {
@@ -271,12 +282,15 @@ export default {
           this.setError('支付错误，请重试')
         })
     },
-
     redirect (data) {
       return MIP.viewer.open(data.url, { isMipLink: false })
     },
 
-    // 微信支付
+    /**
+     * 微信支付，判断是否在微信内逻辑，不同情况进行不同处理
+     *
+     * @param {Object} data 跳转参数
+     */
     weixinRedierct (data) {
       // weixin
       let prepayInfo = data
@@ -310,7 +324,7 @@ export default {
           }
         )
       }
-
+      // 微信 bridge还未注入时的情况处理
       if (typeof WeixinJSBridge === 'undefined') {
         if (document.addEventListener) {
           document.addEventListener(
@@ -326,7 +340,11 @@ export default {
         onBridgeReady()
       }
     },
-
+    /**
+     * 错误显示函数
+     *
+     * @param {string} error 错误信息
+     */
     setError (error) {
       this.errorInfo = error
       setTimeout(() => {
@@ -334,6 +352,9 @@ export default {
       }, 2000)
     },
 
+    /**
+     * 获取订单提交数据
+     */
     getPostData () {
       return Object.assign({}, this.payConfig.postData, {
         sessionId: this.payConfig.sessionId,
@@ -353,6 +374,9 @@ export default {
         })
         .join('&')
     },
+    /**
+     * 微信版本号判断
+     */
     getWechatVer () {
       let result = 0
       let weiMatch = navigator.userAgent.match(/\bmicromessenger\/([\d.]+)/i)
