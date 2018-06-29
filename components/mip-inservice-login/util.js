@@ -5,6 +5,8 @@
 
 /* globals location, fetch, localStorage */
 
+var a = '';
+
 const util = {
 
   loadJS (src, success = () => {}, fail = () => {}) {
