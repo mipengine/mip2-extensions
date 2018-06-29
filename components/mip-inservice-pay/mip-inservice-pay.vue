@@ -1,16 +1,16 @@
 <template>
   <div
-    v-if="visible"
+    v-if="visibleMark"
     class="paybox" >
     <div class="paybox__shadow"/>
     <transition name="fade">
       <div
-        v-if="visibleCon"
+        v-if="visiblePay"
         class="payContain">
         <div class="payContain__shadow"/>
         <span
           class="payContain__close btn"
-          @click="toggleVisible">
+          @click="toggleVisible()">
           <i>
             <svg
               t="1529369317928"
@@ -150,6 +150,20 @@
 
       </div>
     </transition>
+    <div
+      v-if="visibleConfirm"
+      class="confirmDialog">
+      <h4>支付确认</h4>
+      <div class="confirmDialog__info">若未完成支付，请点击重新支付</div>
+      <div class="confirmDialog__btnGroup">
+        <span
+          class="btn"
+          @click="toggleVisible(true)">重新支付</span>
+        <span
+          class="btn"
+          @click="goPayRedirectUrl">支付完成</span>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -215,8 +229,10 @@ export default {
       selectId: 'baifubao',
       loading: false,
 
-      visible: false,
-      visibleCon: false,
+      // 弹层状态
+      visibleMark: false,
+      visiblePay: false,
+      visibleConfirm: false,
 
       errorInfo: '',
 
@@ -227,28 +243,58 @@ export default {
   },
   mounted () {
     this.$element.customElement.addEventAction('toggle', () => {
-      this.toggleVisible()
+      this.toggleVisible(!this.visibleMark)
     })
 
     // 微信跳转redirect， 自动弹窗
     if (storage.get('mipPayRedirect')) {
-      this.toggleVisible()
+      this.toggleVisible(true, 'visibleConfirm')
       storage.rm('mipPayRedirect')
     }
+
+    // 初使化支付默认支付方式
+    ['baifubao', 'alipay', 'weixin'].some((pid) => {
+      if (this.payConfig.endpoint[pid]) {
+        this.selectId = pid
+        return true
+      }
+    })
   },
 
   methods: {
 
     /**
      * 支付弹窗切换功能函数
+     *
+     * @param {boolean} visible 显示或隐藏
+     * @param {string} showType 切换弹窗类型
      */
-    toggleVisible () {
-      this.visible = !this.visible
-      setTimeout(() => {
-        this.visibleCon = !this.visibleCon
-      }, 0)
+    toggleVisible (visible, showType = 'visiblePay') {
+      const DialogList = ['visiblePay', 'visibleConfirm']
+      visible = !!visible
 
-      window.MIP.viewer.page.togglePageMask(this.visible, {
+      if (!visible) {
+        DialogList.forEach(type => { this[type] = visible })
+        this.visibleMark = visible
+        return
+      }
+
+      let curShowType = DialogList.find(type => { return this[type] })
+      if (curShowType && showType === curShowType) {
+        return
+      }
+
+      if (curShowType) {
+        this[curShowType] = !visible
+      } else {
+        this.visibleMark = visible
+      }
+      // 动画延迟
+      setTimeout(() => {
+        this[showType] = visible
+      }, 100)
+
+      window.MIP.viewer.page.togglePageMask(this.visibleMark, {
         skipTransition: true
       })
     },
@@ -317,7 +363,7 @@ export default {
           invokeConfig,
           res => {
             if (res.err_msg === 'get_brand_wcpay_request:ok') {
-              MIP.viewer.open(this.payConfig.redirectUrl, { replace: true })
+              this.goPayRedirectUrl()
             } else {
               this.setError('支付失败，请重试')
             }
@@ -339,6 +385,12 @@ export default {
       } else {
         onBridgeReady()
       }
+    },
+    /**
+     * 支付成功后跳转
+     */
+    goPayRedirectUrl () {
+      MIP.viewer.open(this.payConfig.redirectUrl, { replace: true })
     },
     /**
      * 错误显示函数
@@ -364,7 +416,6 @@ export default {
         })
       })
     },
-
     queryString (data) {
       return Object.keys(data)
         .map(function (key) {
@@ -411,15 +462,14 @@ export default {
 
 <style scoped lang="less">
 @border-color: #f1f1f1;
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
+.fade-enter-active {
+    transition: opacity 0.5s;
     animation-name: layout-fade-in;
     animation-duration: .2s;
-    animation-timing-function: ease;
+    animation-timing-function: ease-out;
     animation-fill-mode: forwards;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
 .btn {
@@ -511,10 +561,14 @@ export default {
       }
     }
     &__listIcon {
-      width: 27px;
-      height: 27px;
+      width: 28px;
+      height: 28px;
       margin-right: 8px;
       background-size: contain;
+      svg{
+        transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0)
+      }
       &.baifubao svg {
         color: #e84848;
       }
@@ -590,4 +644,47 @@ export default {
       }
   }
 }
+
+.confirmDialog{
+  color: #000;
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  background-color: #FFF;
+  border-radius: 4px;
+  max-width: 80%;
+  text-align: center;
+  overflow: hidden;
+  h4{
+    color: #333;
+    margin: 28px 0 0px 0;
+    font-size: 24px;
+    font-weight: normal;
+  }
+  &__info{
+    padding: 24px 37px;
+    font-size: 16px;
+    line-height: 1.3;
+    color: #999;
+  }
+  &__btnGroup{
+    display: flex;
+    font-size: 18px;
+    border-top: 1px solid #E0E0E0;
+    .btn{
+      display: flex;
+      flex: 1;
+      padding: 13px;
+      justify-content: center;
+      align-content: center;
+      &:first-child{
+        border-right: 1px solid #E0E0E0;
+      }
+      &:active{
+            background-color: rgb(235, 235, 235);
+      }
+    }
+  }
+}
+
 </style>
