@@ -3,6 +3,8 @@
  * @author huangjing
  */
 
+/* globals location, fetch, localStorage */
+
 const util = {
 
   loadJS (src, success = () => {}, fail = () => {}) {
