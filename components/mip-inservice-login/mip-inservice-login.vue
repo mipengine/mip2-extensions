@@ -119,8 +119,6 @@ export default {
     },
     /**
      * 用户登录
-     *
-     * @return {undefined}
      */
     login () {
       if (this.isLogin) {
@@ -214,7 +212,7 @@ export default {
     /**
      * 获取用户信息
      *
-     * @return {Promise} 用户信息
+     * @returns {Promise} 用户信息
      */
     getUserInfo () {
       let data = {
