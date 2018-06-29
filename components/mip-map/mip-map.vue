@@ -181,7 +181,7 @@ export default {
      * 工具方法 拼接键值对
      *
      * @param {Object} obj 需要处理的对象
-     * @returns {String} 拼接字符串
+     * @returns {string} 拼接字符串
      */
     traverseAndConcat (obj) {
       let output = ''
