@@ -137,13 +137,17 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="!errorInfo && !loading"
+        <a
+          v-if="selectId && !errorInfo && !loading && requestDataInfo"
+          :href="requestDataInfo.url"
           class="mipPayBtn btn"
-          @click="payAction">确认支付¥{{ payConfig.fee }}</div>
+          @click="comfirmPayAction">确认支付¥{{ payConfig.fee }}</a>
+        <div
+          v-if="!selectId"
+          class="mipPayBtn loading"> 请更换支付方式 </div>
         <div
           v-if="!errorInfo && loading"
-          class="mipPayBtn loading">请求中...</div>
+          class="mipPayBtn loading">确认中...</div>
         <div
           v-if="errorInfo"
           class="mipPayBtn error">{{ errorInfo }}</div>
@@ -158,7 +162,7 @@
       <div class="confirmDialog__btnGroup">
         <span
           class="btn"
-          @click="toggleVisible(true)">重新支付</span>
+          @click="toggleVisible(false)">重新支付</span>
         <span
           class="btn"
           @click="goPayRedirectUrl">支付完成</span>
@@ -237,6 +241,7 @@ export default {
       errorInfo: '',
 
       payInfos: payInfos,
+      requestDataInfo: null,
 
       isWechatApp: platform.isWechatApp()
     }
@@ -276,23 +281,26 @@ export default {
       if (!visible) {
         DialogList.forEach(type => { this[type] = visible })
         this.visibleMark = visible
-        return
-      }
-
-      let curShowType = DialogList.find(type => { return this[type] })
-      if (curShowType && showType === curShowType) {
-        return
-      }
-
-      if (curShowType) {
-        this[curShowType] = !visible
       } else {
-        this.visibleMark = visible
+        let curShowType = DialogList.find(type => { return this[type] })
+        if (curShowType && showType === curShowType) {
+          return
+        }
+
+        if (curShowType) {
+          this[curShowType] = !visible
+        } else {
+          this.visibleMark = visible
+        }
+        // 动画延迟
+        setTimeout(() => {
+          this[showType] = visible
+          // 显示支付弹窗初使化支付数据
+          if (showType === 'visiblePay') {
+            this.payAction()
+          }
+        }, 100)
       }
-      // 动画延迟
-      setTimeout(() => {
-        this[showType] = visible
-      }, 100)
 
       window.MIP.viewer.page.togglePageMask(this.visibleMark, {
         skipTransition: true
@@ -306,6 +314,15 @@ export default {
      */
     changePayType (selectId) {
       this.selectId = selectId
+      this.payAction()
+    },
+
+    comfirmPayAction (e) {
+      if (this.selectId === 'weixin' && this.getWechatVer() >= 5.0) {
+        e.preventDefault()
+        this.weixinRedierct()
+        return false
+      }
     },
 
     /**
@@ -315,11 +332,7 @@ export default {
       this.request(this.payConfig.endpoint[this.selectId], this.getPostData())
         .then(res => {
           if (res.status === 0 && res.data) {
-            if (this.selectId === 'weixin') {
-              this.weixinRedierct(res.data)
-            } else {
-              this.redirect(res.data)
-            }
+            this.requestDataInfo = res.data
           } else {
             this.setError(res.msg || res.message || '支付错误，请重试')
           }
@@ -328,25 +341,13 @@ export default {
           this.setError('支付错误，请重试')
         })
     },
-    redirect (data) {
-      return MIP.viewer.open(data.url, { isMipLink: false })
-    },
 
     /**
      * 微信支付，判断是否在微信内逻辑，不同情况进行不同处理
-     *
-     * @param {Object} data 跳转参数
      */
-    weixinRedierct (data) {
+    weixinRedierct () {
       // weixin
-      let prepayInfo = data
-
-      if (this.getWechatVer() < 5.0) {
-        data.url =
-          data.url + '&redirect_url=' + encodeURIComponent(location.href)
-        storage.set('mipPayRedirect', 'wexin', 10000)
-        return this.redirect(data)
-      }
+      let prepayInfo = this.requestDataInfo
 
       let invokeConfig = {
         appId: prepayInfo.appId, // 公众号名称，由商户传入
@@ -398,6 +399,7 @@ export default {
      * @param {string} error 错误信息
      */
     setError (error) {
+      this.selectId = ''
       this.errorInfo = error
       setTimeout(() => {
         this.errorInfo = ''
@@ -612,6 +614,7 @@ export default {
   }
 
   .mipPayBtn {
+    display: block;
     margin: 16px;
     margin-bottom: 0;
     padding: 0 10px;
