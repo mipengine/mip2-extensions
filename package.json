@@ -7,7 +7,7 @@
     "dev": "mip2 dev -i",
     "build": "rm -rf dist && mip2 build -i",
     "site": "npm run build && node tools/site",
-    "lint": "eslint --ext .js,.vue **/* --ignore-pattern dist"
+    "lint": "./node_modules/.bin/eslint --ext .js,.vue **/* --ignore-pattern dist"
   },
   "husky": {
     "hooks": {
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/mip-project/mip-components#readme",
   "dependencies": {
-    "mip-sandbox": "^1.0.10"
+    "mip-sandbox": "^1.0.14"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
@@ -42,6 +42,6 @@
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
     "husky": "^1.0.0-rc.8",
-    "mip2": "^1.0.10"
+    "mip2": "^1.1.3"
   }
 }

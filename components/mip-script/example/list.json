@@ -1,13 +1,3 @@
 {
-  "userList": [
-    {
-      "name": "Jack"
-    },
-    {
-      "name": "Mike"
-    },
-    {
-      "name": "Jenny"
-    }
-  ]
+  "userList": ["Jack", "Mike", "Jenny"]
 }
