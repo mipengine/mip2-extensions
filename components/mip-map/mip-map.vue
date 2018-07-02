@@ -32,6 +32,10 @@ export default {
       default: () => {
         return null
       }
+    },
+    onlyGetSdk: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -93,6 +97,11 @@ export default {
 
       // 派发事件
       this.$emit('loaded', {})
+
+      // 仅加载SDK，不初始化地图
+      if (this.onlyGetSdk) {
+        return
+      }
 
       // 初始化地图
       this.map = new BMap.Map('allmap')
