@@ -13,22 +13,22 @@
 ### 基本用法
 ```html
 <mip-history history="go, -1" class="mip-history-default">
-	go, -1
+go, -1
 </mip-history>
 <mip-history history="go, -2" class="mip-history-default">
-	go, -2
+go, -2
 </mip-history>
 <mip-history history="go, 1" class="mip-history-default">
-	go, 1
+go, 1
 </mip-history>
 <mip-history history="go" class="mip-history-default">
-	go
+go
 </mip-history>
 <mip-history history="back" class="mip-history-default">
-	back
+back
 </mip-history>
 <mip-history history="forward" class="mip-history-default">
-	forward
+forward
 </mip-history>
 ```
 
@@ -38,14 +38,14 @@
 
 ```html
 <!--宽高比3：1-->
-<mip-history history="go, -1" class="mip-history-default" 
-	layout="responsive" width="3" height="1">
-	go, -1
+<mip-history history="go, -1" class="mip-history-default"
+layout="responsive" width="3" height="1">
+go, -1
 </mip-history>
 <!--定高30px-->
-<mip-history history="go, -1" class="mip-history-default" 
-	layout="fixed-height" width="30">
-	go, -1
+<mip-history history="go, -1" class="mip-history-default"
+layout="fixed-height" width="30">
+go, -1
 </mip-history>
 ```
 

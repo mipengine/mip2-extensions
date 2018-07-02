@@ -18,7 +18,7 @@ export default {
     closeBanner () {
       if (this.history) {
         let historyArr = this.history.split(',')
-        let func = historyArr[0]
+        let func = historyArr[0].trim()
         switch (func) {
           case 'go':
             let step = Number(historyArr[1])
