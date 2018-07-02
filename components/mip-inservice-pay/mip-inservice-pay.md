@@ -1,4 +1,4 @@
-# `mip-instant-pay` 极速服务 支付组件
+# `mip-inservice-pay` 极速服务 支付组件
 
 为mip站长 提供支付调起服务组件，支持百付宝、支付宝、微信
 ![MIP 支付流程图](https://user-images.githubusercontent.com/7043799/41702452-c470f1f8-7562-11e8-82a1-b9accf41f3ff.png)
@@ -14,7 +14,7 @@
 
 ## 示例
 
-```
+```html
 <mip-data>
     <script type="application/json">
         {
@@ -78,8 +78,11 @@
 
 ## 注意事项
 
+### 1.怎样 动态配置更改`payConfig`
+因数据配置在`mip-data`中以及数据通过 `props`传递给 支付组件，故可通过 `MIP.setData`动态设置`postData`、`sessionId`等数据
+
 <a id="cors" name="cors" href="#cors"></a>
-### 1. 后端需要支持 CORS + `withCredentials`
+### 2. 后端需要支持 CORS + `withCredentials`
 
 - [CORS 文档](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS)
 - [`withCredentials` 附带身份凭证的请求](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS#%E9%99%84%E5%B8%A6%E8%BA%AB%E4%BB%BD%E5%87%AD%E8%AF%81%E7%9A%84%E8%AF%B7%E6%B1%82)
@@ -92,7 +95,7 @@
 注意：出于安全考虑请对来源的 `origin` 进行判断，并正确的返回 `Access-Control-Allow-Origin` 字段，不能为 `*` 。
 
 <a id="data" name="data" href="#data"></a>
-### 2. 后端数据说明
+### 3. 后端数据说明
 请求：
 
 名称 | 说明
@@ -104,7 +107,8 @@
 异常情况，`status` 非 `0` 时为失败：
 ```json
 {
-    "status": 403
+    "status": 403,
+    "msg":"支付错误信息"
 }
 ```
 
@@ -127,12 +131,11 @@ https://xiongzhang.baidu.com/opensc/payment.html?id=熊掌号ID&redirect=redirec
 
 
 <a id="sessionId" name="sessionId" href="#sessionId"></a>
-### 3. 会话凭证 sessionId
+### 4. 会话凭证 sessionId
 
 由于在 iOS 对跨域透传 `cooke` 的限制（<https://webkit.org/blog/7675/intelligent-tracking-prevention/>），由登录组件统一记录会话标识，并透传给支付组件，在发送支付请求时携带，后端应该优先使用 `cookie > sessionId` 校验登录状态。
 
 ### 4. 百度搜索结果页降级处理
 
 在百度搜索页打开使用该组件页面时，由于有些支付密码输入框在 `iframe` 框架下有问题，在调用[提交支付接口](#action-pay)时做了降级处理，处理方式为跳转源站。包括以下设备、浏览器：
-
 - iOS设备下的手百App

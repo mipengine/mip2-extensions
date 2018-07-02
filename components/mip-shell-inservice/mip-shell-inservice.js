@@ -3,8 +3,8 @@
  * @author zhuguoxi@baidu.com (zhuguoxi)
  */
 
-import './mip-inservice-shell.less'
-
+import './mip-shell-inservice.less'
+import payPlaceholder from '../../static/pay-placeholder.png'
 // 站点数据请求url
 const URL_SITE = 'https://xiongzhang.baidu.com/opensc/cambrian/card'
 const fetchJsonp = window.fetchJsonp || {}
@@ -24,7 +24,6 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    */
   async processShellConfig (shellConfig) {
     let headerInfo = {
-      title: document.title
     }
     let isasync
 
@@ -48,8 +47,9 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
         text: '取消'
       }]
       if (view.isIndex) {
-        header.title = headerInfo.title || ''
-        header.logo = headerInfo.logo || ''
+        header.title = headerInfo.title || header.title || document.title || ''
+        header.logo = headerInfo.logo || payPlaceholder
+        headerInfo.title = header.title
       }
     })
 
@@ -80,13 +80,15 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
 
       header.buttonGroup = []
       if (headerInfo.serviceUrl) {
-        header.buttonGroup = header.buttonGroup.concat([{
+        header.buttonGroup.push({
           name: 'indexPage',
           text: '首页'
-        }, {
-          name: 'share',
-          text: '分享'
-        }])
+        })
+        // 暂时屏蔽分享功能
+        // header.buttonGroup.push({
+        //   name: 'share',
+        //   text: '分享'
+        // })
       }
       if (headerInfo.cambrianUrl) {
         header.buttonGroup.push({
@@ -128,7 +130,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    */
   showHeaderCloseButton () {
     let { canClose } = MIP.hash.hashTree || {}
-    return canClose === 'true'
+    return canClose && canClose.value === 'true'
   }
   /**
    * 关于我们处理逻辑
@@ -137,6 +139,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     let cambrianUrl = this.headerInfo.cambrianUrl
     let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^http(s)?:\/\//, ''))}`
     if (MIP.standalone) {
+      mipUrl = `${mipUrl}?title=${this.headerInfo.title}`
       MIP.viewer.open(mipUrl, { isMipLink: false })
     } else {
       MIP.viewer.sendMessage('loadiframe', { 'url': cambrianUrl, title: this.headerInfo.title })
@@ -146,8 +149,17 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    * 分享处理逻辑，动态加载创建mip-share组件
    */
   shareAction () {
-    let { shareWrapper } = this.createShareWarp()
+    let { shareWrapper, mask } = this.createShareWarp()
     let { title, serviceUrl, logo } = this.headerInfo
+
+    document.body.appendChild(mask)
+    document.body.appendChild(shareWrapper)
+
+    if (shareWrapper.querySelector('mip-share')) {
+      this.toggleShare()
+      return
+    }
+
     new Promise((resolve, reject) => {
       let script = document.createElement('script')
       script.onload = resolve
@@ -179,11 +191,10 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
 
     mask = document.createElement('mip-fixed')
     mask.classList.add('mip-shell-share-mask')
-    document.body.appendChild(mask)
 
     shareWrapper = document.createElement('mip-fixed')
     shareWrapper.classList.add('mip-shell-share-wrapper')
-    document.body.appendChild(shareWrapper)
+
     mask.onclick = this.toggleShare.bind(this)
     this.shareWarp = { mask, shareWrapper, show: false }
     return this.shareWarp

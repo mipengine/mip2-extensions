@@ -182,71 +182,70 @@
 </head>
 
 <body>
-  <mip-inservice-shell mip-shell>
+  <mip-shell-inservice mip-shell>
     <script type="application/json">
       {
-      "routes": [
-        {
-          "pattern": "./index.html",
-          "meta": {
-            "header": {
-              "show": true
-            },
-            "view":{
-              "isIndex": true
+        "routes": [
+          {
+            "pattern": "./index.html",
+            "meta": {
+              "header": {
+                "show": true
+              },
+              "view": {
+                "isIndex": true
+              }
             }
-          }
-        },
-        {
-          "pattern": "./mip-inservice-shell.html",
-          "meta": {
-            "header": {
-              "show": true,
-              "title": "微咖啡PAGE2"
-            },
-            "view":{
-            "isIndex": false
-            }
-          }
-        },
-        {
-          "pattern": "./mip-inservice-shell-2.html",
-          "meta": {
-            "header": {
-              "show": true,
-              "title": "PAGE3"
-            },
-            "view":{
-            "isIndex": false
-            }
-          }
-        },
-        {
-        "pattern": "./mip-inservice-shell-3.html",
-        "meta": {
-          "header": {
-            "show": true,
-            "title": "芒果系列"
           },
-          "view":{
-            "isIndex": false
-          }
-        }
-      },
-        {
-          "pattern": "*",
-          "meta": {
-            "header": {
-              "show": true
+          {
+            "pattern": "./mip-shell-inservice.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "微咖啡PAGE2"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "./mip-shell-inservice-2.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "PAGE3"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "./mip-shell-inservice-3.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "芒果系列"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "*",
+            "meta": {
+              "header": {
+                "show": true
+              }
             }
           }
-        }
-      ],
-      "isId":"1569699517752663"
-    }
+        ],
+        "isId": "1569699517752663"
+      }
     </script>
-
-  </mip-inservice-shell>
+  </mip-shell-inservice>
   <mip-data>
     <script type="application/json">
       {
@@ -255,23 +254,23 @@
     </script>
   </mip-data>
   <mip-carousel autoplay layout="responsive" width="750" height="316">
-    <a class="link" href="./mip-inservice-shell.html" mip-link>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
       <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_pg.jpg">
       </mip-img>
     </a>
-    <a class="link" href="./mip-inservice-shell.html" mip-link>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
       <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_gz.jpg">
       </mip-img>
     </a>
-    <a class="link" href="./mip-inservice-shell.html" mip-link>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
       <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_jgtm.jpg">
       </mip-img>
     </a>
-    <a class="link" href="./mip-inservice-shell.html" mip-link>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
       <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_pa.jpg">
       </mip-img>
     </a>
-    <a class="link" href="./mip-inservice-shell.html" mip-link>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
       <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_gome.jpg">
       </mip-img>
     </a>
@@ -298,7 +297,7 @@
     </script>
     <template type="mip-mustache">
       <li>
-        <a class="link" href="./mip-inservice-shell-2.html" mip-link>
+        <a class="link" href="./mip-shell-inservice-2.html" mip-link>
           <mip-img src="{{alias}}"></mip-img>
         </a>
 
@@ -363,7 +362,8 @@
     </div>
   </mip-fixed>
   <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
-  <script src="/mip-inservice-shell/mip-inservice-shell.js"></script>
+  <!-- <script src="https://c.mipcdn.com/static/v2/mip-shell-inservice/mip-shell-inservice.js"></script> -->
+  <script src="/mip-shell-inservice/mip-shell-inservice.js"></script>
   <script src="https://c.mipcdn.com/static/v1/mip-list/mip-list.js"></script>
   <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
   <script src="https://c.mipcdn.com/static/v1/mip-accordion/mip-accordion.js"></script>

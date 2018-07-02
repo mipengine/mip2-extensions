@@ -1,4 +1,4 @@
-# `mip-inservice-shell`
+# `mip-shell-inservice`
 
 ## 说明
 极速服务 mip-shell定制化

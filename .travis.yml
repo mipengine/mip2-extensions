@@ -8,3 +8,7 @@ install:
   - npm install
 script:
   - npm run lint
+
+branches:
+  only:
+  - master
