@@ -134,5 +134,4 @@ https://xiongzhang.baidu.com/opensc/payment.html?id=熊掌号ID&redirect=redirec
 ### 4. 百度搜索结果页降级处理
 
 在百度搜索页打开使用该组件页面时，由于有些支付密码输入框在 `iframe` 框架下有问题，在调用[提交支付接口](#action-pay)时做了降级处理，处理方式为跳转源站。包括以下设备、浏览器：
-
 - iOS设备下的手百App

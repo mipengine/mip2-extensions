@@ -80,13 +80,15 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
 
       header.buttonGroup = []
       if (headerInfo.serviceUrl) {
-        header.buttonGroup = header.buttonGroup.concat([{
+        header.buttonGroup.push({
           name: 'indexPage',
           text: '首页'
-        }, {
-          name: 'share',
-          text: '分享'
-        }])
+        })
+        // 暂时屏蔽分享功能
+        // header.buttonGroup.push({
+        //   name: 'share',
+        //   text: '分享'
+        // })
       }
       if (headerInfo.cambrianUrl) {
         header.buttonGroup.push({

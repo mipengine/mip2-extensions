@@ -8,11 +8,11 @@
     "build": "rm -rf dist && mip2 build -i",
     "site": "npm run build && node tools/site",
     "lint": "npm run lint:js && npm run lint:style",
-    "lint:js": "eslint --ext .js,.vue,.md **/* --ignore-pattern dist",
-    "lint:style": "stylelint **/*.{vue,css,less,md}",
+    "lint:js": "eslint {**/*,**}.{vue,js,md}",
+    "lint:style": "stylelint {**/*,**}.{vue,css,less,md}",
     "fix": "npm run fix:js && npm run fix:style",
-    "fix:js": "eslint --ext .js,.vue,.md **/* --fix  --ignore-pattern dist",
-    "fix:style": "stylelint **/*.{vue,css,less,md} --fix"
+    "fix:js": "eslint {**/*,**}.{vue,js,md} --fix",
+    "fix:style": "stylelint {**/*,**}.{vue,css,less,md} --fix"
   },
   "husky": {
     "hooks": {
