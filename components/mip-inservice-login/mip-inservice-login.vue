@@ -60,6 +60,7 @@ export default {
           return this.getUserInfo().then(() => {
             if (!this.isLogin) {
               this.login()
+              this.bindEvents()
             }
           })
         }
@@ -119,12 +120,36 @@ export default {
     },
     /**
      * 用户登录
+     *
+     * @param {string=} url 登录成功后的重定向地址
+     * @param {boolean=} replace 重定向的地址是否要replace当前地址，默认为true
+     * @return {undefined}
      */
-    login () {
+    login (sourceUrl, replace = true) {
       if (this.isLogin) {
         return
       }
-      let sourceUrl = util.getSourceUrl()
+
+      let redirectUri = this.config.redirectUri
+      sourceUrl = sourceUrl || redirectUri
+
+      // 校验url的合法性
+      if (sourceUrl) {
+        // 判断跳转地址是否同源
+        let ori = MIP.util.getOriginalUrl(location.href)
+        /* eslint-disable */
+        let ori_domain = util.getDomain(ori)
+        let red_domian = util.getDomain(sourceUrl)
+
+        if (ori_domain !== red_domian) {
+          this.error('组件属性 redirect_uri 必须与当前页面同源')
+          throw new TypeError('[mip-inservice-login] 组件参数检查失败')
+        }
+        /* eslint-enable */
+        sourceUrl = util.getSourceUrl(sourceUrl)
+      } else {
+        sourceUrl = util.getSourceUrl()
+      }
 
       window.cambrian && window.cambrian.authorize({
         data: {
@@ -141,7 +166,7 @@ export default {
         success (data) {
           viewer.open(
             util.getRedirectUrl(sourceUrl, data.result, 'query'),
-            { isMipLink: true, replace: true }
+            { isMipLink: true, replace }
           )
         },
         fail (data) {
