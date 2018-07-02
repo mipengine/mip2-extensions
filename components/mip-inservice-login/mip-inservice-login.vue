@@ -121,7 +121,7 @@ export default {
     /**
      * 用户登录
      *
-     * @param {string=} url 登录成功后的重定向地址
+     * @param {string=} sourceUrl 登录成功后的重定向地址
      * @param {boolean=} replace 重定向的地址是否要replace当前地址，默认为true
      * @return {undefined}
      */
