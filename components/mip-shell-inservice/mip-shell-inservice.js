@@ -49,7 +49,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
       }]
       if (view.isIndex) {
         header.title = headerInfo.title || ''
-        header.logo = headerInfo.logo || ''
+        header.logo = headerInfo.logo || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII='
       }
     })
 
@@ -139,6 +139,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     let cambrianUrl = this.headerInfo.cambrianUrl
     let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^http(s)?:\/\//, ''))}`
     if (MIP.standalone) {
+      mipUrl = `${mipUrl}?title=${this.headerInfo.title}`
       MIP.viewer.open(mipUrl, { isMipLink: false })
     } else {
       MIP.viewer.sendMessage('loadiframe', { 'url': cambrianUrl, title: this.headerInfo.title })
