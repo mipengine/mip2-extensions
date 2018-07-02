@@ -10,7 +10,8 @@
     "plugin:vue/recommended"
   ],
   "plugins": [
-    "jsdoc"
+    "jsdoc",
+    "markdown"
   ],
   "globals": {
     "MIP": true
