@@ -4,7 +4,7 @@
  */
 
 import './mip-shell-inservice.less'
-
+import payPlaceholder from '../../static/pay-placeholder.png'
 // 站点数据请求url
 const URL_SITE = 'https://xiongzhang.baidu.com/opensc/cambrian/card'
 const fetchJsonp = window.fetchJsonp || {}
@@ -24,7 +24,6 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    */
   async processShellConfig (shellConfig) {
     let headerInfo = {
-      title: document.title
     }
     let isasync
 
@@ -48,8 +47,9 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
         text: '取消'
       }]
       if (view.isIndex) {
-        header.title = headerInfo.title || ''
-        header.logo = headerInfo.logo || ''
+        header.title = headerInfo.title || header.title || document.title || ''
+        header.logo = headerInfo.logo || payPlaceholder
+        headerInfo.title = header.title
       }
     })
 
@@ -139,6 +139,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     let cambrianUrl = this.headerInfo.cambrianUrl
     let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^http(s)?:\/\//, ''))}`
     if (MIP.standalone) {
+      mipUrl = `${mipUrl}?title=${this.headerInfo.title}`
       MIP.viewer.open(mipUrl, { isMipLink: false })
     } else {
       MIP.viewer.sendMessage('loadiframe', { 'url': cambrianUrl, title: this.headerInfo.title })
