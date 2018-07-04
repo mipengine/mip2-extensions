@@ -37,15 +37,12 @@ function execute (ast, element) {
 }
 
 export default {
-  created () {
-    let script
+  connectedCallback (element) {
+    let script = element.textContent.trim()
 
-    try {
-      script = this.$slots.default[0].text
-    } catch (e) {
+    if (!script) {
       return
     }
-
     if (getSize(script) > MAX_SIZE) {
       console.error(`WARNING: <mip-script> is out of range.Please keep it under 2KB`)
       return
@@ -61,9 +58,9 @@ export default {
     detectUnsafe(ast)
 
     if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
-      Promise.all(mipDataPromises).finally(() => execute(ast, this.$element))
+      Promise.all(mipDataPromises).finally(() => execute(ast, element))
     } else {
-      execute(ast, this.$element)
+      execute(ast, element)
     }
   },
 
