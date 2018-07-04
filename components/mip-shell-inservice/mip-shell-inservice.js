@@ -73,17 +73,19 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
 
     shellConfig.routes.forEach(routeConfig => {
       let { header, view } = routeConfig.meta
+      header.buttonGroup = []
       if (view.isIndex) {
         header.title = headerInfo.title
         header.logo = headerInfo.logo
-      }
-
-      header.buttonGroup = []
-      if (headerInfo.serviceUrl) {
+      } else {
         header.buttonGroup.push({
           name: 'indexPage',
           text: '首页'
         })
+      }
+
+      if (headerInfo.serviceUrl) {
+
         // 暂时屏蔽分享功能
         // header.buttonGroup.push({
         //   name: 'share',
@@ -105,7 +107,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     this.headerInfo = headerInfo
     this.updateShellConfig(shellConfig)
     if (isasync) {
-      this.refreshShell({ pageId: window.MIP.viewer.page.pageId })
+      this.refreshShell({ pageId: window.MIP.viewer.page.pageId, asyncRefresh: true })
     }
   }
   /**
@@ -220,6 +222,6 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    */
   indexPageAction () {
     let serviceUrl = this.headerInfo.serviceUrl
-    MIP.viewer.open(serviceUrl, { isMipLink: true, replace: true })
+    MIP.viewer.open(MIP.util.makeCacheUrl(serviceUrl), { isMipLink: true, replace: true })
   }
 }
