@@ -38,9 +38,9 @@ function execute (ast, element) {
 
 export default {
   connectedCallback (element) {
-    let script = element.textContent
+    let script = element.textContent.trim()
 
-    if (!script || typeof script !== 'string') {
+    if (!script) {
       return
     }
     if (getSize(script) > MAX_SIZE) {
