@@ -38,7 +38,7 @@ function execute (ast, element) {
 
 export default {
   connectedCallback (element) {
-    let script = element.innerHTML
+    let script = element.textContent
 
     if (!script || typeof script !== 'string') {
       return
