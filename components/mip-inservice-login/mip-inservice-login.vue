@@ -130,8 +130,7 @@ export default {
         return
       }
 
-      let url = this.config.redirectUri
-      url = redirectUri || url
+      let url = redirectUri || this.config.redirectUri
 
       let sourceUrl
       let hash
