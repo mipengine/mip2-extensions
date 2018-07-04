@@ -243,7 +243,8 @@ export default {
       payInfos: payInfos,
       requestDataInfo: null,
 
-      isWechatApp: platform.isWechatApp()
+      isWechatApp: platform.isWechatApp(),
+      paySucRurl: ''
     }
   },
   mounted () {
@@ -252,7 +253,8 @@ export default {
     })
 
     // 微信跳转redirect， 自动弹窗
-    if (storage.get('mipPayRedirect')) {
+    this.paySucRurl = storage.get('mipPayRedirect')
+    if (this.paySucRurl) {
       this.toggleVisible(true, 'visibleConfirm')
       storage.rm('mipPayRedirect')
     }
@@ -334,7 +336,7 @@ export default {
           return false
         } else {
           // 微信外浏览器吊起微信 种值返回标识
-          storage.set('mipPayRedirect', 'wexin', 10000)
+          storage.set('mipPayRedirect', this.payConfig.redirectUrl, 10000)
         }
       }
     },
@@ -405,7 +407,7 @@ export default {
      * 支付成功后跳转
      */
     goPayRedirectUrl () {
-      MIP.viewer.open(this.payConfig.redirectUrl, { replace: true })
+      MIP.viewer.open(this.paySucRurl || this.payConfig.redirectUrl, { replace: true })
     },
     /**
      * 错误显示函数
