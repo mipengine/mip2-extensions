@@ -121,33 +121,41 @@ export default {
     /**
      * 用户登录
      *
-     * @param {string=} sourceUrl 登录成功后的重定向地址
+     * @param {string=} redirectUri 登录成功后的重定向地址
      * @param {boolean=} replace 重定向的地址是否要replace当前地址，默认为true
      * @return {undefined}
      */
-    login (sourceUrl, replace = true) {
+    login (redirectUri, replace = true) {
       if (this.isLogin) {
         return
       }
 
-      let redirectUri = this.config.redirectUri
-      sourceUrl = sourceUrl || redirectUri
+      let url = redirectUri || this.config.redirectUri
+
+      let sourceUrl
+      let hash
 
       // 校验url的合法性
-      if (sourceUrl) {
+      if (url) {
         // 判断跳转地址是否同源
         let ori = MIP.util.getOriginalUrl(location.href)
         /* eslint-disable */
         let ori_domain = util.getDomain(ori)
-        let red_domian = util.getDomain(sourceUrl)
+        let red_domian = util.getDomain(url)
 
         if (ori_domain !== red_domian) {
           this.error('组件属性 redirect_uri 必须与当前页面同源')
           throw new TypeError('[mip-inservice-login] 组件参数检查失败')
         }
         /* eslint-enable */
-        sourceUrl = util.getSourceUrl(sourceUrl)
+        sourceUrl = util.getSourceUrl(url)
+        // 分析url，获取需要的参数
+        let obj = util.getFormatUrl(url)
+        url = obj.url
+        hash = obj.hash
       } else {
+        url = location.protocol + '//' + location.host + location.pathname + location.search
+        hash = location.hash
         sourceUrl = util.getSourceUrl()
       }
 
@@ -157,15 +165,17 @@ export default {
           scope: 1,
           pass_no_login: 0,
           state: JSON.stringify({
-            url: sourceUrl,
+            url,
+            h: encodeURIComponent(hash),
             r: Date.now()
           }),
           ifSilent: false,
           client_id: this.config.clientId
         },
         success (data) {
+          // 如果是弹窗
           viewer.open(
-            util.getRedirectUrl(sourceUrl, data.result, 'query'),
+            util.getRedirectUrl(url, data.result, hash),
             { isMipLink: true, replace }
           )
         },
@@ -251,7 +261,9 @@ export default {
       if (code) {
         try {
           callbackurl = JSON.parse(util.getQuery('state')).url
-        } catch (e) {}
+        } catch (e) {
+          console.error('JSON parse解析出错')
+        }
       }
 
       if (code && callbackurl) {

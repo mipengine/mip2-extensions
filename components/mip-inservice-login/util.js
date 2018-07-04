@@ -69,11 +69,25 @@ const util = {
       })
   },
 
-  getRedirectUrl (url, query, type) {
-    let result = url + (url.indexOf('?') >= 0 ? '&' : (type === 'hash' ? '#' : '?')) +
-            'code=' + query.code +
-            '&state=' + query.state
+  getRedirectUrl (url, query, hash) {
+    let result = url + (url.indexOf('?') >= 0 ? '&' : '?') +
+        'code=' + query.code + '&state=' + query.state + hash
+
     return result
+  },
+
+  getFormatUrl (url) {
+    let a = document.createElement('a')
+    a.href = url
+
+    let {protocol, host, pathname, search, hash} = a
+
+    a = null
+
+    return {
+      url: protocol + '//' + host + pathname + search,
+      hash: hash
+    }
   },
 
   getDomain (url) {
