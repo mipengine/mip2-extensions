@@ -8,8 +8,8 @@
     <div class="container show-container">
       <!-- <div
       v-if="videoIndex + 1 == 2"
-      class="container show-container">
-      <div class="backgroud"/> -->
+      class="container show-container"> -->
+      <div class="backgroud"/>
       <div
         class="content show-content"
         @click="gotoAdUrl">
@@ -60,6 +60,7 @@ const PINZHUANGURL = 'm.baidu.com'
 const PRETIME = 'ad-time'
 let mipPlayer = null
 let jSMpegPlayer = null
+let canvas = null
 
 // 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
@@ -97,14 +98,17 @@ export default {
     this.init()
     document.addEventListener('touchstart', e => {
       e.stopPropagation()
-      e.preventDefault()
       self.isInitEnd = true
       if (mipPlayer) {
         mipPlayer.play()
       }
       if (jSMpegPlayer) {
+        // 开始播放时展示canvas
+        css(canvas, {opacity: '1'})
         jSMpegPlayer.play()
       }
+      // 初始化倒计时器
+      this.startTimer()
     })
   },
   methods: {
@@ -116,8 +120,6 @@ export default {
       if (this.isShowVideo) {
         // 初始化播放次数
         this.initVideoIndex()
-        // 初始化倒计时器
-        this.startTimer()
         mipPlayer = this.$element.querySelector('video')
         if (mipPlayer) {
           mipPlayer.pause()
@@ -149,7 +151,7 @@ export default {
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + POSTER + ')'})
-        let canvas = this.$refs.videoCanvas
+        canvas = this.$refs.videoCanvas
         let attributes = {
           class: 'video',
           loop: '',
@@ -160,10 +162,7 @@ export default {
         jSMpegPlayer = new JSMpeg.Player(tsUrl, attributes)
         jSMpegPlayer.on('playing', () => {
           let event = new Event('playing')
-          // 开始播放时展示canvas
-          css(canvas, {opacity: '1'})
           // 初始化倒计时器
-          self.startTimer()
           self.$element.dispatchEvent(event)
           self.isInitEnd = true
         })
