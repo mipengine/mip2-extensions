@@ -177,6 +177,7 @@ export default {
     "isGlobal": false, // 需要更新的mip-data里已id为键名的对象数据是否为 全局数据，默认值false
     "autologin": false, // 页面打开后未登录状态下自动跳转登录，常用于必须登录状态下才可以访问的页面 , boolean, 默认值false
     "endpoint": "https://api.example.com/user/info.php", // 后端源站数据接口链接，需要使用 `https://` 或者 `//` 开头的源站地址，需要接口支持 HTTPS ，使用 POST 形式发送数据 , 必须
+    "redirectUri": "https://example.com/xxx.html" // 登录成功后的重定向地址，不传默认跳回原页面
 }
 
 ```
@@ -190,15 +191,16 @@ export default {
 
 在其他元素中绑定点击时打开登录弹层/跳转登录页面。
 
-该方法接收两个参数：
+该方法接收一个参数：
 
-* `redirectUrl`: string, 登录成功后的跳转地址，该地址必须与当前页面`同源`，不传默认跳转回当前页。
-* `replace`: boolean，登录成功后的跳转地址是否replace当前页，默认会替换，即当前页将不产生历史记录。目前，replace的设置只在`登录弹层`的情况下生效。
+ `redirectUri`: string, 登录成功后的跳转地址，该地址必须与当前页面`同源`，可以覆盖`config.redirectUri`的值。
+
 
 注意：
 
 1. 该方法会根据当前用户`登录百度账号`的状态而打开登录弹层（已登录）或者 重新打开一个熊掌号登录页面（未登录），在登录成功后会透传 `code` 跳转到指定的页面，组件重新使用 `code` 参数去请求后端接口，这将导致当前页面未存储的数据丢失，如：表单用户填写内容。
 2. 在已经登录成功的情况下，再次触发login方法，该方法不会执行。
+
 
 ### 登出方法 - `<div on="tap:登录组件id.logout">`
 
