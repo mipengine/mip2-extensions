@@ -5,11 +5,11 @@
 
 <template>
   <div v-show="isShow">
-    <!-- <div class="container show-container"> -->
-    <div
+    <div class="container show-container">
+      <!-- <div
       v-if="videoIndex + 1 == 2"
       class="container show-container">
-      <div class="backgroud"/>
+      <div class="backgroud"/> -->
       <div
         class="content show-content"
         @click="gotoAdUrl">
