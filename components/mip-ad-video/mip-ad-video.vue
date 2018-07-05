@@ -22,6 +22,7 @@
         </div>
         <mip-video
           v-if="isShowVideo"
+          ref="mipVideo"
           class="video"
           loop
           muted
@@ -57,6 +58,8 @@ const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 10
 const PINZHUANGURL = 'm.baidu.com'
 const PRETIME = 'ad-time'
+let mipPlayer = null
+let jSMpegPlayer = null
 
 // 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
@@ -65,10 +68,6 @@ const TSURL = 'http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
 const JSMEGURL = '/components/mip-ad-video/jsmpeg.js'
 
 export default {
-  firstInviewCallback () {
-    // 初始化所有的视频内容
-    this.init()
-  },
   data () {
     return {
       count: '',
@@ -89,23 +88,45 @@ export default {
       return detector.isRenderVideoElement()
     }
   },
+  created () {
+    this.isInitEnd = false
+  },
+  firstInviewCallback () {
+    // 初始化所有的视频内容
+    let self = this
+    this.init()
+    document.addEventListener('touchstart', e => {
+      e.stopPropagation()
+      e.preventDefault()
+      self.isInitEnd = true
+      if (mipPlayer) {
+        mipPlayer.play()
+      }
+      if (jSMpegPlayer) {
+        jSMpegPlayer.play()
+      }
+    })
+  },
   methods: {
     init () {
+      this.isInitEnd = false
+      this.readContainerNoScroll()
       let self = this
       // 在非ios手百下使用JSMpeg兼容各种机型的视频自动播放
       if (this.isShowVideo) {
-        this.isInitEnd = true
         // 初始化播放次数
         this.initVideoIndex()
         // 初始化倒计时器
         this.startTimer()
+        mipPlayer = this.$element.querySelector('video')
+        if (mipPlayer) {
+          mipPlayer.pause()
+        }
       } else {
         this.getJSMpeg().then(() => {
           self.initVideo()
           // 初始化播放次数
           self.initVideoIndex()
-          // 初始化倒计时器
-          self.startTimer()
         })
       }
     },
@@ -136,25 +157,27 @@ export default {
           canvas: canvas
         }
         let tsUrl = TSURL
-        let player = new JSMpeg.Player(tsUrl, attributes)
-        player.on('playing', () => {
+        jSMpegPlayer = new JSMpeg.Player(tsUrl, attributes)
+        jSMpegPlayer.on('playing', () => {
           let event = new Event('playing')
           // 开始播放时展示canvas
           css(canvas, {opacity: '1'})
+          // 初始化倒计时器
+          self.startTimer()
           self.$element.dispatchEvent(event)
           self.isInitEnd = true
         })
 
-        player.on('play', () => {
+        jSMpegPlayer.on('play', () => {
           let event = new Event('play')
           self.$element.dispatchEvent(event)
         })
 
-        player.on('end', () => {
+        jSMpegPlayer.on('end', () => {
           let event = new Event('end')
           self.$element.dispatchEvent(event)
         })
-        player.play()
+        jSMpegPlayer.pause()
       }
     },
     initVideoIndex () {
@@ -165,7 +188,6 @@ export default {
         videoIndex++
         customStorage.set(VIDEOINDEX, videoIndex)
       }
-      this.readContainerNoScroll()
     },
     readContainerNoScroll () {
       if (this.videoIndex >= 2) {
