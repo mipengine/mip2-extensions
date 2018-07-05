@@ -130,8 +130,10 @@ export default {
         return
       }
 
+      // 当前页面的url
       let url = redirectUri || this.config.redirectUri
 
+      // 用来oauth的url
       let sourceUrl
       let hash
 
@@ -268,7 +270,8 @@ export default {
 
       if (code && callbackurl) {
         data.code = code
-        data.redirect_uri = callbackurl
+        // 处理为originurl
+        data.redirect_uri = util.getSourceUrl(callbackurl)
         data.type = 'login'
       }
 
