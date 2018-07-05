@@ -33,7 +33,7 @@ export default {
         return null
       }
     },
-    onlyGetSdk: {
+    dataOnlyGetSdk: {
       type: Boolean,
       default: false
     }
@@ -99,7 +99,7 @@ export default {
       this.$emit('loaded', {})
 
       // 仅加载SDK，不初始化地图
-      if (this.onlyGetSdk) {
+      if (this.dataOnlyGetSdk) {
         return
       }
 
