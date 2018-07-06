@@ -51,7 +51,7 @@ import JSMpeg from './jsmpeg'
 
 const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
-const isIframed = MIP.viewer.isIframed
+// const isIframed = MIP.viewer.isIframed
 
 const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 5
@@ -82,7 +82,10 @@ export default {
     }
   },
   created () {
-    this.resetStatus()
+    // if (+customStorage.get(VIDEOINDEX) == 2) {
+    this.readContainerNoScroll()
+    // }
+    this.isInitEnd = false
   },
   firstInviewCallback () {
     // 初始化所有的视频内容
@@ -90,23 +93,15 @@ export default {
     this.openVideo()
   },
   methods: {
-    resetStatus () {
-      let self = this
-      setTimeout(() => {
-        self.readContainerNoScroll()
-      }, 0)
-      this.isInitEnd = false
-    },
     openVideo () {
       let self = this
       let container = this.$element.querySelector('.container')
       let content = this.$element.querySelector('.content')
       document.body.addEventListener('touchstart', e => {
-        console.log(+customStorage.get(VIDEOINDEX))
-        if (!(self.isTimeExpired() && isIframed && self.isInitEnd) && +customStorage.get(VIDEOINDEX) !== 2) {
-          self.readContainerScroll()
-          return
-        }
+        // if (!(self.isTimeExpired())) {
+        //   self.readContainerScroll()
+        //   return
+        // }
         e.preventDefault()
         self.$element.setAttribute('style', 'display: block !important')
         if (container.classList.contains('close-container') && content.classList.contains('close-content')) {
@@ -178,16 +173,12 @@ export default {
       }
     },
     readContainerNoScroll () {
-      if (+customStorage.get(VIDEOINDEX) >= 2) {
-        document.documentElement.setAttribute('style', 'height: 100% !important; overflow: hidden')
-        document.body.setAttribute('style', 'height: 100% !important; overflow: hidden')
-      }
+      document.documentElement.setAttribute('style', 'height: 100% !important; overflow: hidden')
+      document.body.setAttribute('style', 'height: 100% !important; overflow: hidden')
     },
     readContainerScroll () {
-      if (+customStorage.get(VIDEOINDEX) >= 2) {
-        document.documentElement.setAttribute('style', 'height: auto!important; overflow: auto!important')
-        document.body.setAttribute('style', 'height: auto!important; overflow: auto!important')
-      }
+      document.documentElement.setAttribute('style', 'height: auto!important; overflow: auto!important')
+      document.body.setAttribute('style', 'height: auto!important; overflow: auto!important')
     },
     startTimer () {
       if (!this.timer) {
@@ -226,7 +217,6 @@ export default {
         container.addEventListener('animationend', () => {
           if (!isClosed) {
             self.readContainerScroll()
-            self.resetStatus()
             self.isInitEnd = false
             self.$element.setAttribute('style', 'display: none !important')
           }
