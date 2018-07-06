@@ -1,3 +1,4 @@
+/* eslint-disable */
 ; /*!src/jsmpeg.js*/
 /*! jsmpeg v1.0 | (c) Dominic Szablewski | MIT license */
 
