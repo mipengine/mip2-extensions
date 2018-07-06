@@ -47,6 +47,7 @@
 </template>
 <script>
 import detector from './video-detector'
+import JSMpeg from './jsmpeg'
 
 const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
@@ -59,12 +60,12 @@ const PRETIME = 'ad-time'
 let mipPlayer = null
 let jSMpegPlayer = null
 let canvas = null
+let forbidClick = true
 
 // 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
 const POSTER = 'https://www.mipengine.org/static/img/sample_04.jpg'
 const TSURL = 'http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
-const JSMEGURL = '/components/mip-ad-video/jsmpeg.js'
 
 export default {
   data () {
@@ -114,6 +115,7 @@ export default {
         }
         if (!self.isInitEnd) {
           self.isInitEnd = true
+
           if (mipPlayer && self.isShowVideo) {
             mipPlayer.play()
             self.startTimer()
@@ -128,6 +130,9 @@ export default {
             })
             jSMpegPlayer.play()
           }
+          setTimeout(() => {
+            forbidClick = false
+          }, 500)
         }
       }, false)
     },
@@ -143,28 +148,11 @@ export default {
           mipPlayer.pause()
         }
       } else {
-        this.getJSMpeg().then(() => {
-          self.initVideo()
-          // 初始化播放次数
-          self.initVideoIndex()
-        })
+        self.initVideo()
+        self.initVideoIndex()
       }
     },
-    getJSMpeg () {
-      return new Promise(resolve => {
-        let script = document.createElement('script')
-        script.type = 'text/javascript'
-        script.onload = script.onreadystatechange = function (a) {
-          if (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete') {
-            resolve(window.JSMpeg)
-          }
-        }
-        script.src = JSMEGURL
-        window.document.body.appendChild(script)
-      })
-    },
     initVideo () {
-      let JSMpeg = window.JSMpeg
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + POSTER + ')'})
@@ -215,6 +203,7 @@ export default {
       }
     },
     gotoAdUrl () {
+      if (forbidClick) return
       if (this.count > 0 && this.count <= COUNTDOWNINDEX) {
         this.isInitEnd = false
         window.top.location.href = PINZHUANGURL

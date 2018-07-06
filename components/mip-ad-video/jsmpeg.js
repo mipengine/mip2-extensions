@@ -4213,6 +4213,5 @@
         return WebAudioOut;
 
     })();
-    // return JSMpeg;
-    window.JSMpeg = JSMpeg;
+    export default JSMpeg;
 // });
