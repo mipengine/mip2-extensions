@@ -17,7 +17,7 @@
           class="close-ad"
           @click="closeAd">关闭</div>
       </div>
-      <mip-video
+      <video
         v-if="isShowVideo"
         ref="mipVideo"
         class="video"
