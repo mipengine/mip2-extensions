@@ -70,7 +70,7 @@ let forbidClick = true
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
 const POSTER = 'https://www.mipengine.org/static/img/sample_04.jpg'
 const TSURL = 'https://searchvideo.bj.bcebos.com/vivo2.ts'
-// const TSURL = 'http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
+// const TSURL = 'https://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
 
 export default {
   data () {
