@@ -4,45 +4,43 @@
  */
 
 <template>
-  <div v-show="isShow">
-    <div class="container show-container">
-      <!-- <div
-      v-if="videoIndex + 1 == 2"
-      class="container show-container"> -->
-      <div class="backgroud"/>
-      <div
-        class="content show-content"
-        @click="gotoAdUrl">
-        <div class="content-title">
-          <div>观看广告 免费阅读所有章节</div>
-          <div v-if="count > 0">{{ count }}秒后可跳过</div>
-          <div
-            v-else
-            @click="closeAd">关闭</div>
-        </div>
-        <mip-video
-          v-if="isShowVideo"
-          ref="mipVideo"
-          class="video"
-          loop
-          muted
-          autoplay
-          layout="responsive"
-          width="640"
-          height="360"
-          poster="https://www.mipengine.org/static/img/sample_04.jpg"
-          src="http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.mp4"/>
+  <div class="container show-container">
+    <div class="backgroud"/>
+    <div class="content show-content">
+      <div class="content-title">
+        <div>观看广告 免费阅读所有章节</div>
+        <div v-if="count > 0">{{ count }}秒后可跳过</div>
         <div
           v-else
-          class="video">
-          <div
-            ref="videoCover"
-            class="video-cover"/>
-          <canvas
-            ref="videoCanvas"
-            class="video-canvas"/>
-        </div>
-        <div class="pinpai">品牌广告</div>
+          class="close-ad"
+          @click="closeAd">关闭</div>
+      </div>
+      <mip-video
+        v-if="isShowVideo"
+        ref="mipVideo"
+        class="video"
+        loop
+        muted
+        autoplay
+        layout="responsive"
+        width="640"
+        height="360"
+        poster="https://www.mipengine.org/static/img/sample_04.jpg"
+        src="http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.mp4"
+        @click="gotoAdUrl"/>
+      <div
+        v-else
+        class="video">
+        <div
+          ref="videoCover"
+          class="video-cover"/>
+        <canvas
+          ref="videoCanvas"
+          class="video-canvas"/>
+      </div>
+      <div class="pinpai">
+        <div class="pinpai-back"/>
+        <div class="pinpai-title">品牌广告</div>
       </div>
     </div>
   </div>
@@ -55,8 +53,8 @@ const css = MIP.util.css
 const isIframed = MIP.viewer.isIframed
 
 const VIDEOINDEX = 'ad-video'
-const COUNTDOWNINDEX = 10
-const PINZHUANGURL = 'm.baidu.com'
+const COUNTDOWNINDEX = 5
+const PINZHUANGURL = '//m.baidu.com'
 const PRETIME = 'ad-time'
 let mipPlayer = null
 let jSMpegPlayer = null
@@ -71,50 +69,70 @@ const JSMEGURL = '/components/mip-ad-video/jsmpeg.js'
 export default {
   data () {
     return {
+      isOpening: false,
       count: '',
       timer: null,
-      isInitEnd: false,
-      close: false
+      isInitEnd: false
     }
   },
   computed: {
-    isShow: function () {
-      return isIframed && this.isInitEnd && !this.close && this.isTimeExpired()
-    },
-    videoIndex: function () {
-      console.log(+customStorage.get(VIDEOINDEX))
-      return +customStorage.get(VIDEOINDEX)
-    },
     isShowVideo: function (params) {
       return detector.isRenderVideoElement()
     }
   },
   created () {
-    this.isInitEnd = false
+    this.resetStatus()
   },
   firstInviewCallback () {
     // 初始化所有的视频内容
-    let self = this
     this.init()
-    document.addEventListener('touchstart', e => {
-      e.stopPropagation()
-      self.isInitEnd = true
-      if (mipPlayer) {
-        mipPlayer.play()
-      }
-      if (jSMpegPlayer) {
-        // 开始播放时展示canvas
-        css(canvas, {opacity: '1'})
-        jSMpegPlayer.play()
-      }
-      // 初始化倒计时器
-      this.startTimer()
-    })
+    this.openVideo()
   },
   methods: {
+    resetStatus () {
+      let self = this
+      setTimeout(() => {
+        self.readContainerNoScroll()
+      }, 0)
+      this.isInitEnd = false
+    },
+    openVideo () {
+      let self = this
+      let container = this.$element.querySelector('.container')
+      let content = this.$element.querySelector('.content')
+      document.body.addEventListener('touchstart', e => {
+        console.log(+customStorage.get(VIDEOINDEX))
+        if (!(self.isTimeExpired() && isIframed && self.isInitEnd) && +customStorage.get(VIDEOINDEX) !== 2) {
+          self.readContainerScroll()
+          return
+        }
+        e.preventDefault()
+        self.$element.setAttribute('style', 'display: block !important')
+        if (container.classList.contains('close-container') && content.classList.contains('close-content')) {
+          container.classList.remove('close-container')
+          content.classList.remove('close-content')
+        }
+        if (!self.isInitEnd) {
+          self.isInitEnd = true
+          if (mipPlayer && self.isShowVideo) {
+            mipPlayer.play()
+            self.startTimer()
+          }
+          if (jSMpegPlayer && !self.isShowVideo) {
+            jSMpegPlayer.on('playing', () => {
+              let event = new Event('playing')
+              self.$element.dispatchEvent(event)
+              css(canvas, {opacity: '1'})
+              // 初始化倒计时器
+              self.startTimer()
+            })
+            jSMpegPlayer.play()
+          }
+        }
+      }, false)
+    },
     init () {
       this.isInitEnd = false
-      this.readContainerNoScroll()
       let self = this
       // 在非ios手百下使用JSMpeg兼容各种机型的视频自动播放
       if (this.isShowVideo) {
@@ -147,7 +165,6 @@ export default {
     },
     initVideo () {
       let JSMpeg = window.JSMpeg
-      let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + POSTER + ')'})
@@ -160,22 +177,6 @@ export default {
         }
         let tsUrl = TSURL
         jSMpegPlayer = new JSMpeg.Player(tsUrl, attributes)
-        jSMpegPlayer.on('playing', () => {
-          let event = new Event('playing')
-          // 初始化倒计时器
-          self.$element.dispatchEvent(event)
-          self.isInitEnd = true
-        })
-
-        jSMpegPlayer.on('play', () => {
-          let event = new Event('play')
-          self.$element.dispatchEvent(event)
-        })
-
-        jSMpegPlayer.on('end', () => {
-          let event = new Event('end')
-          self.$element.dispatchEvent(event)
-        })
         jSMpegPlayer.pause()
       }
     },
@@ -189,13 +190,13 @@ export default {
       }
     },
     readContainerNoScroll () {
-      if (this.videoIndex >= 2) {
+      if (+customStorage.get(VIDEOINDEX) >= 2) {
         document.documentElement.setAttribute('style', 'height: 100% !important; overflow: hidden')
         document.body.setAttribute('style', 'height: 100% !important; overflow: hidden')
       }
     },
     readContainerScroll () {
-      if (this.videoIndex >= 2) {
+      if (+customStorage.get(VIDEOINDEX) >= 2) {
         document.documentElement.setAttribute('style', 'height: auto!important; overflow: auto!important')
         document.body.setAttribute('style', 'height: auto!important; overflow: auto!important')
       }
@@ -215,23 +216,36 @@ export default {
     },
     gotoAdUrl () {
       if (this.count > 0 && this.count <= COUNTDOWNINDEX) {
+        this.isInitEnd = false
         window.top.location.href = PINZHUANGURL
       }
     },
-    closeAd () {
+    closeAd (e) {
+      e.stopPropagation()
       let self = this
       let container = this.$element.querySelector('.container')
       let content = this.$element.querySelector('.content')
-      content.classList.remove('show-content')
-      content.classList.add('close-content')
+      let isClosed = false
+      if (mipPlayer) {
+        mipPlayer.pause()
+      }
+      if (jSMpegPlayer) {
+        css(canvas, {opacity: '0'})
+        jSMpegPlayer.pause()
+      }
       content.addEventListener('animationend', () => {
-        container.classList.remove('show-container')
-        container.classList.add('close-container')
         container.addEventListener('animationend', () => {
-          self.close = true
-          self.readContainerScroll()
+          if (!isClosed) {
+            self.readContainerScroll()
+            self.resetStatus()
+            self.isInitEnd = false
+            self.$element.setAttribute('style', 'display: none !important')
+          }
+          isClosed = true
         })
+        container.classList.add('close-container')
       })
+      content.classList.add('close-content')
     },
     isTimeExpired () {
       let myDate = new Date()
@@ -252,7 +266,7 @@ export default {
       let seconds = minutes % (60 * 1000) // 计算分钟数后剩余的毫秒数
       let secondsDiff = Math.round(seconds / 1000)
       // 此处测试完毕会修改成一天一清
-      if (secondsDiff >= 10) {
+      if (secondsDiff >= 30) {
       // if (dayDiff >= 1) {
         customStorage.clear()
         return true
@@ -261,21 +275,24 @@ export default {
     }
   }
 }
+
 </script>
 
 <style lang="less">
+* { touch-action: none; }
 mip-ad-video {
   height: 100%;
   width: 100%;
   position: absolute !important;
   overflow: hidden;
   color: #fff;
+  display: none !important;
+
   .container {
     height: 100%;
     width: 100%;
     position: absolute;
     z-index: 100;
-    display: flex;
     display:flex;
     align-items: center;
     justify-content: center;
@@ -378,26 +395,46 @@ mip-ad-video {
     width: 100%;
     height: 100%;
     z-index: 999;
-    background-color: black;
-    opacity: 0.5;
+    background-color: #000;
+    opacity: 0.3;
   }
   .content {
-    width: 100%;
+    width: 95%;
     height: 56.5vw;
     z-index: 1000;
     position: absolute;
     &-title {
       padding: 0 8px;
-      width: 95%;
+      width: 96%;
+      height: 60px;
+      line-height: 38px;
+      background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1), transparent);
+      background:         linear-gradient(top, rgba(0, 0, 0, 1), transparent);
       position: absolute;
       z-index: 1001;
-      top: 8px;
       display: flex;
       justify-content: space-between;
     }
   }
   .pinpai {
-    margin-top: 8px;
+    width: 65px;
+    height: 25px;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pinpai-back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: #666;
+    opacity: .75;
+    bottom: 0;
+  }
+  .pinpai-title {
+    z-index: 1;
   }
   .video {
     width: 100%;
@@ -433,6 +470,10 @@ mip-ad-video {
     position: absolute;
     opacity: 0;
     width: 100%;
+  }
+  .close-ad {
+    width: 100px;
+    text-align: right;
   }
 }
 

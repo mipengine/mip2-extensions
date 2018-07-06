@@ -1,6 +1,5 @@
 /**
  * @file detector.js 检测是否使用video原生播放
- * @author venyxiong
  */
 
 let UA = navigator.userAgent.toLowerCase();
