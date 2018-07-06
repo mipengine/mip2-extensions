@@ -6,10 +6,12 @@
 <template>
   <div class="container show-container">
     <div class="backgroud"/>
-    <div class="content show-content">
+    <div
+      class="content show-content"
+      @click="gotoAdUrl">
       <div class="content-title">
         <div>观看广告 免费阅读所有章节</div>
-        <div v-if="count > 0">{{ count }}秒后可跳过</div>
+        <div v-if="count > 0"><span>{{ count }}秒</span>后可跳过</div>
         <div
           v-else
           class="close-ad"
@@ -24,10 +26,10 @@
         autoplay
         layout="responsive"
         width="640"
-        height="360"
+        height="368"
         poster="https://www.mipengine.org/static/img/sample_04.jpg"
         src="http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.mp4"
-        @click="gotoAdUrl"/>
+      />
       <div
         v-else
         class="video">
@@ -36,6 +38,8 @@
           class="video-cover"/>
         <canvas
           ref="videoCanvas"
+          width="640"
+          height="368"
           class="video-canvas"/>
       </div>
       <div class="pinpai">
@@ -55,7 +59,7 @@ const css = MIP.util.css
 
 const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 5
-const PINZHUANGURL = '//m.baidu.com'
+const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PRETIME = 'ad-time'
 let mipPlayer = null
 let jSMpegPlayer = null
@@ -65,7 +69,8 @@ let forbidClick = true
 // 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
 const POSTER = 'https://www.mipengine.org/static/img/sample_04.jpg'
-const TSURL = 'http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
+const TSURL = 'http://searchvideo.bj.bcebos.com/vivo2.ts'
+// const TSURL = 'http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
 
 export default {
   data () {
@@ -97,6 +102,10 @@ export default {
       let self = this
       let container = this.$element.querySelector('.container')
       let content = this.$element.querySelector('.content')
+      if (container.classList.contains('close-container') && content.classList.contains('close-content')) {
+        container.classList.remove('close-container')
+        content.classList.remove('close-content')
+      }
       document.body.addEventListener('touchstart', e => {
         // if (!(self.isTimeExpired())) {
         //   self.readContainerScroll()
@@ -104,10 +113,6 @@ export default {
         // }
         e.preventDefault()
         self.$element.setAttribute('style', 'display: block !important')
-        if (container.classList.contains('close-container') && content.classList.contains('close-content')) {
-          container.classList.remove('close-container')
-          content.classList.remove('close-content')
-        }
         if (!self.isInitEnd) {
           self.isInitEnd = true
 
@@ -266,7 +271,10 @@ mip-ad-video {
   overflow: hidden;
   color: #fff;
   display: none !important;
-
+  font-size: 14px;
+  span {
+    color: #ff6767;
+  }
   .container {
     height: 100%;
     width: 100%;
@@ -379,14 +387,13 @@ mip-ad-video {
   }
   .content {
     width: 95%;
-    height: 56.5vw;
+    height: 54.5vw;
     z-index: 1000;
     position: absolute;
     &-title {
-      padding: 0 8px;
-      width: 96%;
+      padding: 12px 10px 0 10px;
+      width: 94.08%;
       height: 60px;
-      line-height: 38px;
       background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1), transparent);
       background:         linear-gradient(top, rgba(0, 0, 0, 1), transparent);
       position: absolute;
@@ -396,8 +403,8 @@ mip-ad-video {
     }
   }
   .pinpai {
-    width: 65px;
-    height: 25px;
+    width: 54px;
+    height: 23px;
     position: absolute;
     bottom: 0;
     display: flex;
@@ -414,6 +421,7 @@ mip-ad-video {
   }
   .pinpai-title {
     z-index: 1;
+    font-size: 10px;
   }
   .video {
     width: 100%;
