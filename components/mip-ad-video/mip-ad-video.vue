@@ -57,12 +57,12 @@
   </div>
 </template>
 <script>
-import detector from './video-detector'
+import {isRenderVideoElement, getMobileSystemVersion} from './video-detector'
 import JSMpeg from './jsmpeg'
 
 const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
-// const isIframed = MIP.viewer.isIframed
+const isIframed = MIP.viewer.isIframed
 
 const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 5
@@ -90,7 +90,7 @@ export default {
   },
   computed: {
     isShowVideo: function () {
-      return detector.isRenderVideoElement()
+      return isRenderVideoElement()
     }
   },
   created () {
@@ -108,10 +108,10 @@ export default {
     openVideo () {
       let self = this
       document.body.addEventListener('touchstart', e => {
-        // if (!(self.isTimeExpired())) {
-        //   self.readContainerScroll()
-        //   return
-        // }
+        if (!isIframed && !self.isTimeExpired() && !getMobileSystemVersion()) {
+          self.readContainerScroll()
+          return
+        }
         self.$element.setAttribute('style', 'display: block !important')
         if (!self.isInitEnd) {
           self.isInitEnd = true
