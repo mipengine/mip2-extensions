@@ -201,7 +201,6 @@ export default {
       }
     },
     gotoAdUrl () {
-      alert('gotoAdUrl')
       if (this.forbidClick) return
       if (this.count > 0 && this.count <= COUNTDOWNINDEX) {
         this.isInitEnd = false
