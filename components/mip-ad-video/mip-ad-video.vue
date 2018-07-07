@@ -118,7 +118,7 @@ export default {
 
           if (mipPlayer && self.isShowVideo) {
             mipPlayer.play()
-            // self.startTimer()
+            self.startTimer()
           }
           if (jSMpegPlayer && !self.isShowVideo) {
             jSMpegPlayer.on('playing', () => {
@@ -126,7 +126,7 @@ export default {
               self.$element.dispatchEvent(event)
               css(canvas, {opacity: '1'})
               // 初始化倒计时器
-              // self.startTimer()
+              self.startTimer()
             })
             jSMpegPlayer.play()
           }
