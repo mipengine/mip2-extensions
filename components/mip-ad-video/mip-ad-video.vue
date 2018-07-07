@@ -94,9 +94,9 @@ export default {
     }
   },
   created () {
-    // if (+customStorage.get(VIDEOINDEX) == 2) {
-    this.readContainerNoScroll()
-    // }
+    if (+customStorage.get(VIDEOINDEX) === 2) {
+      this.readContainerNoScroll()
+    }
     this.isInitEnd = false
   },
   firstInviewCallback () {
@@ -105,10 +105,13 @@ export default {
     this.openVideo()
   },
   methods: {
+    isShow () {
+      return !self.isTimeExpired() && !isIframed && !getMobileSystemVersion() && +customStorage.get(VIDEOINDEX) !== 2
+    },
     openVideo () {
       let self = this
       document.body.addEventListener('touchstart', e => {
-        if (!isIframed && !self.isTimeExpired() && !getMobileSystemVersion()) {
+        if (self.isShow) {
           self.readContainerScroll()
           return
         }
@@ -258,6 +261,7 @@ export default {
       // 此处测试完毕会修改成一天一清
       if (secondsDiff >= 30) {
       // if (dayDiff >= 1) {
+        alert('清空')
         customStorage.clear()
         return true
       }
