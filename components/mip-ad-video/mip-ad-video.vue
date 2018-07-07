@@ -57,7 +57,7 @@
   </div>
 </template>
 <script>
-import {isRenderVideoElement, getMobileSystemVersion} from './video-detector'
+import detector from './video-detector'
 import JSMpeg from './jsmpeg'
 
 const customStorage = MIP.util.customStorage(0)
@@ -90,7 +90,7 @@ export default {
   },
   computed: {
     isShowVideo: function () {
-      return isRenderVideoElement()
+      return detector.isRenderVideoElement()
     }
   },
   created () {
@@ -106,12 +106,15 @@ export default {
   },
   methods: {
     isShow () {
-      return !self.isTimeExpired() && !isIframed && !getMobileSystemVersion() && +customStorage.get(VIDEOINDEX) !== 2
+      let isShow = isIframed && detector.getMobileSystemVersion() && +customStorage.get(VIDEOINDEX) !== 2
+      return isShow
     },
     openVideo () {
       let self = this
+      this.isTimeExpired()
       document.body.addEventListener('touchstart', e => {
-        if (self.isShow) {
+        if (self.isShow()) {
+          self.$element.setAttribute('style', 'display: none !important')
           self.readContainerScroll()
           return
         }
@@ -180,6 +183,7 @@ export default {
         videoIndex++
         customStorage.set(VIDEOINDEX, videoIndex)
       }
+      console.log(+customStorage.get(VIDEOINDEX))
     },
     readContainerNoScroll () {
       document.documentElement.setAttribute('style', 'height: 100% !important; overflow: hidden')
@@ -263,9 +267,7 @@ export default {
       // if (dayDiff >= 1) {
         alert('清空')
         customStorage.clear()
-        return true
       }
-      return false
     }
   }
 }

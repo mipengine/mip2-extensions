@@ -27,28 +27,32 @@ export const isRenderVideoElement = () => {
     return isIPhone() && isGoodUA();
 }
 
-
-export const getMobileSystemVersion = () => {
-    const str = /(?<=\()[^\)]+(?=\))/
-    const mobile = UA.match(str)[0].split(';');
-    let system;
-    mobile.map(function (val) {
-        if (val.indexOf('os') > -1 || val.indexOf('android') > -1) {
-            system = val;
+const detector = {
+    isRenderVideoElement () {
+        return isIPhone() && isGoodUA();
+    },
+    getMobileSystemVersion () {
+        const str = /(?<=\()[^\)]+(?=\))/
+        const mobile = UA.match(str)[0].split(';');
+        let system;
+        mobile.map(function (val) {
+            if (val.indexOf('os') > -1 || val.indexOf('android') > -1) {
+                system = val;
+            }
+        });
+        const num = /\d+/g
+        const version = system.match(num)
+        // ios要求版本8.X以上
+        if (platform.isIos()) {
+            return version && version[0] && version[0] >= IOSVERSION
         }
-    });
-    const num = /\d+/g
-    const version = system.match(num)
-    // ios要求版本8.X以上
-    if (platform.isIos()) {
-        return version && version[0] && version[0] >= IOSVERSION
+        // android要求版本5.X以上
+        else {
+            return version && version[0] && version[0] >= ANDROIDVERSION
+        }
     }
-    // android要求版本5.X以上
-    else {
-        return version && version[0] && version[0] >= ANDROIDVERSION
-    }
-};
+}
 
-
+export default detector;
 
 
