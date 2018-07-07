@@ -57,7 +57,7 @@
   </div>
 </template>
 <script>
-// import detector from './video-detector'
+import detector from './video-detector'
 import JSMpeg from './jsmpeg'
 
 const customStorage = MIP.util.customStorage(0)
@@ -91,8 +91,7 @@ export default {
   },
   computed: {
     isShowVideo: function () {
-      return true
-      // return detector.isRenderVideoElement()
+      return detector.isRenderVideoElement()
     }
   },
   created () {
