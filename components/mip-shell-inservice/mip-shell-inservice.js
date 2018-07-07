@@ -15,6 +15,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
 
     this.alwaysReadConfigOnLoad = false
     this.transitionContainsHeader = false
+    this.scrollBoundary()
   }
 
   /**
@@ -223,5 +224,46 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
   indexPageAction () {
     let serviceUrl = this.headerInfo.serviceUrl
     MIP.viewer.open(MIP.util.makeCacheUrl(serviceUrl), { isMipLink: true, replace: true })
+  }
+
+  scrollBoundary () {
+    let touchStartEvent
+    let scrollaBoundaryTouch = document.createElement('div')
+    scrollaBoundaryTouch.setAttribute('mip-shell-scrollboundary', true);
+    [].slice.call(document.body.children).forEach((child) => {
+      if (/^(SCRIPT|IFRAME|MIP-SHELL-INSERVICE|MIP-DATA)/.test(child.nodeName)) {
+        return
+      }
+      scrollaBoundaryTouch.appendChild(child)
+    })
+    document.body.appendChild(scrollaBoundaryTouch)
+    scrollaBoundaryTouch.addEventListener('touchstart', (e) => {
+      touchStartEvent = e
+    })
+
+    let docRect = MIP.util.rect.getElementRect(document.documentElement)
+    scrollaBoundaryTouch.addEventListener('touchmove', (e) => {
+      let touchRect = e.targetTouches[0]
+      let startTouchReact = touchStartEvent.targetTouches[0]
+
+      docRect = docRect.height ? docRect : MIP.util.rect.getElementRect(document.documentElement)
+
+      let scrollTop = document.body.scrollTop || MIP.util.rect.getScrollTop()
+      let scrollHeight = MIP.util.rect.getElementRect(scrollaBoundaryTouch).height
+      let offsetHeight = docRect.height
+
+      let isprevent = (
+        touchRect.pageY >= startTouchReact.pageY &&
+          touchRect.clientY > startTouchReact.clientY &&
+          scrollTop < 5) ||
+          (
+            touchRect.pageY < startTouchReact.pageY &&
+            scrollTop + offsetHeight >= scrollHeight
+          )
+      if (isprevent) {
+        e.preventDefault()
+      }
+      e.stopPropagation()
+    })
   }
 }
