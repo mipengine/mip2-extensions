@@ -71,13 +71,12 @@ const PRETIME = 'ad-time'
 let mipPlayer = null
 let jSMpegPlayer = null
 let canvas = null
-// let forbidClick = true
 
 // 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
 const POSTER = 'https://www.mipengine.org/static/img/sample_04.jpg'
-const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
-// const TSURL = 'https://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
+// const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
+const TSURL = 'https://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
 
 export default {
   data () {
@@ -119,7 +118,7 @@ export default {
 
           if (mipPlayer && self.isShowVideo) {
             mipPlayer.play()
-            self.startTimer()
+            // self.startTimer()
           }
           if (jSMpegPlayer && !self.isShowVideo) {
             jSMpegPlayer.on('playing', () => {
@@ -127,7 +126,7 @@ export default {
               self.$element.dispatchEvent(event)
               css(canvas, {opacity: '1'})
               // 初始化倒计时器
-              self.startTimer()
+              // self.startTimer()
             })
             jSMpegPlayer.play()
           }
@@ -202,9 +201,10 @@ export default {
     },
     gotoAdUrl () {
       if (this.forbidClick) return
-      if (this.count > 0 && this.count <= COUNTDOWNINDEX) {
+      if (this.count <= COUNTDOWNINDEX) {
         this.isInitEnd = false
         this.forbidClick = true
+        this.$element.setAttribute('style', 'display: none !important')
         window.top.location.href = PINZHUANGURL
       }
     },
@@ -219,25 +219,23 @@ export default {
       }
       if (jSMpegPlayer) {
         css(canvas, {opacity: '0'})
-        jSMpegPlayer.pause()
+        jSMpegPlayer.stop()
       }
-      content.addEventListener('animationend', () => {
-        container.addEventListener('animationend', () => {
-          if (!isClosed) {
-            self.readContainerScroll()
-            self.isInitEnd = false
-            self.forbidClick = true
-            self.$element.setAttribute('style', 'display: none !important')
-            setTimeout(() => {
-              container.classList.remove('close-container')
-              content.classList.remove('close-content')
-            }, 200)
-          }
-          isClosed = true
-        })
+      if (!isClosed) {
+        self.readContainerScroll()
+        self.isInitEnd = false
+        self.forbidClick = true
         container.classList.add('close-container')
-      })
-      content.classList.add('close-content')
+        setTimeout(() => {
+          content.classList.add('close-content')
+          setTimeout(() => {
+            self.$element.setAttribute('style', 'display: none !important')
+            container.classList.remove('close-container')
+            content.classList.remove('close-content')
+          }, 300)
+        }, 100)
+      }
+      isClosed = true
     },
     isTimeExpired () {
       let myDate = new Date()
