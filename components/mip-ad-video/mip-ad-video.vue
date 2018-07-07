@@ -6,45 +6,50 @@
 <template>
   <div class="container show-container">
     <div class="backgroud"/>
-    <div
-      class="content show-content"
-      @click="gotoAdUrl">
-      <div class="content-title">
-        <div>观看广告 免费阅读所有章节</div>
-        <div v-if="count > 0"><span>{{ count }}秒</span>后可跳过</div>
-        <div
-          v-else
-          class="close-ad"
-          @click="closeAd">关闭</div>
-      </div>
-      <video
-        v-if="isShowVideo"
-        ref="mipVideo"
-        class="video"
-        loop
-        muted
-        autoplay
-        layout="responsive"
-        width="640"
-        height="368"
-        poster="https://www.mipengine.org/static/img/sample_04.jpg"
-        src="http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.mp4"
-      />
+    <div class="container-video">
       <div
-        v-else
-        class="video">
-        <div
-          ref="videoCover"
-          class="video-cover"/>
-        <canvas
-          ref="videoCanvas"
+        class="content show-content"
+        @click="gotoAdUrl">
+        <div class="content-title">
+          <div>观看广告 免费阅读所有章节</div>
+          <div v-if="count > 0"><span>{{ count }}秒</span>后可跳过</div>
+          <div
+            v-else
+            class="close-ad"
+            @click="closeAd">关闭</div>
+        </div>
+        <video
+          v-if="isShowVideo"
+          ref="mipVideo"
+          class="video"
+          loop
+          muted
+          autoplay
+          layout="responsive"
           width="640"
           height="368"
-          class="video-canvas"/>
-      </div>
-      <div class="pinpai">
-        <div class="pinpai-back"/>
-        <div class="pinpai-title">品牌广告</div>
+          poster="https://www.mipengine.org/static/img/sample_04.jpg"
+          src="http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.mp4"
+          @click="gotoAdUrl"
+        />
+        <div
+          v-else
+          class="video">
+          <div
+            ref="videoCover"
+            class="video-cover"
+            @click="gotoAdUrl"
+          />
+          <canvas
+            ref="videoCanvas"
+            width="640"
+            height="368"
+            class="video-canvas"/>
+        </div>
+        <div class="pinpai">
+          <div class="pinpai-back"/>
+          <div class="pinpai-title">品牌广告</div>
+        </div>
       </div>
     </div>
   </div>
@@ -281,16 +286,6 @@ mip-ad-video {
     width: 100%;
     position: absolute;
     z-index: 100;
-    display: box;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display:         flex;
-    -webkit-box-align: center;
-    -webkit-box-pack: center;
-    -webkit-align-items: center;
-            align-items: center;
-    -webkit-justify-content: center;
-            justify-content: center;
     opacity: 0;
   }
   .close-container {
@@ -391,17 +386,29 @@ mip-ad-video {
   .backgroud {
     width: 100%;
     height: 100%;
-    z-index: 999;
+    z-index: 998;
     background-color: #000;
     opacity: 0.3;
     position: absolute;
     left: 0;
   }
+  .container-video {
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    left: 0;
+    position: absolute;
+    display: -webkit-flex;
+    display:         flex;
+    -webkit-align-items: center;
+            align-items: center;
+    -webkit-justify-content: center;
+            justify-content: center;
+  }
   .content {
     width: 95%;
-    height: 54.5vw;
+    height: 56vw;
     z-index: 1000;
-    position: absolute;
     &-title {
       padding: 12px 10px 0 10px;
       width: 94.08%;
@@ -432,8 +439,14 @@ mip-ad-video {
     bottom: 0;
   }
   .pinpai-title {
+    width: 100%;
+    height: 100%;
     z-index: 1;
     font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
   .video {
     position: relative;
