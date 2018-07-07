@@ -32,8 +32,7 @@ const detector = {
         return isIPhone() && isGoodUA();
     },
     getMobileSystemVersion () {
-        const str = /(?<=\()[^\)]+(?=\))/
-        const mobile = UA.match(str)[0].split(';');
+        const mobile = UA.match(/\((.+)\)/g)[0].split(';');
         let system;
         mobile.map(function (val) {
             if (val.indexOf('os') > -1 || val.indexOf('android') > -1) {

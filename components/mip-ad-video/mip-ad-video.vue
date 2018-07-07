@@ -4,7 +4,9 @@
  */
 
 <template>
-  <div class="container show-container">
+  <div
+    v-show="show"
+    class="container show-container">
     <div class="backgroud"/>
     <div class="container-video">
       <div class="content show-content">
@@ -84,20 +86,24 @@ export default {
       isOpening: false,
       count: '',
       timer: null,
-      isInitEnd: false,
-      forbidClick: true
+      forbidClick: true,
+      played: false
     }
   },
   computed: {
+    show: function () {
+      return this.isShow()
+    },
     isShowVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
-    if (+customStorage.get(VIDEOINDEX) === 2) {
+    let index = +localStorage.getItem(VIDEOINDEX) + 1
+    alert('是否iframe：' + isIframed + '；页数：' + index)
+    if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
       this.readContainerNoScroll()
     }
-    this.isInitEnd = false
   },
   firstInviewCallback () {
     // 初始化所有的视频内容
@@ -106,7 +112,7 @@ export default {
   },
   methods: {
     isShow () {
-      let isShow = isIframed && detector.getMobileSystemVersion() && +customStorage.get(VIDEOINDEX) !== 2
+      let isShow = !isIframed && !this.played && detector.getMobileSystemVersion() && +customStorage.get(VIDEOINDEX) !== 2
       return isShow
     },
     openVideo () {
@@ -119,31 +125,26 @@ export default {
           return
         }
         self.$element.setAttribute('style', 'display: block !important')
-        if (!self.isInitEnd) {
-          self.isInitEnd = true
-
-          if (mipPlayer && self.isShowVideo) {
-            mipPlayer.play()
-            self.startTimer()
-          }
-          if (jSMpegPlayer && !self.isShowVideo) {
-            jSMpegPlayer.on('playing', () => {
-              let event = new Event('playing')
-              self.$element.dispatchEvent(event)
-              css(canvas, {opacity: '1'})
-              // 初始化倒计时器
-              self.startTimer()
-            })
-            jSMpegPlayer.play()
-          }
-          setTimeout(() => {
-            self.forbidClick = false
-          }, 500)
+        if (mipPlayer && self.isShowVideo) {
+          mipPlayer.play()
+          self.startTimer()
         }
+        if (jSMpegPlayer && !self.isShowVideo) {
+          jSMpegPlayer.on('playing', () => {
+            let event = new Event('playing')
+            self.$element.dispatchEvent(event)
+            css(canvas, {opacity: '1'})
+            // 初始化倒计时器
+            self.startTimer()
+          })
+          jSMpegPlayer.play()
+        }
+        setTimeout(() => {
+          self.forbidClick = false
+        }, 800)
       }, false)
     },
     init () {
-      this.isInitEnd = false
       let self = this
       // 在非ios手百下使用JSMpeg兼容各种机型的视频自动播放
       if (this.isShowVideo) {
@@ -183,7 +184,6 @@ export default {
         videoIndex++
         customStorage.set(VIDEOINDEX, videoIndex)
       }
-      console.log(+customStorage.get(VIDEOINDEX))
     },
     readContainerNoScroll () {
       document.documentElement.setAttribute('style', 'height: 100% !important; overflow: hidden')
@@ -209,14 +209,15 @@ export default {
     gotoAdUrl () {
       if (this.forbidClick) return
       if (this.count <= COUNTDOWNINDEX) {
-        this.isInitEnd = false
         this.forbidClick = true
+        this.played = true
         this.$element.setAttribute('style', 'display: none !important')
         window.top.location.href = PINZHUANGURL
       }
     },
     closeAd (e) {
       e.stopPropagation()
+      e.preventDefault()
       let self = this
       let container = this.$element.querySelector('.container')
       let content = this.$element.querySelector('.content')
@@ -230,8 +231,8 @@ export default {
       }
       if (!isClosed) {
         self.readContainerScroll()
-        self.isInitEnd = false
         self.forbidClick = true
+        self.played = true
         container.classList.add('close-container')
         setTimeout(() => {
           content.classList.add('close-content')
