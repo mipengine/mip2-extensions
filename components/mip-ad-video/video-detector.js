@@ -3,7 +3,7 @@
  */
 
 let UA = navigator.userAgent.toLowerCase();
-let goodUaList = ['baiduboxapp', 'safari'];
+let goodUaList = ['baiduboxapp'];
 
 function isIPhone() {
     return UA.indexOf('iphone') > -1;
@@ -26,3 +26,6 @@ const detector = {
 }
 
 export default detector
+
+
+
