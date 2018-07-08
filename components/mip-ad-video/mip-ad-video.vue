@@ -95,7 +95,7 @@ export default {
     }
   },
   created () {
-    let index = +localStorage.getItem(VIDEOINDEX)
+    let index = +localStorage.getItem(VIDEOINDEX) + 1
     console.log('是否iframe：' + isIframed + '；页数：' + index)
     if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
       this.readContainerNoScroll()
@@ -108,7 +108,11 @@ export default {
   },
   methods: {
     isShow () {
-      let isShow = detector.getMobileSystemVersion() && this.played && isIframed && +customStorage.get(VIDEOINDEX) === 2
+      let isShow = isIframed && detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
+      console.log('Version：' + detector.getMobileSystemVersion())
+      console.log('第几次刷新：' + +customStorage.get(VIDEOINDEX))
+      console.log('是否已经播放过：' + this.played)
+      console.log(!isShow)
       return !isShow
     },
     openVideo () {
