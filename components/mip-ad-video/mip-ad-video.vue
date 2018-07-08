@@ -5,7 +5,6 @@
 
 <template>
   <div
-    v-show="show"
     class="container show-container">
     <div class="backgroud"/>
     <div class="container-video">
@@ -91,16 +90,13 @@ export default {
     }
   },
   computed: {
-    show: function () {
-      return this.isShow()
-    },
     isShowVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
-    let index = +localStorage.getItem(VIDEOINDEX) + 1
-    alert('是否iframe：' + isIframed + '；页数：' + index)
+    let index = +localStorage.getItem(VIDEOINDEX)
+    console.log('是否iframe：' + isIframed + '；页数：' + index)
     if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
       this.readContainerNoScroll()
     }
@@ -112,8 +108,8 @@ export default {
   },
   methods: {
     isShow () {
-      let isShow = !isIframed && !this.played && detector.getMobileSystemVersion() && +customStorage.get(VIDEOINDEX) !== 2
-      return isShow
+      let isShow = detector.getMobileSystemVersion() && this.played && isIframed && +customStorage.get(VIDEOINDEX) === 2
+      return !isShow
     },
     openVideo () {
       let self = this
