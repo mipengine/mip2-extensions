@@ -110,7 +110,7 @@ export default {
     isShow () {
       let isShow = isIframed && detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
       console.log('Version：' + detector.getMobileSystemVersion())
-      console.log('第几次刷新：' + +customStorage.get(VIDEOINDEX))
+      console.log('第几次刷新：' + customStorage.get(VIDEOINDEX))
       console.log('是否已经播放过：' + this.played)
       console.log(!isShow)
       return !isShow
