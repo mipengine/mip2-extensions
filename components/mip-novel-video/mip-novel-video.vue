@@ -271,7 +271,6 @@ export default {
       // 此处测试完毕会修改成一天一清
       if (secondsDiff >= 30) {
       // if (dayDiff >= 1) {
-        alert('清空')
         customStorage.clear()
       }
     }
