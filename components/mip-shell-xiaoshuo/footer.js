@@ -1,28 +1,62 @@
+/**
+ * file: 小说shell 底部控制栏
+ * author: liangjiaying <jiaojiaomao220@163.com>
+ */
+
 import {settingHtml} from './setting'
 
 // 整个底 bar 控制栏
 class footer {
   constructor (config) {
+    console.log('footer初始化')
     this.config = config
     this.$footerWrapper = this._render() // 底部包裹控制栏的mip-fixed元素
   }
 
   // 创建底部控制栏并插入页面
   _render () {
+    // 将底部 bar 插入到页面中
+    let $footerWrapper = document.querySelector('.mip-shell-footer-wrapper')
+    let hadFooter = !!$footerWrapper
+    if (!hadFooter) {
+      // 初次见面新建一个wrapper, 二次更新时直接复用
+      $footerWrapper = document.createElement('mip-fixed')
+      $footerWrapper.setAttribute('type', 'bottom')
+      $footerWrapper.setAttribute('mip-shell', '')
+      $footerWrapper.classList.add('mip-shell-footer-wrapper')
+    }
+
+    let $footer = document.createElement('div')
+    $footer.classList.add('mip-shell-footer', 'mip-border', 'mip-border-top')
+    $footer.innerHTML = this._createFooterDom()
+    if (!hadFooter) {
+      $footerWrapper.appendChild($footer)
+      document.body.appendChild($footerWrapper)
+    } else {
+      // 将footer内容替换为新内容
+      $footerWrapper.removeChild($footerWrapper.querySelector('.mip-shell-footer'))
+      $footerWrapper.appendChild($footer)
+    }
+
+    return $footerWrapper
+  }
+
+  // 根据config 创建底部footer
+  _createFooterDom () {
     // currentPageMeta: 基类提供的配置，页面中用户在shell json配置的内容
     let renderFooterButtonGroup = actionGroup => actionGroup.map(function (actionConfig) {
       if (actionConfig.name === 'catalog') {
         // 目录按钮样式
-        return `<div class="button" on="tap:xiaoshuo-shell.showShellCatalog">${actionConfig.text}</div>`
+        return `<div class="button" on="tap:xiaoshuo-shell.showShellCatalog"> <i class="icon icon-menulist"><p>${actionConfig.text}</p></i> </div>`
       } else if (actionConfig.name === 'darkmode') {
         // 夜间模式按钮
         return `<div class="button" data-current-bg="default" data-hidden-bg="night">
-                <span class="bg-button night-mode" on="tap:xiaoshuo-shell.changeMode(night)" >${actionConfig.text}</span>
-                <span class="bg-button light-mode" on="tap:xiaoshuo-shell.changeMode(default)" >${actionConfig.text2}</span>
-            </div>`
+          <span class="bg-button night-mode" on="tap:xiaoshuo-shell.changeMode(night)" > <i class="icon icon-night"><p>${actionConfig.text}</p></i>  </span>
+          <span class="bg-button light-mode" on="tap:xiaoshuo-shell.changeMode(default)" > <i class="icon icon-day"><p>${actionConfig.text2}</p></i> </span>
+        </div>`
       } else if (actionConfig.name === 'settings') {
         // 字体大小按钮
-        return `<div class="button" on="tap:xiaoshuo-shell.showFontAdjust">${actionConfig.text}</div>`
+        return `<div class="button" on="tap:xiaoshuo-shell.showFontAdjust"> <i class="icon icon-font"><p>${actionConfig.text}</p></i></div>`
       }
     }).join('')
 
@@ -33,6 +67,7 @@ class footer {
     let nextDisabled = nextHref ? '' : 'disabled'
     let prevHrefString = previousHref ? `mip-link href="./${this.config.hrefButton['previous-href']}"` : ''
     let nextHrefString = nextHref ? `mip-link href="./${this.config.hrefButton['next-href']}"` : ''
+    console.log('下一页按钮链接：', this.config.hrefButton['next-href'], ', 上一页按钮链接：', this.config.hrefButton['previous-href'])
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
             <a class="page-button page-previous ${prevDisabled}" ${prevHrefString}>
@@ -47,22 +82,7 @@ class footer {
         </div>
         <div class="mip-xiaoshuo-settings">${settingHtml}</div>
         `
-
-    // 将底部 bar 插入到页面中
-    let $footerWrapper = document.getElementById('mip-shell-footer')
-    $footerWrapper = document.createElement('mip-fixed')
-    $footerWrapper.setAttribute('type', 'bottom')
-    $footerWrapper.setAttribute('mip-shell', '')
-    $footerWrapper.classList.add('mip-shell-footer-wrapper')
-
-    let $footer
-    $footer = document.createElement('div')
-    $footer.classList.add('mip-shell-footer', 'mip-border', 'mip-border-top')
-    $footer.innerHTML = footerHTML
-    $footerWrapper.appendChild($footer)
-
-    document.body.appendChild($footerWrapper)
-    return $footerWrapper
+    return footerHTML
   }
 
   // 显示底bar

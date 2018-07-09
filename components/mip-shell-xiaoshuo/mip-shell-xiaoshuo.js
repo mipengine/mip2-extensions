@@ -18,22 +18,13 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
   // 基类方法：修改配置。从mip-shell 配置中获取 `config` 字段
   processShellConfig (shellConfig) {
-    console.log(shellConfig)
     this.shellConfig = shellConfig
-  }
-
-  // 基类方法：绑定头部弹层事件。
-  bindHeaderEvents () {
-    // todo 针对$el做处理
-    super.bindHeaderEvents()
-    // 初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
-    this._initAllObjects()
   }
 
   // 自有方法：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
   _initAllObjects () {
-    console.log('_initAllObjects, 初始化所有对象')
-    let configMeta = (this.shellConfig && this.shellConfig.routes[0].meta) || window.MIP.viewer.page.currentPageMeta
+    // let configMeta = (this.shellConfig && this.shellConfig.routes[0].meta) || window.MIP.viewer.page.currentPageMeta
+    let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
     // 创建目录侧边栏
@@ -86,17 +77,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
     // 绑定弹层点击关闭事件
     if (this.$buttonMask) {
-      this.$buttonMask.onclick = () => {
-        // 关闭所有可能弹出的bar
-        me.toggleDOM(me.$buttonWrapper, false) // 关不掉分享按钮组
-        me.$buttonWrapper.style.display = 'none' // XXX: hack, 修复 toggleDOM 中强制给未展示底部按钮组增加display:block问题
-        me.footer.hide()
-        me.catalog.hide()
-        me.fontSize.hideFontBar()
-        // 关闭黑色遮罩
-        me.toggleDOM(me.$buttonMask, false)
-      }
-    } else {
+      this.$buttonMask.onclick = this._closeEverything.bind(me)
     }
   }
 
@@ -126,6 +107,33 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     })
   }
 
+  // 基类方法：初始化。用于除头部bar之外的元素
+  renderOtherParts () {
+    console.log('renderOtherParts')
+    super.renderOtherParts()
+    // 初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
+    this._initAllObjects()
+  }
+
+  // 基类方法：更新。用于除头部bar之外的元素
+  updateOtherParts () {
+    // console.log('updateOtherParts:')
+    super.updateOtherParts()
+    // console.log(this.currentPageMeta)
+    this._initAllObjects()
+  }
+
+  _closeEverything () {
+    // console.log('_closeEverything')
+    // 关闭所有可能弹出的bar
+    this.toggleDOM(this.$buttonWrapper, false) // 关不掉分享按钮组
+    this.$buttonWrapper.style.display = 'none' // XXX: hack, 修复 toggleDOM 中强制给未展示底部按钮组增加display:block问题
+    this.footer.hide()
+    this.catalog.hide()
+    this.fontSize.hideFontBar()
+    // 关闭黑色遮罩
+    this.toggleDOM(this.$buttonMask, false)
+  }
   // 基类方法：页面跳转后shell可刷新
   // refreshShell (...args) {
   //     console.log('refreshShell')
@@ -144,12 +152,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // }
   }
 
-  // 基类方法：更新。用于除头部bar之外的元素
-  // todo 啥时候用？
-  updateOtherParts () {
-    console.log('updateOtherParts')
-  }
-
   // 基类方法: 处理头部自定义按钮点击事件，由于没有按钮，置空
   handleShellCustomButton (buttonName) {
     // 如果后期需要增加bar按钮，增加如下配置：
@@ -163,8 +165,10 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // }
   }
 
-  // 基类方法：初始化。用于除头部bar之外的元素
-  renderOtherParts () {
-    super.renderOtherParts()
-  }
+  // 基类方法：绑定头部弹层事件。
+  // bindHeaderEvents () {
+  //   super.bindHeaderEvents()
+  //
+
+  // }
 }

@@ -20,6 +20,9 @@ body {
     height: 150px;
     transition: transform .35s ease;;
     transform: translateY(100%);
+    i p {
+
+    }
 }
 
 .mip-shell-footer-wrapper.show {
@@ -48,8 +51,11 @@ body {
     }
 
     .button-wrapper {
-        display: flex;
-        height: 99px;
+      display: flex;
+      height: 100px;
+      i p{
+        margin-top:5px;
+        }
     }
 
     .button-wrapper .button {
@@ -342,8 +348,8 @@ html {
     }
     .mip-border,
     .mip-border:after {
-        -webkit-transition: border-color ease 480ms;
-                transition: border-color ease 480ms;
+        -webkit-transition: all ease 480ms;
+               transition: all ease 480ms;
     }
     .light-mode {
         display: none;

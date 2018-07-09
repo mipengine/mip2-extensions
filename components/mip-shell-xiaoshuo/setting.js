@@ -20,7 +20,6 @@ function __getConfig () {
 function __setConfig (config) {
   config = extend(__getConfig(), config)
   storage.set(STORAGE_KEY, JSON.stringify(config))
-  console.log('__setConfig ', config)
   if (config.theme) {
     document.documentElement.setAttribute('mip-shell-xiaoshuo-theme', config.theme)
   }
@@ -58,7 +57,7 @@ export class Mode {
     this.defaultBtn = document.querySelector('.mip-shell-footer .default-mode')
     this.greenBtn = document.querySelector('.mip-shell-footer .green-mode')
     this.paperBtn = document.querySelector('.mip-shell-footer .paper-mode')
-    console.log('在背景色初始化中，修改背景为', JSON.stringify(__getConfig()))
+    // console.log('在背景色初始化中，修改背景为', JSON.stringify(__getConfig()))
     // __setConfig(__getConfig())
   }
   // 绑定点击事件

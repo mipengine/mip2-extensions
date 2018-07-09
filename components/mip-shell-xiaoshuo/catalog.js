@@ -1,3 +1,9 @@
+/**
+ * file: 小说shell 目录边栏文件
+ * author: liangjiaying <jiaojiaomao220@163.com>
+ * TODO：
+ *     1. catalog数据支持异步获取
+ */
 class catalog {
   constructor (config) {
     this.$catalogSidebar = this._renderCatalog(config)
@@ -6,7 +12,7 @@ class catalog {
   // 根据配置渲染目录侧边栏到 mip-sidebar组件中
   // 支持从页面直接获取目录，异步获取目录
   _renderCatalog (catalogs) {
-    let $catalogSidebar // 保存目录DOM
+    let renderCatalog
     if (!catalogs) {
       // 目录配置为空
     } else if (typeof catalogs === 'string') {
@@ -14,24 +20,34 @@ class catalog {
 
     } else {
       // 目录为数组，本地目录。直接读取渲染
-      let renderCatalog = catalogs => catalogs.map(catalog => `
+      renderCatalog = catalogs => catalogs.map(catalog => `
         <a class="mip-catalog-btn" mip-catalog-btn mip-link data-button-name="${catalog.name}" href="./${catalog.link}">${catalog.name}</a>`)
         .join('\n')
-
-      // 将底部 bar 插入到页面中
+    }
+    // 将底部 bar 插入到页面中
+    let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
+    let hadCatalog = !!$catalogSidebar
+    if (!hadCatalog) {
+      // 初次见面新建一个wrapper, 二次更新时直接复用
       $catalogSidebar = document.createElement('mip-fixed')
       $catalogSidebar.setAttribute('type', 'left')
       $catalogSidebar.setAttribute('top', '0')
       $catalogSidebar.setAttribute('mip-shell', '')
       $catalogSidebar.classList.add('mip-shell-catalog-wrapper')
+    }
 
-      let $catalog
-      $catalog = document.createElement('div')
-      $catalog.classList.add('mip-shell-catalog', 'mip-border', 'mip-border-right')
-      $catalog.innerHTML = renderCatalog(catalogs)
+    let $catalog
+    $catalog = document.createElement('div')
+    $catalog.classList.add('mip-shell-catalog', 'mip-border', 'mip-border-right')
+    $catalog.innerHTML = renderCatalog(catalogs)
+
+    if (!hadCatalog) {
       $catalogSidebar.appendChild($catalog)
-
       document.body.appendChild($catalogSidebar)
+    } else {
+      // 将 catalog 内容替换为新内容
+      $catalogSidebar.removeChild($catalogSidebar.querySelector('.mip-shell-catalog'))
+      $catalogSidebar.appendChild($catalog)
     }
     return $catalogSidebar
   }
