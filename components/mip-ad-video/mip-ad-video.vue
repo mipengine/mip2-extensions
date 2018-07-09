@@ -124,6 +124,7 @@ export default {
           self.readContainerScroll()
           return
         }
+        e.preventDefault()
         self.$element.setAttribute('style', 'display: block !important')
         if (mipPlayer && self.isShowVideo) {
           mipPlayer.play()
