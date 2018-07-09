@@ -33,8 +33,8 @@
             layout="responsive"
             width="640"
             height="368"
-            poster="https://www.mipengine.org/static/img/sample_04.jpg"
-            src="http://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.mp4"
+            poster="https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg"
+            src="https://ecmb.bdimg.com/cae-legoup-video-target/bcb262e0-fe62-49e6-9d3f-1649cad66394.mp4"
           />
         </div>
         <div
@@ -77,7 +77,7 @@ let canvas = null
 
 // 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
-const POSTER = 'https://www.mipengine.org/static/img/sample_04.jpg'
+const POSTER = 'https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg'
 // const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
 const TSURL = 'https://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
 
