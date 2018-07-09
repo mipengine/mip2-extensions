@@ -85,7 +85,7 @@ export default {
   data () {
     return {
       isOpening: false,
-      count: '',
+      count: COUNTDOWNINDEX,
       timer: null,
       forbidClick: true,
       played: false
@@ -114,7 +114,6 @@ export default {
       console.log('Version：' + detector.getMobileSystemVersion())
       console.log('第几次刷新：' + customStorage.get(VIDEOINDEX))
       console.log('是否已经播放过：' + this.played)
-      console.log(!isShow)
       return !isShow
     },
     openVideo () {
@@ -126,7 +125,7 @@ export default {
           self.readContainerScroll()
           return
         }
-        if (!self.forbidClick || self.count < 0) {
+        if (!self.forbidClick) {
           return
         }
         e.preventDefault()
@@ -200,7 +199,7 @@ export default {
       document.body.setAttribute('style', '')
     },
     startTimer () {
-      if (!this.timer && this.count === COUNTDOWNINDEX) {
+      if (!this.timer && this.count > 0) {
         this.count = COUNTDOWNINDEX
         this.timer = setInterval(() => {
           if (this.count > 0 && this.count <= COUNTDOWNINDEX) {
