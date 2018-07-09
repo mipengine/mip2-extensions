@@ -10,8 +10,10 @@
     <div class="container-video">
       <div class="content show-content">
         <div class="content-title">
-          <div>观看广告 免费阅读所有章节</div>
-          <div v-if="count > 0"><span>{{ count }}秒</span>后可跳过</div>
+          <div class="content-tip">观看广告 免费阅读所有章节</div>
+          <div
+            v-if="count > 0"
+            class="content-count" ><span>{{ count }}秒</span>后可跳过</div>
           <div
             v-else
             class="close-ad"
@@ -124,7 +126,10 @@ export default {
           self.readContainerScroll()
           return
         }
-        // e.preventDefault()
+        if (!self.forbidClick || self.count < 0) {
+          return
+        }
+        e.preventDefault()
         self.$element.setAttribute('style', 'display: block !important')
         if (mipPlayer && self.isShowVideo) {
           mipPlayer.play()
@@ -416,10 +421,11 @@ mip-ad-video {
     width: 95%;
     height: 56vw;
     z-index: 1000;
+    position: relative;
     &-title {
-      padding: 12px 10px 0 10px;
-      width: 94.08%;
+      width: 100%;
       height: 50px;
+      line-height: 40px;
       background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1), transparent);
       background:         linear-gradient(top, rgba(0, 0, 0, 1), transparent);
       position: absolute;
@@ -427,6 +433,17 @@ mip-ad-video {
       display: flex;
       justify-content: space-between;
     }
+    &-count {
+      margin-right: 10px;
+    }
+    &-tip {
+      margin-left: 10px;
+    }
+  }
+  .close-ad {
+    padding-right: 10px;
+    width: 100px;
+    text-align: right;
   }
   .pinpai {
     width: 54px;
@@ -490,10 +507,6 @@ mip-ad-video {
     position: absolute;
     opacity: 0;
     width: 100%;
-  }
-  .close-ad {
-    width: 100px;
-    text-align: right;
   }
 }
 
