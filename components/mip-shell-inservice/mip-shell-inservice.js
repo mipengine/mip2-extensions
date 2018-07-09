@@ -226,32 +226,46 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     MIP.viewer.open(MIP.util.makeCacheUrl(serviceUrl), { isMipLink: true, replace: true })
   }
 
+  /**
+   * 滚动边界处理
+   */
   scrollBoundary () {
     let touchStartEvent
+    let {rect, css} = MIP.util
+    // 收集body child元素 并进行包裹
     let scrollaBoundaryTouch = document.createElement('div')
+    let offsetHeight
+    let bodyPaddingTop
+    let body = document.body
     scrollaBoundaryTouch.setAttribute('mip-shell-scrollboundary', true);
-    [].slice.call(document.body.children).forEach((child) => {
+    [].slice.call(body.children).forEach(child => {
       if (/^(SCRIPT|IFRAME|MIP-SHELL-INSERVICE|MIP-DATA)/.test(child.nodeName)) {
         return
       }
       scrollaBoundaryTouch.appendChild(child)
     })
-    document.body.appendChild(scrollaBoundaryTouch)
-    scrollaBoundaryTouch.addEventListener('touchstart', (e) => {
+    body.appendChild(scrollaBoundaryTouch)
+
+    // 添加事件处理
+    scrollaBoundaryTouch.addEventListener('touchstart', e => {
       touchStartEvent = e
     })
 
-    let docRect = MIP.util.rect.getElementRect(document.documentElement)
-    scrollaBoundaryTouch.addEventListener('touchmove', (e) => {
+    scrollaBoundaryTouch.addEventListener('touchmove', e => {
       let touchRect = e.targetTouches[0]
       let startTouchReact = touchStartEvent.targetTouches[0]
 
-      docRect = docRect.height ? docRect : MIP.util.rect.getElementRect(document.documentElement)
+      // 兼容模式处理
+      offsetHeight = document.compatMode === 'BackCompat'
+        ? document.body.clientHeight
+        : document.documentElement.clientHeight
 
-      let scrollTop = document.body.scrollTop || MIP.util.rect.getScrollTop()
-      let scrollHeight = MIP.util.rect.getElementRect(scrollaBoundaryTouch).height
-      let offsetHeight = docRect.height
+      bodyPaddingTop = bodyPaddingTop || parseInt(css(body, 'paddingTop'), 10)
+      let scrollTop = body.scrollTop || rect.getScrollTop()
+      let scrollHeight = rect.getElementRect(scrollaBoundaryTouch).height + bodyPaddingTop
 
+      // 到达顶部时 && 是向下滚动操作
+      // 到达底部时 && 并且 向上滚动操作
       let isprevent = (
         touchRect.pageY >= startTouchReact.pageY &&
           touchRect.clientY > startTouchReact.clientY &&
