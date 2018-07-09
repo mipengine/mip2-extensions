@@ -96,7 +96,7 @@ export default {
   },
   created () {
     let index = +localStorage.getItem(VIDEOINDEX) + 1
-    console.log('是否iframe：' + isIframed + '；页数：' + index)
+    alert('是否iframe：' + isIframed + '；页数：' + index)
     if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
       this.readContainerNoScroll()
     }
@@ -277,7 +277,6 @@ export default {
 </script>
 
 <style lang="less">
-* { touch-action: none; }
 mip-ad-video {
   height: 100%;
   width: 100%;
