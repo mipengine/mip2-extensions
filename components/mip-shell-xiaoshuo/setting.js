@@ -21,10 +21,10 @@ function __getConfig () {
 function __setConfig (config) {
     config = extend(__getConfig(), config);
     storage.set(STORAGE_KEY, JSON.stringify(config));
+    console.log('__setConfig ', config)
     if (config.theme) {
         document.documentElement.setAttribute('mip-shell-xiaoshuo-theme', config.theme);
     }
-    ;
     if (config.fontSize) {
         document.documentElement.setAttribute('mip-shell-xiaoshuo-font-size', config.fontSize);
     }

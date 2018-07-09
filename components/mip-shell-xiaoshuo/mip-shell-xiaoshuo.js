@@ -75,8 +75,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
         })
         // 并执行一次背景色/字体初始化
         window.MIP.viewer.page.broadcastCustomEvent({
-            name: 'changeMode',
-            data: {'mode': mode }
+            name: 'changeMode'
         })
         // 绑定底部弹层控制条拖动事件
         this.addEventAction('showFontAdjust', function (e) {
@@ -110,7 +109,11 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
         this.fontSize.bindDragEvent()
         // 承接emit事件：根页面修改页面模式、背景
         window.addEventListener('changeMode', (e, data) => {
-            me.mode.update(e, e.detail[0].mode)
+            if(e.detail[0]) {
+                me.mode.update(e, e.detail[0].mode)
+            } else {
+                me.mode.update(e)
+            }
         })
         // 承接emit事件：根页面展示底部控制栏
         window.addEventListener('showShellFooter', (e, data) => {
