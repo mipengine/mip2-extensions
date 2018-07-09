@@ -19,254 +19,89 @@ MIP网站中百度pass账号的登录&授权
 
 ### 基本用法
 
-父容器组件引入`mip-inservice-login`组件，并根据mip-inservice-login组件内不同状态：1）调用组件的方法进行登录/登出； 2）监听登录/登出事件做相应的业务处理。
-
-
-父容器`mip-container`代码示意：
-
-```html
-<template>
-  <div class="wrapper">
-    <h1>我是父组件</h1>
-    <h3>下面是授权组件的基本用法</h3>
-    <Oauth :config="config" ref="oauth" @login="login" @logout="logout">
-        <div slot="content" slot-scope="oauth">
-            <div v-if="oauth.user">
-                <p>hi，{{oauth.user.nickname}}，欢迎回来！<span @click="toLogout" style="color: #f00">登出</span></p>
-                <p>你的头像：<mip-img :src="oauth.user.headimgurl" width="32" height="32"></mip-img></p>
-            </div>
-            <div v-else>你还没有<span @click="toLogin" style="color: #f00">登录</span>哦</div>
-        </div>
-    </Oauth>
-  </div>
-</template>
-
-
-<script>
-import Oauth from '../mip-inservice-login/mip-inservice-login';
-
-export default {
-    components: {
-        Oauth
-    },
-    data() {
-        return {
-            // mip-inservice-login组件的属性数据
-            config: {
-                appid: '熊掌号ID',
-                clientId: '熊掌号开发者ID',
-                endpoint: '后端endpoint'
-            }
-        }
-    },
-    methods: {
-        toLogin() {
-            console.log('去登录');
-            // 调用 mip-inservice-login组件的登录方法
-            this.$refs.oauth.login();
-        },
-        toLogout() {
-            console.log('去登出');
-            // 调用 mip-inservice-login组件的登录方法
-            this.$refs.oauth.logout();
-        },
-        login(data) {
-            // 收到mip-inservice-login组件的登录事件
-            console.log('已登录');
-        },
-        logout() {
-            // 收到mip-inservice-login组件的登出事件
-            console.log('已登出')
-        }
-    }
-}
-
-</script>
-
-```
-
-注意：为了能够在父组件内调用到子组件`mip-inservice-login`的登录/登出 方法，必须在使用组件时，指定其 `ref`的值，
-
-```html
-<Oauth ref="oauth" :config="config" @login="login" @logout="logout"></Oauth>
-```
-
-然后通过父组件的`$refs`获取到授权组件的引用，如：
-
-```javascript
-this.$refs.oauth.logout();
-```
-
-
-
-### 实现个人中心
-
-个人中心需要自动登录的功能
-
-父容器`mip-container-auto`代码示意：
-
-
-```html
-<template>
-  <div class="wrapper">
-    <Oauth :config="config" ref="oauth" @login="login" @logout="logout">
-        <div slot="content" slot-scope="oauth">
-            <div v-if="oauth.user">
-                <p>hi，{{oauth.user.nickname}}，你上次登录时间为{{oauth.user.lasttime}}</p>
-                <p><a href="/order/list.html" data-type="mip">订单中心</a></p>
-                <p @click="toLogout">退出</p>
-            </div>
-            <div v-else>你还没有<span @click="toLogin" style="color: #f00">登录</span>哦</div>
-        </div>
-    </Oauth>
-  </div>
-</template>
-
-
-<script>
-import Oauth from '../mip-inservice-login/mip-inservice-login';
-
-export default {
-    components: {
-        Oauth
-    },
-    data: function () {
-        return {
-            // mip-inservice-login组件的属性数据
-            config: {
-                appid: '熊掌号ID',
-                clientId: '熊掌号开发者ID',
-                endpoint: '后端endpoint',
-                // 设置自动登录
-                autologin: true
-            }
-        }
-    },
-    methods: {
-        toLogin() {
-            console.log('去登录');
-            // 调用 mip-inservice-login组件的登录方法
-            this.$refs.oauth.login();
-        },
-        toLogout() {
-            console.log('去登出');
-            // 调用 mip-inservice-login组件的登录方法
-            this.$refs.oauth.logout();
-        },
-        login(data) {
-            // 收到mip-inservice-login组件的登录事件
-            console.log('已登录');
-        },
-        logout() {
-            // 收到mip-inservice-login组件的登出事件
-            console.log('已登出')
-        }
-    }
-}
-
-</script>
-```
-
-### 和mip-bind 配合使用
-
-在html中使用mip-data
+与`mip-bind`配合，在html中使用`mip-data`
 
 ```html
 <mip-data>
     <script type="application/json">
         {
-            "user": {}
+            "info": {},
+            "config": {
+                appid: '熊掌号id',
+                clientId: '熊掌号开发者id',
+                id: 'info',
+                autologin: false,
+                endpoint: 'https://www.example.com/api/userinfo.php',
+                isGlobal: false
+            }
         }
     </script>
 </mip-data>
-<mip-container m-bind:user="user"></mip-container>
+<mip-my-example id="example" m-bind:info="info"></mip-my-example>
 
-<script src="https://c.mipcdn.com/static/v1/mip-bind/mip-bind.js"></script>
-<script src="/mip-container/mip-container.js"></script>
+<mip-inservice-login
+    id="log"
+    m-bind:config="config"
+    on="login:example.login logout:example.exit"
+>
+</mip-inservice-login>
+
+<button on="tap:log.login">登录</button>
+<button on="tap:log.logout">退出</button>
 
 ```
 
-mip-container代码示例
-
+`mip-my-example`组件代码示例：
 
 ```html
 <template>
-  <div class="wrapper">
-    <Oauth :config="config" ref="oauth" @login="login" @logout="logout">
-        <div slot="content" slot-scope="oauth">
-            <p>是否登录：<input :checked="user.isLogin" type="checkbox" disabled><span>{{user.isLogin ? 'yes' : 'no'}}</span>
-            </p>
-            <p>会话标识：<span>{{user.sessionId ? user.sessionId : '空'}}</span></p>
-            <p>名字：{{user.userInfo ? user.userInfo.nickname : '空'}}</p>
-        </div>
-    </Oauth>
-  </div>
+    <div class="wrap">
+        <h3>这是一个渲染片段示例</h3>
+        <p>默认未登录，由用户交互（如点击按钮）触发登录/登出</p>
+        <hr />
+        <div v-if="info.isLogin">hi，{{info.userInfo.nickname}}，欢迎回来！<span  style="color:#f00;" on="tap:log.logout">退出</span></div>
+        <div v-else>你没有<span  style="color:#f00;" on="tap:log.login">登录</span>哦。</div>
+    </div>
 </template>
 
 
 <script>
-import Oauth from '../mip-inservice-login/mip-inservice-login';
-
 export default {
-    components: {
-        Oauth
-    },
     props: {
-        user: {
-            type: Object
+        info: {
+            type: Object,
+            required: true
         }
     },
-    data: function () {
-        return {
-            // mip-inservice-login组件的属性数据
-            config: {
-                appid: '熊掌号ID',
-                clientId: '熊掌号开发者ID',
-                endpoint: '后端endpoint',
-                // 与mip-data中数据的键名一样
-                id: 'user'
-            }
-        }
-    },
-    methods: {
-        toLogin() {
-            console.log('去登录');
-            // 调用 mip-inservice-login组件的登录方法
-            this.$refs.oauth.login();
-        },
-        toLogout() {
-            console.log('去登出');
-            // 调用 mip-inservice-login组件的登录方法
-            this.$refs.oauth.logout();
-        },
-        login(data) {
-            // 收到mip-inservice-login组件的登录事件
-            console.log('已登录');
-        },
-        logout(data) {
-            // 收到mip-inservice-login组件的登出事件
-            console.log('已登出')
-        }
+    mounted () {
+        // 自定义login事件
+        this.$element.customElement.addEventAction('login', event => {
+            // 这里可以输出登录之后的数据
+
+            // 获取用户信息
+            event.userInfo;
+            // 后端交互会话标识
+            event.sessionId;
+        });
+        // 自定义exit事件
+        this.$element.customElement.addEventAction('exit', event => {
+            console.log('登出了');
+        });
     }
 }
-
 </script>
-
 ```
-
-
-
 
 和`mip-bind`配合使用注意：
 
-1. `mip-bind.js` 必须在登录组件前引用
-1. 必须在`mip-inservice-login`的`config`属性里设置组件`id` 的值
-2. 必须在 `<mip-data>` 配置数据中设置一个以组件 `id` 为键名（`key`）的对象数据
-3. 在请求登录（`type=login`）、检查是否登录（`type=check`）、退出（`type=logout`）成功时，会调用 `MIP.setData` 设置数据，数据结构为：
+1. 必须在`mip-inservice-login`组件的`config`属性里设置`id` 的值，该值与组件id的值可以不一样， 如示例中的`info`。
+2. 必须在 `<mip-data>` 配置数据中设置一个以`mip-inservice-login`的`config`属性里的`id` 为键名（`key`）的对象数据， 如示例中的`info`。
+3. 如果这个数据是全局共享数据，需要设置`mip-inservice-login`的`config`里的`isGlobal`为`true`。共享数据的个用法，请参照文档[MIP 2.0 的数据和应用](https://github.com/mipengine/mip2/blob/master/docs/components/data-and-method.md)。
+4. 在请求登录（`type=login`）、检查是否登录（`type=check`）、退出（`type=logout`）成功时，会调用 `MIP.setData` 设置数据，数据结构为：
 
 ```json
 {
-    "组件id": {
+    "id": {
         "isLogin": Boolean,
         "userInfo": Response.data,
         "sessionId": String
@@ -274,6 +109,53 @@ export default {
 }
 ```
 
+
+### 实现个人中心
+
+个人中心需要自动登录的功能
+
+
+```html
+<mip-data>
+    <script type="application/json">
+        {
+            "info": {
+                userInfo: {
+                    "nickname": "",
+                    "province": ""
+                }
+            },
+            "config": {
+                appid: '熊掌号id',
+                clientId: '熊掌号开发者id',
+                id: 'info',
+                autologin: true,
+                endpoint: 'https://www.example.com/api/userinfo.php',
+                isGlobal: false
+            }
+        }
+    </script>
+</mip-data>
+
+<mip-inservice-login id="log" m-bind:config="config"></mip-inservice-login>
+
+<ul>
+    <li>
+        hi，<span m-text="info.userInfo.nickname"></span>，你上次登录地点为 <span m-text="info.userInfo.province"></span>。
+    </li>
+    <li>
+        <a href="/order/list.html" data-type="mip">订单中心</a>
+    </li>
+    <li>
+        <div on="tap:log.logout">退出</div>
+    </li>
+</ul>
+
+```
+
+说明：
+
+1. 将`mip-inservice-login`组件的`config`属性里，`autologin`设置为`true`。
 
 ## 属性
 
@@ -285,15 +167,17 @@ export default {
 
 类型： `Object`
 
-示例：配置项的示例说明如下，
+示例：通过`m-bind:config="配置数据"`将该属性传入组件，配置数据的示例说明如下，
 
 ```json
 {
     "appid": "12345678", // 熊掌号id，string, 必须
     "clientId": "R6HzvBSGAvkFMUrhELUZayfH2No86t1k", // 熊掌号开发者client_id， string，必须
-    "id": "demo", // 页面全局唯一 id ，用来在其他元素中使用登录组件功能的入口， 使用mip-bind时必须
+    "id": "demo", // 数据的键名（key），当登录信息发生变更时，将更新mip-data里已该值为键名（`key`）的对象数据
+    "isGlobal": false, // 需要更新的mip-data里已id为键名的对象数据是否为 全局数据，默认值false
     "autologin": false, // 页面打开后未登录状态下自动跳转登录，常用于必须登录状态下才可以访问的页面 , boolean, 默认值false
     "endpoint": "https://api.example.com/user/info.php", // 后端源站数据接口链接，需要使用 `https://` 或者 `//` 开头的源站地址，需要接口支持 HTTPS ，使用 POST 形式发送数据 , 必须
+    "redirectUri": "https://example.com/xxx.html" // 登录成功后的重定向地址，不传默认跳回原页面
 }
 
 ```
@@ -303,29 +187,38 @@ export default {
 
 ## 方法和事件
 
-### 登录方法 - `vm.$refs.组件ref.login()`
+### 登录方法 - `<div on="tap:登录组件id.login(redirectUrl, replace)">`
 
 在其他元素中绑定点击时打开登录弹层/跳转登录页面。
 
-注意：该方法会根据当前用户`登录百度账号`的状态而打开登录弹层（已登录）或者 重新打开一个熊掌号登录页面（未登录），在登录成功后会透传 `code` 返回到当前页面，组件重新使用 `code` 参数去请求后端接口，这将导致当前页面未存储的数据丢失，如：表单用户填写内容。
+该方法接收一个参数：
 
-### 登出方法 - `vm.$refs.组件ref.logout()`
+ `redirectUri`: string, 登录成功后的跳转地址，该地址必须与当前页面`同源`，可以覆盖`config.redirectUri`的值。
+
+
+注意：
+
+1. 该方法会根据当前用户`登录百度账号`的状态而打开登录弹层（已登录）或者 重新打开一个熊掌号登录页面（未登录），在登录成功后会透传 `code` 跳转到指定的页面，组件重新使用 `code` 参数去请求后端接口，这将导致当前页面未存储的数据丢失，如：表单用户填写内容。
+2. 在已经登录成功的情况下，再次触发login方法，该方法不会执行。
+
+
+### 登出方法 - `<div on="tap:登录组件id.logout">`
 
 在其他元素中绑定点击时请求退出接口。
 
 注意：该方法不会跳转页面，异步的调用 `endpoint` 接口去退出，并触发登录组件元素中的 `logout:其他组件id.其他组件行为` 事件。
 
-### 登录成功事件 - `<mip-inservice-login @login="其他组件行为">`
+### 登录成功事件 - `<mip-inservice-login on="login:其他组件id.其他组件行为">`
 
 在登录成功时调用其他组件的组件行为。
 
-### 登录失败事件 - `<mip-inservice-login @error="其他组件行为">`
+### 登录失败事件 - `<mip-inservice-login on="error:其他组件id.其他组件行为">`
 
 在登录请求后端返回值错误时触发。
 
-### 登出成功事件 - `<mip-inservice-login @logout="其他组件行为">`
+### 登出成功事件 - `<mip-inservice-login on="logout:其他组件id.其他组件行为">`
 
-在退出登录时（由 `vm.$refs.组件ref.logout()` 调用触发）调用其他组件的组件行为。
+在退出登录时（由 `on="tap:组件id.logout"` 调用触发）调用其他组件的组件行为。
 
 ## 注意事项
 
@@ -350,7 +243,7 @@ export default {
 - `Access-Control-Allow-Credentials: true`
 - `Access-Control-Allow-Origin: 对应请求的 origin`
 
-注意：出于安全考虑请对来源的 `origin` 进行判断，并正确的返回 `Access-Control-Allow-Origin` 字段，不能为 `*` 。
+**注意：** 出于安全考虑请对来源的 `origin` 进行判断，并正确的返回 `Access-Control-Allow-Origin` 字段，不能为 `*` 。
 
 <a id="data" name="data" href="#data"></a>
 ### 3. 后端数据说明
@@ -361,7 +254,7 @@ export default {
 
 名称 | 说明
 --- | ---
-请求链接 | `config.endpoint`
+请求链接 | `config.endpoint`，必须支持`https`
 请求类型 | POST
 请求参数 | `{type: 'check', sessionId: '会话凭证'}`
 
@@ -382,7 +275,7 @@ export default {
     "status": 0,
     "sessionId": "会话凭证，必须返回",
     "data": {
-        "name": "mipengine",
+        "nickname": "mipengine",
         "key2": "value2"
     }
 }
@@ -396,7 +289,7 @@ export default {
 
 名称 | 说明
 --- | ---
-请求链接 | `config.endpoint`
+请求链接 | `config.endpoint`，必须支持`https`
 请求类型 | POST
 请求参数 | `{type: 'login', code: '熊掌号授权code', redirect_uri: '回调链接'}`
 
@@ -409,7 +302,7 @@ export default {
     "status": 0,
     "sessionId": "会话凭证，必须返回",
     "data": {
-        "name": "mipengine",
+        "nickname": "mipengine",
         "key2": "value2"
     }
 }
@@ -428,7 +321,7 @@ export default {
 
 名称 | 说明
 --- | ---
-请求链接 | `config.endpoint`
+请求链接 | `config.endpoint`，必须支持`https`
 请求类型 | POST
 请求参数 | `{type: 'logout'}`
 

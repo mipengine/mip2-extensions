@@ -4,7 +4,7 @@
  */
 
 import './mip-shell-inservice.less'
-
+import payPlaceholder from '../../static/pay-placeholder.png'
 // 站点数据请求url
 const URL_SITE = 'https://xiongzhang.baidu.com/opensc/cambrian/card'
 const fetchJsonp = window.fetchJsonp || {}
@@ -15,6 +15,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
 
     this.alwaysReadConfigOnLoad = false
     this.transitionContainsHeader = false
+    this.scrollBoundary()
   }
 
   /**
@@ -24,7 +25,6 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    */
   async processShellConfig (shellConfig) {
     let headerInfo = {
-      title: document.title
     }
     let isasync
 
@@ -48,8 +48,9 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
         text: '取消'
       }]
       if (view.isIndex) {
-        header.title = headerInfo.title || ''
-        header.logo = headerInfo.logo || ''
+        header.title = headerInfo.title || header.title || document.title || ''
+        header.logo = headerInfo.logo || payPlaceholder
+        headerInfo.title = header.title
       }
     })
 
@@ -73,17 +74,19 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
 
     shellConfig.routes.forEach(routeConfig => {
       let { header, view } = routeConfig.meta
+      header.buttonGroup = []
       if (view.isIndex) {
         header.title = headerInfo.title
         header.logo = headerInfo.logo
-      }
-
-      header.buttonGroup = []
-      if (headerInfo.serviceUrl) {
+      } else {
         header.buttonGroup.push({
           name: 'indexPage',
           text: '首页'
         })
+      }
+
+      if (headerInfo.serviceUrl) {
+
         // 暂时屏蔽分享功能
         // header.buttonGroup.push({
         //   name: 'share',
@@ -105,7 +108,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     this.headerInfo = headerInfo
     this.updateShellConfig(shellConfig)
     if (isasync) {
-      this.refreshShell({ pageId: window.MIP.viewer.page.pageId })
+      this.refreshShell({ pageId: window.MIP.viewer.page.pageId, asyncRefresh: true })
     }
   }
   /**
@@ -139,6 +142,7 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     let cambrianUrl = this.headerInfo.cambrianUrl
     let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^http(s)?:\/\//, ''))}`
     if (MIP.standalone) {
+      mipUrl = `${mipUrl}?title=${this.headerInfo.title}`
       MIP.viewer.open(mipUrl, { isMipLink: false })
     } else {
       MIP.viewer.sendMessage('loadiframe', { 'url': cambrianUrl, title: this.headerInfo.title })
@@ -219,6 +223,47 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    */
   indexPageAction () {
     let serviceUrl = this.headerInfo.serviceUrl
-    MIP.viewer.open(serviceUrl, { isMipLink: true, replace: true })
+    MIP.viewer.open(MIP.util.makeCacheUrl(serviceUrl), { isMipLink: true, replace: true })
+  }
+
+  scrollBoundary () {
+    let touchStartEvent
+    let scrollaBoundaryTouch = document.createElement('div')
+    scrollaBoundaryTouch.setAttribute('mip-shell-scrollboundary', true);
+    [].slice.call(document.body.children).forEach((child) => {
+      if (/^(SCRIPT|IFRAME|MIP-SHELL-INSERVICE|MIP-DATA)/.test(child.nodeName)) {
+        return
+      }
+      scrollaBoundaryTouch.appendChild(child)
+    })
+    document.body.appendChild(scrollaBoundaryTouch)
+    scrollaBoundaryTouch.addEventListener('touchstart', (e) => {
+      touchStartEvent = e
+    })
+
+    let docRect = MIP.util.rect.getElementRect(document.documentElement)
+    scrollaBoundaryTouch.addEventListener('touchmove', (e) => {
+      let touchRect = e.targetTouches[0]
+      let startTouchReact = touchStartEvent.targetTouches[0]
+
+      docRect = docRect.height ? docRect : MIP.util.rect.getElementRect(document.documentElement)
+
+      let scrollTop = document.body.scrollTop || MIP.util.rect.getScrollTop()
+      let scrollHeight = MIP.util.rect.getElementRect(scrollaBoundaryTouch).height
+      let offsetHeight = docRect.height
+
+      let isprevent = (
+        touchRect.pageY >= startTouchReact.pageY &&
+          touchRect.clientY > startTouchReact.clientY &&
+          scrollTop < 5) ||
+          (
+            touchRect.pageY < startTouchReact.pageY &&
+            scrollTop + offsetHeight >= scrollHeight
+          )
+      if (isprevent) {
+        e.preventDefault()
+      }
+      e.stopPropagation()
+    })
   }
 }

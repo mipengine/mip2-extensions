@@ -143,8 +143,8 @@
           class="mipPayBtn btn"
           @click="comfirmPayAction">确认支付¥{{ payConfig.fee }}</a>
         <div
-          v-if="!selectId"
-          class="mipPayBtn loading"> 请更换支付方式 </div>
+          v-if="!selectId && !errorInfo"
+          class="mipPayBtn loading"> 选择支付方式 </div>
         <div
           v-if="!errorInfo && loading"
           class="mipPayBtn loading">确认中...</div>
@@ -243,7 +243,8 @@ export default {
       payInfos: payInfos,
       requestDataInfo: null,
 
-      isWechatApp: platform.isWechatApp()
+      isWechatApp: platform.isWechatApp(),
+      paySucRurl: ''
     }
   },
   mounted () {
@@ -252,13 +253,17 @@ export default {
     })
 
     // 微信跳转redirect， 自动弹窗
-    if (storage.get('mipPayRedirect')) {
+    this.paySucRurl = storage.get('mipPayRedirect')
+    if (this.paySucRurl) {
       this.toggleVisible(true, 'visibleConfirm')
       storage.rm('mipPayRedirect')
     }
 
     // 初使化支付默认支付方式
     ['baifubao', 'alipay', 'weixin'].some((pid) => {
+      if (platform.isWechatApp() && pid === 'alipay') {
+        return false
+      }
       if (this.payConfig.endpoint[pid]) {
         this.selectId = pid
         return true
@@ -317,11 +322,22 @@ export default {
       this.payAction()
     },
 
+    /**
+     * 确认支付动作
+     * 微信内浏览器 截获 a 执行
+     *
+     * @param {Object} e 事件数据
+     */
     comfirmPayAction (e) {
-      if (this.selectId === 'weixin' && this.getWechatVer() >= 5.0) {
-        e.preventDefault()
-        this.weixinRedierct()
-        return false
+      if (this.selectId === 'weixin') {
+        if (this.getWechatVer() >= 5.0) {
+          e.preventDefault()
+          this.weixinRedierct()
+          return false
+        } else {
+          // 微信外浏览器吊起微信 种值返回标识
+          storage.set('mipPayRedirect', this.payConfig.redirectUrl, 10000)
+        }
       }
     },
 
@@ -391,7 +407,7 @@ export default {
      * 支付成功后跳转
      */
     goPayRedirectUrl () {
-      MIP.viewer.open(this.payConfig.redirectUrl, { replace: true })
+      MIP.viewer.open(this.paySucRurl || this.payConfig.redirectUrl, { replace: true })
     },
     /**
      * 错误显示函数
@@ -401,7 +417,8 @@ export default {
     setError (error) {
       this.selectId = ''
       this.errorInfo = error
-      setTimeout(() => {
+      clearTimeout(this.errorTimer)
+      this.errorTimer = setTimeout(() => {
         this.errorInfo = ''
       }, 2000)
     },
