@@ -7,7 +7,7 @@
     "dev": "mip2 dev -i",
     "build": "rm -rf dist && mip2 build -i",
     "site": "npm run build && node tools/site",
-    "lint": "eslint {**/*,**}.{vue,js}"
+    "lint": "eslint --ext .vue,.js ."
   },
   "husky": {
     "hooks": {
