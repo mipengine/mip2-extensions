@@ -1,7 +1,7 @@
 // 默认配置
 let DEFAULTS = {
-    theme: 'default',
-    fontSize: 3
+  theme: 'default',
+  fontSize: 3
 }
 let STORAGE_KEY = 'mip-shell-config'
 let CustomStorage = MIP.util.customStorage
@@ -10,24 +10,23 @@ let extend = MIP.util.fn.extend
 
 // 获取默认配置及用户历史配置
 function __getConfig () {
-    let config = DEFAULTS;
-    try {
-        config = extend(config, JSON.parse(storage.get(LOCAL_KEY)));
-    }
-    catch (e) {}
-    return config;
+  let config = DEFAULTS
+  try {
+    config = extend(config, JSON.parse(storage.get(STORAGE_KEY)))
+  } catch (e) {}
+  return config
 };
 
 function __setConfig (config) {
-    config = extend(__getConfig(), config);
-    storage.set(STORAGE_KEY, JSON.stringify(config));
-    console.log('__setConfig ', config)
-    if (config.theme) {
-        document.documentElement.setAttribute('mip-shell-xiaoshuo-theme', config.theme);
-    }
-    if (config.fontSize) {
-        document.documentElement.setAttribute('mip-shell-xiaoshuo-font-size', config.fontSize);
-    }
+  config = extend(__getConfig(), config)
+  storage.set(STORAGE_KEY, JSON.stringify(config))
+  console.log('__setConfig ', config)
+  if (config.theme) {
+    document.documentElement.setAttribute('mip-shell-xiaoshuo-theme', config.theme)
+  }
+  if (config.fontSize) {
+    document.documentElement.setAttribute('mip-shell-xiaoshuo-font-size', config.fontSize)
+  }
 };
 
 // 更多设置：字体大小，背景颜色
@@ -36,7 +35,7 @@ export const settingHtml = `
         <ul>
             <li class="reduce" on="tap:xiaoshuo-shell.changeFont(smaller)">A-</li>
             <li class="progress">
-            	<input type="range" step="0.5" min="1" max="6" value="${__getConfig().fontSize}">
+                <input type="range" step="0.5" min="1" max="6" value="${__getConfig().fontSize}">
             </li>
             <li class="increase" on="tap:xiaoshuo-shell.changeFont(bigger)">A+</li>
         </ul>
@@ -51,76 +50,76 @@ export const settingHtml = `
 
 // 改变背景色
 export class Mode {
-	// TODO 可以支持config 的配置，配置颜色
-	constructor () {
-		// 保存各个按钮
-		this.nightBtn = document.querySelector('.mip-shell-footer .night-mode');
-		this.lightBtn = document.querySelector('.mip-shell-footer .light-mode');
-		this.defaultBtn = document.querySelector('.mip-shell-footer .default-mode');
-		this.greenBtn = document.querySelector('.mip-shell-footer .green-mode');
-		this.paperBtn = document.querySelector('.mip-shell-footer .paper-mode');
-		console.log('在背景色初始化中，修改背景为', JSON.stringify(__getConfig()))
-		// __setConfig(__getConfig())
-	}
-	// 绑定点击事件
-	update (e, mode) {
-		if(mode) {
-			__setConfig({'theme': mode})
-		} else {
-			__setConfig(__getConfig())
-		}		
-	}
+  // TODO 可以支持config 的配置，配置颜色
+  constructor () {
+    // 保存各个按钮
+    this.nightBtn = document.querySelector('.mip-shell-footer .night-mode')
+    this.lightBtn = document.querySelector('.mip-shell-footer .light-mode')
+    this.defaultBtn = document.querySelector('.mip-shell-footer .default-mode')
+    this.greenBtn = document.querySelector('.mip-shell-footer .green-mode')
+    this.paperBtn = document.querySelector('.mip-shell-footer .paper-mode')
+    console.log('在背景色初始化中，修改背景为', JSON.stringify(__getConfig()))
+    // __setConfig(__getConfig())
+  }
+  // 绑定点击事件
+  update (e, mode) {
+    if (mode) {
+      __setConfig({'theme': mode})
+    } else {
+      __setConfig(__getConfig())
+    }
+  }
 }
 
 // 改变字体大小
 export class FontSize {
-	constructor (element) {
-		this.element = element
-		this.fontInput = element.querySelector('input[type="range"]');
-		this.min = parseInt(this.fontInput.getAttribute('min'))
-		this.max = parseInt(this.fontInput.getAttribute('max'))
-	}
-	// 获取当前字体大小
-	_getInputValue () {
-		return parseFloat(this.fontInput.value)
-	}
-	// 调整滑块位置和字体大小
-	_setInputValue (value) {
-		if (value > this.max || value < this.min) {
-			return
-		}
-		this.fontInput.value = value
-		__setConfig({
-            fontSize: value
-        });
-	}
-	// 绑定点击事件
-	changeFont (e, data) {
-		if (data === 'bigger') {
-			// 点击增大按钮
-			this._setInputValue(this._getInputValue() + 0.5)
-		} else if (data === 'smaller') {
-			// 点击减小按钮
-			this._setInputValue(this._getInputValue() - 0.5)
-		}
-	}
-	// 绑定字体大小改变事件
-	bindDragEvent () {
-		var me = this
-		// 拖动事件
-		this.element.addEventListener('touchmove', function() {
-			me._setInputValue(me._getInputValue())
-		})
-		// 点击事件
-		this.element.addEventListener('click', function() {
-			me._setInputValue(me._getInputValue())
-		})
-	}
-	// 显示小说字体设置bar
-	showFontBar(e) {
-		document.querySelector('.mip-xiaoshuo-settings').classList.add('show')
-	}
-	hideFontBar(e) {
-		document.querySelector('.mip-xiaoshuo-settings').classList.remove('show')
-	}
+  constructor (element) {
+    this.element = element
+    this.fontInput = element.querySelector('input[type="range"]')
+    this.min = parseInt(this.fontInput.getAttribute('min'))
+    this.max = parseInt(this.fontInput.getAttribute('max'))
+  }
+  // 获取当前字体大小
+  _getInputValue () {
+    return parseFloat(this.fontInput.value)
+  }
+  // 调整滑块位置和字体大小
+  _setInputValue (value) {
+    if (value > this.max || value < this.min) {
+      return
+    }
+    this.fontInput.value = value
+    __setConfig({
+      fontSize: value
+    })
+  }
+  // 绑定点击事件
+  changeFont (e, data) {
+    if (data === 'bigger') {
+      // 点击增大按钮
+      this._setInputValue(this._getInputValue() + 0.5)
+    } else if (data === 'smaller') {
+      // 点击减小按钮
+      this._setInputValue(this._getInputValue() - 0.5)
+    }
+  }
+  // 绑定字体大小改变事件
+  bindDragEvent () {
+    let me = this
+    // 拖动事件
+    this.element.addEventListener('touchmove', function () {
+      me._setInputValue(me._getInputValue())
+    })
+    // 点击事件
+    this.element.addEventListener('click', function () {
+      me._setInputValue(me._getInputValue())
+    })
+  }
+  // 显示小说字体设置bar
+  showFontBar (e) {
+    document.querySelector('.mip-xiaoshuo-settings').classList.add('show')
+  }
+  hideFontBar (e) {
+    document.querySelector('.mip-xiaoshuo-settings').classList.remove('show')
+  }
 }
