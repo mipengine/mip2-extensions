@@ -1,0 +1,480 @@
+/*@darkBgColor: rgb(0, 0, 0);
+@darkFontColor: rgb(60, 60, 60);
+@darkBorderColor: rgb(45, 45, 45);*/
+/*页面样式*/
+body {
+    padding-top: 15px;
+    padding-left: 17px;
+    padding-right: 17px;
+    line-height: 1.5;
+}
+
+
+
+/* 控制栏-底bar元素*/
+.mip-shell-footer-wrapper {
+  z-index: 20002!important;
+  height: 150px;
+  transform: translateY(100%);
+  transition: transform .35s ease
+}
+
+.mip-shell-footer-wrapper.show {
+  transform: translateY(0);
+}
+
+.mip-shell-footer {
+    height: 150px;
+    background: white;
+    .upper {
+      height: 50px;
+      overflow: hidden;
+    }
+
+    .page-button.disabled {
+        opacity: 0.5;
+    }
+    .page-button {
+      float: left;
+      line-height: 50px;
+      margin: 0 20px;
+    }
+
+    .page-button.page-next {
+      float: right;
+    }
+
+    .button-wrapper {
+      display: flex;
+      height: 99px;
+    }
+
+    .button-wrapper .button {
+      flex: 1;
+      height: 99px;
+      line-height: 99px;
+      text-align: center;
+    }
+    .bg-button {
+        display: block;
+    }
+}
+
+/* 业务样式 - 侧边栏*/
+#catalog-sidebar {
+  padding: 20px;
+  min-width: 70%;
+  .mip-catalog-btn {
+    display: block;
+    padding: 10px 0;
+  }
+}
+
+mip-fixed.mip-shell-catalog-wrapper {
+    z-index: 20002!important;
+    width: 70%;
+    min-width: 200px;
+    transform: translateX(-100%);
+    transition: transform .35s ease;
+    bottom: 0;
+    background: white;
+    overflow: scroll;
+    &.show {
+        transform: translateX(0);
+    }
+    .mip-shell-catalog {
+        padding: 20px 0;
+    }
+    .mip-catalog-btn {
+        display: block;
+        padding: 10px 20px;
+    }
+}
+
+
+/*原小说shell*/
+
+
+/* flex布局 */
+.mip-shell-xiaoshuo-flex {
+  width: auto;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-box-pack: justify;
+  -webkit-box-align: stretch;
+  -webkit-box-lines: single;
+  display: -webkit-flex;
+  -webkit-flex-direction: row;
+  -webkit-justify-content: space-between;
+  -webkit-align-items: stretch;
+  -webkit-align-content: flex-start;
+  -webkit-flex-wrap: nowrap;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+/* 左右填充 */
+.mip-shell-xiaoshuo-padding {
+  padding-left: 17px;
+  padding-right: 17px;
+}
+
+.optoggle1 {
+  opacity: 1;
+}
+
+.optoggle0 {
+  opacity: 0;
+}
+
+.transiton-init {
+  transition: all ease 240ms;
+} /* 底部控制条 */
+.mip-shell-xiaoshuo-control {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 -6px 9px 0 rgba(0, 0, 0, 0.10);
+  z-index: 200;
+}
+
+/* 分页浮层 */
+.mip-shell-xiaoshuo-control-page {
+  .mip-shell-xiaoshuo-flex;
+  .mip-shell-xiaoshuo-padding;
+  -webkit-transition: all ease 240ms;
+  transition: all ease 240ms;
+  border-bottom: 1px solid;
+  border-bottom-color: #f1f1f1;
+  height: 54px;
+  line-height: 54px;
+  .disabled {
+    -webkit-transition: all ease 240ms;
+    transition: all ease 240ms;
+    color: #a0a0a0;
+    cursor: not-allowed;
+  }
+}
+
+.mip-shell-xiaoshuo-control-page.page-end {
+  border-bottom: 0;
+  margin: 0 -17px;
+}
+/* 异步按钮浮层 */
+.mip-shell-xiaoshuo-control-nav ul {
+  .mip-shell-xiaoshuo-flex;
+  padding: 20px;
+  .mip-shell-xiaoshuo-padding;
+}
+/* 主题浮层 */
+.mip-shell-xiaoshuo-control-theme {
+  padding-bottom: 30px;
+  .mip-shell-xiaoshuo-padding;
+  ul {
+    .mip-shell-xiaoshuo-flex;
+    margin-right: -1.03092784%;
+    margin-left: -1.03092784%;
+  }
+  li {
+    position: relative;
+    padding-right: 1.03092784%;
+    padding-left: 1.03092784%;
+    width: 33.33333333%;
+    -webkit-box-flex: 4;
+    -webkit-flex: 4 4 auto;
+  }
+  span {
+    height: 38px;
+    display: block;
+    width: 100%;
+    border-radius: 3px;
+  }
+  .theme-default {
+    background-color: #eee;
+  }
+  .theme-green {
+    background-color: #D7E0CB;
+  }
+  .theme-paper {
+    background-color: #ECDABB;
+  }
+}
+
+/* 更多设置 */
+.mip-xiaoshuo-settings {
+    height: 100%;
+    background: white;
+    position: relative;
+    transition: transform 240ms;
+}
+.mip-xiaoshuo-settings.show {
+    transform: translateY(-100%);
+}
+
+.mip-shell-xiaoshuo-control-fontsize {
+  padding: 20px 30px;
+  .mip-shell-xiaoshuo-padding;
+  ul {
+    .mip-shell-xiaoshuo-flex;
+  }
+  li {
+
+    padding: 10px 0;
+    cursor: pointer;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    display: block;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 2px;
+    background-color: #f1f1f1;
+    line-height: 2px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    background-color: #000;
+    border-radius: 50%;
+  }
+
+  .progress {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    margin-top: 15px;
+  }
+  .reduce {
+    padding-right: 20px;
+    font-size: 26px;
+    cursor: none;
+  }
+  .increase {
+    padding-left: 20px;
+    font-size: 26px;
+    cursor: none;
+  }
+} /* 内容 */
+
+/* 换色和变字号 */
+html[mip-shell-xiaoshuo-font-size="1"] body,
+html[mip-shell-xiaoshuo-font-size="1"] body p {
+  font-size: 12px;
+}
+
+html[mip-shell-xiaoshuo-font-size="1.5"] body,
+html[mip-shell-xiaoshuo-font-size="1.5"] body p {
+  font-size: 13px;
+}
+
+html[mip-shell-xiaoshuo-font-size="2"] body,
+html[mip-shell-xiaoshuo-font-size="2"] body p {
+  font-size: 14px;
+}
+
+html[mip-shell-xiaoshuo-font-size="2.5"] body,
+html[mip-shell-xiaoshuo-font-size="2.5"] body p {
+  font-size: 15px;
+}
+
+html[mip-shell-xiaoshuo-font-size="3"] body,
+html[mip-shell-xiaoshuo-font-size="3"] body p {
+  font-size: 16px;
+}
+
+html[mip-shell-xiaoshuo-font-size="3.5"] body,
+html[mip-shell-xiaoshuo-font-size="3.5"] body p {
+  font-size: 18px;
+}
+
+html[mip-shell-xiaoshuo-font-size="4"] body,
+html[mip-shell-xiaoshuo-font-size="4"] body p {
+  font-size: 19px;
+}
+
+html[mip-shell-xiaoshuo-font-size="4.5"] body,
+html[mip-shell-xiaoshuo-font-size="4.5"] body p {
+  font-size: 20px;
+}
+
+html[mip-shell-xiaoshuo-font-size="5"] body,
+html[mip-shell-xiaoshuo-font-size="5"] body p {
+  font-size: 22px;
+}
+
+html[mip-shell-xiaoshuo-font-size="5.5"] body,
+html[mip-shell-xiaoshuo-font-size="5.5"] body p {
+  font-size: 26px;
+}
+
+html[mip-shell-xiaoshuo-font-size="6"] body,
+html[mip-shell-xiaoshuo-font-size="6"] body p {
+  font-size: 30px;
+}
+
+/* 换主题 */
+html {
+    body,
+    .mip-shell-footer,
+    .mip-shell-footer a {
+        -webkit-transition: background-color ease 480ms;
+        transition: background-color ease 480ms;
+    }
+    .mip-border, .mip-border:after {
+        -webkit-transition: border-color ease 480ms;
+        transition: border-color ease 480ms;
+    }
+    .light-mode {
+        display: none;
+    }
+}
+html[mip-shell-xiaoshuo-theme="green"] {
+    background-color: #d7e0cb;
+    color: #3B3F2F;
+
+}
+
+html[mip-shell-xiaoshuo-theme="default"] {
+    background-color: #eee;
+    color: #333;
+}
+
+html[mip-shell-xiaoshuo-theme="paper"] {
+    background-color: #ecdabb;
+    color: #412B1A;
+}
+
+html[mip-shell-xiaoshuo-theme="night"] {
+    body,
+    .mip-shell-catalog-wrapper,
+    .mip-shell-catalog-wrapper a {
+        background-color: #000;
+        color: #333;
+    }
+    .mip-shell-footer,
+    .mip-xiaoshuo-settings{
+        background-color: #191919;
+        color: #333;
+        input[type=range] {
+            opacity: 0.2;
+        }
+    }
+    .mip-shell-footer a,
+    .mip-xiaoshuo-settings a {
+        color: #333;
+    }
+    .mip-border, .mip-border:after {
+        border-color: #333!important;
+    }
+    .disabled { 
+        color: #333;
+    }
+    .night-mode {
+        display: none;
+    }
+    .light-mode {
+        display: block;
+    }
+    input[type=range]::-webkit-slider-thumb {
+        background-color: #999;
+    }
+}
+
+input[type=range]:focus::-ms-fill-lower {
+  background: linear-gradient(to right, #059CFA, white 100%, white);
+  background: linear-gradient(#059CFA, #059CFA) no-repeat;
+}
+
+input[type=range]:focus::-ms-fill-upper {
+  background: #ffffff;
+  background: linear-gradient(#059CFA, #059CFA) no-repeat;
+}
+
+@-webkit-keyframes anim {
+  0% {
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  }
+  100% {
+    opacity: .1;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  }
+}
+
+@-webkit-keyframes control {
+  0% {
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0)
+  }
+}
+
+@-webkit-keyframes themechange {
+  0% {
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0)
+  }
+
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0)
+  }
+}
+
+@-webkit-keyframes controlre {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0)
+  }
+
+  100% {
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0)
+  }
+}
+
+
+/* 主题按钮高亮*/
+
+html[mip-shell-xiaoshuo-theme="green"] .mip-shell-xiaoshuo-control-theme .theme-green,
+html[mip-shell-xiaoshuo-theme="default"] .mip-shell-xiaoshuo-control-theme .theme-default,
+html[mip-shell-xiaoshuo-theme="paper"] .mip-shell-xiaoshuo-control-theme .theme-paper {
+  border: 1px solid #000;
+}
+
+html[mip-shell-xiaoshuo-theme=default] footer {
+  background-color: #eee;
+  color: #333
+}
+
+html[mip-shell-xiaoshuo-theme=night] footer {
+  background-color: #000;
+  color: #333
+}
+
+html[mip-shell-xiaoshuo-theme=paper] footer {
+  background-color: #ecdabb;
+  color: #412b1a
+}
+
+html[mip-shell-xiaoshuo-theme=green] li[mode-default] {
+  display: none
+}
+
+html[mip-shell-xiaoshuo-theme=green] footer {
+  background-color: #d7e0cb;
+  color: #3b3f2f
+}
+
