@@ -97,8 +97,6 @@ export default {
     }
   },
   created () {
-    let index = +localStorage.getItem(VIDEOINDEX) + 1
-    alert('是否iframe：' + isIframed + '；页数：' + index)
     if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
       this.readContainerNoScroll()
     }
@@ -111,9 +109,6 @@ export default {
   methods: {
     isShow () {
       let isShow = isIframed && detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
-      console.log('Version：' + detector.getMobileSystemVersion())
-      console.log('第几次刷新：' + customStorage.get(VIDEOINDEX))
-      console.log('是否已经播放过：' + this.played)
       return !isShow
     },
     openVideo () {
