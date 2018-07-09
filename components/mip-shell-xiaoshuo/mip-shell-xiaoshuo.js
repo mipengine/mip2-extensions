@@ -20,10 +20,8 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
     // 基类方法：修改配置。从mip-shell 配置中获取 `config` 字段
     processShellConfig (shellConfig) {
-        console.log('processShellConfig')
-        // this.catalog = shellConfig.catalog
+        console.log(shellConfig)
         this.shellConfig = shellConfig
-        // this.footerTriggerButton = shellConfig['footer-button-area']
     }
 
     // 基类方法：绑定头部弹层事件。
@@ -36,6 +34,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
     // 自有方法：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
     _initAllObjects() {
+        console.log('_initAllObjects, 初始化所有对象')
         let configMeta = (this.shellConfig && this.shellConfig.routes[0].meta) || window.MIP.viewer.page.currentPageMeta
         // 创建底部 bar
         this.footer = new Footer(configMeta.footer)
@@ -74,6 +73,11 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
                 data: {'mode': mode }
             })
         })
+        // 并执行一次背景色/字体初始化
+        window.MIP.viewer.page.broadcastCustomEvent({
+            name: 'changeMode',
+            data: {'mode': mode }
+        })
         // 绑定底部弹层控制条拖动事件
         this.addEventAction('showFontAdjust', function (e) {
             this.fontSize.showFontBar(e)
@@ -106,7 +110,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
         this.fontSize.bindDragEvent()
         // 承接emit事件：根页面修改页面模式、背景
         window.addEventListener('changeMode', (e, data) => {
-            me.mode.change(e, e.detail[0].mode)
+            me.mode.update(e, e.detail[0].mode)
         })
         // 承接emit事件：根页面展示底部控制栏
         window.addEventListener('showShellFooter', (e, data) => {

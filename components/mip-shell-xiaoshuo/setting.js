@@ -14,8 +14,7 @@ function __getConfig () {
     try {
         config = extend(config, JSON.parse(storage.get(LOCAL_KEY)));
     }
-    catch (e) {
-    }
+    catch (e) {}
     return config;
 };
 
@@ -60,15 +59,20 @@ export class Mode {
 		this.defaultBtn = document.querySelector('.mip-shell-footer .default-mode');
 		this.greenBtn = document.querySelector('.mip-shell-footer .green-mode');
 		this.paperBtn = document.querySelector('.mip-shell-footer .paper-mode');
-		__setConfig(__getConfig())
+		console.log('在背景色初始化中，修改背景为', JSON.stringify(__getConfig()))
+		// __setConfig(__getConfig())
 	}
 	// 绑定点击事件
-	change (e, mode) {
-		console.log('背景色改变,' + mode)
-		__setConfig({'theme': mode})
+	update (e, mode) {
+		if(mode) {
+			__setConfig({'theme': mode})
+		} else {
+			__setConfig(__getConfig())
+		}		
 	}
 }
 
+// 改变字体大小
 export class FontSize {
 	constructor (element) {
 		this.element = element
