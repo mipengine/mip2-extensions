@@ -200,7 +200,7 @@ export default {
       document.body.setAttribute('style', '')
     },
     startTimer () {
-      if (!this.timer) {
+      if (!this.timer && this.count === COUNTDOWNINDEX) {
         this.count = COUNTDOWNINDEX
         this.timer = setInterval(() => {
           if (this.count > 0 && this.count <= COUNTDOWNINDEX) {
