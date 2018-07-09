@@ -191,8 +191,8 @@ export default {
       document.body.setAttribute('style', 'height: 100% !important; overflow: hidden')
     },
     readContainerScroll () {
-      document.documentElement.setAttribute('style', 'height: auto!important; overflow: auto!important')
-      document.body.setAttribute('style', 'height: auto!important; overflow: auto!important')
+      document.documentElement.setAttribute('style', '')
+      document.body.setAttribute('style', '')
     },
     startTimer () {
       if (!this.timer) {
