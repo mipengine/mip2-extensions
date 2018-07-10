@@ -94,7 +94,7 @@ class footer {
       if (shellElement) {
         shellElement.toggleDOM(shellElement.$buttonMask, true)
       }
-    }, 200)
+    }, 300)
   }
   // 隐藏底bar
   hide () {

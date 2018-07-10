@@ -63,7 +63,7 @@ class catalog {
     window.setTimeout(function () {
       me.$catalogSidebar.classList.add('show')
       shellElement.toggleDOM(shellElement.$buttonMask, true)
-    }, 200)
+    }, 300)
   }
   // 隐藏侧边目录
   hide () {
