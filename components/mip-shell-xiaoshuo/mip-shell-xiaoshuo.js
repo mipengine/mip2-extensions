@@ -23,7 +23,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
   // 自有方法：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
   _initAllObjects () {
-    // let configMeta = (this.shellConfig && this.shellConfig.routes[0].meta) || window.MIP.viewer.page.currentPageMeta
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
@@ -109,7 +108,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
   // 基类方法：初始化。用于除头部bar之外的元素
   renderOtherParts () {
-    console.log('renderOtherParts')
     super.renderOtherParts()
     // 初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
     this._initAllObjects()
@@ -117,14 +115,11 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
   // 基类方法：更新。用于除头部bar之外的元素
   updateOtherParts () {
-    // console.log('updateOtherParts:')
     super.updateOtherParts()
-    // console.log(this.currentPageMeta)
     this._initAllObjects()
   }
 
   _closeEverything () {
-    // console.log('_closeEverything')
     // 关闭所有可能弹出的bar
     this.toggleDOM(this.$buttonWrapper, false) // 关不掉分享按钮组
     this.$buttonWrapper.style.display = 'none' // XXX: hack, 修复 toggleDOM 中强制给未展示底部按钮组增加display:block问题
@@ -135,16 +130,16 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.toggleDOM(this.$buttonMask, false)
   }
   // 基类方法：页面跳转后shell可刷新
-  // refreshShell (...args) {
-  //     console.log('refreshShell')
-  //     // super里面更新 window.MIP.viewer.page.currentPageMeta 参数，在 _initAllObjects 中使用
-  //     super.refreshShell(...args)
-  //     // this._initAllObjects()
-  // }
+  refreshShell (...args) {
+    console.log('refreshShell')
+    super.refreshShell(...args)
+    this._closeEverything()
+  }
 
   // todo 干什么的？
   unbindHeaderEvents () {
     super.unbindHeaderEvents()
+    console.log('unbindHeaderEvents')
     // if (this.footEventHandler) {
     //     // LJ: 这里为什么还要调用一次？
     //     this.footEventHandler()
@@ -166,9 +161,15 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   }
 
   // 基类方法：绑定头部弹层事件。
-  // bindHeaderEvents () {
-  //   super.bindHeaderEvents()
-  //
+  bindHeaderEvents () {
+    super.bindHeaderEvents()
 
-  // }
+    // let event = window.MIP.util.event
+
+    // Delegate dropdown button
+    // this.footEventHandler = event.delegate(this.$footerWrapper, '[mip-footer-btn]', 'click', function (e) {
+    //   let buttonName = this.dataset.buttonName
+    //   me.handleFooterButton(buttonName)
+    // })
+  }
 }

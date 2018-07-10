@@ -8,7 +8,6 @@ import {settingHtml} from './setting'
 // 整个底 bar 控制栏
 class footer {
   constructor (config) {
-    console.log('footer初始化')
     this.config = config
     this.$footerWrapper = this._render() // 底部包裹控制栏的mip-fixed元素
   }
@@ -67,7 +66,6 @@ class footer {
     let nextDisabled = nextHref ? '' : 'disabled'
     let prevHrefString = previousHref ? `mip-link href="./${this.config.hrefButton['previous-href']}"` : ''
     let nextHrefString = nextHref ? `mip-link href="./${this.config.hrefButton['next-href']}"` : ''
-    console.log('下一页按钮链接：', this.config.hrefButton['next-href'], ', 上一页按钮链接：', this.config.hrefButton['previous-href'])
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
             <a class="page-button page-previous ${prevDisabled}" ${prevHrefString}>
@@ -98,7 +96,6 @@ class footer {
   }
   // 隐藏底bar
   hide () {
-    // debugger;
     this.$footerWrapper.classList.remove('show')
   }
 }
