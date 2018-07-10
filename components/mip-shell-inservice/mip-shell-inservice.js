@@ -237,6 +237,9 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     let offsetHeight
     let bodyPaddingTop
     let body = document.body
+    let touchTarget
+    let stopProFun = e => e.stopPropagation()
+
     scrollaBoundaryTouch.setAttribute('mip-shell-scrollboundary', true);
     [].slice.call(body.children).forEach(child => {
       if (/^(SCRIPT|IFRAME|MIP-SHELL-INSERVICE|MIP-DATA)/.test(child.nodeName)) {
@@ -249,6 +252,11 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     // 添加事件处理
     scrollaBoundaryTouch.addEventListener('touchstart', e => {
       touchStartEvent = e
+      // 内滚 兼容处理
+      touchTarget = this.getClosestScrollElement(e.target)
+      if (touchTarget) {
+        touchTarget.addEventListener('touchmove', stopProFun)
+      }
     })
 
     scrollaBoundaryTouch.addEventListener('touchmove', e => {
@@ -279,5 +287,26 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
       }
       e.stopPropagation()
     })
+
+    scrollaBoundaryTouch.addEventListener('touchend', () => {
+      if (touchTarget) {
+        touchTarget.removeEventListener('touchmove', stopProFun)
+      }
+    })
+  }
+
+  /**
+   * 获取上级可scroll的元素
+   *
+   * @param {Object} element 目标元素
+   */
+  getClosestScrollElement (element) {
+    while (element && !element.getAttribute('mip-shell-scrollboundary')) {
+      if (MIP.util.css(element, 'overflow-y') === 'auto' && element.clientHeight < element.scrollHeight) {
+        return element
+      }
+      element = element.parentNode
+    }
+    return null
   }
 }
