@@ -89,12 +89,12 @@ class footer {
   show (shellElement) {
     let footer = this
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
-    window.setTimeout(function () {
-      footer.$footerWrapper.classList.add('show')
-      if (shellElement) {
-        shellElement.toggleDOM(shellElement.$buttonMask, true)
-      }
-    }, 300)
+    // window.setTimeout(function () {
+    footer.$footerWrapper.classList.add('show')
+    if (shellElement) {
+      shellElement.toggleDOM(shellElement.$buttonMask, true)
+    }
+    // }, 300)
   }
   // 隐藏底bar
   hide () {

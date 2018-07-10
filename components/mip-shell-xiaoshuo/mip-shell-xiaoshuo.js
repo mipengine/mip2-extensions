@@ -119,7 +119,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this._initAllObjects()
   }
 
-  _closeEverything () {
+  _closeEverything (e) {
     // 关闭所有可能弹出的bar
     this.toggleDOM(this.$buttonWrapper, false) // 关不掉分享按钮组
     this.$buttonWrapper.style.display = 'none' // XXX: hack, 修复 toggleDOM 中强制给未展示底部按钮组增加display:block问题
@@ -128,6 +128,9 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.fontSize.hideFontBar()
     // 关闭黑色遮罩
     this.toggleDOM(this.$buttonMask, false)
+    e.stopPropagation()
+    e.preventDefault()
+    return false
   }
   // 基类方法：页面跳转后shell可刷新
   refreshShell (...args) {
