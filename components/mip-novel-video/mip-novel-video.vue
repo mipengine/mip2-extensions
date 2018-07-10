@@ -137,6 +137,7 @@ export default {
         jSMpegPlayer.on('playing', () => {
           let event = new Event('playing')
           self.$element.dispatchEvent(event)
+          css(canvas, {opacity: '1'})
           // 初始化倒计时器
           self.startTimer()
         })
