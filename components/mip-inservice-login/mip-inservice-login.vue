@@ -94,7 +94,7 @@ export default {
         let res = e.detail[0]
         // 没设置过就执行
         if (this.sessionId !== res.data.sessionId) {
-          this.loginHandle('login', true, res.data, res.origin)
+          this.loginHandle('login', true, res.data.userInfo, res.origin)
           // 更新数据哦
           this.setData()
         }
