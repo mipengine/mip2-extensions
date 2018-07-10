@@ -127,7 +127,7 @@ export default {
       }, false)
     },
     startPlayer () {
-      let self = this;
+      let self = this
       self.$element.setAttribute('style', 'display: block !important')
       if (player && self.isShowVideo) {
         player.play()
@@ -142,7 +142,7 @@ export default {
         })
         jSMpegPlayer.play()
       }
-      /* global _hmt */
+      // /* global _hmt */
       // if (_hmt) {
       //   _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
       // }
@@ -151,7 +151,6 @@ export default {
       }, 500)
     },
     init () {
-      let self = this
       // 在非ios手百下使用JSMpeg兼容各种机型的视频自动播放
       if (this.isShowVideo) {
         this.initVideo()
@@ -230,7 +229,7 @@ export default {
         this.played = true
         this.$element.setAttribute('style', 'display: none !important')
         window.top.location.href = PINZHUANGURL
-        /* global _hmt */
+        // /* global _hmt */
         // if (_hmt) {
         //   _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
         // }
@@ -256,7 +255,7 @@ export default {
         container.classList.add('close-container')
         setTimeout(() => {
           content.classList.add('close-content')
-          /* global _hmt */
+          // /* global _hmt */
           // if (_hmt) {
           //   _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
           // }
