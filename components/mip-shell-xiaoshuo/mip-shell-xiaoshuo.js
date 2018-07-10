@@ -133,18 +133,19 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   refreshShell (...args) {
     console.log('refreshShell')
     super.refreshShell(...args)
-    this._closeEverything()
+    // this._closeEverything()
   }
 
   // todo 干什么的？
   unbindHeaderEvents () {
     super.unbindHeaderEvents()
     console.log('unbindHeaderEvents')
-    // if (this.footEventHandler) {
-    //     // LJ: 这里为什么还要调用一次？
-    //     this.footEventHandler()
-    //     this.footEventHandler = undefined
-    // }
+    // 在页面跳转的时候解绑之前页面的点击事件，避免事件重复绑定
+    if (this.jumpHandler) {
+      // XXX: window.MIP.util.event.deligate 返回了一个方法。再调用这个方法，就是解绑
+      this.jumpHandler()
+      this.jumpHandler = undefined
+    }
   }
 
   // 基类方法: 处理头部自定义按钮点击事件，由于没有按钮，置空
@@ -164,12 +165,12 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   bindHeaderEvents () {
     super.bindHeaderEvents()
 
-    // let event = window.MIP.util.event
+    let event = window.MIP.util.event
+    let me = this
 
-    // Delegate dropdown button
-    // this.footEventHandler = event.delegate(this.$footerWrapper, '[mip-footer-btn]', 'click', function (e) {
-    //   let buttonName = this.dataset.buttonName
-    //   me.handleFooterButton(buttonName)
-    // })
+    // 当页面出现跳转时，关闭所有的浮层
+    this.jumpHandler = event.delegate(document, '[mip-link]', 'click', function (e) {
+      me._closeEverything()
+    })
   }
 }
