@@ -7,20 +7,12 @@
  * 3. less嵌套方法修改
  */
 
-/* 收到顶bar影响，body padding-top 不可改*/
-body {
-    padding-top: 15px;
-}
-
 /* 控制栏-底bar元素*/
 .mip-shell-footer-wrapper {
     z-index: 20002!important;
     height: 150px;
     transition: transform .35s ease;;
     transform: translateY(100%);
-    i p {
-
-    }
 }
 
 .mip-shell-footer-wrapper.show {
@@ -52,7 +44,7 @@ body {
       display: flex;
       height: 100px;
       i p{
-        margin-top:5px;
+        margin-top: 10px;
       }
     }
 
@@ -82,8 +74,7 @@ mip-fixed.mip-shell-catalog-wrapper {
     z-index: 20002!important;
     bottom: 0;
     overflow: scroll;
-    -webkit-overflow-scrolling: touch
-    overflow-scrolling: touch
+    -webkit-overflow-scrolling: touch;
     width: 70%;
     min-width: 200px;
     height: 100%;

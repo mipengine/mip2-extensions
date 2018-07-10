@@ -69,10 +69,12 @@ class footer {
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
             <a class="page-button page-previous ${prevDisabled}" ${prevHrefString}>
+                <i class="icon gap-right-small icon-left"></i>
                 ${this.config.hrefButton.previous}
             </a>
             <a class="page-button page-next ${nextDisabled}" ${nextHrefString}>
                 ${this.config.hrefButton.next}
+                <i class="icon gap-left-small icon-right"></i>
             </a>
         </div>
         <div class="button-wrapper">
@@ -92,7 +94,7 @@ class footer {
       if (shellElement) {
         shellElement.toggleDOM(shellElement.$buttonMask, true)
       }
-    }, 100)
+    }, 200)
   }
   // 隐藏底bar
   hide () {

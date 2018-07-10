@@ -6,7 +6,11 @@
  */
 class catalog {
   constructor (config) {
+    console.log('catalog 初始化')
+    // 渲染侧边栏目录元素
     this.$catalogSidebar = this._renderCatalog(config)
+    // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
+    this.propagationStopped = this._stopPropagation()
   }
 
   // 根据配置渲染目录侧边栏到 mip-sidebar组件中
@@ -54,16 +58,29 @@ class catalog {
 
   // 显示侧边目录
   show (shellElement) {
-    let catalog = this
+    let me = this
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     window.setTimeout(function () {
-      catalog.$catalogSidebar.classList.add('show')
+      me.$catalogSidebar.classList.add('show')
       shellElement.toggleDOM(shellElement.$buttonMask, true)
-    }, 100)
+    }, 200)
   }
   // 隐藏侧边目录
   hide () {
     this.$catalogSidebar.classList.remove('show')
+  }
+  // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
+  _stopPropagation () {
+    if (this.propagationStopped) {
+      // 由于目录页只有一个，刷新页面时只绑定一次
+      return
+    }
+    console.log('sidebar 绑定一次停止冒泡事件')
+    this.$catalogSidebar.addEventListener('scroll', (e) => {
+      console.log('sidebar滚动ing, 停止冒泡')
+      e.stopPropagation()
+    })
+    return true
   }
 }
 
