@@ -17,7 +17,10 @@ export default {
   props: {
     config: {
       type: Object,
-      required: true
+      required: true,
+      default () {
+        return {}
+      }
     }
   },
   data () {
@@ -47,6 +50,8 @@ export default {
   created () {
     // 检查配置数据
     this.checkConfig()
+    // 清空登录update
+    util.store.remove(this.config.endpoint + '_login_handle')
   },
   mounted () {
     // 熊掌号sdk
@@ -74,12 +79,58 @@ export default {
   },
   methods: {
     bindEvents () {
-      this.$element.customElement.addEventAction('login', () => {
-        this.login()
+      this.$element.customElement.addEventAction('login', (e, str = '') => {
+        let args = str.split(',')
+        this.login(...args)
       })
       this.$element.customElement.addEventAction('logout', () => {
         this.logout()
       })
+      window.addEventListener('inservice-auth-logined', e => {
+        // 开始进行数据更新
+        this.updateLogin(e.detail[0])
+      })
+      window.addEventListener('inservice-auth-data-updated', e => {
+        let res = e.detail[0]
+        // 没设置过就执行
+        if (this.sessionId !== res.data.sessionId) {
+          this.loginHandle('login', true, res.data.userInfo, res.origin)
+          // 更新数据哦
+          this.setData()
+        }
+      })
+    },
+    updateLogin (data) {
+      let key = this.config.endpoint + '_login_handle'
+      let self = this
+
+      // 先从store里取状态，看当前是否存在已经在查询状态的实例
+      let logProcess = util.store.get(key)
+      let { code, origin, callbackurl } = data
+
+      // 如果没有，开启一次状态更新
+      if (!logProcess) {
+        util.store.set(key, 'pending')
+        return self.getUserInfo({
+          code,
+          origin,
+          callbackurl: callbackurl || (util.getSourceFormatUrl())
+        }).then(() => {
+          // 广播事件，通知数据更新结束
+          window.MIP.viewer.page.broadcastCustomEvent({
+            name: 'inservice-auth-data-updated',
+            data: {
+              data: {
+                isLogin: self.isLogin,
+                userInfo: self.userInfo,
+                sessionId: self.sessionId
+              },
+              origin
+            }
+          })
+          util.store.set(key, 'finish')
+        })
+      }
     },
     /**
      * 检查配置
@@ -122,44 +173,39 @@ export default {
      * 用户登录
      *
      * @param {string=} redirectUri 登录成功后的重定向地址
-     * @param {boolean=} replace 重定向的地址是否要replace当前地址，默认为true
+     * @param {string=} origin 发起登录操作的来源标示
+     * @param {boolean=} replace 重定向的地址是否要replace当前地址，默认为false
      * @return {undefined}
      */
-    login (redirectUri, replace = true) {
-      if (this.isLogin) {
-        return
-      }
-
+    login (redirectUri, origin = '', replace = false) {
       // 当前页面的url
       let url = redirectUri || this.config.redirectUri
 
+      if (this.isLogin) {
+        return
+      }
       // 用来oauth的url
       let sourceUrl
+      // 当前页面的hash值
       let hash
+      // 是否返回原页面
+      let back = false
 
       // 校验url的合法性
       if (url) {
-        // 判断跳转地址是否同源
-        let ori = MIP.util.getOriginalUrl(location.href)
-        /* eslint-disable */
-        let ori_domain = util.getDomain(ori)
-        let red_domian = util.getDomain(url)
-
-        if (ori_domain !== red_domian) {
-          this.error('组件属性 redirect_uri 必须与当前页面同源')
-          throw new TypeError('[mip-inservice-login] 组件参数检查失败')
-        }
-        /* eslint-enable */
         sourceUrl = util.getSourceUrl(url)
         // 分析url，获取需要的参数
         let obj = util.getFormatUrl(url)
         url = obj.url
         hash = obj.hash
       } else {
-        url = location.protocol + '//' + location.host + location.pathname + location.search
+        url = util.getSourceFormatUrl()
         hash = location.hash
         sourceUrl = util.getSourceUrl()
+        back = true
       }
+
+      let self = this
 
       window.cambrian && window.cambrian.authorize({
         data: {
@@ -168,18 +214,29 @@ export default {
           pass_no_login: 0,
           state: JSON.stringify({
             url,
+            back,
+            origin,
             h: encodeURIComponent(hash),
             r: Date.now()
           }),
           ifSilent: false,
-          client_id: this.config.clientId
+          client_id: self.config.clientId
         },
         success (data) {
-          // 如果是弹窗
-          viewer.open(
-            util.getRedirectUrl(url, data.result, hash),
-            { isMipLink: true, replace }
-          )
+          // 弹窗情况会进入该回调
+          // 是返回原页面，就进行事件通知
+          self.updateLogin({
+            code: data.result.code,
+            callbackurl: url,
+            origin
+          }).then(() => {
+            if (!back) {
+              viewer.open(
+                util.getRedirectUrl(url, data.result, hash),
+                { isMipLink: true, replace }
+              )
+            }
+          })
         },
         fail (data) {
           console.error(data.msg)
@@ -202,7 +259,8 @@ export default {
       }).then(function (res) {
         // 清空 sessionId
         util.store.remove(self.config.endpoint)
-
+        // 清空登录update
+        util.store.remove(self.config.endpoint + '_login_handle')
         if (res.data && res.data.url) {
           viewer.open(res.data.url, { isMipLink: true })
         } else {
@@ -214,6 +272,8 @@ export default {
       }).catch(function (data) {
         // 清空 sessionId
         util.store.remove(self.config.endpoint)
+        // 清空登录update
+        util.store.remove(self.config.endpoint + '_login_handle')
 
         self.loginHandle('logout', false)
       })
@@ -225,46 +285,55 @@ export default {
      * @param  {string}  name    事件名称
      * @param  {boolean} isLogin 是否登录
      * @param  {Object|undefined}  data    用户数据
+     * @param {string=} origin 触发登录方法的来源标示
      */
-    loginHandle (name, isLogin, data) {
+    loginHandle (name, isLogin, data, origin) {
       this.isLogin = isLogin
       this.userInfo = data || null
-      this.trigger(name)
+      this.trigger(name, origin)
     },
 
     /**
      * 触发事件
      *
      * @param  {string} name  事件名称
+     * @param {string=} state 触发登录方法的来源标示
      */
-    trigger (name) {
+    trigger (name, origin = '') {
       let event = {
         userInfo: this.userInfo,
-        sessionId: this.sessionId
+        sessionId: this.sessionId,
+        origin
       }
-      viewer.eventAction.execute(name, this.$element, event)
-      // this.$emit(name, event);
+      // viewer.eventAction.execute(name, this.$element, event)
+      this.$emit(name, event)
     },
 
     /**
      * 获取用户信息
      *
+     * @param {Object} options 授权数据，当弹窗登录成功的情况下存在
+     * @param {string} options.code code
+     * @param {string} options.callbackurl 回调地址
+     * @param {string} options.origin 触发登录方法的来源标示
      * @returns {Promise} 用户信息
      */
-    getUserInfo () {
+    getUserInfo (options = {}) {
       let data = {
         type: 'check'
       }
-      let code
-      let callbackurl
 
-      code = util.getQuery('code')
+      let { code, callbackurl, origin } = options
 
-      if (code) {
-        try {
-          callbackurl = JSON.parse(util.getQuery('state')).url
-        } catch (e) {
-          console.error('JSON parse解析出错')
+      if (!code) {
+        code = util.getQuery('code')
+
+        if (code) {
+          try {
+            callbackurl = JSON.parse(util.getQuery('state')).url
+          } catch (e) {
+            throw new Error('JSON parse解析出错')
+          }
         }
       }
 
@@ -285,12 +354,12 @@ export default {
 
         if (data.type === 'login') {
           if (res.status === 0 && fn.isPlainObject(res.data)) {
-            self.loginHandle('login', true, res.data)
+            self.loginHandle('login', true, res.data, origin)
           } else {
             throw new Error('登录失败', res)
           }
         } else if (res.status === 0 && res.data) {
-          self.loginHandle('login', true, res.data)
+          self.loginHandle('login', true, res.data, origin)
         }
 
         // 设置数据
