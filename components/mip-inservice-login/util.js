@@ -50,7 +50,7 @@ const util = {
    * @description 会做如下处理：
    *              1. 删除 hash 后面的字符，因为透传有问题
    *              2. 删除 code state 参数，防止多次重定向链接越来越长
-   * @param  {string=} url
+   * @param  {string=} url url地址
    * @return {string}
    */
   getSourceUrl (url) {
@@ -64,6 +64,13 @@ const util = {
 
     return window.MIP.util.parseCacheUrl(url)
       .replace(/#.*$/, '')
+      .replace(/([&?])((code|state)=[^&$]+)/g, function (matched, prefix) {
+        return prefix === '?' ? '?' : ''
+      })
+  },
+
+  getSourceFormatUrl (url) {
+    return (location.protocol + '//' + location.host + location.pathname + location.search)
       .replace(/([&?])((code|state)=[^&$]+)/g, function (matched, prefix) {
         return prefix === '?' ? '?' : ''
       })
