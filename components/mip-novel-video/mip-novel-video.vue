@@ -139,7 +139,10 @@ export default {
           })
           jSMpegPlayer.play()
         }
-        _hmt.push(['_trackEvent', 'video', 'show', 'vivo']);
+        /* global _hmt */
+        if (_hmt) {
+          _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
+        }
         setTimeout(() => {
           self.forbidClick = false
         }, 500)
@@ -214,7 +217,10 @@ export default {
         this.played = true
         this.$element.setAttribute('style', 'display: none !important')
         window.top.location.href = PINZHUANGURL
-        _hmt.push(['_trackEvent', 'video', 'click', 'vivo']);
+        /* global _hmt */
+        if (_hmt) {
+          _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
+        }
       }
     },
     closeAd (e) {
@@ -237,7 +243,10 @@ export default {
         container.classList.add('close-container')
         setTimeout(() => {
           content.classList.add('close-content')
-          _hmt.push(['_trackEvent', 'close', 'click', 'vivo']);
+          /* global _hmt */
+          if (_hmt) {
+            _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
+          }
           setTimeout(() => {
             self.$element.setAttribute('style', 'display: none !important')
             container.classList.remove('close-container')
