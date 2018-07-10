@@ -21,18 +21,16 @@
         </div>
         <div
           v-if="isShowVideo"
+          class="video"
           @click="gotoAdUrl">
           <video
             ref="mipVideo"
-            class="video"
             muted="true"
+            class="video"
             loop
             autoplay
             webkit-playsinline
             playsinline
-            layout="responsive"
-            width="640"
-            height="368"
             poster="https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg"
             src="https://ecmb.bdimg.com/cae-legoup-video-target/bcb262e0-fe62-49e6-9d3f-1649cad66394.mp4"
           />
@@ -46,8 +44,6 @@
           />
           <canvas
             ref="videoCanvas"
-            width="640"
-            height="368"
             class="video-canvas"
             @click="gotoAdUrl"/>
         </div>
@@ -68,7 +64,7 @@ const css = MIP.util.css
 const isIframed = MIP.viewer.isIframed
 
 const VIDEOINDEX = 'ad-video'
-const COUNTDOWNINDEX = 5
+const COUNTDOWNINDEX = 10
 const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PRETIME = 'ad-time'
 let mipPlayer = null
@@ -78,8 +74,7 @@ let canvas = null
 // 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
 const POSTER = 'https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg'
-// const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
-const TSURL = 'https://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
+const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
 
 export default {
   data () {
@@ -144,6 +139,7 @@ export default {
           })
           jSMpegPlayer.play()
         }
+        _hmt.push(['_trackEvent', 'video', 'show', 'vivo']);
         setTimeout(() => {
           self.forbidClick = false
         }, 500)
@@ -218,6 +214,7 @@ export default {
         this.played = true
         this.$element.setAttribute('style', 'display: none !important')
         window.top.location.href = PINZHUANGURL
+        _hmt.push(['_trackEvent', 'video', 'click', 'vivo']);
       }
     },
     closeAd (e) {
@@ -231,8 +228,7 @@ export default {
         mipPlayer.pause()
       }
       if (jSMpegPlayer) {
-        css(canvas, {opacity: '0'})
-        jSMpegPlayer.stop()
+        jSMpegPlayer.pause()
       }
       if (!isClosed) {
         self.readContainerScroll()
@@ -241,6 +237,7 @@ export default {
         container.classList.add('close-container')
         setTimeout(() => {
           content.classList.add('close-content')
+          _hmt.push(['_trackEvent', 'close', 'click', 'vivo']);
           setTimeout(() => {
             self.$element.setAttribute('style', 'display: none !important')
             container.classList.remove('close-container')
@@ -417,7 +414,7 @@ mip-novel-video {
   }
   .content {
     width: 95%;
-    height: 56vw;
+    height: 53.5vw;
     z-index: 1000;
     position: relative;
     &-title {
@@ -473,7 +470,12 @@ mip-novel-video {
   .video {
     position: relative;
     width: 100%;
-    height: 56.5vw;
+    height: 100%;
+    overflow: hidden;
+  }
+  .video-cover {
+    width: 100%;
+    height: 100%;
   }
 
   @keyframes show
@@ -505,6 +507,7 @@ mip-novel-video {
     position: absolute;
     opacity: 0;
     width: 100%;
+    height: 100%;
   }
 }
 
