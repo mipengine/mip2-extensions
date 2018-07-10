@@ -69,6 +69,13 @@ const util = {
       })
   },
 
+  getSourceFormatUrl (url) {
+    return (location.protocol + '//' + location.host + location.pathname + location.search)
+      .replace(/([&?])((code|state)=[^&$]+)/g, function (matched, prefix) {
+        return prefix === '?' ? '?' : ''
+      })
+  },
+
   getRedirectUrl (url, query, hash) {
     let result = url + (url.indexOf('?') >= 0 ? '&' : '?') +
         'code=' + query.code + '&state=' + query.state + hash
