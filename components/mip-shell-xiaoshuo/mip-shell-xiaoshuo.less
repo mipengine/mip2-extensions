@@ -6,13 +6,6 @@
  * 2. 代码分块整理
  * 3. less嵌套方法修改
  */
-/*页面样式*/
-body {
-    padding-top: 15px;
-    padding-right: 17px;
-    padding-left: 17px;
-    line-height: 1.5;
-}
 
 /* 控制栏-底bar元素*/
 .mip-shell-footer-wrapper {
@@ -55,7 +48,7 @@ body {
       height: 100px;
       i p{
         margin-top:5px;
-        }
+      }
     }
 
     .button-wrapper .button {
@@ -84,6 +77,8 @@ mip-fixed.mip-shell-catalog-wrapper {
     z-index: 20002!important;
     bottom: 0;
     overflow: scroll;
+    -webkit-overflow-scrolling: touch
+    overflow-scrolling: touch
     width: 70%;
     min-width: 200px;
     height: 100%;
