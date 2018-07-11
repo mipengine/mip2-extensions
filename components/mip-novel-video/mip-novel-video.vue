@@ -100,7 +100,9 @@ export default {
   created () {
     let index = +customStorage.get(VIDEOINDEX) + 1
     console.log('是否SF：' + (isSF || false) + '；页数：' + index)
-    this.readContainerNoScroll()
+    if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
+      this.readContainerNoScroll()
+    }
   },
   firstInviewCallback () {
     // 初始化所有的视频内容
@@ -288,7 +290,8 @@ export default {
       // 此处测试完毕会修改成一天一清
       if (secondsDiff >= 30) {
       // if (dayDiff >= 1) {
-        customStorage.clear()
+        customStorage.rm(VIDEOINDEX)
+        customStorage.rm(PRETIME)
       }
     }
   }
