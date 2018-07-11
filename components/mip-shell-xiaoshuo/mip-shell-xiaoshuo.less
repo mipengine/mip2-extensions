@@ -338,13 +338,13 @@ html {
     body,
     .mip-shell-footer,
     .mip-shell-footer a {
-        -webkit-transition: background-color ease 480ms;
-                transition: background-color ease 480ms;
+        -webkit-transition: background-color ease 350ms;
+                transition: background-color ease 350ms;
     }
     .mip-border,
     .mip-border:after {
-        -webkit-transition: all ease 480ms;
-               transition: all ease 480ms;
+        -webkit-transition: all ease 350ms;
+               transition: all ease 350ms;
     }
     .light-mode {
         display: none;
@@ -366,6 +366,17 @@ html[mip-shell-xiaoshuo-theme="paper"] {
 }
 
 html[mip-shell-xiaoshuo-theme="night"] {
+    .mip-shell-header-wrapper{
+        .mip-shell-header {
+            background: #000!important;
+        }
+        .icon path {
+            fill: #666!important;
+        }
+        .mip-shell-header-title {
+            color: #666!important;
+        }
+    }
     body,
     .mip-shell-catalog-wrapper,
     .mip-shell-catalog-wrapper a {
