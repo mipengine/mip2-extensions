@@ -5,9 +5,9 @@
 
 <template>
   <div
-    class="container show-container">
-    <div class="backgroud"/>
-    <div class="container-video">
+    class="video-container show-container">
+    <div class="video-mask"/>
+    <div class="content-video">
       <div class="content show-content">
         <div class="content-title">
           <div class="content-tip">观看广告 免费阅读所有章节</div>
@@ -16,8 +16,8 @@
             class="content-count" ><span>{{ count }}秒</span>后可跳过</div>
           <div
             v-else
-            class="close-ad"
-            @click="closeAd">关闭</div>
+            class="close-video"
+            @click="closeVideo(e, true)">关闭</div>
         </div>
         <div
           v-if="isShowVideo"
@@ -60,12 +60,19 @@ import JSMpeg from './jsmpeg'
 
 const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
-const isIframed = MIP.viewer.isIframed
 
 const VIDEOINDEX = 'ad-video'
-const COUNTDOWNINDEX = 10
+const COUNTDOWNINDEX = 5
 const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PRETIME = 'ad-time'
+const SFHOST = 'https://m.baidu.com'
+
+const isSF = window &&
+window.location &&
+window.location.ancestorOrigins &&
+window.location.ancestorOrigins[0] &&
+window.location.ancestorOrigins[0] === SFHOST
+
 let player = null
 let jSMpegPlayer = null
 let canvas = null
@@ -92,7 +99,7 @@ export default {
   },
   created () {
     let index = +customStorage.get(VIDEOINDEX) + 1
-    console.log('是否iframe：' + isIframed + '；页数：' + index)
+    console.log('是否SF：' + (isSF || false) + '；页数：' + index)
     if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
       this.readContainerNoScroll()
     }
@@ -104,10 +111,8 @@ export default {
   },
   methods: {
     isShow () {
-      let isShow = isIframed && detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
-      console.log('version：' + detector.getMobileSystemVersion())
+      let isShow = detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
       console.log('第几次刷新：' + customStorage.get(VIDEOINDEX))
-      console.log('是否已经播放过：' + this.played)
       return !isShow
     },
     openVideo () {
@@ -143,10 +148,12 @@ export default {
         })
         jSMpegPlayer.play()
       }
-      // /* global _hmt */
-      // if (_hmt) {
-      //   _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
-      // }
+      /* global _hmt */
+      _hmt && _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
+      let videoMask = self.$element.querySelector('.video-mask')
+      videoMask.addEventListener('touchmove', e => {
+        e && e.preventDefault()
+      })
       setTimeout(() => {
         self.forbidClick = false
       }, 500)
@@ -166,7 +173,7 @@ export default {
       if (player) {
         player.pause()
         player.addEventListener('ended', () => {
-          self.closeAd()
+          self.closeVideo()
         })
       }
     },
@@ -189,7 +196,7 @@ export default {
         jSMpegPlayer.on('end', () => {
           let event = new Event('end')
           self.$element.dispatchEvent(event)
-          self.closeAd()
+          self.closeVideo()
         })
       }
     },
@@ -230,17 +237,15 @@ export default {
         this.played = true
         this.$element.setAttribute('style', 'display: none !important')
         window.top.location.href = PINZHUANGURL
-        // /* global _hmt */
-        // if (_hmt) {
-        //   _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
-        // }
+        /* global _hmt */
+        _hmt && _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
       }
     },
-    closeAd (e) {
+    closeVideo (e, isClick) {
       e && e.stopPropagation()
       e && e.preventDefault()
       let self = this
-      let container = this.$element.querySelector('.container')
+      let container = this.$element.querySelector('.video-container')
       let content = this.$element.querySelector('.content')
       let isClosed = false
       if (player) {
@@ -256,10 +261,8 @@ export default {
         container.classList.add('close-container')
         setTimeout(() => {
           content.classList.add('close-content')
-          // /* global _hmt */
-          // if (_hmt) {
-          //   _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
-          // }
+          /* global _hmt */
+          isClick && _hmt && _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
           setTimeout(() => {
             self.$element.setAttribute('style', 'display: none !important')
             container.classList.remove('close-container')
@@ -304,10 +307,12 @@ mip-novel-video {
   color: #fff;
   display: none !important;
   font-size: 14px;
+  left: 0;
+  top: 0;
   span {
     color: #ff6767;
   }
-  .container {
+  .video-container {
     height: 100%;
     width: 100%;
     position: absolute;
@@ -409,7 +414,7 @@ mip-novel-video {
       opacity: 0
     }
   }
-  .backgroud {
+  .video-mask {
     width: 100%;
     height: 100%;
     z-index: 998;
@@ -418,7 +423,7 @@ mip-novel-video {
     position: absolute;
     left: 0;
   }
-  .container-video {
+  .content-video {
     width: 100%;
     height: 100%;
     z-index: 999;
@@ -454,7 +459,7 @@ mip-novel-video {
       margin-left: 10px;
     }
   }
-  .close-ad {
+  .close-video {
     padding-right: 10px;
     width: 100px;
     text-align: right;
