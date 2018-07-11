@@ -173,8 +173,8 @@
 </template>
 
 <script>
+import payUtil from './util.js'
 const { platform } = MIP.util
-const storage = MIP.util.customStorage(0)
 // 支付信息
 const payInfos = [
   {
@@ -244,35 +244,43 @@ export default {
       requestDataInfo: null,
 
       isWechatApp: platform.isWechatApp(),
-      paySucRurl: ''
+      paySucRurl: '',
+
+      isJumped: false
     }
   },
   mounted () {
     this.$element.customElement.addEventAction('toggle', () => {
       this.toggleVisible(!this.visibleMark)
     })
-
-    // 微信跳转redirect， 自动弹窗
-    this.paySucRurl = storage.get('mipPayRedirect')
-    if (this.paySucRurl) {
-      this.toggleVisible(true, 'visibleConfirm')
-      storage.rm('mipPayRedirect')
-    }
-
-    // 初使化支付默认支付方式
-    ['baifubao', 'alipay', 'weixin'].some((pid) => {
-      if (platform.isWechatApp() && pid === 'alipay') {
-        return false
+    // 修复部分机型 回退不刷新页面问题
+    window.addEventListener('focus', () => {
+      if (this.isJumped) {
+        this.init()
       }
-      if (this.payConfig.endpoint[pid]) {
-        this.selectId = pid
-        return true
-      }
+      this.isJumped = false
     })
+    this.init()
   },
 
   methods: {
-
+    init () {
+      // 初使化支付默认支付方式
+      ['baifubao', 'alipay', 'weixin'].some((pid) => {
+        if (platform.isWechatApp() && pid === 'alipay') {
+          return false
+        }
+        if (this.payConfig.endpoint[pid]) {
+          this.selectId = pid
+          return true
+        }
+      })
+      // 微信跳转redirect， 自动弹窗
+      this.paySucRurl = this.getMipPayRedirect().redirectUrl
+      if (this.paySucRurl) {
+        this.toggleVisible(true, 'visibleConfirm')
+      }
+    },
     /**
      * 支付弹窗切换功能函数
      *
@@ -286,6 +294,7 @@ export default {
       if (!visible) {
         DialogList.forEach(type => { this[type] = visible })
         this.visibleMark = visible
+        this.changeMipPayRedirect()
       } else {
         let curShowType = DialogList.find(type => { return this[type] })
         if (curShowType && showType === curShowType) {
@@ -319,7 +328,67 @@ export default {
      */
     changePayType (selectId) {
       this.selectId = selectId
-      this.payAction()
+      if (selectId === 'weixin') {
+        let mipanchorset = encodeURIComponent(JSON.stringify({redirectUrl: this.payConfig.redirectUrl, pay: 'weixin'}))
+        this.changeMipPayRedirect(mipanchorset)
+      } else {
+        let getMipPayRedirect = this.getMipPayRedirect()
+        if (getMipPayRedirect.pay && getMipPayRedirect.pay === 'weixin') {
+          this.changeMipPayRedirect()
+        }
+      }
+      setTimeout(() => {
+        this.payAction().then(() => {
+        }).catch(() => {
+          this.changeMipPayRedirect()
+        })
+      }, 100)
+    },
+    /**
+     * 改变当前支付方式url
+     *
+     * @param {string} value url值
+     */
+    changeMipPayRedirect (value = '') {
+      let win = window
+      let changeUrl
+      if (!MIP.viewer.page.isRootPage) {
+        win = window.parent
+      }
+
+      let search = payUtil.query.parse(win.location.search)
+      if (!value && !search.mipPayRedirect) {
+        return
+      }
+      if (value) {
+        search.mipPayRedirect = value
+      } else {
+        delete search.mipPayRedirect
+      }
+      search = payUtil.query.stringify(search)
+
+      changeUrl = `${win.location.href.split('#')[0].split('?')[0]}${search && '?' + search}`
+      changeUrl += win.location.hash ? `#${win.location.hash}` : ''
+      if (!window.MIP.standalone) {
+        MIP.viewer.messager.sendMessage('pushState', {
+          url: MIP.util.getOriginalUrl(changeUrl)
+        })
+      }
+      win.history.replaceState(null, null, changeUrl)
+      if (!MIP.viewer.page.isRootPage) {
+        window.history.replaceState(null, null, changeUrl)
+      }
+    },
+    /**
+     * 获取返回地址信息
+     */
+    getMipPayRedirect () {
+      let search = payUtil.query.parse((!MIP.viewer.page.isRootPage ? window.parent : window).location.search)
+      let mipPayRedirect = {}
+      try {
+        mipPayRedirect = JSON.parse(decodeURIComponent(decodeURIComponent(search.mipPayRedirect))) || {}
+      } catch (e) {}
+      return mipPayRedirect
     },
 
     /**
@@ -335,8 +404,9 @@ export default {
           this.weixinRedierct()
           return false
         } else {
+          this.isJumped = true
           // 微信外浏览器吊起微信 种值返回标识
-          storage.set('mipPayRedirect', this.payConfig.redirectUrl, 10000)
+          // storage.set('mipPayRedirect', this.payConfig.redirectUrl, 10000)
         }
       }
     },
@@ -345,17 +415,20 @@ export default {
      * 支付请求函数
      */
     payAction () {
-      this.request(this.payConfig.endpoint[this.selectId], this.getPostData())
+      let payPromise = this.request(this.payConfig.endpoint[this.selectId], this.getPostData())
         .then(res => {
           if (res.status === 0 && res.data) {
             this.requestDataInfo = res.data
+            return res
           } else {
             this.setError(res.msg || res.message || '支付错误，请重试')
           }
+          throw new Error('支付错误，请重试')
         })
-        .catch(() => {
-          this.setError('支付错误，请重试')
-        })
+      payPromise.catch(() => {
+        this.setError('支付错误，请重试')
+      })
+      return payPromise
     },
 
     /**
