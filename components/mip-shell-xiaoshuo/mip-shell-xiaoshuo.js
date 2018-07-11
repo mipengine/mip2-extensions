@@ -15,7 +15,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.alwaysReadConfigOnLoad = true
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
-    this._scrollBoundary()
+    // this._scrollBoundary()
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
