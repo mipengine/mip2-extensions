@@ -77,6 +77,8 @@ class catalog {
     // sidebar 绑定一次停止冒泡事件, 防止滚到底部后外层小说内容继续滚动
     this.$catalogSidebar.addEventListener('scroll', (e) => {
       e && e.stopPropagation()
+      e && e.preventDefault()
+      return false
     })
     return true
   }
