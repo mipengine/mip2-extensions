@@ -47,16 +47,16 @@ class footer {
     let renderFooterButtonGroup = actionGroup => actionGroup.map(function (actionConfig) {
       if (actionConfig.name === 'catalog') {
         // 目录按钮样式
-        return `<div class="button" on="tap:xiaoshuo-shell.showShellCatalog"> <i class="icon icon-menulist"><p>${actionConfig.text}</p></i> </div>`
+        return `<div class="button click-cursor" on="click:xiaoshuo-shell.showShellCatalog"> <i class="icon icon-menulist"><p>${actionConfig.text}</p></i> </div>`
       } else if (actionConfig.name === 'darkmode') {
         // 夜间模式按钮
-        return `<div class="button" data-current-bg="default" data-hidden-bg="night">
-          <span class="bg-button night-mode" on="tap:xiaoshuo-shell.changeMode(night)" > <i class="icon icon-night"><p>${actionConfig.text}</p></i>  </span>
-          <span class="bg-button light-mode" on="tap:xiaoshuo-shell.changeMode(default)" > <i class="icon icon-day"><p>${actionConfig.text2}</p></i> </span>
+        return `<div class="button click-cursor" data-current-bg="default" data-hidden-bg="night">
+          <span class="bg-button night-mode" on="click:xiaoshuo-shell.changeMode(night)" > <i class="icon icon-night"><p>${actionConfig.text}</p></i>  </span>
+          <span class="bg-button light-mode click-cursor" on="click:xiaoshuo-shell.changeMode(default)" > <i class="icon icon-day"><p>${actionConfig.text2}</p></i> </span>
         </div>`
       } else if (actionConfig.name === 'settings') {
         // 字体大小按钮
-        return `<div class="button" on="tap:xiaoshuo-shell.showFontAdjust"> <i class="icon icon-font"><p>${actionConfig.text}</p></i></div>`
+        return `<div class="button click-cursor" on="click:xiaoshuo-shell.showFontAdjust"> <i class="icon icon-font"><p>${actionConfig.text}</p></i></div>`
       }
     }).join('')
 
