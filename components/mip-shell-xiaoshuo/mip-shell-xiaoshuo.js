@@ -168,9 +168,10 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   //   super.refreshShell(...args)
   // }
 
-  //
+  // 基类方法：页面跳转后更新shell
   updateOtherParts () {
     super.updateOtherParts()
-    console.log('updateOtherParts', this.footer)
+    // 重新渲染footer
+    this.footer._render(this.currentPageMeta.footer)
   }
 }

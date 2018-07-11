@@ -15,7 +15,10 @@ class footer {
   }
 
   // 创建底部控制栏并插入页面
-  _render () {
+  _render (config) {
+    if (config) {
+      this.config = config
+    }
     // 将底部 bar 插入到页面中
     let $footerWrapper = document.querySelector('.mip-shell-footer-wrapper')
     let hadFooter = !!$footerWrapper
