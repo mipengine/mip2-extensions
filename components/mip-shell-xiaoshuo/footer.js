@@ -111,6 +111,11 @@ class footer {
     this.$footerWrapper.addEventListener('scroll', (e) => {
       e && e.stopPropagation()
     })
+    this.$footerWrapper.addEventListener('touchmove', (e) => {
+      e && e.stopPropagation()
+      e && e.preventDefault()
+      return false
+    })
     return true
   }
 }
