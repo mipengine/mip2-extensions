@@ -105,9 +105,10 @@ export default {
     }
   },
   firstInviewCallback () {
-    // 初始化所有的视频内容
-    this.init()
-    this.openVideo()
+    if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
+      this.init()
+      this.openVideo()
+    }
   },
   methods: {
     isShow () {
