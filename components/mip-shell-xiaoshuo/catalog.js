@@ -75,10 +75,9 @@ class catalog {
       // 由于目录页只有一个，刷新页面时只绑定一次
       return
     }
-    console.log('sidebar 绑定一次停止冒泡事件')
+    // sidebar 绑定一次停止冒泡事件, 防止滚到底部后外层小说内容继续滚动
     this.$catalogSidebar.addEventListener('scroll', (e) => {
-      console.log('sidebar滚动ing, 停止冒泡')
-      e.stopPropagation()
+      e && e.stopPropagation()
     })
     return true
   }
