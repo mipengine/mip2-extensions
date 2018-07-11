@@ -13,26 +13,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   constructor (...args) {
     super(...args)
     this.alwaysReadConfigOnLoad = true
-    this.transitionContainsHeader = false
-  }
-
-  // 基类方法：修改配置。从mip-shell 配置中获取 `config` 字段
-  processShellConfig (shellConfig) {
-    this.shellConfig = shellConfig
-  }
-
-  // 自有方法：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
-  _initAllObjects () {
-    let configMeta = this.currentPageMeta
-    // 创建底部 bar
-    this.footer = new Footer(configMeta.footer)
-    // 创建目录侧边栏
-    this.catalog = new Catalog(configMeta.catalog)
-    // 创建字体调整栏
-    this.fontSize = new FontSize(document.querySelector('.mip-shell-footer-wrapper .mip-shell-xiaoshuo-control-fontsize'))
-    // 创建模式切换（背景色切换）
-    this.mode = new Mode()
-    console.log(this.mode)
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -41,6 +21,9 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     super.bindAllEvents()
     // 初始化所有内置对象
     let me = this
+
+    // 创建模式切换（背景色切换）
+    this.mode = new Mode()
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
     this.addEventAction('showShellFooter', function () {
@@ -76,7 +59,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
     // 承接emit事件：所有页面修改页面模式、背景
     window.addEventListener('changeMode', (e, data) => {
-      console.log('修改页面背景事件，', MIP.viewer.page.pageId)
       if (e.detail[0]) {
         me.mode.update(e, e.detail[0].mode)
       } else {
@@ -84,7 +66,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
       }
     })
     // 初始化页面时执行一次背景色/字体初始化
-    window.MIP.viewer.page.broadcastCustomEvent({
+    window.MIP.viewer.page.emitCustomEvent(window, false, {
       name: 'changeMode'
     })
   }
@@ -115,7 +97,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this._initAllObjects()
   }
 
-  // 关闭所有元素，包括弹层、目录、设置栏
+  // 自有方法：关闭所有元素，包括弹层、目录、设置栏
   _closeEverything (e) {
     // 关闭所有可能弹出的bar
     this.toggleDOM(this.$buttonWrapper, false)
@@ -126,7 +108,18 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.toggleDOM(this.$buttonMask, false)
   }
 
-  // 页面跳转时，解绑当前页事件，防止重复绑定
+  // 自有方法：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
+  _initAllObjects () {
+    let configMeta = this.currentPageMeta
+    // 创建底部 bar
+    this.footer = new Footer(configMeta.footer)
+    // 创建目录侧边栏
+    this.catalog = new Catalog(configMeta.catalog)
+    // 创建字体调整栏
+    this.fontSize = new FontSize(document.querySelector('.mip-shell-footer-wrapper .mip-shell-xiaoshuo-control-fontsize'))
+  }
+
+  // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
   unbindHeaderEvents () {
     super.unbindHeaderEvents()
     // 在页面跳转的时候解绑之前页面的点击事件，避免事件重复绑定
