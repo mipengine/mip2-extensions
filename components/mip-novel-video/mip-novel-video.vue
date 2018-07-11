@@ -20,7 +20,7 @@
             @click="closeVideo(e, true)">关闭</div>
         </div>
         <div
-          v-if="isShowVideo"
+          v-if="isOriginalVideo"
           class="video"
           @click="gotoAdUrl">
           <video
@@ -62,7 +62,7 @@ const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
 
 const VIDEOINDEX = 'ad-video'
-const COUNTDOWNINDEX = 5
+const COUNTDOWNINDEX = 10
 const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PRETIME = 'ad-time'
 const SFHOST = 'https://m.baidu.com'
@@ -82,6 +82,8 @@ let canvas = null
 const POSTER = 'https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg'
 const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
 
+let isShouldVideo;
+
 export default {
   data () {
     return {
@@ -94,24 +96,24 @@ export default {
   },
   computed: {
     isShow: function () {
-      let isShow = detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
-      console.log('第几次刷新：' + customStorage.get(VIDEOINDEX))
+      let isShow = detector.getMobileSystemVersion() && !this.played && isShouldVideo
       return !isShow
     },
-    isShowVideo: function () {
+    isOriginalVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
     this.initVideoIndex()
-    let index = customStorage.get(VIDEOINDEX)
-    console.log('是否SF：' + (isSF || false) + '；页数：' + index)
-    if (+customStorage.get(VIDEOINDEX) === 2) {
+    this.timeExpired()
+    isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
+    console.log('是否SF：' + (isSF || false) + '；页数：' +customStorage.get(VIDEOINDEX))
+    if (isShouldVideo) {
       this.readContainerNoScroll()
     }
   },
   firstInviewCallback () {
-    if (+customStorage.get(VIDEOINDEX) === 2) {
+    if (isShouldVideo) {
       this.creatVideo()
       this.openVideo()
     }
@@ -119,7 +121,6 @@ export default {
   methods: {
     openVideo () {
       let self = this
-      this.timeExpired()
       document.body.addEventListener('touchstart', e => {
         if (self.isShow) {
           self.$element.setAttribute('style', 'display: none !important')
@@ -137,24 +138,24 @@ export default {
     },
     startPlayer () {
       let self = this
-      self.$element.setAttribute('style', 'display: block !important')
-      if (player && self.isShowVideo) {
+      this.$element.setAttribute('style', 'display: block !important')
+      if (player && this.isOriginalVideo) {
         player.play()
-        self.startTimer()
+        this.startTimer()
       }
-      if (jSMpegPlayer && !self.isShowVideo) {
+      if (jSMpegPlayer && !this.isOriginalVideo) {
         jSMpegPlayer.on('playing', () => {
           let event = new Event('playing')
-          self.$element.dispatchEvent(event)
+          this.$element.dispatchEvent(event)
           css(canvas, {opacity: '1'})
           // 初始化倒计时器
-          self.startTimer()
+          this.startTimer()
         })
         jSMpegPlayer.play()
       }
       /* global _hmt */
       _hmt && _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
-      let videoMask = self.$element.querySelector('.video-mask')
+      let videoMask = this.$element.querySelector('.video-mask')
       videoMask.addEventListener('touchmove', e => {
         e && e.preventDefault()
         e && e.stopPropagation()
@@ -172,7 +173,7 @@ export default {
       }, 500)
     },
     creatVideo () {
-      if (this.isShowVideo) {
+      if (this.isOriginalVideo) {
         this.initVideo()
       } else {
         this.initCanvasVideo()
@@ -189,7 +190,6 @@ export default {
       }
     },
     initCanvasVideo () {
-      let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + POSTER + ')'})
@@ -206,8 +206,8 @@ export default {
         jSMpegPlayer.pause()
         jSMpegPlayer.on('ended', () => {
           let event = new Event('ended')
-          self.$element.dispatchEvent(event)
-          self.closeVideo()
+          this.$element.dispatchEvent(event)
+          this.closeVideo()
         })
       }
     },
@@ -299,7 +299,7 @@ export default {
       let secondsDiff = Math.round(seconds / 1000)
       // 此处测试完毕会修改成一天一清
       if (secondsDiff >= 30) {
-      // if (dayDiff >= 1) {
+        console.log('delete storage');
         customStorage.rm(VIDEOINDEX)
         customStorage.rm(PRETIME)
       }
