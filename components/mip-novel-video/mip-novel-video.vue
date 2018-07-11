@@ -93,34 +93,35 @@ export default {
     }
   },
   computed: {
+    isShow: function () {
+      let isShow = detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
+      console.log('第几次刷新：' + customStorage.get(VIDEOINDEX))
+      return !isShow
+    },
     isShowVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
-    let index = +customStorage.get(VIDEOINDEX) + 1
+    this.initVideoIndex()
+    let index = customStorage.get(VIDEOINDEX)
     console.log('是否SF：' + (isSF || false) + '；页数：' + index)
-    if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
+    if (+customStorage.get(VIDEOINDEX) === 2) {
       this.readContainerNoScroll()
     }
   },
   firstInviewCallback () {
-    if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
-      this.init()
+    if (+customStorage.get(VIDEOINDEX) === 2) {
+      this.creatVideo()
       this.openVideo()
     }
   },
   methods: {
-    isShow () {
-      let isShow = detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
-      console.log('第几次刷新：' + customStorage.get(VIDEOINDEX))
-      return !isShow
-    },
     openVideo () {
       let self = this
-      this.isTimeExpired()
+      this.timeExpired()
       document.body.addEventListener('touchstart', e => {
-        if (self.isShow()) {
+        if (self.isShow) {
           self.$element.setAttribute('style', 'display: none !important')
           self.readContainerScroll()
           return
@@ -129,6 +130,8 @@ export default {
           return
         }
         e && e.preventDefault()
+        e && e.stopPropagation()
+        e && e.stopImmediatePropagation()
         self.startPlayer()
       }, false)
     },
@@ -154,19 +157,26 @@ export default {
       let videoMask = self.$element.querySelector('.video-mask')
       videoMask.addEventListener('touchmove', e => {
         e && e.preventDefault()
+        e && e.stopPropagation()
+        e && e.stopImmediatePropagation()
+        return false
+      })
+      videoMask.addEventListener('scroll', e => {
+        e && e.preventDefault()
+        e && e.stopPropagation()
+        e && e.stopImmediatePropagation()
+        return false
       })
       setTimeout(() => {
         self.forbidClick = false
       }, 500)
     },
-    init () {
-      // 在非ios手百下使用JSMpeg兼容各种机型的视频自动播放
+    creatVideo () {
       if (this.isShowVideo) {
         this.initVideo()
       } else {
         this.initCanvasVideo()
       }
-      this.initVideoIndex()
     },
     initVideo () {
       let self = this
@@ -194,8 +204,8 @@ export default {
         let tsUrl = TSURL
         jSMpegPlayer = new JSMpeg.Player(tsUrl, attributes)
         jSMpegPlayer.pause()
-        jSMpegPlayer.on('end', () => {
-          let event = new Event('end')
+        jSMpegPlayer.on('ended', () => {
+          let event = new Event('ended')
           self.$element.dispatchEvent(event)
           self.closeVideo()
         })
@@ -273,12 +283,11 @@ export default {
       }
       isClosed = true
     },
-    isTimeExpired () {
+    timeExpired () {
       let myDate = new Date()
       let preTime = customStorage.get(PRETIME)
       if (preTime == null) {
         customStorage.set(PRETIME, myDate.getTime())
-        return true
       }
       let currentTime = myDate.getTime()
       let diffTime = currentTime - preTime
