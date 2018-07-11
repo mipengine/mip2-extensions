@@ -13,6 +13,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   constructor (...args) {
     super(...args)
     this.alwaysReadConfigOnLoad = true
+    this.transitionContainsHeader = false
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
