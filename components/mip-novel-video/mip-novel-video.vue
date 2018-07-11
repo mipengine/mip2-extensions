@@ -100,9 +100,7 @@ export default {
   created () {
     let index = +customStorage.get(VIDEOINDEX) + 1
     console.log('是否SF：' + (isSF || false) + '；页数：' + index)
-    if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
-      this.readContainerNoScroll()
-    }
+    this.readContainerNoScroll()
   },
   firstInviewCallback () {
     // 初始化所有的视频内容
