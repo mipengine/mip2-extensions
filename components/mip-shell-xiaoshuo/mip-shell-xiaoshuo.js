@@ -167,4 +167,10 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   // refreshShell (...args) {
   //   super.refreshShell(...args)
   // }
+
+  //
+  updateOtherParts () {
+    super.updateOtherParts()
+    console.log('updateOtherParts', this.footer)
+  }
 }

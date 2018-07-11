@@ -32,18 +32,18 @@ function __setConfig (config) {
 export const settingHtml = `
     <div class="mip-shell-xiaoshuo-control-fontsize">
         <ul>
-            <li class="reduce" on="tap:xiaoshuo-shell.changeFont(smaller)">A-</li>
+            <li class="reduce click-cursor" on="click:xiaoshuo-shell.changeFont(smaller)">A-</li>
             <li class="progress">
                 <input type="range" step="0.5" min="1" max="6" value="${__getConfig().fontSize}">
             </li>
-            <li class="increase" on="tap:xiaoshuo-shell.changeFont(bigger)">A+</li>
+            <li class="increase click-cursor" on="click:xiaoshuo-shell.changeFont(bigger)">A+</li>
         </ul>
     </div>
     <div class="mip-shell-xiaoshuo-control-theme">
         <ul>
-            <li><span class="theme-default" on="tap:xiaoshuo-shell.changeMode(default)"></span></li>
-            <li><span class="theme-green" on="tap:xiaoshuo-shell.changeMode(green)"></span></li>
-            <li><span class="theme-paper" on="tap:xiaoshuo-shell.changeMode(paper)"></span></li>
+            <li><span class="theme-default click-cursor" on="click:xiaoshuo-shell.changeMode(default)"></span></li>
+            <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
+            <li><span class="theme-paper click-cursor" on="click:xiaoshuo-shell.changeMode(paper)"></span></li>
         </ul>
     </div>`
 

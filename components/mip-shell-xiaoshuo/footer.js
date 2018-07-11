@@ -38,7 +38,6 @@ class footer {
       $footerWrapper.removeChild($footerWrapper.querySelector('.mip-shell-footer'))
       $footerWrapper.appendChild($footer)
     }
-
     return $footerWrapper
   }
 
