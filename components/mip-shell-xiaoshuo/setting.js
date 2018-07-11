@@ -48,19 +48,14 @@ export const settingHtml = `
     </div>`
 
 // 改变背景色
-export class Mode {
+export class PageStyle {
   // TODO 可以支持config 的配置，配置颜色
   constructor () {
-    // 保存各个按钮
-    // this.nightBtn = document.querySelector('.mip-shell-footer .night-mode')
-    // this.lightBtn = document.querySelector('.mip-shell-footer .light-mode')
-    // this.defaultBtn = document.querySelector('.mip-shell-footer .default-mode')
-    // this.greenBtn = document.querySelector('.mip-shell-footer .green-mode')
-    // this.paperBtn = document.querySelector('.mip-shell-footer .paper-mode')
     // 如果用户手动设置背景色，则以用户为准。否则按照缓存设置。
-    this.update = (e, mode) => {
-      if (mode) {
-        __setConfig({'theme': mode})
+    // data参数例为{'theme': night}
+    this.update = (e, data) => {
+      if (data) {
+        __setConfig(data)
       } else {
         __setConfig(__getConfig())
       }
@@ -73,25 +68,29 @@ export class FontSize {
   constructor (element) {
     this.element = element
     this.fontInput = element.querySelector('input[type="range"]')
-    this.min = parseInt(this.fontInput.getAttribute('min'))
-    this.max = parseInt(this.fontInput.getAttribute('max'))
   }
-  // 获取当前字体大小
+  // 获取当前滑块位置/字体大小
   _getInputValue () {
     return parseFloat(this.fontInput.value)
   }
   // 调整滑块位置和字体大小
   _setInputValue (value) {
+    this.min = parseInt(this.fontInput.getAttribute('min'))
+    this.max = parseInt(this.fontInput.getAttribute('max'))
     if (value > this.max || value < this.min) {
       return
     }
     this.fontInput.value = value
-    __setConfig({
-      fontSize: value
+    // 计算字体大小后，广播告诉所有页面
+    window.MIP.viewer.page.broadcastCustomEvent({
+      name: 'changePageStyle', data: {fontSize: value}
     })
+    // __setConfig({
+    //   fontSize: value
+    // })
   }
   // 绑定点击事件
-  changeFont (e, data) {
+  changeFont (data) {
     if (data === 'bigger') {
       // 点击增大按钮
       this._setInputValue(this._getInputValue() + 0.5)

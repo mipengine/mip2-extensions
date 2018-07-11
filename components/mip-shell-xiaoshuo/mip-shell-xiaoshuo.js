@@ -6,7 +6,7 @@
 import './mip-shell-xiaoshuo.less'
 import Catalog from './catalog' // 侧边栏目录
 import Footer from './footer' // 底部控制栏
-import {Mode, FontSize} from './setting' // 背景色调整，字体大小调整
+import {PageStyle, FontSize} from './setting' // 背景色调整，字体大小调整
 
 export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -23,7 +23,8 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     let me = this
 
     // 创建模式切换（背景色切换）
-    this.mode = new Mode()
+    this.pageStyle = new PageStyle()
+
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
     this.addEventAction('showShellFooter', function () {
@@ -38,9 +39,9 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
       })
     })
     // 功能绑定：背景色切换 使用 on="tap:xiaoshuo-shell.changeMode"调用
-    this.addEventAction('changeMode', function (e, mode) {
+    this.addEventAction('changeMode', function (e, theme) {
       window.MIP.viewer.page.broadcastCustomEvent({
-        name: 'changeMode', data: { mode: mode }
+        name: 'changePageStyle', data: {theme: theme}
       })
     })
 
@@ -48,8 +49,9 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.addEventAction('showFontAdjust', function (e) {
       this.fontSize.showFontBar(e)
     })
-    this.addEventAction('changeFont', function (e, data) {
-      this.fontSize.changeFont(e, data)
+    // 功能绑定：字体大小切换 使用 on="tap:xiaoshuo-shell.changeFont(bigger)"调用
+    this.addEventAction('changeFont', function (e, size) {
+      this.fontSize.changeFont(size)
     })
 
     // 绑定弹层点击关闭事件
@@ -57,17 +59,22 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
       this.$buttonMask.onclick = this._closeEverything.bind(me)
     }
 
-    // 承接emit事件：所有页面修改页面模式、背景
-    window.addEventListener('changeMode', (e, data) => {
-      if (e.detail[0]) {
-        me.mode.update(e, e.detail[0].mode)
+    // 承接emit事件：所有页面修改页主题 & 字号
+    window.addEventListener('changePageStyle', (e, data) => {
+      if (e.detail[0] && e.detail[0].theme) {
+        // 修改主题
+        me.pageStyle.update(e, {theme: e.detail[0].theme})
+      } else if (e.detail[0] && e.detail[0].fontSize) {
+        // 修改字号
+        me.pageStyle.update(e, {fontSize: e.detail[0].fontSize})
       } else {
-        me.mode.update(e)
+        // 初始化，从缓存中获取主题和字号apply到页面
+        me.pageStyle.update(e)
       }
     })
-    // 初始化页面时执行一次背景色/字体初始化
+    // 初始化页面时执行一次背景色+字号初始化
     window.MIP.viewer.page.emitCustomEvent(window, false, {
-      name: 'changeMode'
+      name: 'changePageStyle'
     })
   }
 
@@ -76,8 +83,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   bindRootEvents () {
     super.bindRootEvents()
     let me = this
-    // 绑定 Root shell 字体bar拖动事件
-    this.fontSize.bindDragEvent()
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
       me.footer.show(me)
@@ -91,7 +96,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
   // 基类方法：初始化。用于除头部bar之外的元素
   renderOtherParts () {
-    console.log('renderOtherParts')
     super.renderOtherParts()
     // 初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
     this._initAllObjects()
@@ -115,8 +119,10 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.footer = new Footer(configMeta.footer)
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog)
-    // 创建字体调整栏
+    // 创建字体调整事件
     this.fontSize = new FontSize(document.querySelector('.mip-shell-footer-wrapper .mip-shell-xiaoshuo-control-fontsize'))
+    // 绑定 Root shell 字体bar拖动事件
+    this.fontSize.bindDragEvent()
   }
 
   // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
@@ -144,22 +150,20 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   }
 
   // 基类方法: 处理头部自定义按钮点击事件，由于没有按钮，置空
-  handleShellCustomButton (buttonName) {
-    // 如果后期需要增加bar按钮，增加如下配置：
-    // "header": {
-    //     "show": true,
-    //     "title": "神武天帝",
-    //     "buttonGroup": [
-    //         {"name": "setting", "text": "设置"},
-    //         {"name": "cancel", "text": "取消"}
-    //     ]
-    // }
-  }
+  // handleShellCustomButton (buttonName) {
+  // 如果后期需要增加bar按钮，增加如下配置：
+  // "header": {
+  //     "show": true,
+  //     "title": "神武天帝",
+  //     "buttonGroup": [
+  //         {"name": "setting", "text": "设置"},
+  //         {"name": "cancel", "text": "取消"}
+  //     ]
+  // }
+  // }
 
   // 基类方法：页面跳转后shell可刷新
   // refreshShell (...args) {
-  //   console.log('refreshShell')
   //   super.refreshShell(...args)
-  //   // this._closeEverything()
   // }
 }
