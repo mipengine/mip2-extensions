@@ -3,7 +3,7 @@ let DEFAULTS = {
   theme: 'default',
   fontSize: 3
 }
-let STORAGE_KEY = 'mip-shell-config'
+let STORAGE_KEY = 'mip-shell-xiaoshuo-mode'
 let CustomStorage = MIP.util.customStorage
 let storage = new CustomStorage(0)
 let extend = MIP.util.fn.extend
@@ -16,10 +16,11 @@ function __getConfig () {
   } catch (e) {}
   return config
 };
-
+// 将配置应用在页面上
 function __setConfig (config) {
   config = extend(__getConfig(), config)
   storage.set(STORAGE_KEY, JSON.stringify(config))
+  console.log(MIP.viewer.page.pageId, ' 设置背景色 ', JSON.stringify(config))
   if (config.theme) {
     document.documentElement.setAttribute('mip-shell-xiaoshuo-theme', config.theme)
   }
@@ -51,23 +52,25 @@ export const settingHtml = `
 export class Mode {
   // TODO 可以支持config 的配置，配置颜色
   constructor () {
+    console.log('Mode new')
     // 保存各个按钮
     this.nightBtn = document.querySelector('.mip-shell-footer .night-mode')
     this.lightBtn = document.querySelector('.mip-shell-footer .light-mode')
     this.defaultBtn = document.querySelector('.mip-shell-footer .default-mode')
     this.greenBtn = document.querySelector('.mip-shell-footer .green-mode')
     this.paperBtn = document.querySelector('.mip-shell-footer .paper-mode')
-    // console.log('在背景色初始化中，修改背景为', JSON.stringify(__getConfig()))
-    // __setConfig(__getConfig())
-  }
-  // 绑定点击事件
-  update (e, mode) {
-    if (mode) {
-      __setConfig({'theme': mode})
-    } else {
-      __setConfig(__getConfig())
+    this.update = (e, mode) => {
+      if (mode) {
+        __setConfig({'theme': mode})
+      } else {
+        __setConfig(__getConfig())
+      }
     }
   }
+  // 绑定点击事件, 如果用户手动设置，则以用户为准。否则按照缓存设置。
+  // update (e, mode) {
+
+  // }
 }
 
 // 改变字体大小

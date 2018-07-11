@@ -32,6 +32,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.fontSize = new FontSize(document.querySelector('.mip-shell-footer-wrapper .mip-shell-xiaoshuo-control-fontsize'))
     // 创建模式切换（背景色切换）
     this.mode = new Mode()
+    console.log(this.mode)
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -53,19 +54,13 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
         name: 'showShellCatalog'
       })
     })
-    // 功能绑定：背景色切换
+    // 功能绑定：背景色切换 使用 on="tap:xiaoshuo-shell.changeMode"调用
     this.addEventAction('changeMode', function (e, mode) {
       window.MIP.viewer.page.broadcastCustomEvent({
-        name: 'changeMode',
-        data: {
-          mode: mode
-        }
+        name: 'changeMode', data: { mode: mode }
       })
     })
-    // 并执行一次背景色/字体初始化
-    window.MIP.viewer.page.broadcastCustomEvent({
-      name: 'changeMode'
-    })
+
     // 绑定底部弹层控制条拖动事件
     this.addEventAction('showFontAdjust', function (e) {
       this.fontSize.showFontBar(e)
@@ -78,6 +73,20 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     if (this.$buttonMask) {
       this.$buttonMask.onclick = this._closeEverything.bind(me)
     }
+
+    // 承接emit事件：所有页面修改页面模式、背景
+    window.addEventListener('changeMode', (e, data) => {
+      console.log('修改页面背景事件，', MIP.viewer.page.pageId)
+      if (e.detail[0]) {
+        me.mode.update(e, e.detail[0].mode)
+      } else {
+        me.mode.update(e)
+      }
+    })
+    // 初始化页面时执行一次背景色/字体初始化
+    window.MIP.viewer.page.broadcastCustomEvent({
+      name: 'changeMode'
+    })
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -87,14 +96,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     let me = this
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
-    // 承接emit事件：根页面修改页面模式、背景
-    window.addEventListener('changeMode', (e, data) => {
-      if (e.detail[0]) {
-        me.mode.update(e, e.detail[0].mode)
-      } else {
-        me.mode.update(e)
-      }
-    })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
       me.footer.show(me)
@@ -108,44 +109,45 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
   // 基类方法：初始化。用于除头部bar之外的元素
   renderOtherParts () {
+    console.log('renderOtherParts')
     super.renderOtherParts()
     // 初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
     this._initAllObjects()
   }
 
-  // 基类方法：更新。用于除头部bar之外的元素
-  updateOtherParts () {
-    super.updateOtherParts()
-    this._initAllObjects()
-  }
-
+  // 关闭所有元素，包括弹层、目录、设置栏
   _closeEverything (e) {
     // 关闭所有可能弹出的bar
-    this.toggleDOM(this.$buttonWrapper, false) // 关不掉分享按钮组
-    this.$buttonWrapper.style.display = 'none' // XXX: hack, 修复 toggleDOM 中强制给未展示底部按钮组增加display:block问题
+    this.toggleDOM(this.$buttonWrapper, false)
     this.footer.hide()
     this.catalog.hide()
     this.fontSize.hideFontBar()
     // 关闭黑色遮罩
     this.toggleDOM(this.$buttonMask, false)
   }
-  // 基类方法：页面跳转后shell可刷新
-  refreshShell (...args) {
-    console.log('refreshShell')
-    super.refreshShell(...args)
-    // this._closeEverything()
-  }
 
-  // todo 干什么的？
+  // 页面跳转时，解绑当前页事件，防止重复绑定
   unbindHeaderEvents () {
     super.unbindHeaderEvents()
-    console.log('unbindHeaderEvents')
     // 在页面跳转的时候解绑之前页面的点击事件，避免事件重复绑定
     if (this.jumpHandler) {
       // XXX: window.MIP.util.event.deligate 返回了一个方法。再调用这个方法，就是解绑
       this.jumpHandler()
       this.jumpHandler = undefined
     }
+  }
+
+  // 基类方法：绑定头部弹层事件。
+  bindHeaderEvents () {
+    super.bindHeaderEvents()
+
+    let event = window.MIP.util.event
+    let me = this
+
+    // 当页面出现跳转时，关闭所有的浮层
+    this.jumpHandler = event.delegate(document, '[mip-link]', 'click', function (e) {
+      me._closeEverything()
+    })
   }
 
   // 基类方法: 处理头部自定义按钮点击事件，由于没有按钮，置空
@@ -161,16 +163,10 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // }
   }
 
-  // 基类方法：绑定头部弹层事件。
-  bindHeaderEvents () {
-    super.bindHeaderEvents()
-
-    let event = window.MIP.util.event
-    let me = this
-
-    // 当页面出现跳转时，关闭所有的浮层
-    this.jumpHandler = event.delegate(document, '[mip-link]', 'click', function (e) {
-      me._closeEverything()
-    })
-  }
+  // 基类方法：页面跳转后shell可刷新
+  // refreshShell (...args) {
+  //   console.log('refreshShell')
+  //   super.refreshShell(...args)
+  //   // this._closeEverything()
+  // }
 }

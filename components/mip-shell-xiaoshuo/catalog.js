@@ -6,7 +6,6 @@
  */
 class catalog {
   constructor (config) {
-    console.log('catalog 初始化')
     // 渲染侧边栏目录元素
     this.$catalogSidebar = this._renderCatalog(config)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
