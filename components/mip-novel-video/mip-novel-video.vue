@@ -82,7 +82,7 @@ let canvas = null
 const POSTER = 'https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg'
 const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
 
-let isShouldVideo;
+let isShouldVideo
 
 export default {
   data () {
@@ -107,7 +107,7 @@ export default {
     this.initVideoIndex()
     this.timeExpired()
     isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
-    console.log('是否SF：' + (isSF || false) + '；页数：' +customStorage.get(VIDEOINDEX))
+    console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
     if (isShouldVideo) {
       this.readContainerNoScroll()
     }
@@ -299,7 +299,7 @@ export default {
       let secondsDiff = Math.round(seconds / 1000)
       // 此处测试完毕会修改成一天一清
       if (secondsDiff >= 30) {
-        console.log('delete storage');
+        console.log('delete storage')
         customStorage.rm(VIDEOINDEX)
         customStorage.rm(PRETIME)
       }
