@@ -59,10 +59,10 @@ class catalog {
   show (shellElement) {
     let me = this
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
-    window.setTimeout(function () {
-      me.$catalogSidebar.classList.add('show')
-      shellElement.toggleDOM(shellElement.$buttonMask, true)
-    }, 400)
+    // window.setTimeout(function () {
+    me.$catalogSidebar.classList.add('show')
+    shellElement.toggleDOM(shellElement.$buttonMask, true)
+    // }, 400)
   }
   // 隐藏侧边目录
   hide () {
