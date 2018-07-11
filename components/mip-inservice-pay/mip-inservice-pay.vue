@@ -480,7 +480,12 @@ export default {
      * 支付成功后跳转
      */
     goPayRedirectUrl () {
-      MIP.viewer.open(this.paySucRurl || this.payConfig.redirectUrl, { replace: true })
+      let url = this.paySucRurl || this.payConfig.redirectUrl
+      if (!MIP.standalone) {
+        window.top.location.replace(url)
+      } else {
+        MIP.viewer.open(url, { replace: true })
+      }
     },
     /**
      * 错误显示函数
