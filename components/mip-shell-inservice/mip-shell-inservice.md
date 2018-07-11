@@ -10,6 +10,7 @@
 所需脚本|https://c.mipcdn.com/static/v2/mip-shell-inservice/mip-shell-inservice.js
 
 
+
 ## 示例
 ```html
 <mip-shell-inservice mip-shell>
