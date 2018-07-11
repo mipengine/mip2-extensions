@@ -10,6 +10,8 @@ class footer {
   constructor (config) {
     this.config = config
     this.$footerWrapper = this._render() // 底部包裹控制栏的mip-fixed元素
+    // 禁止冒泡，防止从小说层，触发外层小说页面滚动
+    this.propagationStopped = this._stopPropagation()
   }
 
   // 创建底部控制栏并插入页面
@@ -99,6 +101,18 @@ class footer {
   // 隐藏底bar
   hide () {
     this.$footerWrapper.classList.remove('show')
+  }
+  // 禁止冒泡，防止从控制栏触发外层小说页面滚动
+  _stopPropagation () {
+    if (this.propagationStopped) {
+      // 由于控制栏只有一个，刷新页面时只绑定一次
+      return
+    }
+    // sidebar 绑定一次停止冒泡事件, 防止滚到底部后外层小说内容继续滚动
+    this.$footerWrapper.addEventListener('scroll', (e) => {
+      e && e.stopPropagation()
+    })
+    return true
   }
 }
 
