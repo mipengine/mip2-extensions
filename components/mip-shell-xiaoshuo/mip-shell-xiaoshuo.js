@@ -128,9 +128,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.fontSize.hideFontBar()
     // 关闭黑色遮罩
     this.toggleDOM(this.$buttonMask, false)
-    e.stopPropagation()
-    e.preventDefault()
-    return false
   }
   // 基类方法：页面跳转后shell可刷新
   refreshShell (...args) {
