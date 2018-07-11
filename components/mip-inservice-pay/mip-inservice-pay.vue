@@ -415,7 +415,7 @@ export default {
      * 支付请求函数
      */
     payAction () {
-      return this.request(this.payConfig.endpoint[this.selectId], this.getPostData())
+      let payPromise = this.request(this.payConfig.endpoint[this.selectId], this.getPostData())
         .then(res => {
           if (res.status === 0 && res.data) {
             this.requestDataInfo = res.data
@@ -425,9 +425,10 @@ export default {
           }
           throw new Error('支付错误，请重试')
         })
-        .catch(() => {
-          this.setError('支付错误，请重试')
-        })
+      payPromise.catch(() => {
+        this.setError('支付错误，请重试')
+      })
+      return payPromise
     },
 
     /**

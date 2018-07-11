@@ -19,8 +19,8 @@ const util = {
 
   query: {
     stringify (obj) {
-      const res = obj ? Object.keys(obj).map(key => {
-        const val = obj[key]
+      let res = obj ? Object.keys(obj).map(key => {
+        let val = obj[key]
         if (val === undefined) {
           return ''
         }
@@ -30,7 +30,7 @@ const util = {
         }
 
         if (Array.isArray(val)) {
-          const result = []
+          let result = []
           val.forEach(val2 => {
             if (val2 === undefined) {
               return
