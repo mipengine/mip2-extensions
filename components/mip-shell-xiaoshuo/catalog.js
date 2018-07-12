@@ -24,7 +24,7 @@ class Catalog {
     } else {
       // 目录为数组，本地目录。直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
-        <a class="mip-catalog-btn" mip-catalog-btn mip-link data-button-name="${catalog.name}" href="./${catalog.link}">${catalog.name}</a>`)
+        <a class="mip-catalog-btn" mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}">${catalog.name}</a>`)
         .join('\n')
     }
     // 将底部 bar 插入到页面中

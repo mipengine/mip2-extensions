@@ -68,8 +68,8 @@ class footer {
     let nextHref = this.config.hrefButton['next-href']
     let prevDisabled = previousHref ? '' : 'disabled'
     let nextDisabled = nextHref ? '' : 'disabled'
-    let prevHrefString = previousHref ? `mip-link href="./${this.config.hrefButton['previous-href']}"` : ''
-    let nextHrefString = nextHref ? `mip-link href="./${this.config.hrefButton['next-href']}"` : ''
+    let prevHrefString = previousHref ? `mip-link href="${this.config.hrefButton['previous-href']}"` : ''
+    let nextHrefString = nextHref ? `mip-link href="${this.config.hrefButton['next-href']}"` : ''
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
             <a class="page-button page-previous ${prevDisabled}" ${prevHrefString}>
