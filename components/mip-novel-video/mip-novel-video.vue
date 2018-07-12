@@ -5,9 +5,9 @@
 
 <template>
   <div
-    class="container show-container">
-    <div class="backgroud"/>
-    <div class="container-video">
+    class="video-container show-container">
+    <div class="video-mask"/>
+    <div class="content-video">
       <div class="content show-content">
         <div class="content-title">
           <div class="content-tip">观看广告 免费阅读所有章节</div>
@@ -16,18 +16,17 @@
             class="content-count" ><span>{{ count }}秒</span>后可跳过</div>
           <div
             v-else
-            class="close-ad"
-            @click="closeAd">关闭</div>
+            class="close-video"
+            @click="closeVideo(e, true)">关闭</div>
         </div>
         <div
-          v-if="isShowVideo"
+          v-if="isOriginalVideo"
           class="video"
           @click="gotoAdUrl">
           <video
             ref="mipVideo"
             muted="true"
             class="video"
-            loop
             autoplay
             webkit-playsinline
             playsinline
@@ -61,13 +60,15 @@ import JSMpeg from './jsmpeg'
 
 const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
-const isIframed = MIP.viewer.isIframed
 
 const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 10
 const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PRETIME = 'ad-time'
-let mipPlayer = null
+
+const isSF = window.MIP.standalone
+
+let player = null
 let jSMpegPlayer = null
 let canvas = null
 
@@ -75,6 +76,8 @@ let canvas = null
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
 const POSTER = 'https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg'
 const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
+
+let isShouldVideo
 
 export default {
   data () {
@@ -87,35 +90,34 @@ export default {
     }
   },
   computed: {
-    isShowVideo: function () {
+    isShow: function () {
+      let isShow = isSF && detector.getMobileSystemVersion() && !this.played && isShouldVideo
+      return !isShow
+    },
+    isOriginalVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
-    let index = +customStorage.get(VIDEOINDEX) + 1
-    console.log('是否iframe：' + isIframed + '；页数：' + index)
-    if (+customStorage.get(VIDEOINDEX) + 1 === 2) {
+    this.timeExpired()
+    this.initVideoIndex()
+    isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
+    console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
+    if (isShouldVideo) {
       this.readContainerNoScroll()
     }
   },
   firstInviewCallback () {
-    // 初始化所有的视频内容
-    this.init()
-    this.openVideo()
+    if (isShouldVideo) {
+      this.creatVideo()
+      this.openVideo()
+    }
   },
   methods: {
-    isShow () {
-      let isShow = isIframed && detector.getMobileSystemVersion() && !this.played && +customStorage.get(VIDEOINDEX) === 2
-      console.log('version：' + detector.getMobileSystemVersion())
-      console.log('第几次刷新：' + customStorage.get(VIDEOINDEX))
-      console.log('是否已经播放过：' + this.played)
-      return !isShow
-    },
     openVideo () {
       let self = this
-      this.isTimeExpired()
       document.body.addEventListener('touchstart', e => {
-        if (self.isShow()) {
+        if (self.isShow) {
           self.$element.setAttribute('style', 'display: none !important')
           self.readContainerScroll()
           return
@@ -123,47 +125,66 @@ export default {
         if (!self.forbidClick) {
           return
         }
-        e.preventDefault()
-        self.$element.setAttribute('style', 'display: block !important')
-        if (mipPlayer && self.isShowVideo) {
-          mipPlayer.play()
-          self.startTimer()
-        }
-        if (jSMpegPlayer && !self.isShowVideo) {
-          jSMpegPlayer.on('playing', () => {
-            let event = new Event('playing')
-            self.$element.dispatchEvent(event)
-            css(canvas, {opacity: '1'})
-            // 初始化倒计时器
-            self.startTimer()
-          })
-          jSMpegPlayer.play()
-        }
-        /* global _hmt */
-        if (_hmt) {
-          _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
-        }
-        setTimeout(() => {
-          self.forbidClick = false
-        }, 500)
+        e && e.preventDefault()
+        e && e.stopPropagation()
+        e && e.stopImmediatePropagation()
+        self.startPlayer()
       }, false)
     },
-    init () {
+    startPlayer () {
       let self = this
-      // 在非ios手百下使用JSMpeg兼容各种机型的视频自动播放
-      if (this.isShowVideo) {
-        // 初始化播放次数
-        this.initVideoIndex()
-        mipPlayer = this.$element.querySelector('video')
-        if (mipPlayer) {
-          mipPlayer.pause()
-        }
+      this.$element.setAttribute('style', 'display: block !important')
+      if (player && this.isOriginalVideo) {
+        player.play()
+        this.startTimer()
+      }
+      if (jSMpegPlayer && !this.isOriginalVideo) {
+        jSMpegPlayer.on('playing', () => {
+          let event = new Event('playing')
+          this.$element.dispatchEvent(event)
+          css(canvas, {opacity: '1'})
+          // 初始化倒计时器
+          this.startTimer()
+        })
+        jSMpegPlayer.play()
+      }
+      /* global _hmt */
+      _hmt && _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
+      let videoMask = this.$element.querySelector('.video-mask')
+      videoMask.addEventListener('touchmove', e => {
+        e && e.preventDefault()
+        e && e.stopPropagation()
+        e && e.stopImmediatePropagation()
+        return false
+      })
+      videoMask.addEventListener('scroll', e => {
+        e && e.preventDefault()
+        e && e.stopPropagation()
+        e && e.stopImmediatePropagation()
+        return false
+      })
+      setTimeout(() => {
+        self.forbidClick = false
+      }, 500)
+    },
+    creatVideo () {
+      if (this.isOriginalVideo) {
+        this.initVideo()
       } else {
-        self.initVideo()
-        self.initVideoIndex()
+        this.initCanvasVideo()
       }
     },
     initVideo () {
+      let self = this
+      player = this.$element.querySelector('video')
+      if (player) {
+        player.pause()
+        player.addEventListener('ended', () => {
+          self.closeVideo()
+        })
+      }
+    },
+    initCanvasVideo () {
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + POSTER + ')'})
@@ -178,6 +199,11 @@ export default {
         let tsUrl = TSURL
         jSMpegPlayer = new JSMpeg.Player(tsUrl, attributes)
         jSMpegPlayer.pause()
+        jSMpegPlayer.on('ended', () => {
+          let event = new Event('ended')
+          this.$element.dispatchEvent(event)
+          this.closeVideo()
+        })
       }
     },
     initVideoIndex () {
@@ -218,20 +244,18 @@ export default {
         this.$element.setAttribute('style', 'display: none !important')
         window.top.location.href = PINZHUANGURL
         /* global _hmt */
-        if (_hmt) {
-          _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
-        }
+        _hmt && _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
       }
     },
-    closeAd (e) {
-      e.stopPropagation()
-      e.preventDefault()
+    closeVideo (e, isClick) {
+      e && e.stopPropagation()
+      e && e.preventDefault()
       let self = this
-      let container = this.$element.querySelector('.container')
+      let container = this.$element.querySelector('.video-container')
       let content = this.$element.querySelector('.content')
       let isClosed = false
-      if (mipPlayer) {
-        mipPlayer.pause()
+      if (player) {
+        player.pause()
       }
       if (jSMpegPlayer) {
         jSMpegPlayer.pause()
@@ -244,40 +268,31 @@ export default {
         setTimeout(() => {
           content.classList.add('close-content')
           /* global _hmt */
-          if (_hmt) {
-            _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
-          }
+          isClick && _hmt && _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
           setTimeout(() => {
             self.$element.setAttribute('style', 'display: none !important')
             container.classList.remove('close-container')
             content.classList.remove('close-content')
-          }, 300)
+          }, 200)
         }, 100)
       }
       isClosed = true
     },
-    isTimeExpired () {
-      let myDate = new Date()
+    timeExpired () {
+      let myDate = new Date().getTime()
       let preTime = customStorage.get(PRETIME)
       if (preTime == null) {
-        customStorage.set(PRETIME, myDate.getTime())
-        return true
+        customStorage.set(PRETIME, myDate)
+        return
       }
-      let currentTime = myDate.getTime()
+      let currentTime = myDate
       let diffTime = currentTime - preTime
-      // 相差天数
-      // let dayDiff = Math.floor(diffTime / (24 * 3600 * 1000))
-      // 相差小时数
-      let hours = diffTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
-      // 相差分钟数
-      let minutes = hours % (3600 * 1000) // 计算小时数后剩余的毫秒数
-      // 相差秒数
-      let seconds = minutes % (60 * 1000) // 计算分钟数后剩余的毫秒数
-      let secondsDiff = Math.round(seconds / 1000)
-      // 此处测试完毕会修改成一天一清
+      // let hoursDiff = parseInt(Math.abs(diffTime) / 1000 / 60 / 60)
+      let secondsDiff = parseInt(Math.abs(diffTime) / 1000)
       if (secondsDiff >= 30) {
-      // if (dayDiff >= 1) {
-        customStorage.clear()
+      // if (hoursDiff >= 24) {
+        customStorage.rm(VIDEOINDEX)
+        customStorage.rm(PRETIME)
       }
     }
   }
@@ -294,10 +309,12 @@ mip-novel-video {
   color: #fff;
   display: none !important;
   font-size: 14px;
+  left: 0;
+  top: 0;
   span {
     color: #ff6767;
   }
-  .container {
+  .video-container {
     height: 100%;
     width: 100%;
     position: absolute;
@@ -399,7 +416,7 @@ mip-novel-video {
       opacity: 0
     }
   }
-  .backgroud {
+  .video-mask {
     width: 100%;
     height: 100%;
     z-index: 998;
@@ -408,7 +425,7 @@ mip-novel-video {
     position: absolute;
     left: 0;
   }
-  .container-video {
+  .content-video {
     width: 100%;
     height: 100%;
     z-index: 999;
@@ -444,7 +461,7 @@ mip-novel-video {
       margin-left: 10px;
     }
   }
-  .close-ad {
+  .close-video {
     padding-right: 10px;
     width: 100px;
     text-align: right;
