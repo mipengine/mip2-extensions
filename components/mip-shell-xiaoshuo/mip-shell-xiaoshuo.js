@@ -15,6 +15,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.alwaysReadConfigOnLoad = true
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
+    // todo: 目前有重复调用问题
     // this._scrollBoundary()
   }
 
