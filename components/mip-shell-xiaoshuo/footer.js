@@ -115,9 +115,13 @@ class footer {
       e && e.stopPropagation()
     })
     this.$footerWrapper.addEventListener('touchmove', (e) => {
-      e && e.stopPropagation()
-      e && e.preventDefault()
-      return false
+      // 保证滑块可以滑动，不然其他区域出现滚动穿透的现象
+      // TODO 但滑块区上下滚动还是会滚动穿透
+      if (e.target.tagName !== 'INPUT') {
+        e && e.stopPropagation()
+        e && e.preventDefault()
+        return false
+      }
     })
     return true
   }

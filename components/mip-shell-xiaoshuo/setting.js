@@ -103,7 +103,7 @@ export class FontSize {
   bindDragEvent () {
     let me = this
     // 拖动事件
-    this.element.addEventListener('touchmove', function () {
+    this.element.addEventListener('touchmove', function (e) {
       me._setInputValue(me._getInputValue())
     })
     // 点击事件

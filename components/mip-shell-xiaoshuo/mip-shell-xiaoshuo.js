@@ -50,13 +50,9 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     })
 
     // 绑定底部弹层控制条拖动事件
-    this.addEventAction('showFontAdjust', function (e) {
-      this.fontSize.showFontBar(e)
-    })
+    this.addEventAction('showFontAdjust', e => this.fontSize.showFontBar(e))
     // 功能绑定：字体大小切换 使用 on="tap:xiaoshuo-shell.changeFont(bigger)"调用
-    this.addEventAction('changeFont', function (e, size) {
-      this.fontSize.changeFont(size)
-    })
+    this.addEventAction('changeFont', (e, size) => console.log('addEventAction: changeFont'))
 
     // 绑定弹层点击关闭事件
     if (this.$buttonMask) {
