@@ -85,9 +85,6 @@ export class FontSize {
     window.MIP.viewer.page.broadcastCustomEvent({
       name: 'changePageStyle', data: {fontSize: value}
     })
-    // __setConfig({
-    //   fontSize: value
-    // })
   }
   // 绑定点击事件
   changeFont (data) {
