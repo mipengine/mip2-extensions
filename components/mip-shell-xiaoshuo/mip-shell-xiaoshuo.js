@@ -32,13 +32,13 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
     this.addEventAction('showShellFooter', function () {
-      window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
+      window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
         name: 'showShellFooter'
       })
     })
     // 暴露给外部html的调用方法, 显示目录侧边栏
     this.addEventAction('showShellCatalog', function () {
-      window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
+      window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
         name: 'showShellCatalog'
       })
     })
@@ -52,7 +52,9 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // 绑定底部弹层控制条拖动事件
     this.addEventAction('showFontAdjust', e => this.fontSize.showFontBar(e))
     // 功能绑定：字体大小切换 使用 on="tap:xiaoshuo-shell.changeFont(bigger)"调用
-    this.addEventAction('changeFont', (e, size) => console.log('addEventAction: changeFont'))
+    this.addEventAction('changeFont', (e, size) => {
+      this.fontSize.changeFont(size)
+    })
 
     // 绑定弹层点击关闭事件
     if (this.$buttonMask) {
@@ -73,7 +75,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
       }
     })
     // 初始化页面时执行一次背景色+字号初始化
-    window.MIP.viewer.page.emitCustomEvent(window, false, {
+    window.MIP.viewer.page.emitCustomEvent(window, true, {
       name: 'changePageStyle'
     })
   }
