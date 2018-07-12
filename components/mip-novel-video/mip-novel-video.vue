@@ -66,7 +66,7 @@ const COUNTDOWNINDEX = 10
 const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PRETIME = 'ad-time'
 
-const isSF = window.MIP.standalone
+const isSF = !window.MIP.standalone
 
 let player = null
 let jSMpegPlayer = null
