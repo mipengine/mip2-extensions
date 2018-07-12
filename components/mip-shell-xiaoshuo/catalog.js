@@ -4,7 +4,7 @@
  * TODO：
  *     1. catalog数据支持异步获取
  */
-class catalog {
+class Catalog {
   constructor (config) {
     // 渲染侧边栏目录元素
     this.$catalogSidebar = this._renderCatalog(config)
@@ -84,4 +84,4 @@ class catalog {
   }
 }
 
-export default catalog
+export default Catalog

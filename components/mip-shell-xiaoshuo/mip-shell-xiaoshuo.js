@@ -1,6 +1,9 @@
 /**
  * @file 极速服务 小说shell
  * @author liangjiaying@baidu.com (JennyL)
+ * TODO:
+ * 1. 可以把继承的方法自己的方法分开
+ * 2. 用 JSDoc @private 来标识私有函数
  */
 
 import './mip-shell-xiaoshuo.less'
@@ -12,7 +15,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
     super(...args)
-    this.alwaysReadConfigOnLoad = true
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     // todo: 目前有重复调用问题
@@ -24,8 +26,6 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   bindAllEvents () {
     super.bindAllEvents()
     // 初始化所有内置对象
-    let me = this
-
     // 创建模式切换（背景色切换）
     this.pageStyle = new PageStyle()
 
@@ -60,20 +60,20 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
     // 绑定弹层点击关闭事件
     if (this.$buttonMask) {
-      this.$buttonMask.onclick = this._closeEverything.bind(me)
+      this.$buttonMask.onclick = this._closeEverything.bind(this)
     }
 
     // 承接emit事件：所有页面修改页主题 & 字号
     window.addEventListener('changePageStyle', (e, data) => {
       if (e.detail[0] && e.detail[0].theme) {
         // 修改主题
-        me.pageStyle.update(e, {theme: e.detail[0].theme})
+        this.pageStyle.update(e, {theme: e.detail[0].theme})
       } else if (e.detail[0] && e.detail[0].fontSize) {
         // 修改字号
-        me.pageStyle.update(e, {fontSize: e.detail[0].fontSize})
+        this.pageStyle.update(e, {fontSize: e.detail[0].fontSize})
       } else {
         // 初始化，从缓存中获取主题和字号apply到页面
-        me.pageStyle.update(e)
+        this.pageStyle.update(e)
       }
     })
     // 初始化页面时执行一次背景色+字号初始化
@@ -86,15 +86,14 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
   bindRootEvents () {
     super.bindRootEvents()
-    let me = this
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
-      me.footer.show(me)
+      this.footer.show(this)
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
-      me.catalog.show(me)
-      me.footer.hide()
+      this.catalog.show(this)
+      this.footer.hide()
     })
   }
 
