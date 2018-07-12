@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     isShow: function () {
-      let isShow = detector.getMobileSystemVersion() && !this.played && isShouldVideo
+      let isShow = isSF && detector.getMobileSystemVersion() && !this.played && isShouldVideo
       return !isShow
     },
     isOriginalVideo: function () {
@@ -284,22 +284,15 @@ export default {
       isClosed = true
     },
     timeExpired () {
-      let myDate = new Date()
+      let myDate = new Date().getTime()
       let preTime = customStorage.get(PRETIME)
       if (preTime == null) {
-        customStorage.set(PRETIME, myDate.getTime())
+        customStorage.set(PRETIME, myDate)
       }
-      let currentTime = myDate.getTime()
+      let currentTime = myDate
       let diffTime = currentTime - preTime
-      // 相差天数
-      // let dayDiff = Math.floor(diffTime / (24 * 3600 * 1000))
-      let hours = diffTime % (24 * 3600 * 1000)
-      let minutes = hours % (3600 * 1000)
-      let seconds = minutes % (60 * 1000)
-      let secondsDiff = Math.round(seconds / 1000)
-      // 此处测试完毕会修改成一天一清
-      if (secondsDiff >= 30) {
-        console.log('delete storage')
+      let hoursDiff = parseInt(Math.abs(diffTime) / 1000 / 60 / 60)
+      if (hoursDiff >= 24) {
         customStorage.rm(VIDEOINDEX)
         customStorage.rm(PRETIME)
       }
