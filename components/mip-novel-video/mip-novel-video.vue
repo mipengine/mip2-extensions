@@ -21,18 +21,15 @@
         </div>
         <div
           v-if="isShowVideo"
+          class="video"
           @click="gotoAdUrl">
           <video
             ref="mipVideo"
-            class="video"
             muted="true"
-            loop
+            class="video"
             autoplay
             webkit-playsinline
             playsinline
-            layout="responsive"
-            width="640"
-            height="368"
             poster="https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg"
             src="https://ecmb.bdimg.com/cae-legoup-video-target/bcb262e0-fe62-49e6-9d3f-1649cad66394.mp4"
           />
@@ -46,8 +43,6 @@
           />
           <canvas
             ref="videoCanvas"
-            width="640"
-            height="368"
             class="video-canvas"
             @click="gotoAdUrl"/>
         </div>
@@ -68,18 +63,17 @@ const css = MIP.util.css
 const isIframed = MIP.viewer.isIframed
 
 const VIDEOINDEX = 'ad-video'
-const COUNTDOWNINDEX = 5
+const COUNTDOWNINDEX = 10
 const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PRETIME = 'ad-time'
-let mipPlayer = null
+let player = null
 let jSMpegPlayer = null
 let canvas = null
 
 // 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
 // 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
 const POSTER = 'https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg'
-// const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
-const TSURL = 'https://searchvideo.bj.bcebos.com/tsfile%2Fheritage%2Fvideo1.ts'
+const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
 
 export default {
   data () {
@@ -128,43 +122,56 @@ export default {
         if (!self.forbidClick) {
           return
         }
-        e.preventDefault()
-        self.$element.setAttribute('style', 'display: block !important')
-        if (mipPlayer && self.isShowVideo) {
-          mipPlayer.play()
-          self.startTimer()
-        }
-        if (jSMpegPlayer && !self.isShowVideo) {
-          jSMpegPlayer.on('playing', () => {
-            let event = new Event('playing')
-            self.$element.dispatchEvent(event)
-            css(canvas, {opacity: '1'})
-            // 初始化倒计时器
-            self.startTimer()
-          })
-          jSMpegPlayer.play()
-        }
-        setTimeout(() => {
-          self.forbidClick = false
-        }, 500)
+        e && e.preventDefault()
+        self.startPlayer()
       }, false)
     },
-    init () {
+    startPlayer () {
       let self = this
+      self.$element.setAttribute('style', 'display: block !important')
+      if (player && self.isShowVideo) {
+        player.play()
+        self.startTimer()
+      }
+      if (jSMpegPlayer && !self.isShowVideo) {
+        jSMpegPlayer.on('playing', () => {
+          let event = new Event('playing')
+          self.$element.dispatchEvent(event)
+          css(canvas, {opacity: '1'})
+          // 初始化倒计时器
+          self.startTimer()
+        })
+        jSMpegPlayer.play()
+      }
+      // /* global _hmt */
+      // if (_hmt) {
+      //   _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
+      // }
+      setTimeout(() => {
+        self.forbidClick = false
+      }, 500)
+    },
+    init () {
       // 在非ios手百下使用JSMpeg兼容各种机型的视频自动播放
       if (this.isShowVideo) {
-        // 初始化播放次数
-        this.initVideoIndex()
-        mipPlayer = this.$element.querySelector('video')
-        if (mipPlayer) {
-          mipPlayer.pause()
-        }
+        this.initVideo()
       } else {
-        self.initVideo()
-        self.initVideoIndex()
+        this.initCanvasVideo()
       }
+      this.initVideoIndex()
     },
     initVideo () {
+      let self = this
+      player = this.$element.querySelector('video')
+      if (player) {
+        player.pause()
+        player.addEventListener('ended', () => {
+          self.closeAd()
+        })
+      }
+    },
+    initCanvasVideo () {
+      let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + POSTER + ')'})
@@ -179,6 +186,11 @@ export default {
         let tsUrl = TSURL
         jSMpegPlayer = new JSMpeg.Player(tsUrl, attributes)
         jSMpegPlayer.pause()
+        jSMpegPlayer.on('end', () => {
+          let event = new Event('end')
+          self.$element.dispatchEvent(event)
+          self.closeAd()
+        })
       }
     },
     initVideoIndex () {
@@ -218,21 +230,24 @@ export default {
         this.played = true
         this.$element.setAttribute('style', 'display: none !important')
         window.top.location.href = PINZHUANGURL
+        // /* global _hmt */
+        // if (_hmt) {
+        //   _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
+        // }
       }
     },
     closeAd (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e && e.stopPropagation()
+      e && e.preventDefault()
       let self = this
       let container = this.$element.querySelector('.container')
       let content = this.$element.querySelector('.content')
       let isClosed = false
-      if (mipPlayer) {
-        mipPlayer.pause()
+      if (player) {
+        player.pause()
       }
       if (jSMpegPlayer) {
-        css(canvas, {opacity: '0'})
-        jSMpegPlayer.stop()
+        jSMpegPlayer.pause()
       }
       if (!isClosed) {
         self.readContainerScroll()
@@ -241,11 +256,15 @@ export default {
         container.classList.add('close-container')
         setTimeout(() => {
           content.classList.add('close-content')
+          // /* global _hmt */
+          // if (_hmt) {
+          //   _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
+          // }
           setTimeout(() => {
             self.$element.setAttribute('style', 'display: none !important')
             container.classList.remove('close-container')
             content.classList.remove('close-content')
-          }, 300)
+          }, 200)
         }, 100)
       }
       isClosed = true
@@ -261,12 +280,9 @@ export default {
       let diffTime = currentTime - preTime
       // 相差天数
       // let dayDiff = Math.floor(diffTime / (24 * 3600 * 1000))
-      // 相差小时数
-      let hours = diffTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
-      // 相差分钟数
-      let minutes = hours % (3600 * 1000) // 计算小时数后剩余的毫秒数
-      // 相差秒数
-      let seconds = minutes % (60 * 1000) // 计算分钟数后剩余的毫秒数
+      let hours = diffTime % (24 * 3600 * 1000)
+      let minutes = hours % (3600 * 1000)
+      let seconds = minutes % (60 * 1000)
       let secondsDiff = Math.round(seconds / 1000)
       // 此处测试完毕会修改成一天一清
       if (secondsDiff >= 30) {
@@ -417,7 +433,7 @@ mip-novel-video {
   }
   .content {
     width: 95%;
-    height: 56vw;
+    height: 53.5vw;
     z-index: 1000;
     position: relative;
     &-title {
@@ -473,7 +489,12 @@ mip-novel-video {
   .video {
     position: relative;
     width: 100%;
-    height: 56.5vw;
+    height: 100%;
+    overflow: hidden;
+  }
+  .video-cover {
+    width: 100%;
+    height: 100%;
   }
 
   @keyframes show
@@ -505,6 +526,7 @@ mip-novel-video {
     position: absolute;
     opacity: 0;
     width: 100%;
+    height: 100%;
   }
 }
 
