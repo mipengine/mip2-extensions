@@ -370,7 +370,7 @@
                     this.pause();
                 }
                 //视频播放完成执行 by karlew
-                this.trigger('end');
+                this.trigger('ended');
             }
         };
 

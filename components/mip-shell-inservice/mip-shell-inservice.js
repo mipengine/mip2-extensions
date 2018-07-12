@@ -127,6 +127,10 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
       this.aboutAction()
       this.toggleDropdown(false)
     }
+    // 修复 非首页极速服务页 无后退时场景
+    if (buttonName === 'back' && history.length < 2) {
+      this.indexPageAction()
+    }
   }
   /**
    * 是否显示 关闭button, 不能返回搜索结果页时进行处理
