@@ -65,13 +65,9 @@ const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 10
 const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PRETIME = 'ad-time'
-const SFHOST = 'https://m.baidu.com'
+const SFHOST = 'm.baidu.com'
 
-const isSF = window &&
-window.location &&
-window.location.ancestorOrigins &&
-window.location.ancestorOrigins[0] &&
-window.location.ancestorOrigins[0] === SFHOST
+const isSF = window.location.hostname === SFHOST
 
 let player = null
 let jSMpegPlayer = null
