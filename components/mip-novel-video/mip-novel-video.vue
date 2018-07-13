@@ -91,7 +91,7 @@ export default {
   },
   computed: {
     isShow: function () {
-      let isShow = isSF && detector.getMobileSystemVersion() && !this.played && isShouldVideo
+      let isShow = detector.getMobileSystemVersion() && !this.played
       return !isShow
     },
     isOriginalVideo: function () {
@@ -166,6 +166,9 @@ export default {
       setTimeout(() => {
         self.forbidClick = false
       }, 500)
+      setTimeout(() => {
+        this.closeVideo()
+      }, 15000)
     },
     creatVideo () {
       if (this.isOriginalVideo) {
