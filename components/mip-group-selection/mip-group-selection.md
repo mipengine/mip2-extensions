@@ -6,14 +6,16 @@ mip-group-selection 分组选择组件，可用于城市分组，英文名分组
 ----|----
 类型|通用
 支持布局|responsive,fixed-height,fill,container,fixed
-所需脚本|https://c.mipcdn.com/static/v1/mip-group-selection/mip-group-selection.js<br>
-https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
+所需脚本|
 
 ## 示例
 
 ### 基本用法
+1、本地数据
 
 按照如下示例配置城市数据。
+
+
 
 ```html
 <mip-group-selection class="mip-hidden">
@@ -55,12 +57,14 @@ https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
 	]}
     </script>
 </mip-group-selection>
-<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+
 <!--侧边栏布局依赖mip-fixed组件提供样式-->
 <script src="https://c.mipcdn.com/static/v1/mip-fixed/mip-fixed.js"></script>
 ```
 
 ### 基本用法
+
+2、异步传入数据
 
 按照如下示例配置城市数据。
 
@@ -71,7 +75,7 @@ https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
     <!--存在 data-src 时，本地数据配置不生效-->
 </mip-group-selection>
 
-<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+
 <!--侧边栏布局依赖mip-fixed组件提供样式-->
 <script src="https://c.mipcdn.com/static/v1/mip-fixed/mip-fixed.js"></script>
 ```
@@ -163,8 +167,9 @@ this.$on('print', (str) => {
       console.log(str)
     })
 
+
 ### 配合事件绑定
-当用户选择某个元素时，分组选择组件会抛出名为 `selected` 的事件(event)，使用组件[事件通信机制](https://www.mipengine.org/doc/3-widget/6-help/3-mip-normal.html)可以监听这个事件，并与其他组件/数据交互（action）。
+当用户选择某个元素时，分组选择组件会抛出名为 `citySelected` 的事件(event)，使用组件[事件通信机制](https://www.mipengine.org/doc/3-widget/6-help/3-mip-normal.html)可以监听这个事件，并与其他组件/数据交互（action）。
 
 
 ## 属性说明
