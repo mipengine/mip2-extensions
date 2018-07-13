@@ -134,17 +134,23 @@ export default {
     startPlayer () {
       let self = this
       this.$element.setAttribute('style', 'display: block !important')
+      let forceClose = setTimeout(() => {
+        this.closeVideo()
+      }, 15000)
       if (player && this.isOriginalVideo) {
+        player.addEventListener('playing', () => {
+          this.startTimer()
+          clearTimeout(forceClose)
+        })
         player.play()
-        this.startTimer()
       }
       if (jSMpegPlayer && !this.isOriginalVideo) {
         jSMpegPlayer.on('playing', () => {
           let event = new Event('playing')
           this.$element.dispatchEvent(event)
           css(canvas, {opacity: '1'})
-          // 初始化倒计时器
           this.startTimer()
+          clearTimeout(forceClose)
         })
         jSMpegPlayer.play()
       }
@@ -166,9 +172,6 @@ export default {
       setTimeout(() => {
         self.forbidClick = false
       }, 500)
-      setTimeout(() => {
-        this.closeVideo()
-      }, 15000)
     },
     creatVideo () {
       if (this.isOriginalVideo) {
