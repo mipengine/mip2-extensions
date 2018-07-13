@@ -91,7 +91,7 @@ export default {
   },
   computed: {
     isShow: function () {
-      let isShow = detector.getMobileSystemVersion() && !this.played
+      let isShow = isSF && detector.getMobileSystemVersion() && !this.played && isShouldVideo
       return !isShow
     },
     isOriginalVideo: function () {
