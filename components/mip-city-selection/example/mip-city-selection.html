@@ -14,11 +14,9 @@
 </head>
 
 <body>
-  <!-- <mip-test id="cityTest">
-</mip-test> -->
-
-  <mip-group-selection class="mip-hidden" on="citySelected:cityTest.print">
-    <!-- <mip-group-selection class="mip-hidden" on="citySelected:cityTest.print" data-src="http://172.24.138.98:8888/xxxxtest.json"> -->
+<!--   <mip-test id="cityTest"></mip-test>  测试组件，模拟异步-->
+  <mip-city-selection class="mip-hidden" on="citySelected">
+    <!-- <mip-city-selection class="mip-hidden" on="citySelected:cityTest.print" data-src="http://172.24.138.98:8888/xxxxtest.json"> -->
     <script type="application/json">
       {
         "list": [{
@@ -152,7 +150,66 @@
               "code": "23"
             }
           ]
-        }, {
+        },
+          {
+          "key": "F",
+          "cities": [{
+              "city": "阜阳",
+              "pinyin": "fuyang",
+              "code": "21"
+            },
+            {
+              "city": "福州",
+              "pinyin": "fuzhou",
+              "code": "22"
+            },
+            {
+              "city": "防城港",
+              "pinyin": "fangchenggang",
+              "code": "23"
+            }
+          ]
+        },
+        {
+          "key": "F",
+          "cities": [{
+              "city": "阜阳",
+              "pinyin": "fuyang",
+              "code": "21"
+            },
+            {
+              "city": "福州",
+              "pinyin": "fuzhou",
+              "code": "22"
+            },
+            {
+              "city": "防城港",
+              "pinyin": "fangchenggang",
+              "code": "23"
+            }
+          ]
+        },
+        {
+          "key": "F",
+          "cities": [{
+              "city": "阜阳",
+              "pinyin": "fuyang",
+              "code": "21"
+            },
+            {
+              "city": "福州",
+              "pinyin": "fuzhou",
+              "code": "22"
+            },
+            {
+              "city": "防城港",
+              "pinyin": "fangchenggang",
+              "code": "23"
+            }
+          ]
+        },
+
+         {
           "key": "G",
           "cities": [{
               "city": "广州",
@@ -167,13 +224,10 @@
           ]
         }]
       }
-
     </script>
-
-  </mip-group-selection>
+  </mip-city-selection>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-  <script src="/mip-group-selection/mip-group-selection.js"></script>
-
+  <script src="/mip-city-selection/mip-city-selection.js"></script>
 </body>
 
 </html>

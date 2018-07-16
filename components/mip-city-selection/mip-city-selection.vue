@@ -3,7 +3,7 @@
     <div class="mip-group-selection-content lasted-visted-hot ">
       <!-- 最近访问的城市 -->
       <div
-        v-if="isTrue"
+        v-if="visit"
         class="mip-group-selection-part-letter content-wrapper"
       >
         <div class="mip-group-selection-title"> 最近访问的城市</div>
@@ -278,11 +278,10 @@ export default {
       offsetX: [],
       currentCity: {},
       cityData: '',
-      isTrue: false
+      visit: false
     }
   },
   mounted () {
-    console.log(typeof list)
     this.init(this.list)
     viewport.on('scroll', () => {
       this.getOffsetX()
@@ -300,7 +299,7 @@ export default {
     },
     showInfo (city) {
       this.getOffsetX()
-      this.isTrue = true
+      this.visit = true
       this.currentCity = city
       let isExit = false
       for (let i = 0; i < this.history.length; i++) {
@@ -371,7 +370,7 @@ export default {
       let locationStorage = Storage.get('cityData', cityData)
       if (locationStorage) {
         this.history = JSON.parse(locationStorage)
-        this.isTrue = true
+        this.visit = true
       }
     }
   }
