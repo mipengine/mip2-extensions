@@ -62,7 +62,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
       this.$buttonMask.onclick = this._closeEverything.bind(this)
     }
 
-    // 承接emit事件：所有页面修改页主题 & 字号
+    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
     window.addEventListener('changePageStyle', (e, data) => {
       if (e.detail[0] && e.detail[0].theme) {
         // 修改主题
@@ -75,13 +75,14 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
         this.pageStyle.update(e)
       }
     })
+
     // 初始化页面时执行一次背景色+字号初始化
     window.MIP.viewer.page.emitCustomEvent(window, true, {
       name: 'changePageStyle'
     })
   }
 
-  // 基类方法：绑定页面可被外界调用的事件。
+  // 基类root方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
   bindRootEvents () {
     super.bindRootEvents()
@@ -96,7 +97,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     })
   }
 
-  // 基类方法：初始化。用于除头部bar之外的元素
+  // 基类root方法：初始化。用于除头部bar之外的元素
   renderOtherParts () {
     super.renderOtherParts()
     // 初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
@@ -114,7 +115,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.toggleDOM(this.$buttonMask, false)
   }
 
-  // 自有方法：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
+  // 自有方法 仅root：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
   _initAllObjects () {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
@@ -122,7 +123,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog)
     // 创建字体调整事件
-    this.fontSize = new FontSize(document.querySelector('.mip-shell-footer-wrapper .mip-shell-xiaoshuo-control-fontsize'))
+    this.fontSize = new FontSize()
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
   }
@@ -138,7 +139,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     }
   }
 
-  // 基类方法：绑定头部弹层事件。
+  // 基类方法 每个页面执行：绑定头部弹层事件。
   bindHeaderEvents () {
     super.bindHeaderEvents()
 
@@ -146,7 +147,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     let me = this
 
     // 当页面出现跳转时，关闭所有的浮层
-    this.jumpHandler = event.delegate(document, '[mip-link]', 'click', function (e) {
+    this.jumpHandler = event.delegate(document.body, '[mip-link]', 'click', function (e) {
       me._closeEverything()
     })
   }
@@ -169,7 +170,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
   //   super.refreshShell(...args)
   // }
 
-  // 基类方法：页面跳转后更新shell
+  // 基类方法 非root执行：页面跳转后更新shell
   updateOtherParts () {
     super.updateOtherParts()
     // 重新渲染footer
