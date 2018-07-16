@@ -3,75 +3,77 @@
     <div class="mip-group-selection-content lasted-visted-hot ">
       <!-- 最近访问的城市 -->
       <div
-        class="mip-group-selection-part-letter content-wrapper"
         v-if="isTrue"
+        class="mip-group-selection-part-letter content-wrapper"
       >
         <div class="mip-group-selection-title"> 最近访问的城市</div>
         <p
           v-for="city in history"
+          :key = "city"
           class="mip-group-selection-item"
           @click="showInfo(city)"
-          :key=city
         >
-          {{city.city }}
-          </p>
+          {{ city.city }}
+        </p>
+      </div>
+
     </div>
 
+    <div class="mip-group-selection-content ">
+      <!--  热门城市本地 -->
+      <div v-if="local">
+        <div
+          v-for="item in list"
+          :key="item"
+          class="mip-group-selection-group mip-group-selection-part-letter group-json-content content-wrapper"
+        >
+          <div class="mip-group-selection-title"> {{ item.key }}</div>
+          <p
+            v-for="city in item.cities"
+            :key="city"
+            class="mip-group-selection-item"
+            @click="showInfo(city)"
+          >
+            {{ city.city }}
+          </p>
+        </div>
+      </div>
+
+      <!--  热门城市异步 -->
+      <div v-show="async">
+        <div
+          v-for="item in listOnline"
+          :key="item"
+          class="mip-group-selection-group mip-group-selection-part-letter group-json-content  content-wrapper"
+        >
+          <div class="mip-group-selection-title"> {{ item.key }}</div>
+          <p
+            v-for="city in item.cities"
+            :key="city"
+            class="mip-group-selection-item"
+            @click="showInfo(city)"
+          >
+            {{ city.city }}
+          </p>
+        </div>
+      </div>
+      <div>
+        <mip-fixed class="mip-group-selection-sidebar-wrapper">
+          <div class="mip-group-selection-sidebar">
+            <div
+              v-for="(item, index) in list"
+              :key="index"
+              @click="scrollToGroup(index)"
+            >
+              <a class="mip-group-selection-link"> {{ item.key }}</a>
+            </div>
+          </div>
+        </mip-fixed>
+      </div>
+    </div>
+    <slot/>
   </div>
 
-  <div class="mip-group-selection-content ">
-    <!--  热门城市本地 -->
-    <div
-      v-if="local"
-      v-for="item in list"
-      class="mip-group-selection-group mip-group-selection-part-letter group-json-content content-wrapper"
-      :key="item"
-    >
-      <div class="mip-group-selection-title"> {{item.key}}</div>
-      <p
-        v-for="city in item.cities"
-        class="mip-group-selection-item"
-        @click="showInfo(city)"
-        :key="city"
-      >
-        {{ city.city }}
-        </p>
-  </div>
-  <!--  热门城市异步 -->
-  <div v-show="async">
-    <div
-      v-for="item in listOnline"
-      :class="'sss'"
-      class="mip-group-selection-group mip-group-selection-part-letter group-json-content  content-wrapper"
-      :key="item"
-    >
-      <div class="mip-group-selection-title"> {{item.key}}</div>
-      <p
-        v-for="city in item.cities"
-        class="mip-group-selection-item"
-        @click="showInfo(city)"
-        :key="city"
-      >
-        {{ city.city }}
-        </p>
-  </div>
-  </div>
-  <div>
-    <mip-fixed class="mip-group-selection-sidebar-wrapper">
-      <div class="mip-group-selection-sidebar">
-        <div
-          v-for="(item, index) in list"
-          :key="index"
-          @click="scrollToGroup(index)"
-        >
-          <a class="mip-group-selection-link"> {{item.key}}</a>
-      </div>
-  </div>
-  </mip-fixed>
-  </div>
-  </div>
-  <slot/>
-  </div>
 </template>
 <style lang="less" scoped>
 .wrapper {
@@ -244,17 +246,19 @@
 </style>
 
 <script>
-let viewer = MIP.viewer
 let viewport = MIP.viewport
 let util = MIP.util
 let rect = util.rect
-let CustomStorage = util.customStorage;
-let Storage = new CustomStorage(0);
+let CustomStorage = util.customStorage
+let Storage = new CustomStorage(0)
 let cityData
 export default {
   props: {
     list: {
-      type: Object
+      type: Object,
+      default: function () {
+        return {}
+      }
     },
     maxHistory: {
       type: Number,
@@ -278,7 +282,8 @@ export default {
     }
   },
   mounted () {
-    this.init(this.list);
+    console.log(typeof list)
+    this.init(this.list)
     viewport.on('scroll', () => {
       this.getOffsetX()
     })
@@ -291,11 +296,11 @@ export default {
       for (let group of currentGroups) {
         offsetX.push(rect.getElementOffset(group).top + scrollTop)
       }
-      this.offsetX = offsetX;
+      this.offsetX = offsetX
     },
     showInfo (city) {
       this.getOffsetX()
-      this.isTrue = true;
+      this.isTrue = true
       this.currentCity = city
       let isExit = false
       for (let i = 0; i < this.history.length; i++) {
@@ -305,16 +310,13 @@ export default {
           this.history.unshift(newCity)
           isExit = true
         }
-
-      }
-
-      if (!isExit) {
+      } if (!isExit) {
         this.history.unshift(city)
         this.history = this.history.slice(0, this.maxHistory)
       }
       cityData = JSON.stringify(this.history)
       Storage.set('cityData', cityData)
-      this.$emit("citySelected", city)
+      this.$emit('citySelected', city)
       this.cityData = JSON.parse(Storage.get('cityData'))
       this.history = this.cityData
       this.getOffsetX()
@@ -326,7 +328,7 @@ export default {
     },
     // 城市初始化，本地或异步加载方式加载
     init (list) {
-      let url = this.$element.dataset.src || "";
+      let url = this.$element.dataset.src || ''
       let that = this
       let getdata = new Promise(function (resolve, reject) {
         let groupData
@@ -337,32 +339,30 @@ export default {
             if (res.ok) {
               res.json().then(function (data) {
                 that.listOnline = data.list
-                resolve(data);
-              });
-            }
-            else {
-              reject('mip-city-selection 组件 Fetch 请求失败!');
+                resolve(data)
+              })
+            } else {
+              reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
             }
           }).catch(function (e) {
-            reject('mip-city-selection 组件 Fetch 请求失败!');
-          });
+            reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
+          })
           that.async = true
-        }
-        else if (groupData = that.$element.querySelector('script[type="application/json"]')) {
-          that.async = false;
+        } else {
+          groupData = that.$element.querySelector('script[type="application/json"]')
+          that.async = false
           try {
-            groupData = JSON.parse(groupData.textContent);
+            groupData = JSON.parse(groupData.textContent)
+          } catch (e) {
+            reject(new Error('mip-city-selection 组件 json 配置错误, 请检查 json 格式。'))
           }
-          catch (e) {
-            reject('mip-city-selection 组件 json 配置错误, 请检查 json 格式。');
-          }
-          resolve(groupData);
+          resolve(groupData)
           that.local = true
         }
-      });
+      })
       getdata.then(function (data) {
         if (!data) {
-          console.error('mip-city-selection 需要配置分组选项。可以配置到组件中，也可以配置远程数据。');
+          console.error('mip-city-selection 需要配置分组选项。可以配置到组件中，也可以配置远程数据。')
         }
       })
       //  缓存数据
@@ -373,7 +373,7 @@ export default {
         this.history = JSON.parse(locationStorage)
         this.isTrue = true
       }
-    },
+    }
   }
 }
 </script>
