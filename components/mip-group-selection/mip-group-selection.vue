@@ -282,6 +282,7 @@ export default {
     }
   },
   mounted () {
+    console.log(typeof list)
     this.init(this.list)
     viewport.on('scroll', () => {
       this.getOffsetX()
