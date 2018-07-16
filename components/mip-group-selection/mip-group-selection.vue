@@ -9,69 +9,69 @@
         <div class="mip-group-selection-title"> 最近访问的城市</div>
         <p
           v-for="city in history"
-          :key="city"
+          :key = "city"
           class="mip-group-selection-item"
           @click="showInfo(city)"
         >
           {{ city.city }}
-          </p>
-    </div>
-
-  </div>
-
-  <div class="mip-group-selection-content ">
-    <!--  热门城市本地 -->
-    <div v-if="local">
-      <div
-        v-for="item in list"
-        :key="item"
-        class="mip-group-selection-group mip-group-selection-part-letter group-json-content content-wrapper"
-      >
-        <div class="mip-group-selection-title"> {{ item.key }}</div>
-        <p
-          v-for="city in item.cities"
-          :key="city"
-          class="mip-group-selection-item"
-          @click="showInfo(city)"
-        >
-          {{ city.city }}
-          </p>
-    </div>
-  </div>
-
-  <!--  热门城市异步 -->
-  <div v-show="async">
-    <div
-      v-for="item in listOnline"
-      :key="item"
-      class="mip-group-selection-group mip-group-selection-part-letter group-json-content  content-wrapper"
-    >
-      <div class="mip-group-selection-title"> {{ item.key }}</div>
-      <p
-        v-for="city in item.cities"
-        :key="city"
-        class="mip-group-selection-item"
-        @click="showInfo(city)"
-      >
-        {{ city.city }}
         </p>
-  </div>
-  </div>
-  <div>
-    <mip-fixed class="mip-group-selection-sidebar-wrapper">
-      <div class="mip-group-selection-sidebar">
-        <div
-          v-for="(item, index) in list"
-          :key="index"
-          @click="scrollToGroup(index)"
-        >
-          <a class="mip-group-selection-link"> {{ item.key }}</a>
       </div>
-  </div>
-  </mip-fixed>
-  </div>
-  </div>
-  <slot/>
+
+    </div>
+
+    <div class="mip-group-selection-content ">
+      <!--  热门城市本地 -->
+      <div v-if="local">
+        <div
+          v-for="item in list"
+          :key="item"
+          class="mip-group-selection-group mip-group-selection-part-letter group-json-content content-wrapper"
+        >
+          <div class="mip-group-selection-title"> {{ item.key }}</div>
+          <p
+            v-for="city in item.cities"
+            :key="city"
+            class="mip-group-selection-item"
+            @click="showInfo(city)"
+          >
+            {{ city.city }}
+          </p>
+        </div>
+      </div>
+
+      <!--  热门城市异步 -->
+      <div v-show="async">
+        <div
+          v-for="item in listOnline"
+          :key="item"
+          class="mip-group-selection-group mip-group-selection-part-letter group-json-content  content-wrapper"
+        >
+          <div class="mip-group-selection-title"> {{ item.key }}</div>
+          <p
+            v-for="city in item.cities"
+            :key="city"
+            class="mip-group-selection-item"
+            @click="showInfo(city)"
+          >
+            {{ city.city }}
+          </p>
+        </div>
+      </div>
+      <div>
+        <mip-fixed class="mip-group-selection-sidebar-wrapper">
+          <div class="mip-group-selection-sidebar">
+            <div
+              v-for="(item, index) in list"
+              :key="index"
+              @click="scrollToGroup(index)"
+            >
+              <a class="mip-group-selection-link"> {{ item.key }}</a>
+            </div>
+          </div>
+        </mip-fixed>
+      </div>
+    </div>
+    <slot/>
   </div>
 
 </template>
