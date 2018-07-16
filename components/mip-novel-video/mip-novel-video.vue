@@ -64,7 +64,7 @@ const css = MIP.util.css
 const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 10
 const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
-const PRETIME = 'ad-time'
+const PREDATE = 'ad-time'
 
 const isSF = !window.MIP.standalone
 
@@ -281,19 +281,16 @@ export default {
       isClosed = true
     },
     timeExpired () {
-      let myDate = new Date().getTime()
-      let preTime = customStorage.get(PRETIME)
-      if (preTime == null) {
-        customStorage.set(PRETIME, myDate)
+      let myDate = new Date().getDate()
+      let preDate = customStorage.get(PREDATE)
+      if (preDate == null) {
+        customStorage.set(PREDATE, myDate)
         return
       }
-      let currentTime = myDate
-      let diffTime = currentTime - preTime
-      let secondsDiff = parseInt(Math.abs(diffTime) / 1000)
-      if (secondsDiff >= 30) {
-      // if (secondsDiff >= 86399) {
+      let currentDate = myDate
+      if (currentDate !== preDate) {
         customStorage.rm(VIDEOINDEX)
-        customStorage.rm(PRETIME)
+        customStorage.rm(PREDATE)
       }
     }
   }
