@@ -9,16 +9,17 @@
 import './mip-shell-xiaoshuo.less'
 import Catalog from './catalog' // 侧边栏目录
 import Footer from './footer' // 底部控制栏
+import Header from './header' // shell导航头部
 import {PageStyle, FontSize} from './setting' // 背景色调整，字体大小调整
 
-export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipShell {
+export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
     super(...args)
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     // todo: 目前有重复调用问题
-    // this._scrollBoundary()
+    this._scrollBoundary()
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -88,11 +89,13 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
       this.footer.show(this)
+      this.header.show()
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
       this.catalog.show(this)
       this.footer.hide()
+      this.header.hide()
     })
   }
 
@@ -108,6 +111,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // 关闭所有可能弹出的bar
     this.toggleDOM(this.$buttonWrapper, false)
     this.footer.hide()
+    this.header.hide()
     this.catalog.hide()
     this.fontSize.hideFontBar()
     // 关闭黑色遮罩
@@ -121,6 +125,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     this.footer = new Footer(configMeta.footer)
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog)
+    this.header = new Header(this.$el)
     // 创建字体调整事件
     this.fontSize = new FontSize(document.querySelector('.mip-shell-footer-wrapper .mip-shell-xiaoshuo-control-fontsize'))
     // 绑定 Root shell 字体bar拖动事件
@@ -175,7 +180,12 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
     // 重新渲染footer
     this.footer._render(this.currentPageMeta.footer)
   }
-
+  // 基类方法，设置默认的shellConfig
+  processShellConfig (shellConfig) {
+    shellConfig.routes.forEach(routerConfig => {
+      routerConfig.meta.header.bouncy = false
+    })
+  }
   /**
    * 滚动边界处理
    */
@@ -192,7 +202,7 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
 
     scrollaBoundaryTouch.setAttribute('mip-shell-scrollboundary', true);
     [].slice.call(body.children).forEach(child => {
-      if (/^(SCRIPT|IFRAME|MIP-SHELL-INSERVICE|MIP-DATA)/.test(child.nodeName)) {
+      if (/^(SCRIPT|IFRAME|MIP-SHELL|MIP-DATA)/.test(child.nodeName)) {
         return
       }
       scrollaBoundaryTouch.appendChild(child)
@@ -243,5 +253,20 @@ export default class MipShellXiaoshuo extends window.MIP.builtinComponents.MipSh
         touchTarget.removeEventListener('touchmove', stopProFun)
       }
     })
+  }
+
+  /**
+   * 获取上级可scroll的元素
+   *
+   * @param {Object} element 目标元素
+   */
+  getClosestScrollElement (element) {
+    while (element && !element.getAttribute('mip-shell-scrollboundary')) {
+      if (MIP.util.css(element, 'overflow-y') === 'auto' && element.clientHeight < element.scrollHeight) {
+        return element
+      }
+      element = element.parentNode
+    }
+    return null
   }
 }
