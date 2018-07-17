@@ -25,13 +25,13 @@
           @click="gotoAdUrl">
           <video
             ref="mipVideo"
+            :poster="poster"
+            :src="src"
             muted="true"
             class="video"
             autoplay
             webkit-playsinline
             playsinline
-            poster="https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg"
-            src="https://ecmb.bdimg.com/cae-legoup-video-target/bcb262e0-fe62-49e6-9d3f-1649cad66394.mp4"
           />
         </div>
         <div
@@ -63,23 +63,39 @@ const css = MIP.util.css
 
 const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 10
-const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
-const PRETIME = 'ad-time'
+const PREDATE = 'ad-time'
 
-const isSF = window.MIP.standalone
+const isSF = !window.MIP.standalone
 
 let player = null
 let jSMpegPlayer = null
 let canvas = null
 
-// 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
-// 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
-const POSTER = 'https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg'
-const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
-
 let isShouldVideo
 
 export default {
+  props: {
+    videoid: {
+      type: String,
+      default: ''
+    },
+    poster: {
+      type: String,
+      default: ''
+    },
+    src: {
+      type: String,
+      default: ''
+    },
+    tsurl: {
+      type: String,
+      default: ''
+    },
+    jumpurl: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       isOpening: false,
@@ -91,24 +107,26 @@ export default {
   },
   computed: {
     isShow: function () {
-      let isShow = isSF && detector.getMobileSystemVersion() && !this.played && isShouldVideo
-      return !isShow
+      return this.src && this.tsurl && isSF && detector.getMobileSystemVersion() && isShouldVideo
     },
     isOriginalVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
+    if (!this.src || !this.tsurl) {
+      return
+    }
     this.timeExpired()
     this.initVideoIndex()
     isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
-    console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
-    if (isShouldVideo) {
+    if (this.isShow) {
+      console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
       this.readContainerNoScroll()
     }
   },
   firstInviewCallback () {
-    if (isShouldVideo) {
+    if (this.isShow) {
       this.creatVideo()
       this.openVideo()
     }
@@ -117,39 +135,44 @@ export default {
     openVideo () {
       let self = this
       document.body.addEventListener('touchstart', e => {
-        if (self.isShow) {
-          self.$element.setAttribute('style', 'display: none !important')
-          self.readContainerScroll()
-          return
-        }
-        if (!self.forbidClick) {
+        if (!self.forbidClick || self.played) {
           return
         }
         e && e.preventDefault()
-        e && e.stopPropagation()
-        e && e.stopImmediatePropagation()
         self.startPlayer()
       }, false)
     },
     startPlayer () {
       let self = this
       this.$element.setAttribute('style', 'display: block !important')
+      let forceClose = setTimeout(() => {
+        this.closeVideo()
+      }, 15000)
       if (player && this.isOriginalVideo) {
+        player.addEventListener('playing', () => {
+          self.startTimer()
+          clearTimeout(forceClose)
+        })
         player.play()
-        this.startTimer()
       }
       if (jSMpegPlayer && !this.isOriginalVideo) {
         jSMpegPlayer.on('playing', () => {
           let event = new Event('playing')
           this.$element.dispatchEvent(event)
           css(canvas, {opacity: '1'})
-          // 初始化倒计时器
-          this.startTimer()
+          self.startTimer()
+          clearTimeout(forceClose)
         })
         jSMpegPlayer.play()
       }
       /* global _hmt */
-      _hmt && _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
+      _hmt && _hmt.push(['_trackEvent', 'video', 'show', this.videoid])
+      this.noVideoMaskScroll()
+      setTimeout(() => {
+        self.forbidClick = false
+      }, 500)
+    },
+    noVideoMaskScroll () {
       let videoMask = this.$element.querySelector('.video-mask')
       videoMask.addEventListener('touchmove', e => {
         e && e.preventDefault()
@@ -163,9 +186,6 @@ export default {
         e && e.stopImmediatePropagation()
         return false
       })
-      setTimeout(() => {
-        self.forbidClick = false
-      }, 500)
     },
     creatVideo () {
       if (this.isOriginalVideo) {
@@ -185,24 +205,25 @@ export default {
       }
     },
     initCanvasVideo () {
+      let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
-        css(videoCover, {backgroundImage: 'url(' + POSTER + ')'})
+        css(videoCover, {backgroundImage: 'url(' + this.poster + ')'})
         canvas = this.$refs.videoCanvas
         let attributes = {
           class: 'video',
           loop: false,
           audio: false,
-          poster: POSTER,
+          poster: this.poster,
           canvas: canvas
         }
-        let tsUrl = TSURL
-        jSMpegPlayer = new JSMpeg.Player(tsUrl, attributes)
+        let tsurl = this.tsurl
+        jSMpegPlayer = new JSMpeg.Player(tsurl, attributes)
         jSMpegPlayer.pause()
         jSMpegPlayer.on('ended', () => {
           let event = new Event('ended')
           this.$element.dispatchEvent(event)
-          this.closeVideo()
+          self.closeVideo()
         })
       }
     },
@@ -242,15 +263,14 @@ export default {
         this.forbidClick = true
         this.played = true
         this.$element.setAttribute('style', 'display: none !important')
-        window.top.location.href = PINZHUANGURL
+        window.top.location.href = this.jumpurl
         /* global _hmt */
-        _hmt && _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
+        _hmt && _hmt.push(['_trackEvent', 'video', 'click', this.videoid])
       }
     },
     closeVideo (e, isClick) {
       e && e.stopPropagation()
       e && e.preventDefault()
-      let self = this
       let container = this.$element.querySelector('.video-container')
       let content = this.$element.querySelector('.content')
       let isClosed = false
@@ -261,14 +281,15 @@ export default {
         jSMpegPlayer.pause()
       }
       if (!isClosed) {
-        self.readContainerScroll()
-        self.forbidClick = true
-        self.played = true
+        this.readContainerScroll()
+        this.forbidClick = true
+        this.played = true
         container.classList.add('close-container')
+        let self = this
         setTimeout(() => {
           content.classList.add('close-content')
           /* global _hmt */
-          isClick && _hmt && _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
+          isClick && _hmt && _hmt.push(['_trackEvent', 'close', 'click', this.videoid])
           setTimeout(() => {
             self.$element.setAttribute('style', 'display: none !important')
             container.classList.remove('close-container')
@@ -279,20 +300,16 @@ export default {
       isClosed = true
     },
     timeExpired () {
-      let myDate = new Date().getTime()
-      let preTime = customStorage.get(PRETIME)
-      if (preTime == null) {
-        customStorage.set(PRETIME, myDate)
+      let myDate = new Date().getDate()
+      let preDate = customStorage.get(PREDATE)
+      if (preDate == null) {
+        customStorage.set(PREDATE, myDate)
         return
       }
-      let currentTime = myDate
-      let diffTime = currentTime - preTime
-      // let hoursDiff = parseInt(Math.abs(diffTime) / 1000 / 60 / 60)
-      let secondsDiff = parseInt(Math.abs(diffTime) / 1000)
-      if (secondsDiff >= 30) {
-      // if (hoursDiff >= 24) {
+      let currentDate = myDate
+      if (currentDate !== +preDate) {
         customStorage.rm(VIDEOINDEX)
-        customStorage.rm(PRETIME)
+        customStorage.rm(PREDATE)
       }
     }
   }

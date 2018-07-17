@@ -42,10 +42,10 @@ const detector = {
     const version = system.match(num)
     // ios要求版本8.X以上
     if (platform.isIos()) {
-      return version && version[0] && version[0] >= IOSVERSION
+      return version && version[0] && version[0] >= IOSVERSION && !platform.isUc()
     } else {
     // android要求版本5.X以上
-      return version && version[0] && version[0] >= ANDROIDVERSION
+      return version && version[0] && version[0] >= ANDROIDVERSION && !platform.isUc()
     }
   }
 }
