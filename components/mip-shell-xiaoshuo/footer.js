@@ -84,7 +84,7 @@ class footer {
         <div class="button-wrapper">
             ${renderFooterButtonGroup(this.config.actionGroup)}
         </div>
-        <div class="mip-xiaoshuo-settings">${settingHtml}</div>
+        <div class="mip-xiaoshuo-settings">${settingHtml()}</div>
         `
     return footerHTML
   }
