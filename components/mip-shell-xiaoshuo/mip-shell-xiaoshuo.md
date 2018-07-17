@@ -1,19 +1,11 @@
-# `mip-shell-inservice`
+# `mip-shell-xiaoshuo`
 
 ## 说明
-极速服务 mip-shell定制化
-
-标题|内容
-----|----
-类型|通用
-支持布局|N/S
-所需脚本|https://c.mipcdn.com/static/v2/mip-shell-inservice/mip-shell-inservice.js
-
-
+为极速小说阅读器定制的 mip-shell
 
 ## 示例
 ```html
-<mip-shell-inservice mip-shell>
+<mip-shell-xiaoshuo mip-shell>
     <script type="application/json">
         {
         "routes": [
@@ -29,7 +21,7 @@
                 }
             },
             {
-                "pattern": "./mip-shell-inservice.html",
+                "pattern": "./mip-shell-xiaoshuo.html",
                 "meta": {
                     "header": {
                         "show": true,
@@ -52,7 +44,7 @@
         "isId":"156786663788884"
     }
     </script>
-</mip-shell-inservice>
+</mip-shell-xiaoshuo>
 ```
 
 ## 属性
