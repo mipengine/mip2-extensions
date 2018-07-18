@@ -330,12 +330,22 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
   updateOtherParts () {
     // this.sendLog(`//cp01-chunjie.epc.baidu.com:8500/servicehub/oplog/urlclk?url=${location.href}`)
     let clickToken = storage.get(CLICK_TOKEN_KEY)
-    let url = `//rqs.baidu.com/service/api/rqs?rqt=300&action=page_vi&xzhid=${MIP.util.customStorage(0).get('mip-xzhid')}&click_token=${clickToken}&_t=${new Date().getTime()}&url=${encodeURIComponent(location.href)}`
+    let urlQuerysObj = {
+      rqt: 300,
+      action: 'page_vi',
+      xzhid: MIP.util.customStorage(0).get('mip-xzhid'),
+      click_token: clickToken,
+      _t: new Date().getTime(),
+      url: location.href
+    }
+    let urlQuerys = Object.keys(urlQuerysObj).map((key) => {
+      return `${key}=${encodeURIComponent(urlQuerysObj[key])}`
+    })
+    let url = `//rqs.baidu.com/service/api/rqs?${urlQuerys.join('&')}`
     this.sendLog(url)
   }
   sendLog (url) {
     let img = new Image()
     img.src = url
-    img = null
   }
 }
