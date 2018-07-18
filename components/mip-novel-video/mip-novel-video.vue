@@ -146,7 +146,7 @@ export default {
       let self = this
       this.$element.setAttribute('style', 'display: block !important')
       let forceClose = setTimeout(() => {
-        this.closeVideo()
+        self.closeVideo()
       }, 15000)
       if (player && this.isOriginalVideo) {
         player.addEventListener('playing', () => {
@@ -241,8 +241,8 @@ export default {
       document.body.setAttribute('style', 'height: 100% !important; overflow: hidden')
     },
     readContainerScroll () {
-      document.documentElement.setAttribute('style', '')
-      document.body.setAttribute('style', '')
+      document.documentElement.setAttribute('style', 'height: auto !important; overflow: scroll')
+      document.body.setAttribute('style', 'height: auto !important; overflow: scroll')
     },
     startTimer () {
       if (!this.timer && this.count > 0) {
@@ -509,6 +509,7 @@ mip-novel-video {
     align-items: center;
     justify-content: center;
     text-align: center;
+    position: absolute;
   }
   .video {
     position: relative;
