@@ -558,15 +558,19 @@ export default {
     },
 
     sendLog ({action, param, url = location.href}) {
-      let urlQuerys = ['rqt=300']
+      let urlQuerys = {}
+      urlQuerys.rqt = 300
       let xzhid = storage.get('mip-xzhid')
       let clickToken = storage.get('mip-click-token')
-      urlQuerys.push(`action=${action}`)
-      param && urlQuerys.push(`param=${param}`)
-      urlQuerys.push(`url=${encodeURIComponent(url)}`)
-      xzhid && urlQuerys.push(`xzhid=${xzhid}`)
-      clickToken && urlQuerys.push(`click_token=${clickToken}`)
-      new Image().src = `//rqs.baidu.com/service/api/rqs?${urlQuerys.join('&')}`
+      urlQuerys.action = action
+      param && (urlQuerys.param = param)
+      urlQuerys.url = url
+      xzhid && (urlQuerys.xzhid = xzhid)
+      clickToken && (urlQuerys.click_token = clickToken)
+      let urlQueryParams = Object.keys(urlQuerys).map((key) => {
+        return `${key}=${encodeURIComponent(urlQuerys[key])}`
+      })
+      new Image().src = `//rqs.baidu.com/service/api/rqs?${urlQueryParams.join('&')}`
     }
   }
 }
