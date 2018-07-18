@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <script src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/3.0.0/vconsole.min.js"></script>
+
+  <style mip-custom>
+    /* 自定义样式 */
+
+    mip-tabs {
+      transition: height .3s;
+      box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+
+    .mip-tabs {
+      transition: height .3s;
+    }
+
+    h2 {
+      line-height: 3;
+    }
+
+    p {
+      line-height: 1.8;
+    }
+
+    ul {
+      padding-top: 30px;
+    }
+
+    ul li {
+      list-style: disc;
+      list-style-position: inside;
+      line-height: 1.6;
+    }
+
+  </style>
+</head>
+
+<body>
+    <mip-tabs initial-tab="0">
+      <mip-tabs-item label="MIP 2">
+        <h2>什么是 MIP</h2>
+        <p>MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP-HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。
+          MIP 主要由三部分组织成：
+        </p>
+        <ul>
+          <li>MIP-HTML：基于 HTML 中的基础标签制定了全新的规范，通过对一部分基础标签的使用限制或功能扩展，使 HTML 能够展现更加丰富的内容。</li>
+          <li>MIP-JS：可以保证 MIP-HTML 页面的快速渲染。</li>
+          <li>MIP-Cache：用于实现 MIP 页面的高速缓存，从而进一步提高页面性能。</li>
+        </ul>
+      </mip-tabs-item>
+      <mip-tabs-item label="mip-tabs组件介绍">
+        <ol>
+          <li>使用方便</li>
+          <li>动画交互</li>
+          <li>任意嵌套</li>
+          <li>自定义tab内容结构</li>
+        </ol>
+      </mip-tabs-item>
+      <mip-tabs-item label="嵌套">
+        这里嵌套了另一个tab标签
+        <mip-tabs initial-tab="0">
+          <mip-tabs-item label="嵌1"> 嵌套111111</mip-tabs-item>
+          <mip-tabs-item label="嵌2"> 嵌套222222</mip-tabs-item>
+          <mip-tabs-item label="嵌3"> 嵌套333333</mip-tabs-item>
+        </mip-tabs>
+        <mip-tabs initial-tab="0">
+          <mip-tabs-item label="嵌1"> 嵌套111111</mip-tabs-item>
+          <mip-tabs-item label="嵌2"> 嵌套222222</mip-tabs-item>
+          <mip-tabs-item label="嵌3"> 嵌套333333</mip-tabs-item>
+        </mip-tabs>
+      </mip-tabs-item>
+      <mip-tabs-item label="Tab 4">
+        4444444444
+      </mip-tabs-item>
+      <mip-tabs-item label="暂未开放" disabled="true">
+      </mip-tabs-item>
+      <div>test</div>
+    </mip-tabs>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-tabs/mip-tabs.js "></script>
+</body>
+
+</html>
