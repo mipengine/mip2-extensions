@@ -146,7 +146,7 @@ export default {
       let self = this
       this.$element.setAttribute('style', 'display: block !important')
       let forceClose = setTimeout(() => {
-        self.closeVideo()
+        this.closeVideo()
       }, 15000)
       if (player && this.isOriginalVideo) {
         player.addEventListener('playing', () => {
@@ -195,17 +195,15 @@ export default {
       }
     },
     initVideo () {
-      let self = this
       player = this.$element.querySelector('video')
       if (player) {
         player.pause()
         player.addEventListener('ended', () => {
-          self.closeVideo()
+          this.closeVideo()
         })
       }
     },
     initCanvasVideo () {
-      let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + this.poster + ')'})
@@ -223,7 +221,7 @@ export default {
         jSMpegPlayer.on('ended', () => {
           let event = new Event('ended')
           this.$element.dispatchEvent(event)
-          self.closeVideo()
+          this.closeVideo()
         })
       }
     },
@@ -241,8 +239,8 @@ export default {
       document.body.setAttribute('style', 'height: 100% !important; overflow: hidden')
     },
     readContainerScroll () {
-      document.documentElement.setAttribute('style', 'height: auto !important; overflow: scroll')
-      document.body.setAttribute('style', 'height: auto !important; overflow: scroll')
+      document.documentElement.setAttribute('style', '')
+      document.body.setAttribute('style', '')
     },
     startTimer () {
       if (!this.timer && this.count > 0) {
