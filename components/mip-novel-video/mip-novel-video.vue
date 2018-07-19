@@ -120,6 +120,7 @@ export default {
     this.timeExpired()
     this.initVideoIndex()
     isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
+    alert('; isSF:' + isSF + '; version: ' + detector.getMobileSystemVersion() + '; isShouldVideo: ' + customStorage.get(VIDEOINDEX) + '; src:' + this.src + '; tsurl:' + this.tsurl)
     if (this.isShow) {
       console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
       this.readContainerNoScroll()
