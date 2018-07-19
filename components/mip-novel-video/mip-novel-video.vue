@@ -146,7 +146,7 @@ export default {
       let self = this
       this.$element.setAttribute('style', 'display: block !important')
       let forceClose = setTimeout(() => {
-        this.closeVideo()
+        self.closeVideo()
       }, 15000)
       if (player && this.isOriginalVideo) {
         player.addEventListener('playing', () => {
@@ -195,15 +195,17 @@ export default {
       }
     },
     initVideo () {
+      let self = this
       player = this.$element.querySelector('video')
       if (player) {
         player.pause()
         player.addEventListener('ended', () => {
-          this.closeVideo()
+          self.closeVideo()
         })
       }
     },
     initCanvasVideo () {
+      let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + this.poster + ')'})
@@ -221,7 +223,7 @@ export default {
         jSMpegPlayer.on('ended', () => {
           let event = new Event('ended')
           this.$element.dispatchEvent(event)
-          this.closeVideo()
+          self.closeVideo()
         })
       }
     },
