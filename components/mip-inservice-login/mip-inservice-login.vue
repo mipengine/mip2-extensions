@@ -99,6 +99,20 @@ export default {
           this.setData()
         }
       })
+
+      let self = this
+
+      window.cambrian.init({
+        data: {simpleInit: true},
+        success () {
+          window.cambrian.addListener('xzh-open-log', e => {
+            util.log({
+              action: e.action,
+              xzhid: self.config.appid
+            })
+          })
+        }
+      })
     },
     updateLogin (data) {
       let key = this.config.endpoint + '_login_handle'
@@ -175,7 +189,7 @@ export default {
      * @param {string=} redirectUri 登录成功后的重定向地址
      * @param {string=} origin 发起登录操作的来源标示
      * @param {boolean=} replace 重定向的地址是否要replace当前地址，默认为false
-     * @return {undefined}
+     * @returns {undefined} 结果
      */
     login (redirectUri, origin = '', replace = false) {
       // 当前页面的url
@@ -297,7 +311,7 @@ export default {
      * 触发事件
      *
      * @param  {string} name  事件名称
-     * @param {string=} state 触发登录方法的来源标示
+     * @param {string=} origin 触发登录方法的来源标示
      */
     trigger (name, origin = '') {
       let event = {
@@ -354,6 +368,10 @@ export default {
 
         if (data.type === 'login') {
           if (res.status === 0 && fn.isPlainObject(res.data)) {
+            util.log({
+              action: 'login_success',
+              xzhid: self.config.appid
+            })
             self.loginHandle('login', true, res.data, origin)
           } else {
             throw new Error('登录失败', res)
@@ -366,6 +384,10 @@ export default {
         self.setData()
       }).catch(err => {
         if (data.type === 'login') {
+          util.log({
+            action: 'login_error',
+            xzhid: self.config.appid
+          })
           this.loginHandle('error', false)
           throw err
         }
