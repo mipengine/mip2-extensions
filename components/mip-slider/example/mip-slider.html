@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+
+    body {
+      padding: 20px;
+    }
+
+    mip-slider.her {
+      height: 50px;
+      margin-top: 40px;
+    }
+
+    mip-slider.ver {
+      width: 50px;
+      margin: 30px auto;
+    }
+
+    ul li {
+      list-style: none;
+      padding: 20px 30px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+    }
+
+  </style>
+</head>
+
+<body>
+  <ul>
+    <li>
+      <p> 单值、横向、上方显示、范围0-200、 步长1、预设值60 </p>
+      <mip-slider class="her">
+        <script type="application/json">
+          {
+            range: 60,
+            height: 6,
+            dotSize: 16,
+            min: 0,
+            max: 200,
+            step: 1
+          }
+
+        </script>
+      </mip-slider>
+    </li>
+
+    <li>
+      <p> 范围值、横向、下方显示、范围0-100、 步长1、预设20-60、支持固定范围拖动</p>
+      <mip-slider class="her">
+        <script type="application/json">
+          {
+            range: [20, 60],
+            height: 6,
+            dotSize: 16,
+            min: 0,
+            max: 100,
+            step: 5,
+            tipDir: "bottom",
+            fixRange: true
+          }
+
+        </script>
+      </mip-slider>
+    </li>
+
+    <li>
+      <p>范围值、纵向、左方显示、范围0-100、步长3、预设20-80、自定义颜色</p>
+      <mip-slider class="ver">
+        <script type="application/json">
+          {
+            range: [20, 80],
+            width: 6,
+            height: 300,
+            dotSize: 24,
+            direction: "vertical",
+            min: 0,
+            max: 100,
+            step: 3,
+            dotStyle: {
+              "background": "url('https://cambrian-images.cdn.bcebos.com/580ce3eeaa75ee03a916db594e47ae4e_1516170693203.jpeg') center center no-repeat",
+              "background-size": "100%"
+            },
+            barStyle: {
+              "background": "#f3f3f3",
+              "box-shadow": "inset 0 1px 2px rgba(0,0,0,.1)"
+            },
+            processStyle: {
+              "background-image": "-webkit-linear-gradient(top, rgb(240, 91, 114), rgb(52, 152, 219))"
+            }
+          }
+
+        </script>
+      </mip-slider>
+    </li>
+  </ul>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-slider/mip-slider.js"></script>
+</body>
+
+</html>
