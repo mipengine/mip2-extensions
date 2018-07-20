@@ -120,7 +120,6 @@ export default {
     this.timeExpired()
     this.initVideoIndex()
     isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
-    alert('; windowName:' + window.name + '; isSF:' + isSF + '; isShouldVideo: ' + customStorage.get(VIDEOINDEX))
     if (this.isShow) {
       console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
       this.readContainerNoScroll()
@@ -196,17 +195,15 @@ export default {
       }
     },
     initVideo () {
-      let self = this
       player = this.$element.querySelector('video')
       if (player) {
         player.pause()
         player.addEventListener('ended', () => {
-          self.closeVideo()
+          this.closeVideo()
         })
       }
     },
     initCanvasVideo () {
-      let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + this.poster + ')'})
@@ -224,7 +221,7 @@ export default {
         jSMpegPlayer.on('ended', () => {
           let event = new Event('ended')
           this.$element.dispatchEvent(event)
-          self.closeVideo()
+          this.closeVideo()
         })
       }
     },
