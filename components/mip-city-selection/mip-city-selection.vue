@@ -1,16 +1,16 @@
 <template>
-  <div class="mip-group-selection-wrapper">
-    <div class="mip-group-selection-content lasted-visted-hot ">
+  <div class="mip-city-selection-wrapper">
+    <div class="mip-city-selection-content lasted-visted-hot ">
       <!-- 最近访问的城市 -->
       <div
         v-if="visit"
-        class="mip-group-selection-part-letter content-wrapper"
+        class="mip-city-selection-part-letter content-wrapper"
       >
-        <div class="mip-group-selection-title"> 最近访问的城市</div>
+        <div class="mip-city-selection-title"> 最近访问的城市</div>
         <p
           v-for="city in history"
           :key = "city"
-          class="mip-group-selection-item"
+          class="mip-city-selection-item"
           @click="showInfo(city)"
         >
           {{ city.city }}
@@ -19,19 +19,19 @@
 
     </div>
 
-    <div class="mip-group-selection-content ">
+    <div class="mip-city-selection-content ">
       <!--  热门城市本地 -->
       <div v-if="local">
         <div
           v-for="item in list"
           :key="item"
-          class="mip-group-selection-group mip-group-selection-part-letter group-json-content content-wrapper"
+          class="mip-city-selection-city mip-city-selection-part-letter city-json-content content-wrapper"
         >
-          <div class="mip-group-selection-title"> {{ item.key }}</div>
+          <div class="mip-city-selection-title"> {{ item.key }}</div>
           <p
             v-for="city in item.cities"
             :key="city"
-            class="mip-group-selection-item"
+            class="mip-city-selection-item"
             @click="showInfo(city)"
           >
             {{ city.city }}
@@ -44,13 +44,13 @@
         <div
           v-for="item in listOnline"
           :key="item"
-          class="mip-group-selection-group mip-group-selection-part-letter group-json-content  content-wrapper"
+          class="mip-city-selection-city mip-city-selection-part-letter city-json-content  content-wrapper"
         >
-          <div class="mip-group-selection-title"> {{ item.key }}</div>
+          <div class="mip-city-selection-title"> {{ item.key }}</div>
           <p
             v-for="city in item.cities"
             :key="city"
-            class="mip-group-selection-item"
+            class="mip-city-selection-item"
             @click="showInfo(city)"
           >
             {{ city.city }}
@@ -58,14 +58,14 @@
         </div>
       </div>
       <div>
-        <mip-fixed class="mip-group-selection-sidebar-wrapper">
-          <div class="mip-group-selection-sidebar">
+        <mip-fixed class="mip-city-selection-sidebar-wrapper">
+          <div class="mip-city-selection-sidebar">
             <div
               v-for="(item, index) in list"
               :key="index"
-              @click="scrollToGroup(index)"
+              @click="scrollTocity(index)"
             >
-              <a class="mip-group-selection-link"> {{ item.key }}</a>
+              <a class="mip-city-selection-link"> {{ item.key }}</a>
             </div>
           </div>
         </mip-fixed>
@@ -86,12 +86,12 @@
   padding-right: 8px;
 }
 
-.group-json-content:first-child {
+.city-json-content:first-child {
   background: #f2f2f2;
   padding-right: 5%;
 }
 
-.group-json-content:first-child p,
+.city-json-content:first-child p,
 .lasted-visted-hot p {
   border-bottom: 0;
   display: inline-block;
@@ -110,11 +110,11 @@
   white-space: nowrap;
 }
 
-.group-json-content:not(:first-child) {
+.city-json-content:not(:first-child) {
   background: #fff;
 }
 
-.mip-group-selection-content {
+.mip-city-selection-content {
   overflow-x: hidden;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
@@ -141,14 +141,14 @@
   background: #666;
 }
 
-.mip-group-selection-group {
+.mip-city-selection-city {
   padding-top: 18px;
   &:last-child {
     margin-bottom: 800px;
   }
 }
 
-.mip-group-selection-title {
+.mip-city-selection-title {
   padding: 0 10px;
   font-size: 12px;
   color: #aaa;
@@ -156,18 +156,18 @@
   margin-top: 0;
 }
 
-.mip-group-selection-part-history {
+.mip-city-selection-part-history {
   display: none;
 }
 
-.mip-group-selection-btn {
+.mip-city-selection-btn {
   height: 38px;
   line-height: 38px;
   text-align: center;
   background: #f8f8f8;
 }
 
-.mip-group-selection-item {
+.mip-city-selection-item {
   height: 39px;
   border-bottom: 1px solid #eee;
   line-height: 39px;
@@ -176,18 +176,18 @@
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
-.mip-group-selection-item.down {
+.mip-city-selection-item.down {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mip-group-selection-sidebar-wrapper {
+.mip-city-selection-sidebar-wrapper {
   top: 0;
   right: 10px;
   bottom: 0;
   margin: 10px 0;
 }
 
-.mip-group-selection-sidebar {
+.mip-city-selection-sidebar {
   z-index: 50;
   right: 7px;
   overflow: scroll;
@@ -202,7 +202,7 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
-.mip-group-selection-link {
+.mip-city-selection-link {
   display: block;
   padding: 0 10px;
   font-size: 13px;
@@ -212,7 +212,7 @@
   border-radius: 50%;
 }
 
-.mip-group-selection-letter-top {
+.mip-city-selection-letter-top {
   position: absolute;
   z-index: 40;
   top: 44px;
@@ -227,7 +227,7 @@
   background: #fff;
 }
 
-.mip-group-selection-large-char {
+.mip-city-selection-large-char {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -291,9 +291,9 @@ export default {
     getOffsetX () {
       let scrollTop = viewport.getScrollTop()
       let offsetX = []
-      let currentGroups = [...this.$element.querySelectorAll('.mip-group-selection-group')]
-      for (let group of currentGroups) {
-        offsetX.push(rect.getElementOffset(group).top + scrollTop)
+      let currentCitys = [...this.$element.querySelectorAll('.mip-city-selection-city')]
+      for (let city of currentCitys) {
+        offsetX.push(rect.getElementOffset(city).top + scrollTop)
       }
       this.offsetX = offsetX
     },
@@ -320,7 +320,7 @@ export default {
       this.history = this.cityData
       this.getOffsetX()
     },
-    scrollToGroup (index) {
+    scrollTocity (index) {
       this.getOffsetX()
       let finalOffsetX = this.offsetX[index]
       viewport.setScrollTop(finalOffsetX)
@@ -330,7 +330,7 @@ export default {
       let url = this.$element.dataset.src || ''
       let that = this
       let getdata = new Promise(function (resolve, reject) {
-        let groupData
+        let cityData
         if (url) {
           that.local = false
           // 优先远程获取数据，覆盖本地配置数据
@@ -348,14 +348,14 @@ export default {
           })
           that.async = true
         } else {
-          groupData = that.$element.querySelector('script[type="application/json"]')
+          cityData = that.$element.querySelector('script[type="application/json"]')
           that.async = false
           try {
-            groupData = JSON.parse(groupData.textContent)
+            cityData = JSON.parse(cityData.textContent)
           } catch (e) {
             reject(new Error('mip-city-selection 组件 json 配置错误, 请检查 json 格式。'))
           }
-          resolve(groupData)
+          resolve(cityData)
           that.local = true
         }
       })
