@@ -153,8 +153,7 @@ const util = {
       xzhid
     }
 
-    let keys = Object.keys(data)
-    let queryArr = keys.map(function (key) {
+    let queryArr = Object.keys(data).map(key => {
       return `${key}=${encodeURIComponent(data[key])}`
     })
 
