@@ -99,10 +99,23 @@ export default {
           this.setData()
         }
       })
+
+      let self = this
+
+      window.cambrian.init({
+        data: { simpleInit: true },
+        success () {
+          window.cambrian.addListener('xzh-open-log', e => {
+            util.log({
+              action: e.action,
+              xzhid: self.config.appid
+            })
+          })
+        }
+      })
     },
     updateLogin (data) {
       let key = this.config.endpoint + '_login_handle'
-      let self = this
 
       // 先从store里取状态，看当前是否存在已经在查询状态的实例
       let logProcess = util.store.get(key)
@@ -111,7 +124,7 @@ export default {
       // 如果没有，开启一次状态更新
       if (!logProcess) {
         util.store.set(key, 'pending')
-        return self.getUserInfo({
+        return this.getUserInfo({
           code,
           origin,
           callbackurl: callbackurl || (util.getSourceFormatUrl())
@@ -121,9 +134,9 @@ export default {
             name: 'inservice-auth-data-updated',
             data: {
               data: {
-                isLogin: self.isLogin,
-                userInfo: self.userInfo,
-                sessionId: self.sessionId
+                isLogin: this.isLogin,
+                userInfo: this.userInfo,
+                sessionId: this.sessionId
               },
               origin
             }
@@ -175,7 +188,7 @@ export default {
      * @param {string=} redirectUri 登录成功后的重定向地址
      * @param {string=} origin 发起登录操作的来源标示
      * @param {boolean=} replace 重定向的地址是否要replace当前地址，默认为false
-     * @return {undefined}
+     * @returns {undefined} 结果
      */
     login (redirectUri, origin = '', replace = false) {
       // 当前页面的url
@@ -282,9 +295,9 @@ export default {
     /**
      * 登录统一处理
      *
-     * @param  {string}  name    事件名称
-     * @param  {boolean} isLogin 是否登录
-     * @param  {Object|undefined}  data    用户数据
+     * @param {string}  name    事件名称
+     * @param {boolean} isLogin 是否登录
+     * @param {Object|undefined}  data    用户数据
      * @param {string=} origin 触发登录方法的来源标示
      */
     loginHandle (name, isLogin, data, origin) {
@@ -296,8 +309,8 @@ export default {
     /**
      * 触发事件
      *
-     * @param  {string} name  事件名称
-     * @param {string=} state 触发登录方法的来源标示
+     * @param {string} name  事件名称
+     * @param {string=} origin 触发登录方法的来源标示
      */
     trigger (name, origin = '') {
       let event = {
@@ -354,6 +367,10 @@ export default {
 
         if (data.type === 'login') {
           if (res.status === 0 && fn.isPlainObject(res.data)) {
+            util.log({
+              action: 'login_success',
+              xzhid: self.config.appid
+            })
             self.loginHandle('login', true, res.data, origin)
           } else {
             throw new Error('登录失败', res)
@@ -366,6 +383,10 @@ export default {
         self.setData()
       }).catch(err => {
         if (data.type === 'login') {
+          util.log({
+            action: 'login_error',
+            xzhid: self.config.appid
+          })
           this.loginHandle('error', false)
           throw err
         }
