@@ -8,7 +8,9 @@ import payPlaceholder from '../../static/pay-placeholder.png'
 // 站点数据请求url
 const URL_SITE = 'https://xiongzhang.baidu.com/opensc/cambrian/card'
 const fetchJsonp = window.fetchJsonp || {}
-
+const XZH_KEY = 'mip-xzhid'
+const CLICK_TOKEN_KEY = 'mip-click-token'
+let storage = MIP.util.customStorage(0)
 export default class MipShellInservice extends MIP.builtinComponents.MipShell {
   constructor (...args) {
     super(...args)
@@ -27,6 +29,9 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     let headerInfo = {
     }
     let isasync
+    let clickToken
+
+    storage.set(XZH_KEY, shellConfig.isId)
 
     // wise搜索环境页带入熊掌号信息
     try {
@@ -35,7 +40,15 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
       if (hashHeader && hashHeader.type === 'cambrian') {
         Object.assign(headerInfo, {title: hashHeader.title, logo: hashHeader.logo})
       }
+      if (hashHeader && hashHeader.click_token) {
+        clickToken = hashHeader.click_token
+      }
     } catch (error) {
+    }
+    if (clickToken) {
+      storage.set(CLICK_TOKEN_KEY, clickToken)
+    } else if (!storage.get(CLICK_TOKEN_KEY)) {
+      storage.set(CLICK_TOKEN_KEY, shellConfig.isId)
     }
 
     // Set default data
@@ -312,5 +325,27 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
       element = element.parentNode
     }
     return null
+  }
+
+  updateOtherParts () {
+    // this.sendLog(`//cp01-chunjie.epc.baidu.com:8500/servicehub/oplog/urlclk?url=${location.href}`)
+    let clickToken = storage.get(CLICK_TOKEN_KEY)
+    let urlQuerysObj = {
+      rqt: 300,
+      action: 'page_vi',
+      xzhid: MIP.util.customStorage(0).get('mip-xzhid'),
+      click_token: clickToken,
+      _t: new Date().getTime(),
+      url: location.href
+    }
+    let urlQuerys = Object.keys(urlQuerysObj).map((key) => {
+      return `${key}=${encodeURIComponent(urlQuerysObj[key])}`
+    })
+    let url = `//rqs.baidu.com/service/api/rqs?${urlQuerys.join('&')}`
+    this.sendLog(url)
+  }
+  sendLog (url) {
+    let img = new Image()
+    img.src = url
   }
 }

@@ -484,7 +484,7 @@ export default {
      * 设置控制柄的位置
      *
      * @param {Number} pos 点坐标
-     * @param {Boolen} isDrag 是否拖拽了进度bar
+     * @param {Boolean} isDrag 是否拖拽了进度bar
      */
     setValueOnPos (pos, isDrag) {
       let { limit, currentSlider, gap, valueLimit, setTransform, getValueByIndex, setCurrentValue } = this
