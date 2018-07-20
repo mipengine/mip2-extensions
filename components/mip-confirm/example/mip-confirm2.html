@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    </style>
+  </head>
+  <body>
+    <div>
+     <mip-test id="confirmTest"  on="show:confirm.show"></mip-test>
+      <mip-confirm
+        id= "confirm"
+        pattern="alert"
+        on="ready:confirmTest.print"
+        info-title="提示"
+        info-text="confirm 类型的弹窗。这里是弹窗的提示信息内容，问题问题问题问题"
+      >
+      </mip-confirm>
+    </div>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-confirm/mip-confirm.js"></script>
+    <script src="https://caoru828.github.io/my_json/mip-test/mip-test.js"></script>
+  </body>
+</html>
