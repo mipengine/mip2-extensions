@@ -18,44 +18,215 @@ mip-city-selection 分组选择组件，可用于城市分组，英文名分组�
 
 ```html
 <!--  <mip-test id="cityTest"></mip-test> 测试组件，模拟接收事件 -->
-<mip-city-selection class="mip-hidden" on="citySelected:cityTest.print">
-    <!-- 在 application/json 中配置全部xx城市 -->
-    <script type="application/json">
-    {"list": [
-        {   "key" :"热门",
-            "cities": [
-                { "city": "北京", "pinyin": "beijing", "code": "1"},
-                { "city": "上海", "pinyin": "shanghai", "code": "2"},
-        },{ "key" :"A",
-            "cities": [
-                { "city": "澳门", "pinyin": "aomen", "code": "7"},
-                { "city": "安庆", "pinyin": "anqing", "code": "8"},
-        },{ "key" :"B",
-            "cities": [
-                { "city": "宝清", "pinyin": "baoqing", "code": "10"},
-        },{
-            "key":"C",
-            "cities": [
-                { "city": "重庆", "pinyin": "chongqing", "code": "13"},
-        },{
-            "key":"D",
-            "cities": [
-                { "city": "大庆", "pinyin": "daqing", "code": "16"},
-        },{
-            "key":"E",
-            "cities": [
-                { "city": "鄂尔多斯", "pinyin": "eerduosi", "code": "19"},
-        },{
-            "key":"F",
-            "cities": [
-                { "city": "阜阳", "pinyin": "fuyang", "code": "21"},
-        },{
-            "key":"G",
-            "cities": [
-                { "city": "广州", "pinyin": "guangzhou", "code": "24"},
-        }
-    ]}
-    </script>
+<mip-city-selection class="mip-hidden" on="citySelected">
+<!-- <mip-city-selection class="mip-hidden" on="citySelected:cityTest.print" data-src="http://172.24.138.98:8888/xxxxtest.json"> -->
+  <script type="application/json">
+    {
+      "list": [{
+        "key": "热门",
+        "cities": [{
+            "city": "北京",
+            "pinyin": "beijing",
+            "code": "1"
+          },
+          {
+            "city": "上海",
+            "pinyin": "shanghai",
+            "code": "2"
+          },
+          {
+            "city": "广州",
+            "pinyin": "guangzhou",
+            "code": "3"
+          },
+          {
+            "city": "深圳",
+            "pinyin": "shenzhen",
+            "code": "4"
+          },
+          {
+            "city": "重庆",
+            "pinyin": "chongqing",
+            "code": "5"
+          }
+        ]
+      }, {
+        "key": "A",
+        "cities": [{
+            "city": "澳门",
+            "pinyin": "aomen",
+            "code": "7"
+          },
+          {
+            "city": "安庆",
+            "pinyin": "anqing",
+            "code": "8"
+          },
+          {
+            "city": "安泽",
+            "pinyin": "anze",
+            "code": "9"
+          }
+        ]
+      }, {
+        "key": "B",
+        "cities": [{
+            "city": "宝清",
+            "pinyin": "baoqing",
+            "code": "10"
+          },
+          {
+            "city": "宝鸡",
+            "pinyin": "baoji",
+            "code": "11"
+          },
+          {
+            "city": "巴东",
+            "pinyin": "badong",
+            "code": "12"
+          }
+        ]
+      }, {
+        "key": "C",
+        "cities": [{
+            "city": "重庆",
+            "pinyin": "chongqing",
+            "code": "13"
+          },
+          {
+            "city": "成都",
+            "pinyin": "chengdu",
+            "code": "14"
+          },
+          {
+            "city": "苍山",
+            "pinyin": "cangshan",
+            "code": "15"
+          }
+        ]
+      }, {
+        "key": "D",
+        "cities": [{
+            "city": "大庆",
+            "pinyin": "daqing",
+            "code": "16"
+          },
+          {
+            "city": "大理",
+            "pinyin": "dali",
+            "code": "17"
+          },
+          {
+            "city": "东莞",
+            "pinyin": "dongguan",
+            "code": "18"
+          }
+        ]
+      }, {
+        "key": "E",
+        "cities": [{
+            "city": "鄂尔多斯",
+            "pinyin": "eerduosi",
+            "code": "19"
+          },
+          {
+            "city": "峨眉山",
+            "pinyin": "emeishan",
+            "code": "20"
+          }
+        ]
+      }, {
+        "key": "F",
+        "cities": [{
+            "city": "阜阳",
+            "pinyin": "fuyang",
+            "code": "21"
+          },
+          {
+            "city": "福州",
+            "pinyin": "fuzhou",
+            "code": "22"
+          },
+          {
+            "city": "防城港",
+            "pinyin": "fangchenggang",
+            "code": "23"
+          }
+        ]
+      },
+        {
+        "key": "F",
+        "cities": [{
+            "city": "阜阳",
+            "pinyin": "fuyang",
+            "code": "21"
+          },
+          {
+            "city": "福州",
+            "pinyin": "fuzhou",
+            "code": "22"
+          },
+          {
+            "city": "防城港",
+            "pinyin": "fangchenggang",
+            "code": "23"
+          }
+        ]
+      },
+      {
+        "key": "F",
+        "cities": [{
+            "city": "阜阳",
+            "pinyin": "fuyang",
+            "code": "21"
+          },
+          {
+            "city": "福州",
+            "pinyin": "fuzhou",
+            "code": "22"
+          },
+          {
+            "city": "防城港",
+            "pinyin": "fangchenggang",
+            "code": "23"
+          }
+        ]
+      },
+      {
+        "key": "F",
+        "cities": [{
+            "city": "阜阳",
+            "pinyin": "fuyang",
+            "code": "21"
+          },
+          {
+            "city": "福州",
+            "pinyin": "fuzhou",
+            "code": "22"
+          },
+          {
+            "city": "防城港",
+            "pinyin": "fangchenggang",
+            "code": "23"
+          }
+        ]
+      },
+      {
+        "key": "G",
+        "cities": [{
+            "city": "广州",
+            "pinyin": "guangzhou",
+            "code": "24"
+          },
+          {
+            "city": "贵阳",
+            "pinyin": "guiyang",
+            "code": "25"
+          }
+        ]
+      }]
+    }
+  </script>
 </mip-city-selection>
 
 ```
