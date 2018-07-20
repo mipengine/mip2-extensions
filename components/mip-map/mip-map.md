@@ -17,22 +17,22 @@
   <script type="application/json">
     {
       "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
+      "hide-map": false,
+      "get-position": true,
       "location": {
         "province": "北京",
         "city": "北京市",
-        "district": "海淀区",
-        "street": "百度大厦"
+        "district": "东城区",
+        "street": "故宫博物馆"
       },
       "controls": {
-        "NavigationControl": {
-        },
-        "MapTypeControl": {
-        }
+        "NavigationControl": {},
+        "MapTypeControl": {}
       },
       "info": {
-        "width" : 250,
+        "width": 250,
         "height": 100,
-        "content": "<h4>百度大厦</h4><p>地址：北京市海淀区上地十街10号<br/>电话：(010)59928888<br/>简介：百度大厦位于北京市海淀区西二旗地铁站附近，为百度公司综合研发及办公总部。</p></div>"
+        "content": "<h4>故宫博物馆</h4><p>地址：北京市东城区景山前街4号<br/>电话：(010)65131892</p></div>"
       }
     }
   </script>
@@ -94,5 +94,65 @@
 ### data-only-get-sdk
 
 说明：是否只加载地图 SDK
-必填：否  
+必填：否
 格式：Boolean
+默认：false
+
+### hide-map
+
+说明：是否隐藏地图
+必填：否
+格式：Boolean
+默认：false
+
+### get-position
+
+说明：是否自动定位
+必填：否
+格式：Boolean
+默认：false
+
+## 触发事件
+
+### getPositionComplete
+
+如设置定位且成功定位，则透传经纬度等信息
+透传数据结构如下：
+
+```js
+{
+  "accuracy":30,
+  "altitude":null,
+  "altitudeAccuracy":null,
+  "heading":null,
+  "latitude":40.050551292543,
+  "longitude":116.28123645733,
+  "speed":null,
+  "timestamp":null,
+  "point":{
+      "lng":116.28123645733,
+      "lat":40.050551292543
+  },
+  "address":{
+      "city":"北京市",
+      "city_code":0,
+      "district":"海淀区",
+      "province":"北京市",
+      "street":"软件园西三路辅路",
+      "street_number":""
+  }
+}
+```
+### getPositionFailed
+定位失败
+
+### searchLocalFailed
+
+无法定位值`local`所配位置时，触发此事件，并切换为自动定位
+
+
+## 暴露方法
+
+### getLocal
+
+获取当前定位
