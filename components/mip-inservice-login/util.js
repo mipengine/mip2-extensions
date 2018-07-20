@@ -147,7 +147,7 @@ const util = {
 
     let data = {
       rqt: 300,
-      click_token: (util.store.support ? localStorage.getItem('mip-click-token') : ''),
+      click_token: window.MIP.util.customStorage(0).get('mip-click-token') || '',
       url: window.MIP.util.parseCacheUrl(location.href),
       action,
       xzhid
