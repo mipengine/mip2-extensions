@@ -64,4 +64,4 @@
 示例："123456678"
 
 ### routes 
-[参考mip-shell用法](https://github.com/mipengine/mip2/blob/master/docs/page/shell.md)
+[参考mip-shell用法](https://github.com/mipengine/mip2/blob/master/docs/new-doc/all-sites-mip/5-mip-shell.md)
