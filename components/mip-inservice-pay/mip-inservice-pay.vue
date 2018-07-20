@@ -175,6 +175,7 @@
 <script>
 import payUtil from './util.js'
 const { platform } = MIP.util
+let storage = MIP.util.customStorage(0)
 // 支付信息
 const payInfos = [
   {
@@ -312,6 +313,7 @@ export default {
           // 显示支付弹窗初使化支付数据
           if (showType === 'visiblePay') {
             this.payAction()
+            this.sendLog({action: 'pay_dialog'})
           }
         }, 100)
       }
@@ -398,6 +400,7 @@ export default {
      * @param {Object} e 事件数据
      */
     comfirmPayAction (e) {
+      this.sendLog({action: 'pay_click'})
       if (this.selectId === 'weixin') {
         if (this.getWechatVer() >= 5.0) {
           e.preventDefault()
@@ -552,6 +555,22 @@ export default {
         this.loading = false
       })
       return presult
+    },
+
+    sendLog ({action, param, url = location.href}) {
+      let urlQuerys = {}
+      urlQuerys.rqt = 300
+      let xzhid = storage.get('mip-xzhid')
+      let clickToken = storage.get('mip-click-token')
+      urlQuerys.action = action
+      param && (urlQuerys.param = param)
+      urlQuerys.url = url
+      xzhid && (urlQuerys.xzhid = xzhid)
+      clickToken && (urlQuerys.click_token = clickToken)
+      let urlQueryParams = Object.keys(urlQuerys).map((key) => {
+        return `${key}=${encodeURIComponent(urlQuerys[key])}`
+      })
+      new Image().src = `//rqs.baidu.com/service/api/rqs?${urlQueryParams.join('&')}`
     }
   }
 }
