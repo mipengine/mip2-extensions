@@ -17,7 +17,7 @@
 1、弹出框 只弹出文字（不传 info-icon-src）
 
 ```html
-/*<mip-test   on="show:demo.show"></mip-test>    测试组件，模拟接收和抛出事件 */
+<!-- <mip-test id="confirmTest"  on="show:confirm.show"></mip-test>    测试组件，模拟接收和抛出事件 -->
 <mip-toast
   id= "demo"
   info-text="最多七个中文字"
@@ -30,7 +30,7 @@
 2、弹出框 弹出带图和文字
 
 ```html
-/*<mip-test   on="show:demo.show"></mip-test>    测试组件，模拟接收和抛出事件 */
+<!-- <mip-test id="confirmTest"  on="show:confirm.show"></mip-test>    测试组件，模拟接收和抛出事件 -->
 <mip-toast
   id= "demo"
   info-icon-src="https://www.mipengine.org/static/img/sample_mip_logo.png"

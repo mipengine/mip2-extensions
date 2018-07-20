@@ -15,13 +15,13 @@
 1、弹出框 pattern="alert" 只有确认按钮
 
 ```html
-/* <mip-test id="confirmTest"  on="show:confirm.show"></mip-test>    测试组件，模拟接收和抛出事件 */
+<!-- <mip-test id="confirmTest"  on="show:confirm.show"></mip-test>    测试组件，模拟接收和抛出事件 -->
 <mip-confirm
-id= "confirm"
-pattern="alert"
-on="ready:confirmTest.print"
-info-title="提示"
-info-text="confirm 类型的弹窗。这里是弹窗的提示信息内容，问题问题问题问题"
+  id= "confirm"
+  pattern="alert"
+  on="ready:confirmTest.print"
+  info-title="提示"
+  info-text="confirm 类型的弹窗。这里是弹窗的提示信息内容，问题问题问题问题"
 >
 </mip-confirm>
 
@@ -29,7 +29,7 @@ info-text="confirm 类型的弹窗。这里是弹窗的提示信息内容，问�
 2、弹出框 pattern="confirm" 有确认按钮和取消按钮
 
 ```html
-/* <mip-test id="confirmTest"  on="show:confirm.show"></mip-test>  测试组件，模拟接收和抛出事件 */
+<!-- <mip-test id="confirmTest"  on="show:confirm.show"></mip-test>    测试组件，模拟接收和抛出事件 -->
 <mip-confirm
   id= "confirm"
   pattern="confirm"
@@ -57,7 +57,7 @@ info-text="confirm 类型的弹窗。这里是弹窗的提示信息内容，问�
 
 ### pattern
 
-说明：控制是alert方式 （提示框）  还是confirm方式 （确认框），  alert只有确认按钮  ， confirm有取消按钮和确认按钮
+说明：控制是alert方式（提示框）还是confirm方式（确认框），alert只有确认按钮，confirm有取消按钮和确认按钮
 
 必选项：是
 
