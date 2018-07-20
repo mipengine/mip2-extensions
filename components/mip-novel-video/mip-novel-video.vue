@@ -204,6 +204,7 @@ export default {
       }
     },
     initCanvasVideo () {
+      let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
         css(videoCover, {backgroundImage: 'url(' + this.poster + ')'})
@@ -221,7 +222,7 @@ export default {
         jSMpegPlayer.on('ended', () => {
           let event = new Event('ended')
           this.$element.dispatchEvent(event)
-          this.closeVideo()
+          self.closeVideo()
         })
       }
     },
