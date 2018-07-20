@@ -35,7 +35,7 @@ const util = {
      * 解析对象为 string
      *
      * @param  {Object} data 一级对象数据
-     * @return {string}
+     * @returns {string} 结果
      */
     stringify (data) {
       return Object.keys(data).map(function (key) {
@@ -51,7 +51,7 @@ const util = {
    *              1. 删除 hash 后面的字符，因为透传有问题
    *              2. 删除 code state 参数，防止多次重定向链接越来越长
    * @param  {string=} url url地址
-   * @return {string}
+   * @returns {string} 结果
    */
   getSourceUrl (url) {
     !url && (url = location.href)
@@ -130,7 +130,7 @@ const util = {
    * 获取链接中的 query
    *
    * @param  {string} name 参数名称
-   * @return {string}
+   * @returns {string} 结果
    */
   getQuery (name) {
     let url = location.search.substr(1)
@@ -138,6 +138,28 @@ const util = {
     let matched = url.match(reg)
 
     return matched ? decodeURIComponent(matched[2]) : ''
+  },
+
+  log (param) {
+    /* eslint-disable fecs-camelcase */
+    let img = document.createElement('img')
+    let {action, xzhid} = param
+
+    let data = {
+      rqt: 300,
+      click_token: window.MIP.util.customStorage(0).get('mip-click-token') || '',
+      url: window.MIP.util.parseCacheUrl(location.href),
+      action,
+      xzhid
+    }
+
+    let keys = Object.keys(data)
+    let queryArr = keys.map(function (key) {
+      return `${key}=${encodeURIComponent(data[key])}`
+    })
+
+    img.src = 'https://rqs.baidu.com/service/api/rqs?' + queryArr.join('&') + '&_t=' + (new Date()).getTime()
+    /* eslint-enable fecs-camelcase */
   },
 
   /**
@@ -158,7 +180,7 @@ const util = {
      *
      * @param  {string} key 键值
      *
-     * @return {string}
+     * @returns {string} 结果
      */
     getKey (key) {
       return util.store.prefix + key
@@ -184,7 +206,7 @@ const util = {
      * 获取缓存数据
      *
      * @param  {string} key 数据名称
-     * @return {string}
+     * @returns {string} 结果
      */
     get (key) {
       if (util.store.support) {
@@ -197,7 +219,7 @@ const util = {
      *
      * @param {string} key   数据名称
      * @param {string} value 数据值
-     * @param {UTC} expires 过期时间
+     * @param {number} expires 过期时间UTC
      */
     set (key, value, expires) {
       if (util.store.support) {
