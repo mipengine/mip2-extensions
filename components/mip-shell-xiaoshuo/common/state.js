@@ -9,7 +9,7 @@ export function isRootPage () {
 
 /**
 * 返回当前页面状态
-*
+ *
 * @returns {Array} [1, 3] 第一章第三节
 */
 export function currentPage () {
