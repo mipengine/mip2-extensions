@@ -1,10 +1,9 @@
 /**
- * file: 小说shell 目录边栏文件
- * author: liangjiaying <jiaojiaomao220@163.com>
- * TODO：
- *     1. catalog数据支持异步获取
- */
-export function area () {
+* 返回当前页面是否是根页面 - 搜索点出
+*
+* @returns {boolean} 是搜索点出、不是搜索点出
+*/
+export function isRootPage () {
   return true
 }
 
