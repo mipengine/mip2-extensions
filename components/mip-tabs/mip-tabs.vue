@@ -134,8 +134,8 @@ export default {
     /**
      * 切换内容
      *
-     * @param  {Number} index  当前tab的下标
-     * @param  {Boolean} dis  是否有disabled属性
+     * @param  {number} index  当前tab的下标
+     * @param  {boolean} dis  是否有disabled属性
      */
     changeTab (index, dis) {
       // disabled 时直接返回
@@ -155,7 +155,7 @@ export default {
     /**
      * tab切换时的动画
      *
-     * @param  {Number} index  当前tab的下标
+     * @param  {number} index  当前tab的下标
      */
     moveTab (index) {
       // 当前标签的rect值
@@ -184,7 +184,7 @@ export default {
     /**
      * 色值校验
      *
-     * @param  {String} color  色值
+     * @param  {string} color  色值
      */
     checkColor (color) {
       if (color.charAt(0) === '#') {
