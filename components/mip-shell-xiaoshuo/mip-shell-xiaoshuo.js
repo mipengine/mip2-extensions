@@ -7,10 +7,10 @@
  */
 
 import './mip-shell-xiaoshuo.less'
-import Catalog from './catalog' // 侧边栏目录
-import Footer from './footer' // 底部控制栏
-import Header from './header' // shell导航头部
-import {PageStyle, FontSize} from './setting' // 背景色调整，字体大小调整
+import Catalog from './feature/catalog' // 侧边栏目录
+import Footer from './feature/footer' // 底部控制栏
+import Header from './feature/header' // shell导航头部
+import {PageStyle, FontSize} from './feature/setting' // 背景色调整，字体大小调整
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
