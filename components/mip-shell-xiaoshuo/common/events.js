@@ -5,7 +5,7 @@
  *     1. catalog数据支持异步获取
  */
 import {Constant} from '../constant-config'
-// import state from './state'
+import state from './state'
 let event = window.MIP.util.event
 
 class XiaoshuoEvents {
@@ -48,8 +48,15 @@ class XiaoshuoEvents {
 
   // 每次翻页/页面刷新时都会触发
   bindAll () {
-    // let isRootPage = state.isRootPage()
-    // console.log(isRootPage)
+    console.log(state)
+    let isRootPage = state.isRootPage()
+    console.log('isRootPage: ', isRootPage)
+
+    // event.delegate(document.body, previousPageButton, 'click', function () {
+    //   window.MIP.viewer.page.emitCustomEvent(window, false, {
+    //     name: Constant.PREVIOUS_PAGE_BUTTON_CLICK
+    //   })
+    // })
   }
 }
 
