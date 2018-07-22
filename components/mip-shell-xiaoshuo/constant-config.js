@@ -3,7 +3,7 @@
  * @author JennyL, liujing
  */
 
-export const Event = {
+export const constant = {
   /** @member {string} 上一页按钮被点击事件'previous-page-button-click' */
   PREVIOUS_PAGE_BUTTON_CLICK: 'previous-page-button-click',
   /** @member {string} 下一页按钮被点击事件'next-page-button-click' */

@@ -2,7 +2,6 @@
  * @file 小说中的各种状态
  * @author JennyL, liujing
  */
-
 export default () => {
   return {
     /**
@@ -46,7 +45,7 @@ export default () => {
       return true
     },
     /**
-      * 当前页面的页面ID
+      * 当前页面的页面ID，通常为页面URL
       *
       * @returns {string} 当前页面的页面ID
       */
@@ -63,5 +62,3 @@ export default () => {
     }
   }
 }
-
-// import { isRootPage, currentPage } from './common';
