@@ -12,7 +12,9 @@ import Footer from './feature/footer' // 底部控制栏
 import Header from './feature/header' // shell导航头部
 import {PageStyle, FontSize} from './feature/setting' // 背景色调整，字体大小调整
 
-import Event from './common/event'
+import XiaoshuoEvents from './common/event'
+
+let xiaoshuoEvents = new XiaoshuoEvents()
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -83,6 +85,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     window.MIP.viewer.page.emitCustomEvent(window, true, {
       name: 'changePageStyle'
     })
+
+    xiaoshuoEvents.bindAll()
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
@@ -101,8 +105,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.header.hide()
     })
 
-    let event = new Event()
-    event.bind()
+    xiaoshuoEvents.bindRoot()
   }
 
   // 基类root方法：初始化。用于除头部bar之外的元素
