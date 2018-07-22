@@ -8,12 +8,11 @@
 import {Constant} from '../constant-config'
 import state from '../common/state'
 
-let globalAd = false
-let pageAd = false
-
 class Strategy {
   constructor (config) {
-    this.state = true
+    this.globalAd = false
+    this.pageAd = false
+    this.nextPageRead = false
   }
   /**
    * 初始化所有的状态.
@@ -29,10 +28,12 @@ class Strategy {
    * 根据当前的页面状态获取相关的广告策略
    */
   strategyStatic () {
+    // 获取最新的页面状态
     const state = this.getState()
-    // TODO: 根据当前的状态更新是否需要触发全局custom的请求和渲染事件
+    // 修改出广告的策略
+    this.changeStrategy()
     const {globalCustomId, pageCunstomId} = state
-    if (globalAd) {
+    if (this.globalAd) {
       window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
         name: 'showAdvertising',
         data: {
@@ -40,7 +41,7 @@ class Strategy {
         }
       })
     }
-    if (pageAd) {
+    if (this.pageAd) {
       window.MIP.viewer.page.broadcastCustomEvent({
         name: 'showAdvertising',
         data: {
@@ -51,16 +52,17 @@ class Strategy {
   }
 
   /**
-   * 获取当前的页面状态ss
+   * 修改出广告的策略
    *
-   * @returns {Object} 返回当前页面状态的对象
+   * @returns {Object} 修改出广告的策略
    */
-  getStrategy () {
-    return {}
+  changeStrategy () {
+    this.globalAd = true
+    this.pageAd = true
   }
 
   /**
-   * 获取当前的页面状态ss
+   * 获取当前的页面状态
    *
    * @returns {Object} 返回当前页面状态的对象
    */
@@ -140,6 +142,22 @@ class Strategy {
      */
     window.addEventListener(Constant.AT_CHAPTER_END, e => {
       self.strategyStatic()
+    })
+
+    /**
+     * 获取'AT_CHAPTER_END'
+     *
+     * @method
+     * @param {module:constant-config~event:AT_CHAPTER_END} e - A event.
+     * @listens module:constant-config~event:AT_CHAPTER_END
+     */
+    window.addEventListener(Constant.MIP_CUSTOM_ELEMENT_READY, e => {
+      const state = this.getState()
+      let customId = e && e.detail && e.detail[0] && e.detail[0].customId
+      if (state.nextPageId() === customId) {
+        this.nextPageRead = true
+        self.strategyStatic()
+      }
     })
   }
 }

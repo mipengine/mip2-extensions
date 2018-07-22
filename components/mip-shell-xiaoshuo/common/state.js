@@ -3,6 +3,7 @@
  * @author JennyL, LiuJing
  */
 export default (() => {
+  const rootPage = window.MIP.viewer.page.pageId
   return {
     /**
       * 返回当前页面状态
@@ -63,7 +64,7 @@ export default (() => {
       * @returns {string} 根页面ID(Root Page ID)
       */
     rootPageId () {
-      return ''
+      return rootPage
     }
   }
 })()
