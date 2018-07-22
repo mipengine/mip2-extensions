@@ -29,6 +29,6 @@ export const Constant = {
   CHANGE_THEME: 'change-theme',
   /** @member {string} 修改字体大小'change-font-size' */
   CHANGE_FONT_SIZE: 'change-font-size',
-  /** @member {string} 定制化MIP组件build完成事件（由mip-custom.js抛出）,包括mip-custom.js所在页面id'mip-custom-element-ready' */
+  /** @member {string} 定制化MIP组件可用事件（由mip-custom.js抛出）,包括mip-custom.js所在页面id'mip-custom-element-ready' */
   MIP_CUSTOM_ELEMENT_READY: 'mip-custom-element-ready'
 }

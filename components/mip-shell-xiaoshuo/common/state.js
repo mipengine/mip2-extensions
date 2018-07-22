@@ -15,26 +15,38 @@ export default (() => {
     /**
       * 返回当前页面状态
       *
-      * @returns {Array} [1, 3] 第一章第三节
+      * @returns {Array} {1, 3, id} 第一章,第三节,页面id(url)
       */
     currentPage: () => {
-      return [1, 3]
+      return {
+        'chapter': 1,
+        'page': 3,
+        'id': window.MIP.viewer.page.pageId
+      }
     },
     /**
       * 下一页状态
       *
-      * @returns {Array} [2, 1] 第二章第一节
+      * @returns {Object} {2, 1, id} 第二章,第一节,页面id(url)
       */
     nextPage: () => {
-      return [2, 1]
+      return {
+        'chapter': 2,
+        'page': 1,
+        'id': ''// todo
+      }
     },
     /**
       * 上一页状态
       *
-      * @returns {Array} [2, 1] 第一章第二节
+      * @returns {Object} {1, 2, id} 第一章,第二节,页面id(url)
       */
     previousPage: () => {
-      return [1, 2]
+      return {
+        'chapter': 1,
+        'page': 2,
+        'id': ''// todo
+      }
     },
     /**
       * 当前页是本章最后一页
@@ -44,14 +56,7 @@ export default (() => {
     isChapterEnd () {
       return true
     },
-    /**
-      * 当前页面的页面ID，通常为页面URL
-      *
-      * @returns {string} 当前页面的页面ID
-      */
-    pageId () {
-      return window.MIP.viewer.page.pageId
-    },
+
     /**
       * 根页面/搜索点出 ID(Root Page ID)，通常为页面URL, 可以用于选择根页面定制化组件
       *
