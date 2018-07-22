@@ -16,9 +16,12 @@ class footer {
 
   // 创建底部控制栏并插入页面
   _render (config) {
+    // 获取 mip-shell-xiaoshuo 配置（通用，每个页面相同）
     if (config) {
       this.config = config
     }
+    console.log('this.config. ', this.config)
+
     // 将底部 bar 插入到页面中
     let $footerWrapper = document.querySelector('.mip-shell-footer-wrapper')
     let hadFooter = !!$footerWrapper
@@ -46,6 +49,16 @@ class footer {
 
   // 根据config 创建底部footer
   _createFooterDom () {
+    // 获取<head>中声明的mip-shell-xiaoshuo 配置。每个页面不同，如上一页链接，当前章节名
+    let jsonld = document.head.querySelector("script[type='application/ld+json']")
+    let jsonldConf
+    try {
+      jsonldConf = JSON.parse(jsonld.innerText).mipShellConfig
+      if (!jsonldConf) throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json mipShellConfig')
+    } catch (e) {
+      console.error(e)
+    }
+
     // currentPageMeta: 基类提供的配置，页面中用户在shell json配置的内容
     let renderFooterButtonGroup = actionGroup => actionGroup.map(function (actionConfig) {
       if (actionConfig.name === 'catalog') {
@@ -64,12 +77,12 @@ class footer {
     }).join('')
 
     // 创建底部按钮 HTML
-    let previousHref = this.config.hrefButton['previous-href']
-    let nextHref = this.config.hrefButton['next-href']
+    let previousHref = jsonldConf['previousPageUrl']
+    let nextHref = jsonldConf['nextPageUrl']
     let prevDisabled = previousHref ? '' : 'disabled'
     let nextDisabled = nextHref ? '' : 'disabled'
-    let prevHrefString = previousHref ? `mip-link href="${this.config.hrefButton['previous-href']}"` : ''
-    let nextHrefString = nextHref ? `mip-link href="${this.config.hrefButton['next-href']}"` : ''
+    let prevHrefString = previousHref ? `mip-link href="${previousHref}"` : ''
+    let nextHrefString = nextHref ? `mip-link href="${nextHref}"` : ''
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
             <a class="page-button page-previous ${prevDisabled}" ${prevHrefString}>
