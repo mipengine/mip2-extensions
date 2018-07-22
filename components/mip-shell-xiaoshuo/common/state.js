@@ -1,8 +1,8 @@
 /**
  * @file 小说中的各种状态
- * @author JennyL, liujing
+ * @author JennyL, LiuJing
  */
-export default () => {
+export default (() => {
   return {
     /**
       * 返回当前页面状态
@@ -61,4 +61,4 @@ export default () => {
       return ''
     }
   }
-}
+})()
