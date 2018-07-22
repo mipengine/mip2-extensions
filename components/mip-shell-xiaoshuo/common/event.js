@@ -4,7 +4,8 @@
  * TODO：
  *     1. catalog数据支持异步获取
  */
-import constant from './constant'
+import {constant} from '../constant-config'
+let event = window.MIP.util.event
 
 class Event {
   constructor (config) {
@@ -16,20 +17,26 @@ class Event {
      * 当【下一页】按钮被点击了, 抛出'next-page-button-clicked'事件
      * @fires 'next-page-button-clicked'
      */
-    document.addEventListener('下一页按钮', 'click', function () {
+    let nextPageButton = '.mip-shell-footer .page-next'
+    event.delegate(document.body, nextPageButton, 'click', function () {
       window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
         name: constant.NEXT_PAGE_BUTTON_CLICK
       })
     })
+
     /**
      * 当【上一页】按钮被点击了, 抛出'previous-page-button-clicked'事件
      * @fires 'next-page-button-clicked'
      */
-    document.addEventListener('上一页按钮', 'click', function () {
+    let previousPageButton = '.mip-shell-footer .page-previous'
+    event.delegate(document.body, previousPageButton, 'click', function () {
       window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
         name: constant.PREVIOUS_PAGE_BUTTON_CLICK
       })
     })
+
+    window.addEventListener(constant.NEXT_PAGE_BUTTON_CLICK, e => console.log('NEXT_PAGE_BUTTON_CLICK'))
+    window.addEventListener(constant.PREVIOUS_PAGE_BUTTON_CLICK, e => console.log('PREVIOUS_PAGE_BUTTON_CLICK'))
   }
 }
 
