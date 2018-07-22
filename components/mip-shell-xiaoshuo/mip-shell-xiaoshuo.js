@@ -12,7 +12,7 @@ import Footer from './feature/footer' // 底部控制栏
 import Header from './feature/header' // shell导航头部
 import {PageStyle, FontSize} from './feature/setting' // 背景色调整，字体大小调整
 
-import XiaoshuoEvents from './common/event'
+import XiaoshuoEvents from './common/events'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 
