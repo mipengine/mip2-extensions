@@ -14,7 +14,7 @@ export const Constant = {
   /** @member {string} 本页是本章第一页'at-chapter-start' */
   AT_CHAPTER_START: 'at-chapter-start',
   /** @member {string} 从搜索结果页进入'is-root-page' */
-  IS_ROOT_PAGE: 'is-root-page',
+  IN_ROOT_PAGE: 'in-root-page',
   /** @member {string} 目录展开按钮被点击'catalog-show' */
   CATALOG_SHOW: 'catalog-show',
   /** @member {string} 目录关闭按钮被点击'catalog-hide' */
