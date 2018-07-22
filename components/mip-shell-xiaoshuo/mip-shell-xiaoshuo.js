@@ -13,6 +13,7 @@ import Header from './feature/header' // shell导航头部
 import {PageStyle, FontSize} from './feature/setting' // 背景色调整，字体大小调整
 
 import XiaoshuoEvents from './common/events'
+import Strategy from './ad/strategy'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 
@@ -23,6 +24,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     this._scrollBoundary()
+    let strategy = new Strategy()
+    strategy.init()
   }
 
   // 基类方法：绑定页面可被外界调用的事件。

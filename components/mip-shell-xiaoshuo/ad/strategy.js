@@ -5,7 +5,7 @@
  * @param {string} author - liujing.
  */
 
-import {Event} from '../constant-config'
+import {Constant} from '../constant-config'
 import state from '../common/state'
 
 let globalAd = false
@@ -56,15 +56,7 @@ class Strategy {
    * @returns {Object} 返回当前页面状态的对象
    */
   getStrategy () {
-    return {
-      isRootPage: state.isRootPage,
-      currentPage: state.currentPage,
-      nextPage: state.nextPage,
-      previousPage: state.previousPage,
-      isChapterEnd: state.isChapterEnd,
-      pageCunstomId: state.pageId,
-      globalCustomId: state.globalCustomId
-    }
+    return {}
   }
 
   /**
@@ -113,18 +105,18 @@ class Strategy {
      * @param {module:constant-config~event:PREVIOUS_PAGE_BUTTON_CLICK} e - A event.
      * @listens module:constant-config~event:PREVIOUS_PAGE_BUTTON_CLICK
      */
-    window.addEventListener(Event.PREVIOUS_PAGE_BUTTON_CLICK, e => {
+    window.addEventListener(Constant.PREVIOUS_PAGE_BUTTON_CLICK, e => {
       self.strategyStatic()
     })
 
     /**
-     * 监听上一页按钮被点击事件'NEXT_PAGE_BUTTON_CLICK'
+     * 监听下一页按钮被点击事件'NEXT_PAGE_BUTTON_CLICK'
      *
      * @method
      * @param {module:constant-config~event:NEXT_PAGE_BUTTON_CLICK} e - A event.
      * @listens module:constant-config~event:NEXT_PAGE_BUTTON_CLICK
      */
-    window.addEventListener(Event.NEXT_PAGE_BUTTON_CLICK, e => {
+    window.addEventListener(Constant.NEXT_PAGE_BUTTON_CLICK, e => {
       self.strategyStatic()
     })
 
@@ -135,7 +127,7 @@ class Strategy {
      * @param {module:constant-config~event:AT_CHAPTER_END} e - A event.
      * @listens module:constant-config~event:AT_CHAPTER_END
      */
-    window.addEventListener(Event.AT_CHAPTER_END, e => {
+    window.addEventListener(Constant.AT_CHAPTER_END, e => {
       self.strategyStatic()
     })
 
@@ -146,7 +138,7 @@ class Strategy {
      * @param {module:constant-config~event:AT_CHAPTER_END} e - A event.
      * @listens module:constant-config~event:AT_CHAPTER_END
      */
-    window.addEventListener(Event.AT_CHAPTER_END, e => {
+    window.addEventListener(Constant.AT_CHAPTER_END, e => {
       self.strategyStatic()
     })
   }
