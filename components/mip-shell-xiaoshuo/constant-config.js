@@ -4,9 +4,9 @@
  */
 export const Constant = {
   /** @member {string} 上一页按钮被点击事件'previous-page-button-click' */
-  PREVIOUS_PAGE_BUTTON_CLICK: 'previous-page-button-click',
+  PREVIOUS_PAGE: 'previous-page',
   /** @member {string} 下一页按钮被点击事件'next-page-button-click' */
-  NEXT_PAGE_BUTTON_CLICK: 'next-page-button-click',
+  NEXT_PAGE: 'next-page',
   /** @member {string} 快速切换章节拖动条事件'fastforward-control-strip-drag' */
   FASTFORWARD_CONTROL_STRIP_DRAG: 'fastforward-control-strip-drag',
   /** @member {string} 本页是本章最后一页'at-chapter-end' */
@@ -28,5 +28,7 @@ export const Constant = {
   /** @member {string} 切换背景色'change-theme' */
   CHANGE_THEME: 'change-theme',
   /** @member {string} 修改字体大小'change-font-size' */
-  CHANGE_FONT_SIZE: 'change-font-size'
+  CHANGE_FONT_SIZE: 'change-font-size',
+  /** @member {string} 定制化MIP组件build完成事件（由mip-custom.js抛出）,包括mip-custom.js所在页面id'mip-custom-element-ready' */
+  MIP_CUSTOM_ELEMENT_READY: 'mip-custom-element-ready'
 }
