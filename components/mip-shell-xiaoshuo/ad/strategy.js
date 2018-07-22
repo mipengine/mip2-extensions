@@ -8,11 +8,14 @@
 import {Constant} from '../constant-config'
 import state from '../common/state'
 
+const extend = MIP.util.fn.extend
+
 class Strategy {
   constructor (config) {
     this.globalAd = false
     this.pageAd = false
-    this.nextPageRead = false
+    this.adCustomRead = false
+    this.fromSearch = 0
   }
   /**
    * 初始化所有的状态.
@@ -28,25 +31,36 @@ class Strategy {
    * 根据当前的页面状态获取相关的广告策略
    */
   strategyStatic () {
-    // 获取最新的页面状态
-    const state = this.getState()
     // 修改出广告的策略
     this.changeStrategy()
-    const {globalCustomId, pageCunstomId} = state
+    const {rootPageId, currentPage, isChapterEnd, chapterName} = state
     if (this.globalAd) {
       window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
         name: 'showAdvertising',
         data: {
-          customId: globalCustomId
+          customId: rootPageId
         }
       })
     }
     if (this.pageAd) {
+      let data = {
+        customId: currentPage().id
+      }
+      if (this.fromSearch === 1) {
+        extend(data, {fromSearch: this.fromSearch})
+      }
+      if (currentPage() && currentPage().chapter !== null && currentPage().page !== null && chapterName()) {
+        let novelData = {
+          isChapterEnd: isChapterEnd(),
+          chapter: currentPage().chapter,
+          page: currentPage().page,
+          chapterName: chapterName()
+        }
+        extend(data, {novelData})
+      }
       window.MIP.viewer.page.broadcastCustomEvent({
         name: 'showAdvertising',
-        data: {
-          customId: pageCunstomId
-        }
+        data
       })
     }
   }
@@ -57,24 +71,9 @@ class Strategy {
    * @returns {Object} 修改出广告的策略
    */
   changeStrategy () {
-    this.globalAd = true
-    this.pageAd = true
-  }
-
-  /**
-   * 获取当前的页面状态
-   *
-   * @returns {Object} 返回当前页面状态的对象
-   */
-  getState () {
-    return {
-      isRootPage: state.isRootPage,
-      currentPage: state.currentPage,
-      nextPage: state.nextPage,
-      previousPage: state.previousPage,
-      isChapterEnd: state.isChapterEnd,
-      pageCunstomId: state.pageId,
-      globalCustomId: state.globalCustomId
+    const {isChapterEnd} = state
+    if (this.fromSearch === 1 || isChapterEnd) {
+      this.pageAd = true
     }
   }
 
@@ -145,6 +144,18 @@ class Strategy {
     })
 
     /**
+     * 搜索点出的第一页'AT_CHAPTER_END'
+     *
+     * @method
+     * @param {module:constant-config~event:AT_CHAPTER_END} e - A event.
+     * @listens module:constant-config~event:AT_CHAPTER_END
+     */
+    window.addEventListener(Constant.IN_ROOT_PAGE, e => {
+      self.fromSearch = 1
+      self.strategyStatic()
+    })
+
+    /**
      * 获取'AT_CHAPTER_END'
      *
      * @method
@@ -152,10 +163,9 @@ class Strategy {
      * @listens module:constant-config~event:AT_CHAPTER_END
      */
     window.addEventListener(Constant.MIP_CUSTOM_ELEMENT_READY, e => {
-      const state = this.getState()
       let customId = e && e.detail && e.detail[0] && e.detail[0].customId
-      if (state.nextPageId() === customId) {
-        this.nextPageRead = true
+      if (state.nextPage().id === customId) {
+        this.adCustomRead = true
         self.strategyStatic()
       }
     })

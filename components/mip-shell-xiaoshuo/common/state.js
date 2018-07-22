@@ -65,6 +65,15 @@ export default (() => {
       */
     rootPageId () {
       return rootPage
+    },
+    /**
+      * 当前页面的章名
+      *
+      * @returns {string} 当前页面的章名
+      */
+    chapterName () {
+      return '第一章'
     }
+
   }
 })()
