@@ -12,6 +12,8 @@ import Footer from './feature/footer' // 底部控制栏
 import Header from './feature/header' // shell导航头部
 import {PageStyle, FontSize} from './feature/setting' // 背景色调整，字体大小调整
 
+import Event from './common/event'
+
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
@@ -98,6 +100,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.footer.hide()
       this.header.hide()
     })
+
+    let event = new Event()
+    event.bind()
   }
 
   // 基类root方法：初始化。用于除头部bar之外的元素

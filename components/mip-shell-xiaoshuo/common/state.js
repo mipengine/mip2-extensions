@@ -53,11 +53,11 @@ export default () => {
       return window.MIP.viewer.page.pageId
     },
     /**
-      * 全局custom的ID
+      * 根页面/搜索点出 ID(Root Page ID)，通常为页面URL, 可以用于选择根页面定制化组件
       *
-      * @returns {string} 全局custom的ID
+      * @returns {string} 根页面ID(Root Page ID)
       */
-    globalCustomId () {
+    rootPageId () {
       return ''
     }
   }
