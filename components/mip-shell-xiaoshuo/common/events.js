@@ -48,9 +48,9 @@ class XiaoshuoEvents {
 
   // 每次翻页/页面刷新时都会触发
   bindAll () {
-    console.log(state)
     let isRootPage = state.isRootPage()
-    console.log('isRootPage: ', isRootPage)
+    let isChapterEnd = state.isChapterEnd()
+    console.log('isRootPage: isChapterEnd', isRootPage, isChapterEnd)
 
     // event.delegate(document.body, previousPageButton, 'click', function () {
     //   window.MIP.viewer.page.emitCustomEvent(window, false, {
