@@ -14,6 +14,7 @@ import {PageStyle, FontSize} from './feature/setting' // 背景色调整，字�
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
+import state from './common/state'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 
@@ -89,12 +90,25 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
 
     xiaoshuoEvents.bindAll()
+
+    // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
+    if (!isRootPage) {
+      let jsonld = state.getJsonld()
+      window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
+        name: 'updateShellFooter',
+        data: {'jsonld': jsonld}
+      })
+    }
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
   bindRootEvents () {
     super.bindRootEvents()
+    // 承接emit事件：根页面底部控制栏内容更新
+    window.addEventListener('updateShellFooter', (e) => {
+      this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
+    })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
       this.footer.show(this)
@@ -134,6 +148,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
+    this.footer.updateDom(state.getJsonld())
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog)
     this.header = new Header(this.$el)
@@ -186,11 +201,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // }
 
   // 基类方法 非root执行：页面跳转后更新shell
-  updateOtherParts () {
-    super.updateOtherParts()
-    // 重新渲染footer
-    this.footer._render(this.currentPageMeta.footer)
-  }
+  // updateOtherParts () {
+  //   super.updateOtherParts()
+  //   // 重新渲染footer
+  //   // this.footer._render(this.currentPageMeta.footer)
+  // }
+
   // 基类方法，设置默认的shellConfig
   processShellConfig (shellConfig) {
     shellConfig.routes.forEach(routerConfig => {
