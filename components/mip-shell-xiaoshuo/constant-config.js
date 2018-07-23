@@ -7,14 +7,10 @@ export const Constant = {
   PREVIOUS_PAGE: 'previous-page',
   /** @member {string} 下一页按钮被点击事件'next-page-button-click' */
   NEXT_PAGE: 'next-page',
+  /** @member {string} 当前页ready,状态可获取'current-page-ready' */
+  CURRENT_PAGE_READY: 'current-page-ready',
   /** @member {string} 快速切换章节拖动条事件'fastforward-control-strip-drag' */
   FASTFORWARD_CONTROL_STRIP_DRAG: 'fastforward-control-strip-drag',
-  /** @member {string} 本页是本章最后一页'at-chapter-end' */
-  AT_CHAPTER_END: 'at-chapter-end',
-  /** @member {string} 本页是本章第一页'at-chapter-start' */
-  AT_CHAPTER_START: 'at-chapter-start',
-  /** @member {string} 从搜索结果页进入'is-root-page' */
-  IN_ROOT_PAGE: 'in-root-page',
   /** @member {string} 目录展开按钮被点击'catalog-show' */
   CATALOG_SHOW: 'catalog-show',
   /** @member {string} 目录关闭按钮被点击'catalog-hide' */

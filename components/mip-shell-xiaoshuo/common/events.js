@@ -9,9 +9,8 @@ import state from './state'
 let event = window.MIP.util.event
 
 class XiaoshuoEvents {
-  constructor (config) {
-    this.state = true
-  }
+  // constructor (config) {
+  // }
 
   // 每次搜索点出，同步刷新调用
   bindRoot () {
@@ -36,30 +35,15 @@ class XiaoshuoEvents {
         name: Constant.PREVIOUS_PAGE_BUTTON_CLICK
       })
     })
-
-    // 抛出 “在根页面,搜索点出页” 事件给阅读器
-    window.MIP.viewer.page.emitCustomEvent(window, false, {
-      name: Constant.IN_ROOT_PAGE,
-      data: {
-        'isRootPage': true
-      }
-    })
   }
 
   // 每次翻页/页面刷新时都会触发
   bindAll (opt) {
-    let isChapterEnd = state.isChapterEnd()
     let isRootPage = state.isRootPage()
-    if (isChapterEnd) {
-      // 抛出“当前页是章末页面”事件给阅读器
-      window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.top, false, {
-        name: Constant.AT_CHAPTER_END,
-        data: {
-          'isChapterEnd': isChapterEnd,
-          'isRootPage': isRootPage
-        }
-      })
-    }
+    // 抛出“当前页ready,状态可获取”事件给阅读器
+    window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.top, false, {
+      name: Constant.CURRENT_PAGE_READY
+    })
   }
 }
 
