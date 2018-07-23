@@ -3,8 +3,23 @@
  * @author JennyL, LiuJing
  */
 export default (() => {
-  const rootPage = window.MIP.viewer.page.pageId
   return {
+    getJsonld: () => {
+      console.log('in getJsonld')
+      // 获取<head>中声明的mip-shell-xiaoshuo 配置。每个页面不同，如上一页链接，当前章节名
+      let jsonld = document.head.querySelector("script[type='application/ld+json']")
+      let jsonldConf
+      try {
+        jsonldConf = JSON.parse(jsonld.innerText).mipShellConfig
+        if (!jsonldConf) {
+          throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json mipShellConfig')
+        } else {
+          return jsonldConf
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    },
     /**
       * 返回当前页面状态
       *
@@ -19,10 +34,16 @@ export default (() => {
       * @returns {Array} {1, 3, id} 第一章,第三节,页面id(url)
       */
     currentPage: () => {
-      return {
-        'chapter': 1,
-        'page': 3,
-        'id': window.MIP.viewer.page.pageId
+      let chapter
+
+      if (!chapter) {
+        throw new Error('请检查head中jsonld配置，chapter不存在')
+      } else {
+        return {
+          'chapter': 1,
+          'page': 3,
+          'id': MIP.viewer.page.currentPageId
+        }
       }
     },
     /**
@@ -64,7 +85,7 @@ export default (() => {
       * @returns {string} 根页面ID(Root Page ID)
       */
     rootPageId () {
-      return rootPage
+      return window.MIP.viewer.page.pageId
     },
     /**
       * 当前页面的章名
@@ -74,6 +95,5 @@ export default (() => {
     chapterName () {
       return '第一章'
     }
-
   }
 })()
