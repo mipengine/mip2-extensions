@@ -85,6 +85,11 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
       }).catch(() => headerInfo)
     }
 
+    // bos图片大小处理
+    if (headerInfo.logo && /cdn\.bcebos\.com/.test(headerInfo.logo)) {
+      headerInfo.logo += '@w_100'
+    }
+
     shellConfig.routes.forEach(routeConfig => {
       let { header, view } = routeConfig.meta
       header.buttonGroup = []
