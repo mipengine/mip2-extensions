@@ -100,6 +100,15 @@ export default (() => {
       */
     chapterName () {
       return '第一章'
+    },
+    /**
+      * 当前页面是否是搜索结果点出
+      *
+      * @returns {string} 当前页面是否是搜索结果点出
+      */
+    isFromSearch () {
+      return MIP.viewer.page.pageId === MIP.viewer.page.currentPageId
     }
+
   }
 })()
