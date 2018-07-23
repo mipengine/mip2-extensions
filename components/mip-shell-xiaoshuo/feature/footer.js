@@ -4,7 +4,6 @@
  */
 
 import {settingHtml} from './setting'
-
 // 整个底 bar 控制栏
 class footer {
   constructor (config) {
@@ -16,9 +15,11 @@ class footer {
 
   // 创建底部控制栏并插入页面
   _render (config) {
+    // 获取 mip-shell-xiaoshuo 配置（通用，每个页面相同）
     if (config) {
       this.config = config
     }
+
     // 将底部 bar 插入到页面中
     let $footerWrapper = document.querySelector('.mip-shell-footer-wrapper')
     let hadFooter = !!$footerWrapper
@@ -64,19 +65,13 @@ class footer {
     }).join('')
 
     // 创建底部按钮 HTML
-    let previousHref = this.config.hrefButton['previous-href']
-    let nextHref = this.config.hrefButton['next-href']
-    let prevDisabled = previousHref ? '' : 'disabled'
-    let nextDisabled = nextHref ? '' : 'disabled'
-    let prevHrefString = previousHref ? `mip-link href="${this.config.hrefButton['previous-href']}"` : ''
-    let nextHrefString = nextHref ? `mip-link href="${this.config.hrefButton['next-href']}"` : ''
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
-            <a class="page-button page-previous ${prevDisabled}" ${prevHrefString}>
+            <a class="page-button page-previous" mip-link href="">
                 <i class="icon gap-right-small icon-left"></i>
                 ${this.config.hrefButton.previous}
             </a>
-            <a class="page-button page-next ${nextDisabled}" ${nextHrefString}>
+            <a class="page-button page-next" mip-link href="">
                 ${this.config.hrefButton.next}
                 <i class="icon gap-left-small icon-right"></i>
             </a>
@@ -87,6 +82,23 @@ class footer {
         <div class="mip-xiaoshuo-settings">${settingHtml()}</div>
         `
     return footerHTML
+  }
+
+  /**
+   * 修改footer 【上一页】【下一页】链接, 增加跳转链接及是否可以跳转
+   */
+  updateDom (conf) {
+    let previousHref = conf['previousPageUrl'] || ''
+    let nextHref = conf['nextPageUrl'] || ''
+    let previousButton = document.querySelector('.mip-shell-footer .page-previous')
+    previousButton.setAttribute('href', previousHref)
+    previousButton.classList.remove('disabled')
+    if (!previousHref) previousButton.classList.add('disabled')
+
+    let nextButton = document.querySelector('.mip-shell-footer .page-next')
+    nextButton.setAttribute('href', nextHref)
+    nextButton.classList.remove('disabled')
+    if (!nextHref) nextButton.classList.add('disabled')
   }
 
   // 显示底bar
