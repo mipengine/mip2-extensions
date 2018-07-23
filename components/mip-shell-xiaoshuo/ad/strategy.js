@@ -71,8 +71,12 @@ class Strategy {
    * @returns {Object} 修改出广告的策略
    */
   changeStrategy () {
-    const {isChapterEnd} = state
-    if (this.fromSearch === 1 || isChapterEnd) {
+    const {isChapterEnd, isFromSearch} = state
+    if (isFromSearch()) {
+      this.fromSearch = 1
+      this.pageAd = true
+    }
+    if (isChapterEnd()) {
       this.pageAd = true
     }
   }
@@ -84,14 +88,7 @@ class Strategy {
    * @async 异步获取相广告策略
    */
   asyncUpdataStrategy () {
-    const fetchJsonp = window.fetchJsonp || {}
-    fetchJsonp('xxx', {
-      jsonpCallback: 'cb'
-    }).then(function (res) {
-      return res.json()
-    }).then(function (data) {
-      console.log(data)
-    })
+    // TODO:fetch请求后端接口获取广告策略
   }
 
   /**
@@ -100,13 +97,13 @@ class Strategy {
   eventHandler () {
     let self = this
     /**
-     * 监听上一页按钮被点击事件'PREVIOUS_PAGE_BUTTON_CLICK'
+     * 监听上一页按钮被点击事件'PREVIOUS_PAGE'
      *
      * @method
-     * @param {module:constant-config~event:PREVIOUS_PAGE_BUTTON_CLICK} e - A event.
-     * @listens module:constant-config~event:PREVIOUS_PAGE_BUTTON_CLICK
+     * @param {module:constant-config~event:PREVIOUS_PAGE} e - A event.
+     * @listens module:constant-config~event:PREVIOUS_PAGE
      */
-    window.addEventListener(Constant.PREVIOUS_PAGE_BUTTON_CLICK, e => {
+    window.addEventListener(Constant.PREVIOUS_PAGE, e => {
       self.strategyStatic()
     })
 
@@ -114,59 +111,35 @@ class Strategy {
      * 监听下一页按钮被点击事件'NEXT_PAGE_BUTTON_CLICK'
      *
      * @method
-     * @param {module:constant-config~event:NEXT_PAGE_BUTTON_CLICK} e - A event.
-     * @listens module:constant-config~event:NEXT_PAGE_BUTTON_CLICK
+     * @param {module:constant-config~event:NEXT_PAGE} e - A event.
+     * @listens module:constant-config~event:NEXT_PAGE
      */
-    window.addEventListener(Constant.NEXT_PAGE_BUTTON_CLICK, e => {
+    window.addEventListener(Constant.NEXT_PAGE, e => {
       self.strategyStatic()
     })
 
     /**
-     * 监听上一页按钮被点击事件'AT_CHAPTER_END'
+     * 当前页ready,状态可获取'CURRENT_PAGE_READY'
      *
      * @method
-     * @param {module:constant-config~event:AT_CHAPTER_END} e - A event.
-     * @listens module:constant-config~event:AT_CHAPTER_END
+     * @param {module:constant-config~event:CURRENT_PAGE_READY} e - A event.
+     * @listens module:constant-config~event:CURRENT_PAGE_READY
      */
-    window.addEventListener(Constant.AT_CHAPTER_END, e => {
+    window.addEventListener(Constant.CURRENT_PAGE_READY, e => {
       self.strategyStatic()
     })
 
     /**
-     * 本页是本章最后一页'AT_CHAPTER_END'
+     * 定制化MIP组件可用事件'MIP_CUSTOM_ELEMENT_READY'
      *
      * @method
-     * @param {module:constant-config~event:AT_CHAPTER_END} e - A event.
-     * @listens module:constant-config~event:AT_CHAPTER_END
-     */
-    window.addEventListener(Constant.AT_CHAPTER_END, e => {
-      self.strategyStatic()
-    })
-
-    /**
-     * 搜索点出的第一页'AT_CHAPTER_END'
-     *
-     * @method
-     * @param {module:constant-config~event:AT_CHAPTER_END} e - A event.
-     * @listens module:constant-config~event:AT_CHAPTER_END
-     */
-    window.addEventListener(Constant.IN_ROOT_PAGE, e => {
-      self.fromSearch = 1
-      self.strategyStatic()
-    })
-
-    /**
-     * 获取'AT_CHAPTER_END'
-     *
-     * @method
-     * @param {module:constant-config~event:AT_CHAPTER_END} e - A event.
-     * @listens module:constant-config~event:AT_CHAPTER_END
+     * @param {module:constant-config~event:MIP_CUSTOM_ELEMENT_READY} e - A event.
+     * @listens module:constant-config~event:MIP_CUSTOM_ELEMENT_READY
      */
     window.addEventListener(Constant.MIP_CUSTOM_ELEMENT_READY, e => {
       let customId = e && e.detail && e.detail[0] && e.detail[0].customId
-      if (state.nextPage().id === customId) {
-        this.adCustomRead = true
-        self.strategyStatic()
+      if (state.currentPage().id === customId) {
+        self.adCustomRead = true
       }
     })
   }
