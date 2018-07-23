@@ -7,6 +7,11 @@
     :class="['mip-slider', flowDirection, disabledClass, stateClass]"
     :style="wrapStyles"
     @click.stop="wrapClick"
+    @touchmove="dragging"
+    @mousemove="dragging"
+    @touchend="dragComplete"
+    @mouseup="dragComplete"
+    @mouseleave="dragComplete"
   >
     <div
       ref="sliderBar"
@@ -25,6 +30,7 @@
           :style="[dotStyles, dotStyle]"
           @touchstart.stop="dragStart($event, 0)"
           @mousedown.stop="dragStart($event, 0)"
+          @transitionend="tipHit"
         >
           <div
             ref="tip0"
@@ -41,6 +47,7 @@
           :style="[dotStyles,dotStyle]"
           @touchstart.stop="dragStart($event, 1)"
           @mousedown.stop="dragStart($event, 1)"
+          @transitionend="tipHit"
         >
           <div
             ref="tip1"
@@ -199,9 +206,9 @@ export default {
       let { tipDirection, isVertial, dotSize, width, height } = this
       let offset = isVertial ? (width / 2) - 9 : (height / 2) - 9
 
-      let style = {}
-      style[tipDirection] = `${dotSize / -2 + offset}px`
-      return style
+      return {
+        [tipDirection]: `${dotSize / -2 + offset}px`
+      }
     },
 
     // tip方向
@@ -299,40 +306,51 @@ export default {
     wrapStyles () {
       let { isVertial, width, height, dotSize } = this
 
-      return isVertial ? {
-        height: typeof height === 'number' ? `${height}px` : height,
-        padding: `${dotSize / 2}px`
-      } : {
-        width: typeof width === 'number' ? `${width}px` : width,
-        padding: `${dotSize / 2}px`
-      }
+      return isVertial
+        ? {
+          height: typeof height === 'number' ? `${height}px` : height,
+          padding: `${dotSize / 2}px`
+        }
+        : {
+          width: typeof width === 'number' ? `${width}px` : width,
+          padding: `${dotSize / 2}px`
+        }
     },
 
     // 滑动条样式
     elemStyles () {
       let { isVertial, width, height } = this
 
-      return isVertial ? {
-        width: `${width}px`,
-        height: '100%'
-      } : {
-        height: `${height}px`
-      }
+      return isVertial
+        ? {
+          width: `${width}px`,
+          height: '100%'
+        }
+        : {
+          height: `${height}px`
+        }
     },
 
     // 控制柄样式
     dotStyles () {
       let { isVertial, dotSize, width, height } = this
 
-      return isVertial ? {
-        width: `${dotSize}px`,
-        height: `${dotSize}px`,
-        left: `${(-(dotSize - width) / 2)}px`
-      } : {
-        width: `${dotSize}px`,
-        height: `${dotSize}px`,
-        top: `${(-(dotSize - height) / 2)}px`
-      }
+      return isVertial
+        ? {
+          width: `${dotSize}px`,
+          height: `${dotSize}px`,
+          left: `${(-(dotSize - width) / 2)}px`
+        }
+        : {
+          width: `${dotSize}px`,
+          height: `${dotSize}px`,
+          top: `${(-(dotSize - height) / 2)}px`
+        }
+    }
+  },
+  watch: {
+    currentValue (val) {
+      this.$emit('dragging', val)
     }
   },
   mounted () {
@@ -350,8 +368,15 @@ export default {
      */
     registerEvent () {
       // 设置值
-      this.$on('setVal', (val, speed) => {
-        this.setValue(val, speed)
+      this.$on('setVal', (e, val) => {
+        let valCon = JSON.parse(val)
+        valCon = valCon.length === 1 ? [0, ...valCon] : valCon
+        this.setValue(valCon)
+      })
+
+      // 获取值
+      this.$on('getVal', () => {
+        return this.currentValue
       })
     },
     /**
@@ -359,24 +384,8 @@ export default {
      *
      */
     bindEvents () {
-      let {dragging, dragComplete, resetSlider, tipHit} = this
-      let thisSlider = this.$el
-
-      // 绑定拖拽相关事件
-      thisSlider.addEventListener('touchmove', dragging, { passive: false })
-      thisSlider.addEventListener('touchend', dragComplete, { passive: false })
-
-      // 支持鼠标
-      thisSlider.addEventListener('mousemove', dragging)
-      thisSlider.addEventListener('mouseup', dragComplete)
-      thisSlider.addEventListener('mouseleave', dragComplete)
-
       // 视口变动，及时刷新
-      viewport.on('resize', resetSlider)
-
-      // 检测碰撞
-      this.$refs.dot0.addEventListener('transitionend', tipHit)
-      this.$refs.dot1.addEventListener('transitionend', tipHit)
+      viewport.on('resize', this.resetSlider)
     },
 
     /**
@@ -441,7 +450,6 @@ export default {
       } else {
         setValueOnPos(getPos(ev), true)
       }
-
       // 检测两个tip是否碰撞
       this.tipHit()
     },
@@ -462,7 +470,6 @@ export default {
       setTimeout(() => {
         this.processDragging = false
       }, 0)
-
       this.setPosition()
     },
 
@@ -724,9 +731,8 @@ export default {
       if (color.charAt(0) === '#') {
         color = color.substring(1)
         return [3, 4, 6, 8].indexOf(color.length) > -1 && !isNaN(parseInt(color, 16))
-      } else {
-        return /^(rgb|hsl)a?\((\d+%?(deg|rad|grad|turn)?[,\s]+){2,3}[\s/]*[\d.]+%?\)$/i.test(color)
       }
+      return /^(rgb|hsl)a?\((\d+%?(deg|rad|grad|turn)?[,\s]+){2,3}[\s/]*[\d.]+%?\)$/i.test(color)
     }
   }
 }

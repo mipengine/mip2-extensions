@@ -31,6 +31,14 @@
       border: 1px solid #ccc;
     }
 
+    button{
+      padding: 8px 12px;
+      display: inline-block;
+      border: none;
+      background-color: #ccc;
+      border-radius: 3px;
+      margin: 5px 10px 5px 0;
+    }
   </style>
 </head>
 
@@ -38,7 +46,7 @@
   <ul>
     <li>
       <p> 单值、横向、上方显示、范围0-200、 步长1、预设值60 </p>
-      <mip-slider class="her">
+      <mip-slider class="her" id="slider1" on="dragging:test.changeSpacing dragStart:test.changeSpacing">
         <script type="application/json">
           {
             range: 60,
@@ -51,11 +59,12 @@
 
         </script>
       </mip-slider>
+      <button on="click:slider1.setVal([80])">设置值为80</button>
     </li>
 
     <li>
       <p> 范围值、横向、下方显示、范围0-100、 步长1、预设20-60、支持固定范围拖动</p>
-      <mip-slider class="her">
+      <mip-slider class="her" id="slider2">
         <script type="application/json">
           {
             range: [20, 60],
@@ -70,6 +79,7 @@
 
         </script>
       </mip-slider>
+      <button on="click:slider2.setVal([10,80])">设置值为10-80</button>
     </li>
 
     <li>
