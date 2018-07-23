@@ -85,7 +85,15 @@ export default (() => {
       * @returns {string} 根页面ID(Root Page ID)
       */
     rootPageId () {
-      return MIP.viewer.page.pageId
+      return window.MIP.viewer.page.pageId
+    },
+    /**
+      * 当前页面的章名
+      *
+      * @returns {string} 当前页面的章名
+      */
+    chapterName () {
+      return '第一章'
     }
   }
 })()
