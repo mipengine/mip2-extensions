@@ -39,24 +39,27 @@ class XiaoshuoEvents {
 
     // 抛出 “在根页面,搜索点出页” 事件给阅读器
     window.MIP.viewer.page.emitCustomEvent(window, false, {
-      name: Constant.IN_ROOT_PAGE
+      name: Constant.IN_ROOT_PAGE,
+      data: {
+        'isRootPage': true
+      }
     })
-
-    window.addEventListener(Constant.NEXT_PAGE_BUTTON_CLICK, e => console.log('NEXT_PAGE_BUTTON_CLICK'))
-    window.addEventListener(Constant.PREVIOUS_PAGE_BUTTON_CLICK, e => console.log('PREVIOUS_PAGE_BUTTON_CLICK'))
   }
 
   // 每次翻页/页面刷新时都会触发
-  bindAll () {
-    let isRootPage = state.isRootPage()
+  bindAll (opt) {
     let isChapterEnd = state.isChapterEnd()
-    console.log('isRootPage: isChapterEnd', isRootPage, isChapterEnd)
-
-    // event.delegate(document.body, previousPageButton, 'click', function () {
-    //   window.MIP.viewer.page.emitCustomEvent(window, false, {
-    //     name: Constant.PREVIOUS_PAGE_BUTTON_CLICK
-    //   })
-    // })
+    let isRootPage = state.isRootPage()
+    if (isChapterEnd) {
+      // 抛出“当前页是章末页面”事件给阅读器
+      window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.top, false, {
+        name: Constant.AT_CHAPTER_END,
+        data: {
+          'isChapterEnd': isChapterEnd,
+          'isRootPage': isRootPage
+        }
+      })
+    }
   }
 }
 

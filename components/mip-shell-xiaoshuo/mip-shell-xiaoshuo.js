@@ -14,7 +14,7 @@ import {PageStyle, FontSize} from './feature/setting' // 背景色调整，字�
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import state from './common/state'
+import util from './common/util'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 
@@ -89,11 +89,15 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       name: 'changePageStyle'
     })
 
-    xiaoshuoEvents.bindAll()
+    // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
+    xiaoshuoEvents.bindAll({
+      currentPageMeta: this.currentPageMeta,
+      shellConfig: this.shellConfig
+    })
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
-      let jsonld = state.getJsonld()
+      let jsonld = util.getJsonld()
       window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
         name: 'updateShellFooter',
         data: {'jsonld': jsonld}
@@ -148,7 +152,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
-    this.footer.updateDom(state.getJsonld())
+    this.footer.updateDom(util.getJsonld())
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog)
     this.header = new Header(this.$el)
@@ -209,6 +213,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 基类方法，设置默认的shellConfig
   processShellConfig (shellConfig) {
+    MIP.mipshellXiaoshuo = this
+    this.shellConfig = shellConfig
     shellConfig.routes.forEach(routerConfig => {
       routerConfig.meta.header.bouncy = false
     })
