@@ -2,24 +2,12 @@
  * @file 小说中的各种状态
  * @author JennyL, LiuJing
  */
+import util from './util'
+
 export default (() => {
+  // 获取html head 中json-ld 配置
+  let jsonld = util.getJsonld()
   return {
-    getJsonld: () => {
-      console.log('in getJsonld')
-      // 获取<head>中声明的mip-shell-xiaoshuo 配置。每个页面不同，如上一页链接，当前章节名
-      let jsonld = document.head.querySelector("script[type='application/ld+json']")
-      let jsonldConf
-      try {
-        jsonldConf = JSON.parse(jsonld.innerText).mipShellConfig
-        if (!jsonldConf) {
-          throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json mipShellConfig')
-        } else {
-          return jsonldConf
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    },
     /**
       * 返回当前页面状态
       *
@@ -34,14 +22,12 @@ export default (() => {
       * @returns {Array} {1, 3, id} 第一章,第三节,页面id(url)
       */
     currentPage: () => {
-      let chapter
-
-      if (!chapter) {
-        throw new Error('请检查head中jsonld配置，chapter不存在')
+      if (!jsonld.currentChapter || !jsonld.currentPage) {
+        throw new Error('请检查head中json-ld配置，currentChapter/currentPage 不存在')
       } else {
         return {
-          'chapter': 1,
-          'page': 3,
+          'chapter': jsonld.currentChapter,
+          'page': jsonld.currentPage,
           'id': MIP.viewer.page.currentPageId
         }
       }
@@ -53,7 +39,7 @@ export default (() => {
       */
     nextPage: () => {
       return {
-        'chapter': 2,
+        'url': 2,
         'page': 1,
         'id': ''// todo
       }
@@ -71,12 +57,32 @@ export default (() => {
       }
     },
     /**
-      * 当前页是本章最后一页
+      * 当前页是本章最后一页,
       *
       * @returns {boolean} 是本章最后一页
       */
     isChapterEnd () {
-      return true
+      let isChapterEnd = false
+      let isRootPage = window.MIP.viewer.page.isRootPage
+      let win = isRootPage ? window : window.top
+      let shellConfig = win.MIP.mipshellXiaoshuo.shellConfig
+      // 获取当前页链接
+      let reg = new RegExp(shellConfig.routes[0].pattern)
+      const currentUrl = window.location.href.match(reg)[0]
+      if (!currentUrl) {
+        console.error('请确认 mip-shell-xiaoshuo 中 pattern 配置正确，且以页面链接匹配后在 catalog->pages 中存在')
+      }
+      // 获取目录，在目录中匹配页面url, 判断当前页url是否是某张最后一页
+      let catalogs = shellConfig.routes[0].meta.catalog
+      catalogs.forEach((item) => {
+        let pages = item.pages
+        pages.forEach((page, i) => {
+          if (page === currentUrl && i === pages.length - 1) {
+            isChapterEnd = true
+          }
+        })
+      })
+      return isChapterEnd
     },
 
     /**
