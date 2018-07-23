@@ -372,7 +372,7 @@ export default {
       changeUrl = `${win.location.href.split('#')[0].split('?')[0]}${search && '?' + search}`
       changeUrl += win.location.hash ? `#${win.location.hash}` : ''
       if (!window.MIP.standalone) {
-        MIP.viewer.messager.sendMessage('pushState', {
+        MIP.viewer.messager.sendMessage('replaceState', {
           url: MIP.util.getOriginalUrl(changeUrl)
         })
       }
