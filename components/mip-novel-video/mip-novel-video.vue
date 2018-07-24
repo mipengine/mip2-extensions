@@ -61,7 +61,6 @@ import JSMpeg from './jsmpeg'
 const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
 
-const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 10
 const PREDATE = 'ad-time'
 
@@ -119,9 +118,9 @@ export default {
     }
     this.timeExpired()
     this.initVideoIndex()
-    isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
+    isShouldVideo = +customStorage.get(this.videoid) === 2 || false
     if (this.isShow) {
-      console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
+      console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(this.videoid))
       this.readContainerNoScroll()
     }
   },
@@ -227,12 +226,12 @@ export default {
       }
     },
     initVideoIndex () {
-      let videoIndex = customStorage.get(VIDEOINDEX)
+      let videoIndex = customStorage.get(this.videoid)
       if (videoIndex == null) {
-        customStorage.set(VIDEOINDEX, 1)
+        customStorage.set(this.videoid, 1)
       } else {
         videoIndex++
-        customStorage.set(VIDEOINDEX, videoIndex)
+        customStorage.set(this.videoid, videoIndex)
       }
     },
     readContainerNoScroll () {
@@ -307,7 +306,7 @@ export default {
       }
       let currentDate = myDate
       if (currentDate !== +preDate) {
-        customStorage.rm(VIDEOINDEX)
+        customStorage.rm(this.videoid)
         customStorage.rm(PREDATE)
       }
     }
