@@ -152,7 +152,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let me = this
 
     // 当页面出现跳转时，关闭所有的浮层
-    this.jumpHandler = event.delegate(document.body, '[mip-link]', 'click', function (e) {
+    this.jumpHandler = event.delegate(document.documentElement, '[mip-link]', 'click', function (e) {
       me._closeEverything()
     })
   }

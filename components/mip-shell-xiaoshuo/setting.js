@@ -105,11 +105,11 @@ export class FontSize {
   bindDragEvent () {
     let event = window.MIP.util.event
     // 拖动事件
-    event.delegate(document.body, this.elementSelector + ' input[type="range"]', 'touchmove', () => {
+    event.delegate(document.documentElement, this.elementSelector + ' input[type="range"]', 'touchmove', () => {
       this._setInputValue(this._getInputValue())
     })
     // 点击事件
-    event.delegate(document.body, this.elementSelector + ' input[type="range"]', 'click', () => {
+    event.delegate(document.documentElement, this.elementSelector + ' input[type="range"]', 'click', () => {
       this._setInputValue(this._getInputValue())
     })
   }
