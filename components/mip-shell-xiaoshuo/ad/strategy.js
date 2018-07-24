@@ -10,11 +10,11 @@ import state from '../common/state'
 
 const extend = MIP.util.fn.extend
 
-class Strategy {
+export default class Strategy {
   constructor (config) {
     this.globalAd = false
     this.pageAd = false
-    this.adCustomRead = false
+    this.adCustomReady = false
     this.fromSearch = 0
   }
   /**
@@ -34,6 +34,7 @@ class Strategy {
     // 修改出广告的策略
     this.changeStrategy()
     const {rootPageId, currentPage, isChapterEnd, chapterName} = state
+    // 全局的广告
     if (this.globalAd) {
       window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
         name: 'showAdvertising',
@@ -42,6 +43,7 @@ class Strategy {
         }
       })
     }
+    // 页内的广告
     if (this.pageAd) {
       let data = {
         customId: currentPage().id
@@ -71,13 +73,17 @@ class Strategy {
    * @returns {Object} 修改出广告的策略
    */
   changeStrategy () {
-    const {isChapterEnd, isFromSearch} = state
+    const {isChapterEnd, isFromSearch, nextPage} = state
     if (isFromSearch()) {
       this.fromSearch = 1
       this.pageAd = true
     }
     if (isChapterEnd()) {
       this.pageAd = true
+    }
+    // 品专第二页广告
+    if (+nextPage().page === 2) {
+      this.globalAd = true
     }
   }
 
@@ -139,10 +145,8 @@ class Strategy {
     window.addEventListener(Constant.MIP_CUSTOM_ELEMENT_READY, e => {
       let customId = e && e.detail && e.detail[0] && e.detail[0].customId
       if (state.currentPage().id === customId) {
-        self.adCustomRead = true
+        self.adCustomReady = true
       }
     })
   }
 }
-
-export default Strategy
