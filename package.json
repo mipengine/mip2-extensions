@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/mip-project/mip-components#readme",
   "dependencies": {
+    "fastclick": "^1.0.6",
     "mip-sandbox": "^1.0.14"
   },
   "devDependencies": {
