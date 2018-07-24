@@ -7,6 +7,11 @@
  * 3. less嵌套方法修改
  */
 
+.mip-shell-header {
+  font-size: 18px;
+  font-weight: bold;
+}
+
 /* 控制栏-底bar元素*/
 .mip-shell-footer-wrapper {
   z-index: 20002 !important;
@@ -45,7 +50,7 @@
 
   .upper {
     overflow: hidden;
-    height: 50px;
+    height: 58px;
   }
 
   .page-button.disabled {
@@ -54,8 +59,8 @@
 
   .page-button {
     float: left;
-    margin: 0 20px;
-    line-height: 50px;
+    margin: 0 13px;
+    line-height: 58px;
   }
 
   .page-button.page-next {
@@ -64,17 +69,17 @@
 
   .button-wrapper {
     display: flex;
-    height: 100px;
 
     i p {
-      margin-top: 10px;
+      margin-top: 20px;
+      font-size: 12px;
     }
 
   }
 
   .button-wrapper .button {
-    height: 99px;
-    line-height: 99px;
+    height: 92px;
+    line-height: 92px;
     text-align: center;
     flex: 1;
   }
@@ -82,7 +87,14 @@
   .bg-button {
     display: block;
   }
-
+  .gap-right-small {
+    margin-right: -.05rem;
+    margin-top: -.03rem;
+  }
+  .gap-left-small {
+    margin-left: -.05rem;
+    margin-top: -.03rem;
+  }
 }
 
 /* 业务样式 - 侧边栏*/
@@ -109,7 +121,8 @@ mip-fixed.mip-shell-catalog-wrapper {
 
   .mip-catalog-btn {
     display: block;
-    padding: 10px 20px;
+    padding: 0px 20px;
+    line-height: 2.9
   }
 
 }
@@ -141,6 +154,9 @@ mip-fixed.mip-shell-catalog-wrapper {
   padding-left: 17px;
 }
 
+.mip-shell-night-font-color {
+  color: rgba(255, 255, 255, .24);
+}
 .optoggle1 {
   opacity: 1;
 }
@@ -251,7 +267,7 @@ mip-fixed.mip-shell-catalog-wrapper {
 }
 
 .mip-shell-xiaoshuo-control-fontsize {
-  padding: 20px 30px;
+  padding: 15px;
   .mip-shell-xiaoshuo-padding;
 
   ul {
@@ -286,21 +302,23 @@ mip-fixed.mip-shell-catalog-wrapper {
   }
 
   .progress {
-    margin-top: 15px;
+    margin-top: 12px;
     -webkit-box-flex: 1;
     -webkit-flex: 1 1 auto;
   }
 
-  .reduce {
-    padding-right: 20px;
-    font-size: 26px;
+  .reduce, .increase {
+    font-size: 16px;
     cursor: none;
+    padding: 10px 17px;
+  }
+
+  .reduce {
+    margin-left: -17px
   }
 
   .increase {
-    padding-left: 20px;
-    font-size: 26px;
-    cursor: none;
+    margin-right: -17px
   }
 
 }
@@ -430,13 +448,13 @@ html[mip-shell-xiaoshuo-theme="night"] {
   body,
   .mip-shell-catalog-wrapper,
   .mip-shell-catalog-wrapper a {
-    color: #333;
+    .mip-shell-night-font-color;
     background-color: #000;
   }
 
   .mip-shell-footer,
   .mip-xiaoshuo-settings {
-    color: #333;
+    .mip-shell-night-font-color;
     background-color: #191919;
 
     input[type=range] {
@@ -447,7 +465,7 @@ html[mip-shell-xiaoshuo-theme="night"] {
 
   .mip-shell-footer a,
   .mip-xiaoshuo-settings a {
-    color: #333;
+    .mip-shell-night-font-color;
   }
 
   .mip-border,
@@ -548,7 +566,7 @@ html[mip-shell-xiaoshuo-theme=default] footer {
 }
 
 html[mip-shell-xiaoshuo-theme=night] footer {
-  color: #333;
+  .mip-shell-night-font-color;
   background-color: #000;
 }
 
@@ -572,7 +590,6 @@ body.with-header {
 
 .mip-page__iframe {
   opacity: 0;
-  // position: fixed;
   position: absolute;
   left: 0;
   top: 0;
