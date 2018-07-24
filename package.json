@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/mip-project/mip-components#readme",
   "dependencies": {
-    "mip-sandbox": "^1.0.14"
+    "mip-sandbox": "^1.0.19"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
@@ -43,6 +43,6 @@
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
     "husky": "^1.0.0-rc.8",
-    "mip2": "^1.1.3"
+    "mip2": "^1.1.10"
   }
 }
