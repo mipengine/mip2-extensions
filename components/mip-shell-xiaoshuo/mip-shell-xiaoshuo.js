@@ -151,11 +151,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let event = window.MIP.util.event
     let me = this
 
-    // 当页面出现跳转时，关闭所有的浮层
+    // 当页面目录点击触发跳转时，关闭所有的浮层（底部控件触发不关闭浮层）
     this.jumpHandler = event.delegate(document.documentElement, '.mip-shell-catalog-wrapper [mip-link]', 'click', function (e) {
       me._closeEverything()
     })
-    this.jumpHandler = event.delegate(document.body, '.mip-shell-header-wrapper a', 'click', function (e) {
+    // 当页面左上角返回按钮点击时，关闭所有的浮层
+    this.jumpHandler = event.delegate(document.documentElement, '.mip-shell-header-wrapper a', 'click', function (e) {
       me._closeEverything()
     })
   }
