@@ -3,6 +3,8 @@ import FastClick from 'fastclick'
 export default class MIPFastClick extends MIP.CustomElement {
   constructor (ele) {
     super(ele)
-    FastClick.attach(document.body)
+    let targetId = this.element.getAttribute('target')
+    let target = document.querySelector('#' + targetId) || this.element
+    FastClick.attach(target)
   }
 }
