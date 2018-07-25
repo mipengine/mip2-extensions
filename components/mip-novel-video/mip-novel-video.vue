@@ -26,7 +26,7 @@
           <video
             ref="mipVideo"
             :poster="poster"
-            :src="src"
+            :src="videourl"
             muted="true"
             class="video"
             autoplay
@@ -82,7 +82,7 @@ export default {
       type: String,
       default: ''
     },
-    src: {
+    videourl: {
       type: String,
       default: ''
     },
@@ -106,21 +106,20 @@ export default {
   },
   computed: {
     isShow: function () {
-      return this.src && this.tsurl && isSF && detector.getMobileSystemVersion() && isShouldVideo
+      return this.videourl && this.tsurl && isSF && detector.getMobileSystemVersion() && isShouldVideo
     },
     isOriginalVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
-    if (!this.src || !this.tsurl) {
+    if (!this.videourl || !this.tsurl) {
       return
     }
     this.timeExpired()
     this.initVideoIndex()
     isShouldVideo = +customStorage.get(this.videoid) === 2 || false
     if (this.isShow) {
-      console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(this.videoid))
       this.readContainerNoScroll()
     }
   },
