@@ -14,6 +14,12 @@
 .mip-shell-more-button-mask {
   background: none;
 }
+.mip-border {
+    border: 0 solid #f5f5f5;
+}
+.mip-border:after {
+  border-color: #f5f5f5;
+}
 
 /* 控制栏-底bar元素*/
 
@@ -169,6 +175,9 @@ mip-fixed.mip-shell-catalog-wrapper {
 
 .mip-shell-night-font-color {
   color: #333;
+}
+.mip-shell-night-bar-font-color {
+  color: #505050;
 }
 .mip-shell-night-bg-color {
   color: #333;
@@ -466,16 +475,20 @@ html[mip-shell-xiaoshuo-theme="night"] {
 
   }
 
-  body,
+  body {
+    .mip-shell-night-font-color;
+    background-color: #000;
+  }
+
   .mip-shell-catalog-wrapper,
   .mip-shell-catalog-wrapper a {
-    .mip-shell-night-font-color;
+    .mip-shell-night-bar-font-color;
     background-color: #000;
   }
 
   .mip-shell-footer,
   .mip-xiaoshuo-settings {
-    .mip-shell-night-font-color;
+    .mip-shell-night-bar-font-color;
     background-color: #191919;
 
     input[type=range] {
@@ -486,7 +499,7 @@ html[mip-shell-xiaoshuo-theme="night"] {
 
   .mip-shell-footer a,
   .mip-xiaoshuo-settings a {
-    .mip-shell-night-font-color;
+    .mip-shell-night-bar-font-color;
   }
 
   .mip-border,
