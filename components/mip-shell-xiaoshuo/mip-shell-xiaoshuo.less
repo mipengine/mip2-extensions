@@ -1,0 +1,654 @@
+/**
+ * file: 小说shell（阅读器）通用样式文件;
+ * author: liangjiaying <jiaojiaomao220@163.com>
+ * TODO:
+ * 1. 通用样式抽象
+ * 2. 代码分块整理
+ * 3. less嵌套方法修改
+ */
+
+/* 控制栏-底bar元素*/
+.mip-shell-footer-wrapper {
+  z-index: 20002 !important;
+  height: 150px;
+  transition: transform .35s ease;
+  transform: translateY(100%);
+  font-size: 16px;
+
+  .button p {
+    font-size: 16px;
+  }
+
+}
+
+.mip-shell-header-wrapper {
+  z-index: 20002 !important;
+  transition: transform .35s ease;
+  transform: translateY(-100%);
+}
+
+.mip-shell-header-wrapper.show {
+  transform: translateY(0);
+}
+
+.click-cursor {
+  cursor: pointer
+}
+
+.mip-shell-footer-wrapper.show {
+  transform: translateY(0);
+}
+
+.mip-shell-footer {
+  height: 150px;
+  background: white;
+
+  .upper {
+    overflow: hidden;
+    height: 50px;
+  }
+
+  .page-button.disabled {
+    opacity: .5;
+  }
+
+  .page-button {
+    float: left;
+    margin: 0 20px;
+    line-height: 50px;
+  }
+
+  .page-button.page-next {
+    float: right;
+  }
+
+  .button-wrapper {
+    display: flex;
+    height: 100px;
+
+    i p {
+      margin-top: 10px;
+    }
+
+  }
+
+  .button-wrapper .button {
+    height: 99px;
+    line-height: 99px;
+    text-align: center;
+    flex: 1;
+  }
+
+  .bg-button {
+    display: block;
+  }
+
+}
+
+/* 业务样式 - 侧边栏*/
+mip-fixed.mip-shell-catalog-wrapper {
+  z-index: 20002 !important;
+  bottom: 0;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  width: 70%;
+  min-width: 200px;
+  height: 100%;
+  background: white;
+  transition: transform .35s ease;
+  transform: translateX(-100%);
+  font-size: 16px;
+
+  &.show {
+    transform: translateX(0);
+  }
+
+  .mip-shell-catalog {
+    padding: 20px 0;
+  }
+
+  .mip-catalog-btn {
+    display: block;
+    padding: 10px 20px;
+  }
+
+}
+
+/*原小说shell*/
+
+/* flex布局 */
+.mip-shell-xiaoshuo-flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: auto;
+  -webkit-align-content: flex-start;
+  -webkit-align-items: stretch;
+  -webkit-box-align: stretch;
+  -webkit-box-direction: normal;
+  -webkit-box-lines: single;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: justify;
+  -webkit-flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  -webkit-justify-content: space-between;
+}
+
+/* 左右填充 */
+.mip-shell-xiaoshuo-padding {
+  padding-right: 17px;
+  padding-left: 17px;
+}
+
+.optoggle1 {
+  opacity: 1;
+}
+
+.optoggle0 {
+  opacity: 0;
+}
+
+.transiton-init {
+  transition: all ease 240ms;
+}
+
+/* 底部控制条 */
+.mip-shell-xiaoshuo-control {
+  position: fixed;
+  z-index: 200;
+  bottom: 0;
+  left: 0;
+  display: none;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 -6px 9px 0 rgba(0, 0, 0, .10);
+}
+
+/* 分页浮层 */
+.mip-shell-xiaoshuo-control-page {
+  height: 54px;
+  border-bottom: 1px solid;
+  border-bottom-color: #f1f1f1;
+  line-height: 54px;
+  -webkit-transition: all ease 240ms;
+  transition: all ease 240ms;
+  .mip-shell-xiaoshuo-flex;
+  .mip-shell-xiaoshuo-padding;
+
+  .disabled {
+    color: #a0a0a0;
+    -webkit-transition: all ease 240ms;
+    transition: all ease 240ms;
+    cursor: not-allowed;
+  }
+
+}
+
+.mip-shell-xiaoshuo-control-page.page-end {
+  margin: 0 -17px;
+  border-bottom: 0;
+}
+
+/* 异步按钮浮层 */
+.mip-shell-xiaoshuo-control-nav ul {
+  padding: 20px;
+  .mip-shell-xiaoshuo-flex;
+  .mip-shell-xiaoshuo-padding;
+}
+
+/* 主题浮层 */
+.mip-shell-xiaoshuo-control-theme {
+  padding-bottom: 30px;
+  .mip-shell-xiaoshuo-padding;
+
+  ul {
+    margin-right: -1.03092784%;
+    margin-left: -1.03092784%;
+    .mip-shell-xiaoshuo-flex;
+  }
+
+  li {
+    position: relative;
+    width: 33.33333333%;
+    padding-right: 1.03092784%;
+    padding-left: 1.03092784%;
+    -webkit-box-flex: 4;
+    -webkit-flex: 4 4 auto;
+  }
+
+  span {
+    display: block;
+    width: 100%;
+    height: 38px;
+    border-radius: 3px;
+  }
+
+  .theme-default {
+    background-color: #eee;
+  }
+
+  .theme-green {
+    background-color: #d7e0cb;
+  }
+
+  .theme-paper {
+    background-color: #ecdabb;
+  }
+
+}
+
+/* 更多设置 */
+.mip-xiaoshuo-settings {
+  position: relative;
+  height: 100%;
+  background: white;
+  transition: transform 240ms;
+}
+
+.mip-xiaoshuo-settings.show {
+  transform: translateY(-100%);
+}
+
+.mip-shell-xiaoshuo-control-fontsize {
+  padding: 20px 30px;
+  .mip-shell-xiaoshuo-padding;
+
+  ul {
+    .mip-shell-xiaoshuo-flex;
+  }
+
+  li {
+    padding: 10px 0;
+    cursor: pointer;
+  }
+
+  input[type=range] {
+    display: block;
+    width: 100%;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 2px;
+    line-height: 2px;
+    background-color: #f1f1f1;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border-radius: 50%;
+    background-color: #000;
+    -webkit-appearance: none;
+  }
+
+  .progress {
+    margin-top: 15px;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+  }
+
+  .reduce {
+    padding-right: 20px;
+    font-size: 26px;
+    cursor: none;
+  }
+
+  .increase {
+    padding-left: 20px;
+    font-size: 26px;
+    cursor: none;
+  }
+
+}
+
+/* 内容 */
+
+/* 换色和变字号 */
+html[mip-shell-xiaoshuo-font-size="1"] body,
+html[mip-shell-xiaoshuo-font-size="1"] body p {
+  font-size: 12px;
+}
+
+html[mip-shell-xiaoshuo-font-size="1.5"] body,
+html[mip-shell-xiaoshuo-font-size="1.5"] body p {
+  font-size: 13px;
+}
+
+html[mip-shell-xiaoshuo-font-size="2"] body,
+html[mip-shell-xiaoshuo-font-size="2"] body p {
+  font-size: 14px;
+}
+
+html[mip-shell-xiaoshuo-font-size="2.5"] body,
+html[mip-shell-xiaoshuo-font-size="2.5"] body p {
+  font-size: 15px;
+}
+
+html[mip-shell-xiaoshuo-font-size="3"] body,
+html[mip-shell-xiaoshuo-font-size="3"] body p {
+  font-size: 16px;
+}
+
+html[mip-shell-xiaoshuo-font-size="3.5"] body,
+html[mip-shell-xiaoshuo-font-size="3.5"] body p {
+  font-size: 18px;
+}
+
+html[mip-shell-xiaoshuo-font-size="4"] body,
+html[mip-shell-xiaoshuo-font-size="4"] body p {
+  font-size: 19px;
+}
+
+html[mip-shell-xiaoshuo-font-size="4.5"] body,
+html[mip-shell-xiaoshuo-font-size="4.5"] body p {
+  font-size: 20px;
+}
+
+html[mip-shell-xiaoshuo-font-size="5"] body,
+html[mip-shell-xiaoshuo-font-size="5"] body p {
+  font-size: 22px;
+}
+
+html[mip-shell-xiaoshuo-font-size="5.5"] body,
+html[mip-shell-xiaoshuo-font-size="5.5"] body p {
+  font-size: 26px;
+}
+
+html[mip-shell-xiaoshuo-font-size="6"] body,
+html[mip-shell-xiaoshuo-font-size="6"] body p {
+  font-size: 30px;
+}
+
+/* 换主题 */
+html {
+  body,
+  .mip-shell-footer,
+  .mip-shell-footer a {
+    -webkit-transition: background-color ease 350ms;
+    transition: background-color ease 350ms;
+  }
+
+  .mip-border,
+  .mip-border:after {
+    -webkit-transition: all ease 350ms;
+    transition: all ease 350ms;
+  }
+
+  .light-mode {
+    display: none;
+  }
+
+}
+
+html[mip-shell-xiaoshuo-theme="green"] {
+  color: #3b3f2f;
+  background-color: #d7e0cb;
+}
+
+html[mip-shell-xiaoshuo-theme="default"] {
+  color: #333;
+  background-color: #eee;
+}
+
+html[mip-shell-xiaoshuo-theme="paper"] {
+  color: #412b1a;
+  background-color: #ecdabb;
+}
+
+html[mip-shell-xiaoshuo-theme="night"] {
+
+  /*#mip-page-loading-wrapper shell加载中效果*/
+  #mip-page-loading-wrapper,
+  .mip-page-fade-header-wrapper {
+    background: #191919 !important;
+
+    .mip-shell-header {
+      background: #191919 !important;
+    }
+
+  }
+
+  .mip-shell-header-wrapper {
+    .mip-shell-header {
+      background: #191919 !important;
+    }
+
+    .icon path {
+      fill: #666 !important;
+    }
+
+    .mip-shell-header-title {
+      color: #666 !important;
+    }
+
+  }
+
+  body,
+  .mip-shell-catalog-wrapper,
+  .mip-shell-catalog-wrapper a {
+    color: #333;
+    background-color: #000;
+  }
+
+  .mip-shell-footer,
+  .mip-xiaoshuo-settings {
+    color: #333;
+    background-color: #191919;
+
+    input[type=range] {
+      opacity: .2;
+    }
+
+  }
+
+  .mip-shell-footer a,
+  .mip-xiaoshuo-settings a {
+    color: #333;
+  }
+
+  .mip-border,
+  .mip-border:after {
+    border-color: #333 !important;
+  }
+
+  .disabled {
+    color: #333;
+  }
+
+  .night-mode {
+    display: none;
+  }
+
+  .light-mode {
+    display: block;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    background-color: #999;
+  }
+
+}
+
+input[type=range]:focus::-ms-fill-lower {
+  background: linear-gradient(to right, #059cfa, white 100%, white);
+  background: linear-gradient(#059cfa, #059cfa) no-repeat;
+}
+
+input[type=range]:focus::-ms-fill-upper {
+  background: #fff;
+  background: linear-gradient(#059cfa, #059cfa) no-repeat;
+}
+
+@-webkit-keyframes anim {
+  0% {
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  }
+
+  100% {
+    opacity: .1;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  }
+
+}
+
+@-webkit-keyframes control {
+  0% {
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+}
+
+@-webkit-keyframes themechange {
+  0% {
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+}
+
+@-webkit-keyframes controlre {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+}
+
+/* 主题按钮高亮*/
+html[mip-shell-xiaoshuo-theme="green"] .mip-shell-xiaoshuo-control-theme .theme-green,
+html[mip-shell-xiaoshuo-theme="default"] .mip-shell-xiaoshuo-control-theme .theme-default,
+html[mip-shell-xiaoshuo-theme="paper"] .mip-shell-xiaoshuo-control-theme .theme-paper {
+  border: 1px solid #000;
+}
+
+html[mip-shell-xiaoshuo-theme=default] footer {
+  color: #333;
+  background-color: #eee;
+}
+
+html[mip-shell-xiaoshuo-theme=night] footer {
+  color: #333;
+  background-color: #000;
+}
+
+html[mip-shell-xiaoshuo-theme=paper] footer {
+  color: #412b1a;
+  background-color: #ecdabb;
+}
+
+html[mip-shell-xiaoshuo-theme=green] li[mode-default] {
+  display: none;
+}
+
+html[mip-shell-xiaoshuo-theme=green] footer {
+  color: #3b3f2f;
+  background-color: #d7e0cb;
+}
+
+body.with-header {
+  padding-top: 0;
+}
+
+.mip-page__iframe {
+  opacity: 0;
+  // position: fixed;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border: 0;
+  width: 1px;
+  min-width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 10000;
+  display: none;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.mip-page-loading-wrapper {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 1);
+  z-index: 20001 !important;
+  display: none;
+}
+
+.mip-page-loading-wrapper,
+.mip-page__iframe {
+  transform: translate3d(0, 0, 0);
+
+  &.slide-enter,
+  &.slide-leave-to {
+    transform: translate3d(0, 1px, 0);
+  }
+
+  &.slide-enter-active,
+  &.slide-leave-active {
+    transition: transform 0.1s ease;
+  }
+
+  &.slide-enter-to,
+  &.slide-leave {
+    transform: translate3d(0, 0, 0);
+  }
+
+  &.transition-without-header {
+    top: 0;
+  }
+
+}
+
+.mip-page-fade-header-wrapper {
+  top: 0;
+  left: 0;
+  right: 95px;
+  background: #fff;
+  z-index: 20001 !important;
+  display: none !important;
+
+  &.fade-enter {
+    opacity: 0;
+  }
+
+  &.fade-enter-active {
+    transition: opacity 0.35s ease;
+  }
+
+  &.fade-enter-to {
+    opacity: 0.0001;
+  }
+
+  .mip-shell-header {
+    padding-left: 95px;
+    padding-right: 0;
+  }
+
+}
