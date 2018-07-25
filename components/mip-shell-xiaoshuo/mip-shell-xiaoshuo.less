@@ -13,15 +13,70 @@
 }
 
 /* 控制栏-底bar元素*/
+
 .mip-shell-footer-wrapper {
   z-index: 20002 !important;
-  height: 150px;
+  height: 136px;
   transition: transform .35s ease;
   transform: translateY(100%);
-  font-size: 16px;
+  font-size: 14px;
 
   .button p {
     font-size: 16px;
+  }
+  .button .icon {
+    font-size: 18px;
+  }
+  .mip-shell-footer {
+    height: 136px;
+    background: white;
+
+    .upper {
+      overflow: hidden;
+    }
+
+    .page-button.disabled {
+      opacity: .5;
+    }
+
+    .page-button {
+      float: left;
+      margin: 0 13px;
+      line-height: 54px;
+    }
+
+    .page-button.page-next {
+      float: right;
+    }
+
+    .button-wrapper {
+      display: flex;
+
+      i p {
+        margin-top: 6px;
+        font-size: 12px;
+      }
+
+    }
+
+    .button-wrapper .button {
+      line-height: 81px;
+      height: 81px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .bg-button {
+      display: block;
+    }
+    .gap-right-small {
+      margin-right: -.02rem;
+      margin-top: -.03rem;
+    }
+    .gap-left-small {
+      margin-left: -.02rem;
+      margin-top: -.03rem;
+    }
   }
 
 }
@@ -44,58 +99,7 @@
   transform: translateY(0);
 }
 
-.mip-shell-footer {
-  height: 150px;
-  background: white;
 
-  .upper {
-    overflow: hidden;
-    height: 58px;
-  }
-
-  .page-button.disabled {
-    opacity: .5;
-  }
-
-  .page-button {
-    float: left;
-    margin: 0 13px;
-    line-height: 58px;
-  }
-
-  .page-button.page-next {
-    float: right;
-  }
-
-  .button-wrapper {
-    display: flex;
-
-    i p {
-      margin-top: 20px;
-      font-size: 12px;
-    }
-
-  }
-
-  .button-wrapper .button {
-    height: 92px;
-    line-height: 92px;
-    text-align: center;
-    flex: 1;
-  }
-
-  .bg-button {
-    display: block;
-  }
-  .gap-right-small {
-    margin-right: -.05rem;
-    margin-top: -.03rem;
-  }
-  .gap-left-small {
-    margin-left: -.05rem;
-    margin-top: -.03rem;
-  }
-}
 
 /* 业务样式 - 侧边栏*/
 mip-fixed.mip-shell-catalog-wrapper {
@@ -215,7 +219,7 @@ mip-fixed.mip-shell-catalog-wrapper {
 
 /* 主题浮层 */
 .mip-shell-xiaoshuo-control-theme {
-  padding-bottom: 30px;
+  /*padding-bottom: 30px;*/
   .mip-shell-xiaoshuo-padding;
 
   ul {
@@ -236,7 +240,7 @@ mip-fixed.mip-shell-catalog-wrapper {
   span {
     display: block;
     width: 100%;
-    height: 38px;
+    height: 36px;
     border-radius: 3px;
   }
 
@@ -267,7 +271,7 @@ mip-fixed.mip-shell-catalog-wrapper {
 }
 
 .mip-shell-xiaoshuo-control-fontsize {
-  padding: 15px;
+  padding: 17px;
   .mip-shell-xiaoshuo-padding;
 
   ul {
@@ -311,6 +315,8 @@ mip-fixed.mip-shell-catalog-wrapper {
     font-size: 16px;
     cursor: none;
     padding: 10px 17px;
+    color: #757575;
+    font-family: 'PingFangSC-Regular';
   }
 
   .reduce {
@@ -557,7 +563,7 @@ input[type=range]:focus::-ms-fill-upper {
 html[mip-shell-xiaoshuo-theme="green"] .mip-shell-xiaoshuo-control-theme .theme-green,
 html[mip-shell-xiaoshuo-theme="default"] .mip-shell-xiaoshuo-control-theme .theme-default,
 html[mip-shell-xiaoshuo-theme="paper"] .mip-shell-xiaoshuo-control-theme .theme-paper {
-  border: 1px solid #000;
+  border: 1px solid rgba(0, 0, 0, .64);
 }
 
 html[mip-shell-xiaoshuo-theme=default] footer {
