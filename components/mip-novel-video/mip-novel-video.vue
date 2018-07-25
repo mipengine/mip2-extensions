@@ -26,7 +26,7 @@
           <video
             ref="mipVideo"
             :poster="poster"
-            :src="src"
+            :src="videourl"
             muted="true"
             class="video"
             autoplay
@@ -61,7 +61,6 @@ import JSMpeg from './jsmpeg'
 const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
 
-const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 10
 const PREDATE = 'ad-time'
 
@@ -83,7 +82,7 @@ export default {
       type: String,
       default: ''
     },
-    src: {
+    videourl: {
       type: String,
       default: ''
     },
@@ -107,21 +106,20 @@ export default {
   },
   computed: {
     isShow: function () {
-      return this.src && this.tsurl && isSF && detector.getMobileSystemVersion() && isShouldVideo
+      return this.videourl && this.tsurl && isSF && detector.getMobileSystemVersion() && isShouldVideo
     },
     isOriginalVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
-    if (!this.src || !this.tsurl) {
+    if (!this.videourl || !this.tsurl) {
       return
     }
     this.timeExpired()
     this.initVideoIndex()
-    isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
+    isShouldVideo = +customStorage.get(this.videoid) === 2 || false
     if (this.isShow) {
-      console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
       this.readContainerNoScroll()
     }
   },
@@ -227,12 +225,12 @@ export default {
       }
     },
     initVideoIndex () {
-      let videoIndex = customStorage.get(VIDEOINDEX)
+      let videoIndex = customStorage.get(this.videoid)
       if (videoIndex == null) {
-        customStorage.set(VIDEOINDEX, 1)
+        customStorage.set(this.videoid, 1)
       } else {
         videoIndex++
-        customStorage.set(VIDEOINDEX, videoIndex)
+        customStorage.set(this.videoid, videoIndex)
       }
     },
     readContainerNoScroll () {
@@ -307,7 +305,7 @@ export default {
       }
       let currentDate = myDate
       if (currentDate !== +preDate) {
-        customStorage.rm(VIDEOINDEX)
+        customStorage.rm(this.videoid)
         customStorage.rm(PREDATE)
       }
     }
