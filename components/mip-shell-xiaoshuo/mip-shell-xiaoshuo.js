@@ -155,6 +155,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     this.jumpHandler = event.delegate(document.documentElement, '.mip-shell-catalog-wrapper [mip-link]', 'click', function (e) {
       me._closeEverything()
     })
+    this.jumpHandler = event.delegate(document.body, '.mip-shell-header-wrapper a', 'click', function (e) {
+      me._closeEverything()
+    })
   }
 
   // 基类方法: 处理头部自定义按钮点击事件，由于没有按钮，置空
