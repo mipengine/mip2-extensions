@@ -1,7 +1,7 @@
 // 默认配置
 let DEFAULTS = {
   theme: 'default',
-  fontSize: 3
+  fontSize: 3.5
 }
 let STORAGE_KEY = 'mip-shell-xiaoshuo-mode'
 let CustomStorage = MIP.util.customStorage
