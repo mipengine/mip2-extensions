@@ -1,4 +1,4 @@
-# `mip-slider`
+# `mip-range`
 
 通过拖动滑块在一个固定区间内进行选择
 
@@ -6,7 +6,7 @@
 | -------- | ------------------------------------------------------- |
 | 类型     | 通用                                                    |
 | 支持布局 | N/A                                                     |
-| 所需脚本 | https://c.mipcdn.com/static/v2/mip-slider/mip-slider.js |
+| 所需脚本 | https://c.mipcdn.com/static/v2/mip-range/mip-range.js |
 
 ## 说明
 
@@ -15,9 +15,9 @@
 ## 示例
 
 ```html
-<!-- 单值、横向、上方显示、范围0-200、步长1、预设值60  -->
+<!-- 单值、横向、上方显示、范围0-200、 步长1、预设值60、拖动显示tip -->
 
-<mip-slider>
+<mip-range class="her" id="slider1" on="dragging:test.changeSpacing dragStart:test.changeSpacing">
   <script type="application/json">
     {
       range: 60,
@@ -25,16 +25,21 @@
       dotSize: 16,
       min: 0,
       max: 200,
-      step: 1
+      step: 1,
+      tipShow: "dragging",
+      tipFormat: "价格：{{tip}}元"
     }
   </script>
-</mip-slider>
+</mip-range>
+<button on="click:slider1.setVal([130])">设置值为130</button>
+<button on="click:slider1.valReduce(5)">减小5</button>
+<button on="click:slider1.valIncrease(5)">增加5</button>
 ```
 
 ```html
-<!-- 范围值、横向、下方显示、范围0-100、步长5、预设20-60、支持固定范围拖动 -->
+<!-- 范围值、横向、下方显示、范围0-100、步长5、预设20-60-->
 
-<mip-slider>
+<mip-range class="her" id="slider2">
   <script type="application/json">
     {
       range: [20, 60],
@@ -43,17 +48,17 @@
       min: 0,
       max: 100,
       step: 5,
-      tipDir: "bottom",
-      fixRange: true
+      tipDir: "bottom"
     }
   </script>
-</mip-slider>
+</mip-range>
+<button on="click:slider2.setVal([10,80])">设置值为10-80</button>
 ```
 
 ```html
 <!-- 范围值、纵向、左方显示、范围0-100、步长3、预设20-80、自定义颜色 -->
 
-<mip-slider>
+<mip-range class="ver">
   <script type="application/json">
     {
       range: [20, 80],
@@ -77,7 +82,7 @@
       }
     }
   </script>
-<mip-slider>
+</mip-range>
 ```
 
 示例说明
@@ -90,7 +95,7 @@
 
 必选项：否
 
-类型：`Number`、`String`
+类型：`{ Number | String }`
 
 默认值：`auto`
 
@@ -100,7 +105,7 @@
 
 必选项：否
 
-类型：`Number`、`String`
+类型：`{ Number | String }`
 
 默认值：`auto`
 
@@ -154,6 +159,42 @@
 
 默认值：`false`
 
+### tipShow
+
+说明：tip的现实时机
+
+必选项：否
+
+类型：`String`
+
+取值范围：`{ always | dragging | change | none }`
+  - `always`: 始终显示tip
+  - `dragging`: 拖动的时候显示
+  - `change`: 数据发生变化的时候显示
+  - `none`: 始终不显示tip
+
+默认值：`always`
+
+### tipFormat
+
+说明：tip显示的模板 如`价格: {{tip}}`
+
+必选项：否
+
+类型：`String`
+
+默认值：``
+
+### tipExist
+
+说明：tip显示隐藏的过渡时间，单位`ms`
+
+必选项：否
+
+类型：`{ String | Number }`
+
+默认值：`300`
+
 ### direction
 
 说明：slider 方向 支持横向、纵向
@@ -180,19 +221,9 @@
 
 必选项：否
 
-类型：`Number`、`String`、`Array`
+类型：`{ Number | String | Array }`
 
 默认值：`0`
-
-### fixRange
-
-说明：是否支持固定区间，如果支持，则可拖拽进度条
-
-必选项：否
-
-类型：`Boolean`
-
-默认值：`false`
 
 ### tipDir
 
@@ -202,7 +233,7 @@
 
 类型：`String`
 
-取值范围：`top`、`bottom`、`left`、`right`
+取值范围：`{ top | bottom | left | right }`
 
 默认值：`空`
 
@@ -212,7 +243,7 @@
 
 必选项：否
 
-类型：`Array`、`Object`
+类型：`{ Array | Object }`
 
 默认值：`null`
 
@@ -222,7 +253,7 @@
 
 必选项：否
 
-类型：`Array`、`Object`
+类型：`{ Array | Object }`
 
 默认值：`null`
 
@@ -232,7 +263,7 @@
 
 必选项：否
 
-类型：`Array`、`Object`
+类型：`{ Array | Object }`
 
 默认值：`null`
 
@@ -252,7 +283,7 @@
 
 ## 方法
 
-### setVal(val)
+### setVal(val) 设置
 
 - **参数**
 
@@ -260,3 +291,26 @@
 
 - **用法**
 将值设置为`10-30`=>`ID.setVal([10,30])`
+
+### getVal()
+
+- **用法**
+获取当前值 =>`ID.getVal`
+
+### valIncrease(num)
+
+- **参数**
+
+  - `{Number} num` 设置值 默认当前步长
+
+- **用法**
+将值增加5=>`ID.valIncrease(5)`
+
+### valReduce(num)
+
+- **参数**
+
+  - `{Number} num` 设置值 默认当前步长
+
+- **用法**
+将值减少5=>`ID.valReduce(5)`

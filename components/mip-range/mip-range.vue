@@ -1,10 +1,10 @@
 /**
- * @file mip-slider.vue
+ * @file mip-range.vue
  */
 <template>
   <div
     ref="wrap"
-    :class="['mip-slider', flowDirection, disabledClass, stateClass]"
+    :class="['mip-range', flowDirection, disabledClass, stateClass]"
     :style="wrapStyles"
     @click.stop="wrapClick"
     @touchmove="dragging"
@@ -16,17 +16,14 @@
     <div
       ref="sliderBar"
       :style="[elemStyles, barStyle]"
-      class="mip-slider-container"
+      class="mip-range-container"
     >
       <template>
         <div
           v-show="!isSingle"
           ref="dot0"
           key="dot0"
-          :class="[
-            tipStatus,
-            'mip-slider-dot'
-          ]"
+          :class="[tipStatus, 'mip-range-dot']"
           :style="[dotStyles, dotStyle]"
           @touchstart.stop="dragStart($event, 0)"
           @mousedown.stop="dragStart($event, 0)"
@@ -34,43 +31,45 @@
         >
           <div
             ref="tip0"
-            :class="['mip-slider-tip-' + tipDirection, 'mip-slider-tip-wrap', {'hideV': hideV}]"
+            :style="tipExistTime"
+            :class="['mip-range-tip-' + tipDirection, 'mip-range-tip-wrap', {'hideV': hideV}]"
           >
-            <span class="mip-slider-tip">{{ val[0] }}
+            <span class="mip-range-tip">{{ val[0] }}
             </span>
           </div>
         </div>
         <div
           ref="dot1"
           key="dot1"
-          :class="[tipStatus, 'mip-slider-dot']"
-          :style="[dotStyles,dotStyle]"
+          :class="[tipStatus, 'mip-range-dot']"
+          :style="[dotStyles, dotStyle]"
           @touchstart.stop="dragStart($event, 1)"
           @mousedown.stop="dragStart($event, 1)"
           @transitionend="tipHit"
         >
           <div
             ref="tip1"
-            :class="['mip-slider-tip-' + tipDirection, 'mip-slider-tip-wrap', {'hideV': hideV}]"
+            :style="tipExistTime"
+            :class="['mip-range-tip-' + tipDirection, 'mip-range-tip-wrap', {'hideV': hideV}]"
           >
-            <span class="mip-slider-tip">{{ val[1] }}</span>
+            <span class="mip-range-tip">{{ val[1] }}</span>
           </div>
         </div>
       </template>
       <div
         ref="process"
-        :class="['mip-slider-process', { 'mip-slider-process-dragable': fixRange }]"
+        :class="['mip-range-process', { 'mip-range-process-dragable': fixRange }]"
         :style="[processRect, processStyle]"
         @touchstart.stop="dragStart($event, 0, true)"
         @mousedown.stop="dragStart($event, 0, true)"
       >
         <div
           ref="mergedtip"
-          :class="['mip-slider-tip-' + tipDirection, 'mip-slider-tip-wrap', {'hideV': !hideV}]"
+          :class="['mip-range-tip-' + tipDirection, 'mip-range-tip-wrap', {'hideV': !hideV}]"
           :style="tipMergedPosition"
           class="mip-merged-tip"
         >
-          <span class="mip-slider-tip">
+          <span class="mip-range-tip">
             {{ `${val[0]} — ${val[1]}` }}
           </span>
         </div>
@@ -79,7 +78,7 @@
         v-model="val"
         :min="min"
         :max="max"
-        class="mip-slider-range"
+        class="mip-range-range"
         type="range"
       >
     </div>
@@ -119,8 +118,8 @@ export default {
       type: Boolean,
       default: false
     },
-    tip: {
-      type: [String, Boolean],
+    tipShow: {
+      type: String,
       default: 'always'
     },
     direction: {
@@ -164,6 +163,14 @@ export default {
       default: () => {
         return null
       }
+    },
+    tipFormat: {
+      type: String,
+      default: ''
+    },
+    tipExist: {
+      type: [String, Number],
+      default: 300
     }
   },
   data () {
@@ -179,7 +186,11 @@ export default {
       currentSlider: 0,
       hideV: 0,
       legalDir: ['left', 'right', 'top', 'bottom'],
-      processRect: {}
+      processRect: {},
+      bodyTop: 0,
+      change: false,
+      isInit: false,
+      timer: null
     }
   },
   computed: {
@@ -198,13 +209,13 @@ export default {
 
     // 方向class
     flowDirection () {
-      return `mip-slider-${this.direction}`
+      return `mip-range-${this.direction}`
     },
 
     // 合并tip时的位置补偿
     tipMergedPosition () {
-      let { tipDirection, isVertial, dotSize, width, height } = this
-      let offset = isVertial ? (width / 2) - 9 : (height / 2) - 9
+      let { tipDirection, isVertical, dotSize, width, height } = this
+      let offset = isVertical ? (width / 2) - 9 : (height / 2) - 9
 
       return {
         [tipDirection]: `${dotSize / -2 + offset}px`
@@ -213,37 +224,32 @@ export default {
 
     // tip方向
     tipDirection () {
-      let { isVertial, tipDir, legalDir } = this
+      let { isVertical, tipDir, legalDir } = this
 
-      // 方向是否合法
-      let hasDir = legalDir.find((dir) => {
-        return tipDir === dir
-      })
+      // 方向是否合法 这里用 Array.prototype.find() 方法 会有兼容问题
+      let dirIndex = legalDir.indexOf(tipDir)
+      let hasDir = dirIndex > -1 ? tipDir : ''
 
-      return hasDir || (isVertial ? 'left' : 'top')
+      return hasDir || (isVertical ? 'left' : 'top')
     },
 
     // tips显示的时机
     tipStatus () {
-      return this.tip === 'hover' && this.canMove ? 'mip-slider-always' : this.tip ? `mip-slider-${this.tip}` : ''
-    },
-
-    // tip最终class
-    tipClass () {
-      return [`mip-slider-tip-${this.tipDirection}`, 'mip-slider-tip']
+      return `mip-range-tip-${this.tipShow}`
     },
 
     // 是否不可以
     disabledClass () {
-      return this.disabled ? 'mip-slider-disabled' : ''
+      return this.disabled ? 'mip-range-disabled' : ''
     },
 
     // 状态class
     stateClass () {
       return {
-        'mip-slider-state-process-drag': this.processDragging,
-        'mip-slider-state-drag': this.canMove && !this.processDragging,
-        'mip-slider-state-focus': this.focusFlag
+        'mip-range-state-process-drag': this.processDragging,
+        'mip-range-state-drag': this.canMove && !this.processDragging,
+        'mip-range-state-focus': this.focusFlag,
+        'mip-range-state-change': this.change
       }
     },
 
@@ -255,7 +261,13 @@ export default {
     // 读取设置值
     val: {
       get () {
-        return this.currentValue
+        let { tipFormat, currentValue } = this
+        let format = tipFormat ? tipFormat.split('{{tip}}') : ['', '']
+        let [prefix, suffix] = format
+
+        return currentValue.map((item) => {
+          return prefix + item + suffix
+        })
       },
       set (val) {
         this.currentValue = val
@@ -298,15 +310,22 @@ export default {
     },
 
     // 是否为垂直方向
-    isVertial () {
+    isVertical () {
       return this.direction === 'vertical'
+    },
+
+    // tip存在时间
+    tipExistTime () {
+      return {
+        'transition-duration': `${this.tipExist}ms`
+      }
     },
 
     // 容器样式
     wrapStyles () {
-      let { isVertial, width, height, dotSize } = this
+      let { isVertical, width, height, dotSize } = this
 
-      return isVertial
+      return isVertical
         ? {
           height: typeof height === 'number' ? `${height}px` : height,
           padding: `${dotSize / 2}px`
@@ -319,9 +338,9 @@ export default {
 
     // 滑动条样式
     elemStyles () {
-      let { isVertial, width, height } = this
+      let { isVertical, width, height } = this
 
-      return isVertial
+      return isVertical
         ? {
           width: `${width}px`,
           height: '100%'
@@ -333,9 +352,9 @@ export default {
 
     // 控制柄样式
     dotStyles () {
-      let { isVertial, dotSize, width, height } = this
+      let { isVertical, dotSize, width, height } = this
 
-      return isVertial
+      return isVertical
         ? {
           width: `${dotSize}px`,
           height: `${dotSize}px`,
@@ -350,8 +369,15 @@ export default {
   },
   watch: {
     currentValue (val) {
+      if (!this.isInit) {
+        return
+      }
+      this.change = true
       this.$emit('dragging', val)
     }
+  },
+  prerenderAllowed () {
+    return true
   },
   mounted () {
     this.$nextTick(() => {
@@ -378,6 +404,20 @@ export default {
       this.$on('getVal', () => {
         return this.currentValue
       })
+
+      // 值增加
+      this.$on('valIncrease', (e, num) => {
+        let numCon = num ? parseInt(num, 10) : this.step
+        numCon = isNaN(numCon) ? this.step : numCon
+        this.valIncrease(numCon)
+      })
+
+      // 值减小
+      this.$on('valReduce', (e, num) => {
+        let numCon = num ? parseInt(num, 10) : this.step
+        numCon = isNaN(numCon) ? this.step : numCon
+        this.valReduce(numCon)
+      })
     },
     /**
      * 绑定事件
@@ -386,6 +426,11 @@ export default {
     bindEvents () {
       // 视口变动，及时刷新
       viewport.on('resize', this.resetSlider)
+
+      // iframe下，纵向 slider 高度补偿
+      viewport.on('scroll', () => {
+        this.bodyTop = rect.getElementRect(document.body).top
+      })
     },
 
     /**
@@ -540,8 +585,8 @@ export default {
      * @returns {Number} 像素值
      */
     getPos (e) {
-      let { isVertial, size, offset } = this
-      return isVertial ? (size - (e.pageY - offset)) : (e.clientX - offset)
+      let {isVertical, size, offset, bodyTop} = this
+      return isVertical ? (size - (e.pageY + bodyTop - offset)) : (e.clientX - offset)
     },
 
     /**
@@ -620,13 +665,15 @@ export default {
      * @param {Boolean} isAnotherSlider 是否为被拖拽的控制柄
      */
     setTransform (val, isAnotherSlider) {
-      let { anotherSlider, currentSlider, dotSize, isVertial, position, slider } = this
+      let { anotherSlider, currentSlider, dotSize, isVertical, position, slider } = this
 
       let sliderIndex = isAnotherSlider ? anotherSlider : currentSlider
 
+      this.isInit = true
+
       // 计算 控制点样式
-      let offsetValue = isVertial ? ((dotSize / 2) - val) : (val - (dotSize / 2))
-      let translateValue = isVertial ? `translateY(${offsetValue}px)` : `translateX(${offsetValue}px)`
+      let offsetValue = isVertical ? ((dotSize / 2) - val) : (val - (dotSize / 2))
+      let translateValue = isVertical ? `translateY(${offsetValue}px)` : `translateX(${offsetValue}px)`
 
       let dragSlider = slider[sliderIndex]
       dragSlider.style.transform = translateValue
@@ -636,7 +683,7 @@ export default {
       let processSize = `${sliderIndex === 0 ? position[1] - val : val - position[0]}px`
       let processPos = `${sliderIndex === 0 ? val : position[0]}px`
 
-      this.processRect = isVertial ? {
+      this.processRect = isVertical ? {
         'height': processSize,
         'bottom': processPos
       } : {
@@ -686,6 +733,26 @@ export default {
     },
 
     /**
+     * 数值增加
+     *
+     */
+    valIncrease (num) {
+      let {setValue, currentValue} = this
+      currentValue = [currentValue[0], currentValue[1] + +num]
+      setValue(currentValue)
+    },
+
+    /**
+     * 初始化slider bar 尺寸数据
+     *
+     */
+    valReduce (num) {
+      let {setValue, currentValue} = this
+      currentValue = [currentValue[0], currentValue[1] - +num]
+      setValue(currentValue)
+    },
+
+    /**
      * 初始化slider bar 尺寸数据
      *
      */
@@ -693,8 +760,8 @@ export default {
       let sliderBarRect = rect.getElementRect(this.$refs.sliderBar)
 
       // slider bar的尺寸和偏移量
-      this.size = this.isVertial ? sliderBarRect.height : sliderBarRect.width
-      this.offset = this.isVertial ? (sliderBarRect.top + viewport.getScrollTop()) : sliderBarRect.left
+      this.size = this.isVertical ? sliderBarRect.height : sliderBarRect.width
+      this.offset = this.isVertical ? (sliderBarRect.top + viewport.getScrollTop()) : sliderBarRect.left
     },
 
     /**
@@ -714,90 +781,128 @@ export default {
       let tipRectL = rect.getElementRect(this.$refs.tip0)
       let tipRectR = rect.getElementRect(this.$refs.tip1)
 
+      // class延迟去除
+      let delayTime = parseInt(this.tipExist, 10)
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.change = false
+      }, delayTime)
+
       // 是否碰撞
-      let horHit = !this.isVertial && tipRectL.right > tipRectR.left
-      let verHit = this.isVertial && tipRectR.top + tipRectR.height > tipRectL.top
+      let horHit = !this.isVertical && tipRectL.right > tipRectR.left
+      let verHit = this.isVertical && tipRectR.top + tipRectR.height > tipRectL.top
 
       // 碰撞合并
       horHit || verHit ? this.hideV = 1 : this.hideV = 0
-    },
-
-    /**
-     * 色值校验
-     *
-     * @param  {String} color  色值
-     */
-    checkColor (color) {
-      if (color.charAt(0) === '#') {
-        color = color.substring(1)
-        return [3, 4, 6, 8].indexOf(color.length) > -1 && !isNaN(parseInt(color, 16))
-      }
-      return /^(rgb|hsl)a?\((\d+%?(deg|rad|grad|turn)?[,\s]+){2,3}[\s/]*[\d.]+%?\)$/i.test(color)
     }
   }
 }
 </script>
 
 <style scoped lang="less">
-.mip-slider {
+.mip-range {
   position: relative;
   box-sizing: border-box;
   user-select: none;
 
-  &.mip-slider-disabled {
+  &.mip-range-disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    .mip-slider-dot {
+    .mip-range-dot {
       cursor: not-allowed;
     }
   }
 
-  .mip-slider-container {
+  .hideV {
+    visibility: hidden;
+  }
+
+  .mip-range-container {
     position: relative;
     display: block;
     border-radius: 15px;
     background: #f5f5f5;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    .mip-range-dot{
+      .mip-range-tip-wrap{
+        opacity: 0;
+        transition-property: opacity;
+        transition-timing-function: ease-in-out;
+      }
+    }
+    .mip-range-tip{
+      &-always{
+        .mip-range-tip-wrap{
+          opacity: 0.5;
+        }
+      }
+      &-none{
+        .mip-range-tip-wrap{
+          opacity: 0!important;
+        }
+      }
+    }
   }
 
-  .mip-slider-process {
+  &.mip-range-state-process-drag,
+  &.mip-range-state-drag{
+    .mip-range-tip{
+      &-dragging{
+        .mip-range-tip-wrap{
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  &.mip-range-state-change{
+    .mip-range-tip{
+      &-change{
+        .mip-range-tip-wrap{
+          opacity:0.5;
+        }
+      }
+    }
+  }
+
+  .mip-range-process {
     position: absolute;
     border-radius: 15px;
     background-color: #38f;
     transition: all 0s;
     z-index: 1;
-    &.mip-slider-process-dragable {
+    &.mip-range-process-dragable {
       cursor: pointer;
       z-index: 3;
     }
   }
 
-  &.mip-slider-horizontal {
-    .mip-slider-process {
+  &.mip-range-horizontal {
+    .mip-range-process {
       width: 0;
       height: 100%;
       top: 0;
       left: 0;
     }
 
-    .mip-slider-dot {
+    .mip-range-dot {
       left: 0;
     }
   }
-  &.mip-slider-vertical {
-    .mip-slider-process {
+  &.mip-range-vertical {
+    .mip-range-process {
       width: 100%;
       height: 0;
       bottom: 0;
       left: 0;
     }
 
-    .mip-slider-dot {
+    .mip-range-dot {
       bottom: 0;
     }
   }
 
-  .mip-slider-dot {
+  .mip-range-dot {
     position: absolute;
     border-radius: 50%;
     background-color: #fff;
@@ -805,17 +910,14 @@ export default {
     transition: all 0s;
     cursor: pointer;
     z-index: 9;
-    &.mip-slider-dot-dragging {
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    &.mip-range-dot-dragging {
       z-index: 5;
-    }
-    &.mip-slider-always {
-      .mip-slider-tip-wrap {
-        display: block !important;
-      }
     }
   }
 
-  .mip-slider-tip-wrap {
+  .mip-range-tip-wrap {
     position: absolute;
     z-index: 9;
     display: block;
@@ -828,9 +930,6 @@ export default {
     border-radius: 5px;
     background: #000;
     opacity: 0.5;
-    &.hideV {
-      visibility: hidden;
-    }
     &::after {
       content: '';
       position: absolute;
@@ -839,7 +938,7 @@ export default {
       height: 0;
       border-style: solid;
     }
-    &.mip-slider-tip {
+    &.mip-range-tip {
       &-top {
         top: -9px;
         left: 50%;
@@ -891,16 +990,13 @@ export default {
     }
   }
 
-  .mip-slider-range {
-    clip: rect(1px, 1px, 1px, 1px);
+  .mip-range-range {
     height: 1px;
     width: 1px;
+    visibility: hidden;
     overflow: hidden;
     position: absolute !important;
   }
 }
 
-// .mip-slider .mip-slider-dot.mip-slider-always .mip-slider-tip-wrap {
-//   display: block !important;
-// }
 </style>
