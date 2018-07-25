@@ -1,10 +1,13 @@
 import FastClick from 'fastclick'
 
 export default class MIPFastClick extends MIP.CustomElement {
-  constructor (...args) {
-    super(...args)
+  connectedCallback () {
     let targetId = this.element.getAttribute('target')
-    let target = document.querySelector('#' + targetId) || this.element
-    FastClick.attach(target)
+    this.target = document.getElementById(targetId) || this.element
+    this.fastclick = FastClick.attach(this.target)
+  }
+
+  disconnectedCallback () {
+    this.fastclick.destroy()
   }
 }
