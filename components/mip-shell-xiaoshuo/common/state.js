@@ -79,7 +79,7 @@ export default (() => {
       * @returns {string} 当前页面的章名
       */
     chapterName () {
-      return jsonld.currentPage.isLastPage
+      return jsonld.currentPage.chapterName
     },
     /**
       * 当前页面是否是搜索结果点出
