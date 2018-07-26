@@ -19,6 +19,9 @@ export default class MipShellInservice extends MIP.builtinComponents.MIPShell {
     this.processConfig = new ProcessConfig()
   }
 
+  /**
+   * 组件一加载进行 刷新token
+   */
   build () {
     super.build()
     this.processConfig.reflushToken()
