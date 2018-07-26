@@ -5,7 +5,7 @@
 
 import './mip-shell-inservice.less'
 import scrollBoundary from './lib/scrollBoundary'
-import MoreAction from './lib/moreAction'
+import MoreAction from './lib/MoreAction'
 import ProcessConfig from './lib/ProcessConfig'
 
 export default class MipShellInservice extends MIP.builtinComponents.MIPShell {
