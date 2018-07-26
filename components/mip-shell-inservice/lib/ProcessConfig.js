@@ -29,7 +29,10 @@ export default class {
       let { isTitle } = MIP.hash.hashTree
       let hashHeader = isTitle && JSON.parse(decodeURIComponent(isTitle && isTitle.value))
       if (hashHeader && hashHeader.type === 'cambrian') {
-        Object.assign(headerInfo, {title: hashHeader.title, logo: hashHeader.logo})
+        Object.assign(headerInfo, {
+          title: hashHeader.title,
+          logo: hashHeader.logo
+        })
       }
       if (hashHeader && hashHeader.clickToken) {
         clickToken = hashHeader.clickToken

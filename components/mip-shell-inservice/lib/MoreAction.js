@@ -43,15 +43,15 @@ export default class {
       document.body.appendChild(script)
     }).then(() => {
       shareWrapper.innerHTML = `
-      <mip-share
-          title="${title}"
-          content="${title}"
-          url="${serviceUrl}"
-          icon="${logo}"
-          layout="container"
-          width="414"
-          height="158">
-      </mip-share>`
+        <mip-share
+            title="${title}"
+            content="${title}"
+            url="${serviceUrl}"
+            icon="${logo}"
+            layout="container"
+            width="414"
+            height="158">
+        </mip-share>`
       this.toggleShare()
     })
   }
@@ -94,8 +94,7 @@ export default class {
    * 跳转首页逻辑
    */
   indexPage () {
-    let serviceUrl = this.headerInfo.serviceUrl
-    MIP.viewer.open(MIP.util.makeCacheUrl(serviceUrl), { isMipLink: true, replace: true })
+    MIP.viewer.open(MIP.util.makeCacheUrl(this.headerInfo.serviceUrl), { isMipLink: true, replace: true })
   }
 
   /**

@@ -283,17 +283,18 @@ export default {
       if (!this.payConfig) {
         return
       }
-      let _selectId
-      ['baifubao', 'alipay', 'weixin'].forEach((pid) => {
-        if (_selectId && platform.isWechatApp() && pid === 'alipay') {
-          return false
+
+      let selectId
+      ['baifubao', 'alipay', 'weixin'].forEach(pid => {
+        // 微信环境下屏蔽支付宝
+        if (selectId || (platform.isWechatApp() && pid === 'alipay')) {
+          return
         }
         if (this.payConfig.endpoint[pid]) {
-          _selectId = pid
-          return true
+          this.selectId = selectId = pid
         }
       })
-      _selectId && (this._selectId = _selectId)
+
       // 微信跳转redirect， 自动弹窗
       this.paySucRurl = this.getMipPayRedirect().redirectUrl
       if (this.paySucRurl) {
