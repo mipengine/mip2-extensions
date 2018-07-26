@@ -143,12 +143,13 @@ const util = {
   log (param) {
     /* eslint-disable fecs-camelcase */
     let img = document.createElement('img')
-    let {action, xzhid} = param
+    let {action, xzhid, ext = {}} = param
 
     let data = {
       rqt: 300,
       click_token: window.MIP.util.customStorage(0).get('mip-click-token') || '',
       url: location.href,
+      ext: JSON.stringify(ext),
       action,
       xzhid
     }
