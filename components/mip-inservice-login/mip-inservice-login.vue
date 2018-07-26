@@ -179,7 +179,7 @@ export default {
       if (hasError) {
         util.log({
           action: 'login_init_error',
-          ext: {code},
+          ext: { code },
           xzhid: this.config.appid
         })
         throw new TypeError('[mip-inservice-login] 组件参数检查失败')
@@ -397,7 +397,7 @@ export default {
           } else {
             util.log({
               action: 'login_error',
-              ext: {code: res.status},
+              ext: { code: res.status },
               xzhid: self.config.appid
             })
             throw new Error('登录失败', res)
