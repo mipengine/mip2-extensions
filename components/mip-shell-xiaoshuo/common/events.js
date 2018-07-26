@@ -38,7 +38,7 @@ class XiaoshuoEvents {
   }
 
   // 每次翻页/页面刷新时都会触发
-  bindAll (opt) {
+  bindAll () {
     let isRootPage = state.isRootPage()
     // 抛出“当前页ready,状态可获取”事件给阅读器
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.top, false, {

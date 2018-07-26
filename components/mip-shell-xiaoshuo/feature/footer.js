@@ -86,10 +86,12 @@ class footer {
 
   /**
    * 修改footer 【上一页】【下一页】链接, 增加跳转链接及是否可以跳转
+   *
+   * @param {Object} conf 头部json-ld配置
    */
   updateDom (conf) {
-    let previousHref = conf['previousPageUrl'] || ''
-    let nextHref = conf['nextPageUrl'] || ''
+    let previousHref = (conf['previousPage'] && conf['previousPage']['url']) || ''
+    let nextHref = (conf['nextPage'] && conf['nextPage']['url']) || ''
     let previousButton = document.querySelector('.mip-shell-footer .page-previous')
     previousButton.setAttribute('href', previousHref)
     previousButton.classList.remove('disabled')
