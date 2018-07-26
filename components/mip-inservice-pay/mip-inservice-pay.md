@@ -113,6 +113,9 @@
 ```
 
 成功：
+
+** 支付类型为 `nomal|alipay` 时**
+
 ```json
 {
     "status": 0,
@@ -122,11 +125,41 @@
 }
 ```
 
+** 支付类型为 `weixin`时**
+
+- 微信外环境
+```json
+{
+    "status": 0,
+    "data": {
+        "url": "https://付款链接"
+    }
+}
+```
+
+- 微信内环境
+
+[微信内判断方法](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_5)
+```javascript
+{
+    "status": 0,
+    "data": {
+        "appId": "wx3dxxxxxxxx",
+        "timeStamp": "1527508907",
+        "nonceStr": "ASDFWSACSDCDSGA",
+        "package": "prepay_id=wx3dxxxxxxxx",
+        "signType": "MD5",
+        "paySign": "SADF98S0A9D00A9S09A0SDCASD",
+        "timestamp": "1527508907"
+    }
+}
+```
+
 注意：付款成功后回调链接应该为源站后端订单处理链接，如：`https://支付链接?callback=urlencode('https://api.mipengine.org/order?id=1')` ，回调链接（`https://api.mipengine.org/order?id=1`）在支付完成后处理完成订单数据后重定向到 `统一支付成功页面`
 
 格式如：
 ```
-https://xiongzhang.baidu.com/opensc/payment.html?id=熊掌号ID&redirect=redirect_url=显示支付完成页面，必须是MIP页面
+https://xiongzhang.baidu.com/opensc/wps/payment?id=熊掌号ID&redirect=显示支付完成页面，必须是MIP页面
 ```
 
 
