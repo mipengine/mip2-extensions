@@ -39,7 +39,7 @@ export default class Strategy {
       window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
         name: 'showAdvertising',
         data: {
-          customId: rootPageId
+          customId: rootPageId()
         }
       })
     }
