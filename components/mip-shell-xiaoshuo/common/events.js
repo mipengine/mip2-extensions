@@ -41,7 +41,7 @@ class XiaoshuoEvents {
   bindAll () {
     let isRootPage = state.isRootPage()
     // 抛出“当前页ready,状态可获取”事件给阅读器
-    window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.top, false, {
+    window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
       name: Constant.CURRENT_PAGE_READY
     })
   }
