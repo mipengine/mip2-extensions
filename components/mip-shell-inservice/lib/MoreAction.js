@@ -12,7 +12,7 @@ export default class {
    */
   about () {
     let cambrianUrl = this.headerInfo.cambrianUrl
-    let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^http(s)?:\/\//, ''))}`
+    let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^https?:\/\//, ''))}`
     if (MIP.standalone) {
       mipUrl = `${mipUrl}?title=${this.headerInfo.title}`
       MIP.viewer.open(mipUrl, { isMipLink: false })

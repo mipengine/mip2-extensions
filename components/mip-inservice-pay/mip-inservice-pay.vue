@@ -315,7 +315,8 @@ export default {
         this.visibleMark = visible
         this.changeMipPayRedirect()
       } else {
-        let curShowType = DialogList.forEach(type => {
+        let curShowType
+        DialogList.forEach(type => {
           if (!curShowType && this[type]) {
             curShowType = type
           }
