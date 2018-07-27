@@ -141,7 +141,7 @@
           v-if="selectId && !errorInfo && !loading && requestDataInfo"
           :href="requestDataInfo.url"
           class="mipPayBtn btn"
-          @touchend="comfirmPayAction">确认支付¥{{ payConfig.fee }}</a>
+          @click="comfirmPayAction">确认支付¥{{ payConfig.fee }}</a>
         <div
           v-if="!selectId && !errorInfo"
           class="mipPayBtn loading"> 选择支付方式 </div>
@@ -162,10 +162,10 @@
       <div class="confirmDialog__btnGroup">
         <span
           class="btn"
-          @touchend="toggleVisible(false)">重新支付</span>
+          @click="toggleVisible(false)">重新支付</span>
         <span
           class="btn"
-          @touchend="goPayRedirectUrl">支付完成</span>
+          @click="goPayRedirectUrl">支付完成</span>
       </div>
     </div>
   </div>
