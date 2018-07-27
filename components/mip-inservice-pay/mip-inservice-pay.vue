@@ -283,15 +283,17 @@ export default {
       if (!this.payConfig) {
         return
       }
-
-      let selectId
-      ['baifubao', 'alipay', 'weixin'].forEach(pid => {
-        // 微信环境下屏蔽支付宝
-        if (selectId || (platform.isWechatApp() && pid === 'alipay')) {
-          return
+      this.payInfos.forEach(payInfo => {
+        if (platform.isWechatApp() && payInfo.id === 'alipay') {
+          payInfo.disable = true
         }
-        if (this.payConfig.endpoint[pid]) {
-          this.selectId = selectId = pid
+
+        // 初使化selectId
+        if (!this.payConfig.endpoint[this.selectId] || (this.selectId === payInfo.id && payInfo.disable)) {
+          this.selectId = ''
+        }
+        if (!this.selectId && !payInfo.disable) {
+          this.selectId = payInfo.id
         }
       })
 

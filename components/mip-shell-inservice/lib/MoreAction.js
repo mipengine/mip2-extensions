@@ -111,10 +111,9 @@ export default class {
       _t: new Date().getTime(),
       url: location.href
     }
-    let urlQuerys = Object.keys(urlQuerysObj).map((key) => {
+    let urlQuerys = Object.keys(urlQuerysObj).map(key => {
       return `${key}=${encodeURIComponent(urlQuerysObj[key])}`
     })
-    let url = `//rqs.baidu.com/service/api/rqs?${urlQuerys.join('&')}`
-    new Image().src = url
+    new Image().src = `//rqs.baidu.com/service/api/rqs?${urlQuerys.join('&')}`
   }
 }

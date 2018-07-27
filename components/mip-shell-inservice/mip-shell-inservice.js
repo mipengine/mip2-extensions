@@ -8,7 +8,7 @@ import scrollBoundary from './lib/scrollBoundary'
 import MoreAction from './lib/MoreAction'
 import ProcessConfig from './lib/ProcessConfig'
 
-export default class MipShellInservice extends MIP.builtinComponents.MIPShell {
+export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
   constructor (...args) {
     super(...args)
 
