@@ -42,7 +42,7 @@
             v-if="!(isWechatApp && payItem.id==='alipay') && payConfig.endpoint[payItem.id]"
             :key="payItem.tye"
             class="payTypeList__list btn"
-            @touchend="changePayType(payItem.id)">
+            @click="changePayType(payItem.id)">
             <span :class="['payTypeList__listIcon', payItem.id]" >
               <svg
                 v-if="payItem.id==='baifubao'"
