@@ -250,6 +250,19 @@ export default {
       isJumped: false
     }
   },
+
+  watch: {
+    // 修复某些机器 payConfig props数据绑定缓慢
+    payConfig: {
+      handler (payConfig, oldPayConfig) {
+        if (!oldPayConfig && this.payConfig) {
+          setTimeout(() => {
+            this.init()
+          }, 0)
+        }
+      }
+    }
+  },
   mounted () {
     this.$element.customElement.addEventAction('toggle', () => {
       this.toggleVisible(!this.visibleMark)
@@ -267,15 +280,23 @@ export default {
   methods: {
     init () {
       // 初使化支付默认支付方式
-      ['baifubao', 'alipay', 'weixin'].some((pid) => {
-        if (platform.isWechatApp() && pid === 'alipay') {
-          return false
+      if (!this.payConfig) {
+        return
+      }
+      this.payInfos.forEach(payInfo => {
+        if (platform.isWechatApp() && payInfo.id === 'alipay') {
+          payInfo.disable = true
         }
-        if (this.payConfig.endpoint[pid]) {
-          this.selectId = pid
-          return true
+
+        // 初使化selectId
+        if (!this.payConfig.endpoint[this.selectId] || (this.selectId === payInfo.id && payInfo.disable)) {
+          this.selectId = ''
+        }
+        if (!this.selectId && !payInfo.disable) {
+          this.selectId = payInfo.id
         }
       })
+
       // 微信跳转redirect， 自动弹窗
       this.paySucRurl = this.getMipPayRedirect().redirectUrl
       if (this.paySucRurl) {
@@ -291,13 +312,17 @@ export default {
     toggleVisible (visible, showType = 'visiblePay') {
       const DialogList = ['visiblePay', 'visibleConfirm']
       visible = !!visible
-
       if (!visible) {
         DialogList.forEach(type => { this[type] = visible })
         this.visibleMark = visible
         this.changeMipPayRedirect()
       } else {
-        let curShowType = DialogList.find(type => { return this[type] })
+        let curShowType
+        DialogList.forEach(type => {
+          if (!curShowType && this[type]) {
+            curShowType = type
+          }
+        })
         if (curShowType && showType === curShowType) {
           return
         }
@@ -426,9 +451,11 @@ export default {
           } else {
             this.setError(res.msg || res.message || '支付错误，请重试')
           }
+          this.sendLog({'action': 'pay_error', ext: {type: 1}})
           throw new Error('支付错误，请重试')
         })
       payPromise.catch(() => {
+        this.sendLog({'action': 'pay_error', ext: {type: 1}})
         this.setError('支付错误，请重试')
       })
       return payPromise
@@ -458,6 +485,7 @@ export default {
             if (res.err_msg === 'get_brand_wcpay_request:ok') {
               this.goPayRedirectUrl()
             } else {
+              this.sendLog({'action': 'pay_error', ext: {type: 2}})
               this.setError('支付失败，请重试')
             }
           }
@@ -484,11 +512,7 @@ export default {
      */
     goPayRedirectUrl () {
       let url = this.paySucRurl || this.payConfig.redirectUrl
-      if (!MIP.standalone) {
-        window.top.location.replace(url)
-      } else {
-        MIP.viewer.open(url, { replace: true })
-      }
+      window.top.location.replace(url)
     },
     /**
      * 错误显示函数
@@ -557,7 +581,7 @@ export default {
       return presult
     },
 
-    sendLog ({action, param, url = location.href}) {
+    sendLog ({action, param, url = location.href, ext = {}}) {
       let urlQuerys = {}
       urlQuerys.rqt = 300
       let xzhid = storage.get('mip-xzhid')
@@ -567,6 +591,7 @@ export default {
       urlQuerys.url = url
       xzhid && (urlQuerys.xzhid = xzhid)
       clickToken && (urlQuerys.click_token = clickToken)
+      urlQuerys.ext = JSON.stringify(ext)
       let urlQueryParams = Object.keys(urlQuerys).map((key) => {
         return `${key}=${encodeURIComponent(urlQuerys[key])}`
       })
