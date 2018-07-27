@@ -80,10 +80,13 @@ export default {
    */
   getClosestScrollElement (element) {
     while (element && !element.getAttribute('mip-shell-scrollboundary')) {
-      if (MIP.util.css(element, 'overflow-y') === 'auto' && element.clientHeight < element.scrollHeight) {
+      let overflowY = MIP.util.css(element, 'overflow-y')
+      if ((overflowY === 'auto' || overflowY === 'scroll') && element.clientHeight < element.scrollHeight) {
         return element
       }
-      if (MIP.util.css(element, 'overflow-x') === 'auto' && element.clientWidth < element.scrollWidth) {
+
+      let overflowX = MIP.util.css(element, 'overflow-x')
+      if ((overflowX === 'auto' || overflowX === 'scroll') && element.clientWidth < element.scrollWidth) {
         return element
       }
       element = element.parentNode
