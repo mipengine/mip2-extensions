@@ -13,7 +13,7 @@ export default (() => {
       *
       * @returns {Array} [1, 3] 第一章第三节
       */
-    isRootPage: () => {
+    isRootPage () {
       return window.MIP.viewer.page.isRootPage
     },
     /**
@@ -21,15 +21,14 @@ export default (() => {
       *
       * @returns {Array} {1, 3, id} 第一章,第三节,页面id(url)
       */
-    currentPage: () => {
+    currentPage () {
       if (!jsonld.currentPage) {
         throw new Error('请检查head中json-ld配置，currentPage 不存在')
-      } else {
-        return {
-          'chapter': jsonld.currentPage.chapter,
-          'page': jsonld.currentPage.page,
-          'id': MIP.viewer.page.currentPageId
-        }
+      }
+      return {
+        'chapter': jsonld.currentPage.chapter,
+        'page': jsonld.currentPage.page,
+        'id': window.MIP.viewer.page.currentPageId
       }
     },
     /**
@@ -37,7 +36,7 @@ export default (() => {
       *
       * @returns {Object} {2, 1, id} 第二章,第一节,页面id(url)
       */
-    nextPage: () => {
+    nextPage () {
       return {
         'chapter': jsonld.nextPage && jsonld.nextPage.chapter,
         'page': jsonld.nextPage && jsonld.nextPage.chapter,
@@ -49,7 +48,7 @@ export default (() => {
       *
       * @returns {Object} {1, 2, id} 第一章,第二节,页面id(url)
       */
-    previousPage: () => {
+    previousPage () {
       return {
         'chapter': jsonld.previousPage && jsonld.previousPage.chapter,
         'page': jsonld.previousPage && jsonld.previousPage.chapter,
@@ -87,7 +86,7 @@ export default (() => {
       * @returns {string} 当前页面是否是搜索结果点出
       */
     isFromSearch () {
-      return MIP.viewer.page.pageId === MIP.viewer.page.currentPageId
+      return window.MIP.viewer.page.pageId === window.MIP.viewer.page.currentPageId
     }
 
   }
