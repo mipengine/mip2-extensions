@@ -4,20 +4,27 @@
  */
 
 import './mip-shell-inservice.less'
-import payPlaceholder from '../../static/pay-placeholder.png'
-// 站点数据请求url
-const URL_SITE = 'https://xiongzhang.baidu.com/opensc/cambrian/card'
-const fetchJsonp = window.fetchJsonp || {}
-const XZH_KEY = 'mip-xzhid'
-const CLICK_TOKEN_KEY = 'mip-click-token'
-let storage = MIP.util.customStorage(0)
-export default class MipShellInservice extends MIP.builtinComponents.MipShell {
+import scrollBoundary from './lib/scrollBoundary'
+import MoreAction from './lib/MoreAction'
+import ProcessConfig from './lib/ProcessConfig'
+
+export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
   constructor (...args) {
     super(...args)
 
     this.alwaysReadConfigOnLoad = false
     this.transitionContainsHeader = false
-    this.scrollBoundary()
+    this.moreAction = new MoreAction(this.headerInfo = {})
+    scrollBoundary.init()
+    this.processConfig = new ProcessConfig()
+  }
+
+  /**
+   * 组件一加载进行 刷新token
+   */
+  build () {
+    super.build()
+    this.processConfig.reflushToken()
   }
 
   /**
@@ -26,106 +33,9 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    * @param {Object} shellConfig 继承MipShell config
    */
   async processShellConfig (shellConfig) {
-    let headerInfo = {
-    }
-    let isasync
-    let clickToken
-
-    storage.set(XZH_KEY, shellConfig.isId)
-
-    // wise搜索环境页带入熊掌号信息
-    try {
-      let { isTitle } = MIP.hash.hashTree
-      let hashHeader = isTitle && JSON.parse(decodeURIComponent(isTitle && isTitle.value))
-      if (hashHeader && hashHeader.type === 'cambrian') {
-        Object.assign(headerInfo, {title: hashHeader.title, logo: hashHeader.logo})
-      }
-      if (hashHeader && hashHeader.click_token) {
-        clickToken = hashHeader.click_token
-      }
-    } catch (error) {
-    }
-    if (clickToken) {
-      storage.set(CLICK_TOKEN_KEY, clickToken)
-    } else if (!storage.get(CLICK_TOKEN_KEY)) {
-      storage.set(CLICK_TOKEN_KEY, shellConfig.isId)
-    }
-
-    // Set default data
-    shellConfig.routes.forEach(routeConfig => {
-      let { header, view } = routeConfig.meta
-      header.logo = ''
-      header.bouncy = false
-      header.buttonGroup = [{
-        name: 'cancel',
-        text: '取消'
-      }]
-      if (view.isIndex) {
-        header.title = headerInfo.title || header.title || document.title || ''
-        header.logo = headerInfo.logo || payPlaceholder
-        headerInfo.title = header.title
-      }
-    })
-
-    let isId = shellConfig.isId
-
-    if (isId) {
-      headerInfo.isId = isId
-      isasync = true
-      headerInfo = await fetchJsonp(`${URL_SITE}?cambrian_id=${isId}`).then(res => res.json()).then(data => {
-        if (data.code === 0 && data.data.name) {
-          return {
-            title: data.data.name,
-            logo: data.data.avatar,
-            serviceUrl: data.data.service_url,
-            cambrianUrl: data.data.cambrian_url
-          }
-        }
-        return headerInfo
-      }).catch(() => headerInfo)
-    }
-
-    // bos图片大小处理
-    if (headerInfo.logo && /cdn\.bcebos\.com/.test(headerInfo.logo)) {
-      headerInfo.logo += '@w_100'
-    }
-
-    shellConfig.routes.forEach(routeConfig => {
-      let { header, view } = routeConfig.meta
-      header.buttonGroup = []
-      if (view.isIndex) {
-        header.title = headerInfo.title
-        header.logo = headerInfo.logo
-      } else {
-        header.buttonGroup.push({
-          name: 'indexPage',
-          text: '首页'
-        })
-      }
-
-      if (headerInfo.serviceUrl) {
-
-        // 暂时屏蔽分享功能
-        // header.buttonGroup.push({
-        //   name: 'share',
-        //   text: '分享'
-        // })
-      }
-      if (headerInfo.cambrianUrl) {
-        header.buttonGroup.push({
-          name: 'about',
-          text: `关于${headerInfo.title}`
-        })
-      }
-      header.buttonGroup.push({
-        name: 'cancel',
-        text: '取消'
-      })
-    })
-
-    this.headerInfo = headerInfo
+    await this.processConfig.init(this.headerInfo, shellConfig).process()
     this.updateShellConfig(shellConfig)
-    if (isasync) {
+    if (shellConfig.isId) {
       this.refreshShell({ pageId: window.MIP.viewer.page.pageId, asyncRefresh: true })
     }
   }
@@ -136,18 +46,18 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
    */
   handleShellCustomButton (buttonName) {
     if (buttonName === 'share') {
-      this.shareAction()
+      this.moreAction.share()
       this.toggleDropdown(false)
     } else if (buttonName === 'indexPage') {
-      this.indexPageAction()
+      this.moreAction.indexPage()
       this.toggleDropdown(false)
     } else if (buttonName === 'about') {
-      this.aboutAction()
+      this.moreAction.about()
       this.toggleDropdown(false)
     }
     // 修复 非首页极速服务页 无后退时场景
     if (buttonName === 'back' && history.length < 2) {
-      this.indexPageAction()
+      this.moreAction.indexPage()
     }
   }
   /**
@@ -157,200 +67,8 @@ export default class MipShellInservice extends MIP.builtinComponents.MipShell {
     let { canClose } = MIP.hash.hashTree || {}
     return canClose && canClose.value === 'true'
   }
-  /**
-   * 关于我们处理逻辑
-   */
-  aboutAction () {
-    let cambrianUrl = this.headerInfo.cambrianUrl
-    let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^http(s)?:\/\//, ''))}`
-    if (MIP.standalone) {
-      mipUrl = `${mipUrl}?title=${this.headerInfo.title}`
-      MIP.viewer.open(mipUrl, { isMipLink: false })
-    } else {
-      MIP.viewer.sendMessage('loadiframe', { 'url': cambrianUrl, title: this.headerInfo.title })
-    }
-  }
-  /**
-   * 分享处理逻辑，动态加载创建mip-share组件
-   */
-  shareAction () {
-    let { shareWrapper, mask } = this.createShareWarp()
-    let { title, serviceUrl, logo } = this.headerInfo
-
-    document.body.appendChild(mask)
-    document.body.appendChild(shareWrapper)
-
-    if (shareWrapper.querySelector('mip-share')) {
-      this.toggleShare()
-      return
-    }
-
-    new Promise((resolve, reject) => {
-      let script = document.createElement('script')
-      script.onload = resolve
-      script.onerror = reject
-      script.src = 'https://c.mipcdn.com/static/v1/mip-share/mip-share.js'
-      document.body.appendChild(script)
-    }).then(() => {
-      shareWrapper.innerHTML = `
-      <mip-share
-          title="${title}"
-          content="${title}"
-          url="${serviceUrl}"
-          icon="${logo}"
-          layout="container"
-          width="414"
-          height="158">
-      </mip-share>`
-      this.toggleShare()
-    })
-  }
-
-  createShareWarp () {
-    if (this.shareWarp) {
-      return this.shareWarp
-    }
-
-    let mask
-    let shareWrapper
-
-    mask = document.createElement('mip-fixed')
-    mask.classList.add('mip-shell-share-mask')
-
-    shareWrapper = document.createElement('mip-fixed')
-    shareWrapper.classList.add('mip-shell-share-wrapper')
-
-    mask.onclick = this.toggleShare.bind(this)
-    this.shareWarp = { mask, shareWrapper, show: false }
-    return this.shareWarp
-  }
-  /**
-   * 分享功能切换
-   */
-  toggleShare () {
-    if (this.shareWarp.show) {
-      this.shareWarp.mask.classList.remove('show')
-      this.shareWarp.shareWrapper.classList.remove('show')
-    } else {
-      this.shareWarp.mask.classList.add('show')
-      this.shareWarp.shareWrapper.classList.add('show')
-    }
-    this.shareWarp.show = !this.shareWarp.show
-    MIP.viewer.page.togglePageMask(this.shareWarp.show, {
-      skipTransition: true
-    })
-  }
-  /**
-   * 跳转首页逻辑
-   */
-  indexPageAction () {
-    let serviceUrl = this.headerInfo.serviceUrl
-    MIP.viewer.open(MIP.util.makeCacheUrl(serviceUrl), { isMipLink: true, replace: true })
-  }
-
-  /**
-   * 滚动边界处理
-   */
-  scrollBoundary () {
-    let touchStartEvent
-    let {rect, css} = MIP.util
-    // 收集body child元素 并进行包裹
-    let scrollaBoundaryTouch = document.createElement('div')
-    let offsetHeight
-    let bodyPaddingTop
-    let body = document.body
-    let touchTarget
-    let stopProFun = e => e.stopPropagation()
-
-    scrollaBoundaryTouch.setAttribute('mip-shell-scrollboundary', true);
-    [].slice.call(body.children).forEach(child => {
-      if (/^(SCRIPT|IFRAME|MIP-SHELL-INSERVICE|MIP-DATA)/.test(child.nodeName)) {
-        return
-      }
-      scrollaBoundaryTouch.appendChild(child)
-    })
-    body.appendChild(scrollaBoundaryTouch)
-
-    // 添加事件处理
-    scrollaBoundaryTouch.addEventListener('touchstart', e => {
-      touchStartEvent = e
-      // 内滚 兼容处理
-      touchTarget = this.getClosestScrollElement(e.target)
-      if (touchTarget) {
-        touchTarget.addEventListener('touchmove', stopProFun)
-      }
-    })
-
-    scrollaBoundaryTouch.addEventListener('touchmove', e => {
-      let touchRect = e.targetTouches[0]
-      let startTouchReact = touchStartEvent.targetTouches[0]
-
-      // 兼容模式处理
-      offsetHeight = document.compatMode === 'BackCompat'
-        ? document.body.clientHeight
-        : document.documentElement.clientHeight
-
-      bodyPaddingTop = bodyPaddingTop || parseInt(css(body, 'paddingTop'), 10)
-      let scrollTop = body.scrollTop || rect.getScrollTop()
-      let scrollHeight = rect.getElementRect(scrollaBoundaryTouch).height + bodyPaddingTop
-
-      // 到达顶部时 && 是向下滚动操作
-      // 到达底部时 && 并且 向上滚动操作
-      let isprevent = (
-        touchRect.pageY >= startTouchReact.pageY &&
-          touchRect.clientY > startTouchReact.clientY &&
-          scrollTop < 5) ||
-          (
-            touchRect.pageY < startTouchReact.pageY &&
-            scrollTop + offsetHeight >= scrollHeight
-          )
-      if (isprevent) {
-        e.preventDefault()
-      }
-      e.stopPropagation()
-    })
-
-    scrollaBoundaryTouch.addEventListener('touchend', () => {
-      if (touchTarget) {
-        touchTarget.removeEventListener('touchmove', stopProFun)
-      }
-    })
-  }
-
-  /**
-   * 获取上级可scroll的元素
-   *
-   * @param {Object} element 目标元素
-   */
-  getClosestScrollElement (element) {
-    while (element && !element.getAttribute('mip-shell-scrollboundary')) {
-      if (MIP.util.css(element, 'overflow-y') === 'auto' && element.clientHeight < element.scrollHeight) {
-        return element
-      }
-      element = element.parentNode
-    }
-    return null
-  }
 
   updateOtherParts () {
-    // this.sendLog(`//cp01-chunjie.epc.baidu.com:8500/servicehub/oplog/urlclk?url=${location.href}`)
-    let clickToken = storage.get(CLICK_TOKEN_KEY)
-    let urlQuerysObj = {
-      rqt: 300,
-      action: 'page_vi',
-      xzhid: MIP.util.customStorage(0).get('mip-xzhid'),
-      click_token: clickToken,
-      _t: new Date().getTime(),
-      url: location.href
-    }
-    let urlQuerys = Object.keys(urlQuerysObj).map((key) => {
-      return `${key}=${encodeURIComponent(urlQuerysObj[key])}`
-    })
-    let url = `//rqs.baidu.com/service/api/rqs?${urlQuerys.join('&')}`
-    this.sendLog(url)
-  }
-  sendLog (url) {
-    let img = new Image()
-    img.src = url
+    this.moreAction.sendLog(this.processConfig.getLocalToken())
   }
 }
