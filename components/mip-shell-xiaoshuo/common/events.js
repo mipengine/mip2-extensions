@@ -19,7 +19,7 @@ class XiaoshuoEvents {
      * @fires 'next-page-button-clicked'
      */
     let nextPageButton = '.mip-shell-footer .page-next:not(.disabled)'
-    event.delegate(document.body, nextPageButton, 'click', function () {
+    event.delegate(document.documentElement, nextPageButton, 'click', function () {
       window.MIP.viewer.page.emitCustomEvent(window, false, {
         name: Constant.NEXT_PAGE_BUTTON_CLICK
       })
@@ -30,7 +30,7 @@ class XiaoshuoEvents {
      * @fires 'next-page-button-clicked'
      */
     let previousPageButton = '.mip-shell-footer .page-previous:not(.disabled)'
-    event.delegate(document.body, previousPageButton, 'click', function () {
+    event.delegate(document.documentElement, previousPageButton, 'click', function () {
       window.MIP.viewer.page.emitCustomEvent(window, false, {
         name: Constant.PREVIOUS_PAGE_BUTTON_CLICK
       })
