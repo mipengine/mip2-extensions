@@ -43,8 +43,8 @@ export function settingHtml () {
     <div class="mip-shell-xiaoshuo-control-theme">
         <ul>
             <li><span class="theme-default click-cursor" on="click:xiaoshuo-shell.changeMode(default)"></span></li>
-            <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
             <li><span class="theme-paper click-cursor" on="click:xiaoshuo-shell.changeMode(paper)"></span></li>
+            <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
         </ul>
     </div>`
 }
