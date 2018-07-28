@@ -60,7 +60,7 @@ export default (() => {
       *
       * @returns {boolean} 是本章最后一页
       */
-    isChapterEnd () {
+    isLastPage () {
       return jsonld.currentPage.isLastPage
     },
 

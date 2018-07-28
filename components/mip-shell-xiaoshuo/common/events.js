@@ -39,9 +39,9 @@ class XiaoshuoEvents {
 
   // 每次翻页/页面刷新时都会触发
   bindAll () {
-    let {isRootPage, isChapterEnd, currentPage, chapterName} = state
+    let {isRootPage, isLastPage, currentPage, chapterName} = state
     let novelData = {
-      isChapterEnd: isChapterEnd(),
+      isLastPage: isLastPage(),
       chapter: currentPage().chapter,
       page: currentPage().page,
       chapterName: chapterName()

@@ -65,13 +65,13 @@ export default class Strategy {
    * @returns {Object} 修改出广告的策略
    */
   changeStrategy () {
-    const {isChapterEnd, isRootPage, nextPage} = state
+    const {isLastPage, isRootPage, nextPage} = state
     if (isRootPage()) {
       this.fromSearch = 1
     } else {
       this.fromSearch = 0
     }
-    if (isChapterEnd()) {
+    if (isLastPage()) {
       this.pageAd = true
     }
     // 品专第二页广告
