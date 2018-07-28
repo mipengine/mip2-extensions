@@ -25,13 +25,13 @@
           @click="gotoAdUrl">
           <video
             ref="mipVideo"
+            :poster="poster"
+            :src="videourl"
             muted="true"
             class="video"
             autoplay
             webkit-playsinline
             playsinline
-            poster="https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg"
-            src="https://ecmb.bdimg.com/cae-legoup-video-target/bcb262e0-fe62-49e6-9d3f-1649cad66394.mp4"
           />
         </div>
         <div
@@ -61,9 +61,7 @@ import JSMpeg from './jsmpeg'
 const customStorage = MIP.util.customStorage(0)
 const css = MIP.util.css
 
-const VIDEOINDEX = 'ad-video'
 const COUNTDOWNINDEX = 10
-const PINZHUANGURL = 'https://www.vivo.com/vivo/nexs/?cid=w-1-baidu_ada-xs'
 const PREDATE = 'ad-time'
 
 const isSF = !window.MIP.standalone
@@ -72,14 +70,31 @@ let player = null
 let jSMpegPlayer = null
 let canvas = null
 
-// 由于本次为品专视频广告变现的小流量实验，7月9号需产出效果，
-// 因此本次视频写死在组件内部，正式通过实验以后会与品专设置相关格式，修改升级为通用视频广告模板，本次将无属性参数传如；
-const POSTER = 'https://ecmb.bdimg.com/adtest/cc74e541725b3d1c426927fe556f834e.jpg'
-const TSURL = 'https://searchvideo.bj.bcebos.com/vivo4.ts'
-
 let isShouldVideo
 
 export default {
+  props: {
+    videoid: {
+      type: String,
+      default: ''
+    },
+    poster: {
+      type: String,
+      default: ''
+    },
+    videourl: {
+      type: String,
+      default: ''
+    },
+    tsurl: {
+      type: String,
+      default: ''
+    },
+    jumpurl: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       isOpening: false,
@@ -91,18 +106,20 @@ export default {
   },
   computed: {
     isShow: function () {
-      return isSF && detector.getMobileSystemVersion() && isShouldVideo
+      return this.videourl && this.tsurl && isSF && detector.getMobileSystemVersion() && isShouldVideo
     },
     isOriginalVideo: function () {
       return detector.isRenderVideoElement()
     }
   },
   created () {
+    if (!this.videourl || !this.tsurl) {
+      return
+    }
     this.timeExpired()
     this.initVideoIndex()
-    isShouldVideo = +customStorage.get(VIDEOINDEX) === 2 || false
+    isShouldVideo = +customStorage.get(this.videoid) === 2 || false
     if (this.isShow) {
-      console.log('是否SF：' + (isSF || false) + '；页数：' + customStorage.get(VIDEOINDEX))
       this.readContainerNoScroll()
     }
   },
@@ -127,7 +144,7 @@ export default {
       let self = this
       this.$element.setAttribute('style', 'display: block !important')
       let forceClose = setTimeout(() => {
-        this.closeVideo()
+        self.closeVideo()
       }, 15000)
       if (player && this.isOriginalVideo) {
         player.addEventListener('playing', () => {
@@ -147,7 +164,7 @@ export default {
         jSMpegPlayer.play()
       }
       /* global _hmt */
-      _hmt && _hmt.push(['_trackEvent', 'video', 'show', 'vivo'])
+      _hmt && _hmt.push(['_trackEvent', 'video', 'show', this.videoid])
       this.noVideoMaskScroll()
       setTimeout(() => {
         self.forbidClick = false
@@ -176,12 +193,11 @@ export default {
       }
     },
     initVideo () {
-      let self = this
       player = this.$element.querySelector('video')
       if (player) {
         player.pause()
         player.addEventListener('ended', () => {
-          self.closeVideo()
+          this.closeVideo()
         })
       }
     },
@@ -189,17 +205,17 @@ export default {
       let self = this
       let videoCover = this.$refs.videoCover
       if (videoCover) {
-        css(videoCover, {backgroundImage: 'url(' + POSTER + ')'})
+        css(videoCover, {backgroundImage: 'url(' + this.poster + ')'})
         canvas = this.$refs.videoCanvas
         let attributes = {
           class: 'video',
           loop: false,
           audio: false,
-          poster: POSTER,
+          poster: this.poster,
           canvas: canvas
         }
-        let tsUrl = TSURL
-        jSMpegPlayer = new JSMpeg.Player(tsUrl, attributes)
+        let tsurl = this.tsurl
+        jSMpegPlayer = new JSMpeg.Player(tsurl, attributes)
         jSMpegPlayer.pause()
         jSMpegPlayer.on('ended', () => {
           let event = new Event('ended')
@@ -209,12 +225,12 @@ export default {
       }
     },
     initVideoIndex () {
-      let videoIndex = customStorage.get(VIDEOINDEX)
+      let videoIndex = customStorage.get(this.videoid)
       if (videoIndex == null) {
-        customStorage.set(VIDEOINDEX, 1)
+        customStorage.set(this.videoid, 1)
       } else {
         videoIndex++
-        customStorage.set(VIDEOINDEX, videoIndex)
+        customStorage.set(this.videoid, videoIndex)
       }
     },
     readContainerNoScroll () {
@@ -244,9 +260,9 @@ export default {
         this.forbidClick = true
         this.played = true
         this.$element.setAttribute('style', 'display: none !important')
-        window.top.location.href = PINZHUANGURL
+        window.top.location.href = this.jumpurl
         /* global _hmt */
-        _hmt && _hmt.push(['_trackEvent', 'video', 'click', 'vivo'])
+        _hmt && _hmt.push(['_trackEvent', 'video', 'click', this.videoid])
       }
     },
     closeVideo (e, isClick) {
@@ -270,7 +286,7 @@ export default {
         setTimeout(() => {
           content.classList.add('close-content')
           /* global _hmt */
-          isClick && _hmt && _hmt.push(['_trackEvent', 'close', 'click', 'vivo'])
+          isClick && _hmt && _hmt.push(['_trackEvent', 'close', 'click', this.videoid])
           setTimeout(() => {
             self.$element.setAttribute('style', 'display: none !important')
             container.classList.remove('close-container')
@@ -288,8 +304,8 @@ export default {
         return
       }
       let currentDate = myDate
-      if (currentDate !== preDate) {
-        customStorage.rm(VIDEOINDEX)
+      if (currentDate !== +preDate) {
+        customStorage.rm(this.videoid)
         customStorage.rm(PREDATE)
       }
     }
@@ -490,6 +506,7 @@ mip-novel-video {
     align-items: center;
     justify-content: center;
     text-align: center;
+    position: absolute;
   }
   .video {
     position: relative;
