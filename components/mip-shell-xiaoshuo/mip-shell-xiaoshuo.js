@@ -17,6 +17,7 @@ import Strategy from './ad/strategy'
 import util from './common/util'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
+let strategy = new Strategy()
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -25,8 +26,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     this._scrollBoundary()
-    let strategy = new Strategy()
-    strategy.init()
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -88,6 +87,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     window.MIP.viewer.page.emitCustomEvent(window, true, {
       name: 'changePageStyle'
     })
+
+    strategy.init()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     xiaoshuoEvents.bindAll()
