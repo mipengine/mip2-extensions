@@ -2,6 +2,8 @@
 
 fastclick 组件
 
+**注意** 点击延迟问题应该由页面引入 mip-fastclick 组件解决，**禁止** 组件内部单独引入 fastclick
+
 标题|内容
 ----|----
 类型|通用
@@ -26,9 +28,9 @@ fastclick 组件
 
 ### target
 
-说明：需要绑定 fastclick 的元素id, 默认对当前 `mip-fastclick` 标签绑定 fastclick
-必选项：否
-类型：字符串
+说明：需要绑定 fastclick 的元素id, 默认对当前 `mip-fastclick` 标签绑定 fastclick \
+必选项：否 \
+类型：字符串 \
 取值范围：html ID
 
 ## fastclick 使用参考
