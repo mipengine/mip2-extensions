@@ -6,10 +6,10 @@
         v-show="visit"
         class="mip-city-selection-part-letter content-wrapper"
       >
-        <div class="mip-city-selection-title"> 最近访问的城市</div>
+        <div class="mip-city-selection-title">最近访问的城市</div>
         <p
           v-for="city in history"
-          :key = "city"
+          :key="city"
           class="mip-city-selection-item"
           @click="showInfo(city)"
         >
@@ -19,7 +19,7 @@
 
     </div>
 
-    <div class="mip-city-selection-content ">
+    <div class="mip-city-selection-content">
       <!--  热门城市本地 -->
       <div v-if="local">
         <div
@@ -61,10 +61,11 @@
     <div>
       <mip-fixed
         class="mip-city-selection-sidebar-wrapper"
-        type="right">
+        type="right"
+      >
         <div class="mip-city-selection-sidebar">
           <div
-            v-for="(item, index) in list"
+            v-for="(item, index) in listOnline"
             :key="index"
             @click="scrollTocity(index)"
           >
@@ -346,6 +347,7 @@ export default {
             if (res.ok) {
               res.json().then(function (data) {
                 that.listOnline = data.list
+                that.list = data.list
                 resolve(data)
               })
             } else {
@@ -356,6 +358,7 @@ export default {
           })
           that.async = true
         } else {
+          that.listOnline = that.list
           cityData = that.$element.querySelector('script[type="application/json"]')
           that.async = false
           try {
