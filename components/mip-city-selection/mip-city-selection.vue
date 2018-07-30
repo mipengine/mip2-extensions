@@ -3,7 +3,7 @@
     <div class="mip-city-selection-content lasted-visted-hot ">
       <!-- 最近访问的城市 -->
       <div
-        v-if="visit"
+        v-show="visit"
         class="mip-city-selection-part-letter content-wrapper"
       >
         <div class="mip-city-selection-title"> 最近访问的城市</div>
@@ -57,19 +57,21 @@
           </p>
         </div>
       </div>
-      <div>
-        <mip-fixed class="mip-city-selection-sidebar-wrapper">
-          <div class="mip-city-selection-sidebar">
-            <div
-              v-for="(item, index) in list"
-              :key="index"
-              @click="scrollTocity(index)"
-            >
-              <a class="mip-city-selection-link"> {{ item.key }}</a>
-            </div>
+    </div>
+    <div>
+      <mip-fixed
+        class="mip-city-selection-sidebar-wrapper"
+        type="right">
+        <div class="mip-city-selection-sidebar">
+          <div
+            v-for="(item, index) in list"
+            :key="index"
+            @click="scrollTocity(index)"
+          >
+            <a class="mip-city-selection-link"> {{ item.key }}</a>
           </div>
-        </mip-fixed>
-      </div>
+        </div>
+      </mip-fixed>
     </div>
     <slot/>
   </div>
@@ -299,7 +301,6 @@ export default {
     },
     showInfo (city) {
       this.getOffsetX()
-      this.visit = true
       this.currentCity = city
       let isExit = false
       for (let i = 0; i < this.history.length; i++) {
@@ -318,7 +319,14 @@ export default {
       this.$emit('citySelected', city)
       this.cityData = JSON.parse(Storage.get('cityData'))
       this.history = this.cityData
-      this.getOffsetX()
+      let locationStorage = Storage.get('cityData', cityData)
+      if (locationStorage) {
+        this.history = JSON.parse(locationStorage)
+        this.visit = true
+      } else {
+        this.visit = false
+        return false
+      }
     },
     scrollTocity (index) {
       this.getOffsetX()
@@ -371,6 +379,8 @@ export default {
       if (locationStorage) {
         this.history = JSON.parse(locationStorage)
         this.visit = true
+      } else {
+        this.visit = false
       }
     }
   }
