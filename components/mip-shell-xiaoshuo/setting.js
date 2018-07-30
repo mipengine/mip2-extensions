@@ -1,7 +1,7 @@
 // 默认配置
 let DEFAULTS = {
   theme: 'default',
-  fontSize: 3
+  fontSize: 3.5
 }
 let STORAGE_KEY = 'mip-shell-xiaoshuo-mode'
 let CustomStorage = MIP.util.customStorage
@@ -43,8 +43,8 @@ export function settingHtml () {
     <div class="mip-shell-xiaoshuo-control-theme">
         <ul>
             <li><span class="theme-default click-cursor" on="click:xiaoshuo-shell.changeMode(default)"></span></li>
-            <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
             <li><span class="theme-paper click-cursor" on="click:xiaoshuo-shell.changeMode(paper)"></span></li>
+            <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
         </ul>
     </div>`
 }
@@ -105,11 +105,11 @@ export class FontSize {
   bindDragEvent () {
     let event = window.MIP.util.event
     // 拖动事件
-    event.delegate(document.body, this.elementSelector + ' input[type="range"]', 'touchmove', () => {
+    event.delegate(document.documentElement, this.elementSelector + ' input[type="range"]', 'touchmove', () => {
       this._setInputValue(this._getInputValue())
     })
     // 点击事件
-    event.delegate(document.body, this.elementSelector + ' input[type="range"]', 'click', () => {
+    event.delegate(document.documentElement, this.elementSelector + ' input[type="range"]', 'click', () => {
       this._setInputValue(this._getInputValue())
     })
   }
