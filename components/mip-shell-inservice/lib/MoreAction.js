@@ -14,8 +14,11 @@ export default class {
     let cambrianUrl = this.headerInfo.cambrianUrl
     let mipUrl = `https://m.baidu.com/mip/c/s/${encodeURIComponent(cambrianUrl.replace(/^https?:\/\//, ''))}`
     if (MIP.standalone) {
-      mipUrl = `${mipUrl}?title=${this.headerInfo.title}`
-      MIP.viewer.open(mipUrl, { isMipLink: false })
+      mipUrl = `${mipUrl}?title=${this.headerInfo.title}&nocache=1`
+      // 解决ios 上 mark 未关闭前跳转后返回问题
+      setTimeout(() => {
+        MIP.viewer.open(mipUrl, { isMipLink: false })
+      }, 300)
     } else {
       MIP.viewer.sendMessage('loadiframe', { 'url': cambrianUrl, title: this.headerInfo.title })
     }
@@ -115,5 +118,6 @@ export default class {
       return `${key}=${encodeURIComponent(urlQuerysObj[key])}`
     })
     new Image().src = `//rqs.baidu.com/service/api/rqs?${urlQuerys.join('&')}`
+    new Image().src = `//sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/servicehub.pae.baidu.com/servicehub/oplog/urlclk?url=${encodeURIComponent(location.href)}&is_mip=1`
   }
 }
