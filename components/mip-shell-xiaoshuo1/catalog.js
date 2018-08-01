@@ -25,15 +25,17 @@ class Catalog {
             <p style="font-size:1.2em;" class="catalog-title">将夜</p>
             <div style="padding-top: 0.625em;">
               <p style="font-size:1em;font-family: PingFangSC-Regular;color: #999999;letter-spacing: 0;
-              text-align: justify;" class="content-total">已完结 共1342章</p>
+              text-align: justify;font-size: 14px;height: 14px;line-height: 14px;" class="content-total">已完结 共1342章</p>
             </div>
           </div>
-          <div style="display:flex;display: -webkit-flex;flex-grow:100%;padding: 1.875em 0 0.9375em;" >
-            <div class="width-50 text-left"  style="flex-grow:1">目录</div>
+          <div style="display:flex;display: -webkit-flex;flex-grow:100%;padding:1.875em 0 0.9375em;    font-size: 1em;
+    line-height: 1em;" >
+            <div class="width-50 text-left"  style="flex-grow:1;opacity: 0.88;font-family: PingFangSC-Regular;
+            font-size:1em;color: #000000;line-height:1em;"height:1em>目录</div>
             <div class="width-50 text-right"  style="flex-grow:1">
-              <a href="#" class="catalog-reserve" style="z-index:9999">
-                <i class="icon icon-order" style="font-size: 14px;"></i>
-                <span class="reverse-name">倒序</span>
+              <a href="#" class="catalog-reserve" style="z-index:9999" style="font-size:1em">
+                <i class="icon icon-order" style="font-size:14px;height:14px;line-height:14px"></i>
+                <span class="reverse-name" style="height:1em;line-height:1em">倒序</span>
               </a>
             </div>
             </div>
@@ -45,7 +47,7 @@ class Catalog {
           </div>
           </div>
         </div>
-        <div style="position:absolute;top:9.437em;right:0;z-index:8888">
+        <div style="position:absolute;top:133px;right:0;z-index:8888">
             <div class="catalog-scroll" >
               <div id="catalog-scroll-btn">
                 <div class="scroll-btn"></div>
@@ -63,7 +65,7 @@ class Catalog {
     } else {
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
-        <div><a class="mip-catalog-btn" mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}">${catalog.name}</a></div>`).join('\n')
+        <div><a class="mip-catalog-btn" mip-catalog-btn mip-link style="padding: 15px 1.06em;line-height: 16px;"  data-button-name="${catalog.name}" href="${catalog.link}">${catalog.name}</a></div>`).join('\n')
     }
     // 将底部 bar 插入到页面中
     let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
@@ -162,7 +164,8 @@ class Catalog {
         this.moveTranslateY($catalogScroll, scrollTop)
       }, 100)
     }
-    $catalogContent.addEventListener('touchstart', () => {
+    $catalogContent.addEventListener('touchstart', (e) => {
+      e.stopPropagation()
       $catalogScroll.style.opacity = 0
     })
     $catalogContent.addEventListener('touchend', () => {
@@ -171,7 +174,8 @@ class Catalog {
       scrollNow = contentTop
       if (isTouchEndOver <= 5 && isTouchEndOver >= -5) scrollToEnd(1)
     })
-    $catalogContent.addEventListener('touchmove', () => {
+    $catalogContent.addEventListener('touchmove', (e) => {
+      e.stopPropagation()
       $catalogScroll.style.opacity = 0
       scrollNow = (rect.getElementOffset($catalogContent).top - rect.getElementOffset($contentTop).height)
     })
