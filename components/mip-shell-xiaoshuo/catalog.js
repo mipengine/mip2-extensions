@@ -156,7 +156,7 @@ class Catalog {
         if (scrollTop >= clientHeight) {
           scrollTop = clientHeight
         }
-        // 解决translateY的兼容问题，多次用到，封装函数
+        // 解决translateY的兼容问题，方便后续多次用到，封装函数
         this.moveTranslateY($catalogScroll, scrollTop)
       }, 100)
     }

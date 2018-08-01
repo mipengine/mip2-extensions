@@ -161,7 +161,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
   }
 
-  // 基类方法: 处理头部自定义按钮点击事件，由于没有按钮，置空
+  // 基类方法: 处理头部自定义按钮点击事件， 由于没有按钮，置空
   // handleShellCustomButton (buttonName) {
   // 如果后期需要增加bar按钮，增加如下配置：
   // "header": {
