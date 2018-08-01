@@ -179,7 +179,7 @@ class Catalog {
   }
   /**
    * 函数说明：实现滚动条拖拽函数，拖动滚动条，左边滑到相应位置
-   * @param  {object} $catalogSidebar
+   * @param  {object} $catalogSidebar todo
    * @param  {object} $catalog
    * @param  {object} $catalogScroll
    * @param  {object} $catalogButton
