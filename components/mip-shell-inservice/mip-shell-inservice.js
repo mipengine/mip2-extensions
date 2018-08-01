@@ -109,6 +109,8 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
 
   /**
    * 页面切换动画
+   *
+   * @param {Object} options 源页面与目标页面选项
    */
   beforeSwitchPage (options) {
     console.log('beforeSwitchPage options: ', options)
@@ -145,5 +147,4 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
       }
     })
   }
-
 }

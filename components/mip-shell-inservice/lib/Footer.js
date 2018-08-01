@@ -6,10 +6,6 @@
 
 // 整个底 bar 控制栏
 export default class Footer {
-  constructor () {
-
-  }
-
   initShellConfig (shellConfig) {
     this.shellConfig = shellConfig
   }
