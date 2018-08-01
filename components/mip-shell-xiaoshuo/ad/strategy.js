@@ -52,6 +52,7 @@ export default class Strategy {
         Object.assign(data, {fromSearch: this.fromSearch})
       }
       Object.assign(data, {novelData: this.novelData})
+      console.log(data)
       window.MIP.viewer.page.broadcastCustomEvent({
         name: 'showAdvertising',
         data
