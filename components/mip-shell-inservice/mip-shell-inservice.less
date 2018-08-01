@@ -78,3 +78,79 @@
     box-sizing: content-box
   }
 }
+
+/* 控制栏-底bar元素*/
+.mip-shell-footer-wrapper {
+  /* fix: mip-shell-footer-wrapper堆叠顺序由20002降低到20001 */
+  z-index: 20001 !important;
+  height: 150px;
+  transition: transform .35s ease;
+  transform: translateY(60%);
+  font-size: 14px;
+  font-weight: lighter;
+  color: #929292;
+  .button p {
+    font-size: 14px;
+    font-weight: lighter;
+  }
+}
+
+.click-cursor {
+  cursor: pointer
+}
+
+.mip-shell-footer-wrapper.show {
+  transform: translateY(0);
+}
+
+.mip-shell-footer {
+  height: 100px;
+  /*background: white;*/
+  .upper {
+    overflow: hidden;
+    height: 50px;
+  }
+
+  .page-button.disabled {
+    opacity: .5;
+  }
+  .page-button {
+    float: left;
+    margin: 0 20px;
+    line-height: 50px;
+  }
+
+  .page-button.page-next {
+    float: right;
+  }
+
+  .button-wrapper {
+    display: flex;
+    height: 40px;
+    i p{
+      margin-top: 10px;
+    }
+  }
+
+  .button-wrapper .button {
+    position: relative;
+    display: none;
+    height: 99px;
+    line-height: 89px;
+    text-align: center;
+    flex: 1;
+    &.button-show {
+      display: block;
+    }
+    /*底部菜单栏icon*/
+    mip-img {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+  .bg-button {
+    display: block;
+  }
+}

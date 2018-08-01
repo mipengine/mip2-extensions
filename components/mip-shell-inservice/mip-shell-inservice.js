@@ -7,6 +7,7 @@ import './mip-shell-inservice.less'
 import scrollBoundary from './lib/scrollBoundary'
 import MoreAction from './lib/MoreAction'
 import ProcessConfig from './lib/ProcessConfig'
+import Footer from './lib/Footer' // 底部控制栏
 
 export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
   constructor (...args) {
@@ -17,6 +18,7 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
     this.moreAction = new MoreAction(this.headerInfo = {})
     scrollBoundary.init()
     this.processConfig = new ProcessConfig()
+    this.footer = new Footer()
   }
 
   /**
@@ -33,6 +35,9 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
    * @param {Object} shellConfig 继承MipShell config
    */
   async processShellConfig (shellConfig) {
+    this.shellConfig = shellConfig
+    this.footer.initShellConfig(shellConfig)
+
     await this.processConfig.init(this.headerInfo, shellConfig).process()
     this.updateShellConfig(shellConfig)
     if (shellConfig.isId) {
@@ -68,7 +73,77 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
     return canClose && canClose.value === 'true'
   }
 
+  /**
+   * 底部菜单栏导航
+   */
+  renderOtherParts () {
+    this.footer._render()
+  }
+
   updateOtherParts () {
     this.moreAction.sendLog(this.processConfig.getLocalToken())
+
+    let pageMeta = this.currentPageMeta
+    this.footer.initCurrentPageMeta(pageMeta)
+
+    this.footer._update()
   }
+
+  bindHeaderEvents () {
+    super.bindHeaderEvents()
+
+    this.footer._bind()
+  }
+
+  unbindHeaderEvents () {
+    super.unbindHeaderEvents()
+
+    this.footer._unbind()
+  }
+
+  bindAllEvents () {
+    super.bindAllEvents()
+
+    this.footer._bindAll()
+  }
+
+  /**
+   * 页面切换动画
+   */
+  beforeSwitchPage (options) {
+    console.log('beforeSwitchPage options: ', options)
+    // 固定动画切换方向为前进方向
+    // options.isForward = true
+    // 固定打开新的iframe
+    // options.newPage = true
+    window.MIP_SHELL_OPTION.allowTransition = false
+
+    // MIP.util.naboo.animate(ele, {
+    //   width: "90%"
+    // }, {
+    //   duration: 2000,
+    //   cb: function () {
+    //     console.log('动画结束')
+    //   }
+    // }).start()
+
+    let pageMeta = options.targetPageMeta
+    this.footer.initTargetPageMeta(pageMeta)
+
+    this.footer._switchPage()
+  }
+
+  afterSwitchPage (options) {
+    // 向所有页面广播页面切换事件，并给出切换前后的 pageId
+    console.log('afterSwitchPage options: ', options)
+    let {sourcePageId, targetPageId} = options
+    window.MIP.viewer.page.broadcastCustomEvent({
+      name: 'switchPageComplete',
+      data: {
+        targetPageId,
+        sourcePageId
+      }
+    })
+  }
+
 }
