@@ -33,7 +33,7 @@ export default class Strategy {
   strategyStatic () {
     // 修改出广告的策略
     this.changeStrategy()
-    const {rootPageId, currentPage} = state
+    const {rootPageId, currentPage} = state()
     // 全局的广告
     if (this.globalAd) {
       window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
@@ -52,7 +52,6 @@ export default class Strategy {
         Object.assign(data, {fromSearch: this.fromSearch})
       }
       Object.assign(data, {novelData: this.novelData})
-      console.log(data)
       window.MIP.viewer.page.broadcastCustomEvent({
         name: 'showAdvertising',
         data
@@ -66,7 +65,7 @@ export default class Strategy {
    * @returns {Object} 修改出广告的策略
    */
   changeStrategy () {
-    const {isLastPage, isRootPage, nextPage} = state
+    const {isLastPage, isRootPage, nextPage} = state()
     if (isRootPage()) {
       this.fromSearch = 1
     } else {
@@ -126,7 +125,7 @@ export default class Strategy {
      */
     window.addEventListener(Constant.MIP_CUSTOM_ELEMENT_READY, e => {
       let customId = e && e.detail && e.detail[0] && e.detail[0].customId
-      if (state.currentPage().id === customId) {
+      if (state().currentPage().id === customId) {
         this.adCustomReady = true
       }
     })
@@ -138,7 +137,6 @@ export default class Strategy {
      * @param {module:constant-config~event:CURRENT_PAGE_READY} e - A event.
      * @listens module:constant-config~event:CURRENT_PAGE_READY
      */
-    // let currentWindow = state.isRootPage() ? window : window.parent
     window.addEventListener(Constant.CURRENT_PAGE_READY, e => {
       this.novelData = e && e.detail && e.detail[0] && e.detail[0].novelData
       this.pageAd = true

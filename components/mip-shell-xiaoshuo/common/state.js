@@ -4,9 +4,9 @@
  */
 import util from './util'
 
-export default (() => {
+export default () => {
   // 获取html head 中json-ld 配置
-  let jsonld = util.getJsonld()
+  let jsonld = util().getJsonld()
   return {
     /**
       * 返回当前页面状态
@@ -26,9 +26,9 @@ export default (() => {
         throw new Error('请检查head中json-ld配置，currentPage 不存在')
       }
       return {
-        'chapter': jsonld.currentPage.chapter,
-        'page': jsonld.currentPage.page,
-        'id': window.MIP.viewer.page.currentPageId
+        chapter: jsonld.currentPage.chapter,
+        page: jsonld.currentPage.page,
+        id: window.MIP.viewer.page.currentPageId
       }
     },
     /**
@@ -38,9 +38,9 @@ export default (() => {
       */
     nextPage () {
       return {
-        'chapter': jsonld.nextPage && jsonld.nextPage.chapter,
-        'page': jsonld.nextPage && jsonld.nextPage.chapter,
-        'id': jsonld.nextPage && jsonld.nextPage.url
+        chapter: jsonld.nextPage && jsonld.nextPage.chapter,
+        page: jsonld.nextPage && jsonld.nextPage.chapter,
+        id: jsonld.nextPage && jsonld.nextPage.url
       }
     },
     /**
@@ -50,9 +50,9 @@ export default (() => {
       */
     previousPage () {
       return {
-        'chapter': jsonld.previousPage && jsonld.previousPage.chapter,
-        'page': jsonld.previousPage && jsonld.previousPage.chapter,
-        'id': jsonld.previousPage && jsonld.previousPage.url
+        chapter: jsonld.previousPage && jsonld.previousPage.chapter,
+        page: jsonld.previousPage && jsonld.previousPage.chapter,
+        id: jsonld.previousPage && jsonld.previousPage.url
       }
     },
     /**
@@ -90,4 +90,4 @@ export default (() => {
     }
 
   }
-})()
+}
