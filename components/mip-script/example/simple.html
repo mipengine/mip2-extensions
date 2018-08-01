@@ -28,7 +28,17 @@
   console.log(document.cookie)
   window.location.href = &#x27;/&#x27;
   var ele = document.getElementById(&#x27;test&#x27;)
-&lt;/mip-script&gt;      
+&lt;/mip-script&gt;  
+&lt;mip-script src="./test-script.js"&gt;&lt;/mip-script&gt; 
+
+// test-script.js
+window.MIP.setData({
+  test: 'test info by setting within this script'
+})
+console.log(window.MIP.getData('test'))
+let div = document.createElement('div')
+div.setAttribute('class', 'active')
+document.body.appendChild(div)
     </pre>
     <mip-script>
       console.log('mip-script executed')
@@ -36,6 +46,8 @@
       window.location.href = '/'
       var ele = document.getElementById('test')
     </mip-script>
+
+    <mip-script src="./test-script.js"></mip-script>
   </div>
   <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
   <script src="/mip-script/mip-script.js"></script>
