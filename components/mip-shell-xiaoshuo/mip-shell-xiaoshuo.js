@@ -95,7 +95,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
-      let jsonld = util.getJsonld()
+      let jsonld = util().getJsonld()
       window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
         name: 'updateShellFooter',
         data: {'jsonld': jsonld}
@@ -150,7 +150,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
-    this.footer.updateDom(util.getJsonld())
+    this.footer.updateDom(util().getJsonld())
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog)
     this.header = new Header(this.$el)

@@ -2,7 +2,7 @@
  * @file 小说通用工具函数
  * @author JennyL
  */
-export default (() => {
+export default () => {
   return {
     // 获取<head>中声明的mip-shell-xiaoshuo 配置。
     // 每个页面不同，如上一页链接，当前章节名
@@ -20,4 +20,4 @@ export default (() => {
       }
     }
   }
-})()
+}
