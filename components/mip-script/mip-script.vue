@@ -8,6 +8,7 @@ import generate from 'mip-sandbox/lib/generate-lite'
 import detect from 'mip-sandbox/lib/unsafe-detect'
 /* global mipDataPromises */
 /* global Promise */
+/* global fetch */
 
 const MAX_SIZE = 2048
 
@@ -36,8 +37,43 @@ function execute (ast, element) {
   element.remove()
 }
 
+function run (script, element) {
+  let ast
+  try {
+    ast = mark(script)
+  } catch (e) {
+    console.error('Fail to generate AST of script: ', e)
+    return
+  }
+  detectUnsafe(ast)
+
+  if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
+    Promise.all(mipDataPromises).finally(() => execute(ast, element))
+  } else {
+    execute(ast, element)
+  }
+}
+
 export default {
   connectedCallback (element) {
+    let src = element.getAttribute('src')
+    if (src) {
+      fetch(src)
+        .then(res => {
+          if (res.ok) {
+            res.text().then(data => {
+              if (!data) {
+                return
+              }
+              run(data, element)
+            })
+          } else {
+            console.error('Fetch script failed!')
+          }
+        })
+        .catch(console.error)
+    }
+
     let script = element.textContent.trim()
 
     if (!script) {
@@ -48,20 +84,7 @@ export default {
       return
     }
 
-    let ast
-    try {
-      ast = mark(script)
-    } catch (e) {
-      console.error('Fail to generate AST of script: ', e)
-      return
-    }
-    detectUnsafe(ast)
-
-    if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
-      Promise.all(mipDataPromises).finally(() => execute(ast, element))
-    } else {
-      execute(ast, element)
-    }
+    run(script, element)
   },
 
   prerenderAllowed () {
