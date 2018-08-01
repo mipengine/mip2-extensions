@@ -3,13 +3,13 @@
     <div class="mip-city-selection-content lasted-visted-hot ">
       <!-- 最近访问的城市 -->
       <div
-        v-if="visit"
+        v-show="visit"
         class="mip-city-selection-part-letter content-wrapper"
       >
-        <div class="mip-city-selection-title"> 最近访问的城市</div>
+        <div class="mip-city-selection-title">最近访问的城市</div>
         <p
           v-for="city in history"
-          :key = "city"
+          :key="city"
           class="mip-city-selection-item"
           @click="showInfo(city)"
         >
@@ -19,7 +19,7 @@
 
     </div>
 
-    <div class="mip-city-selection-content ">
+    <div class="mip-city-selection-content">
       <!--  热门城市本地 -->
       <div v-if="local">
         <div
@@ -57,19 +57,22 @@
           </p>
         </div>
       </div>
-      <div>
-        <mip-fixed class="mip-city-selection-sidebar-wrapper">
-          <div class="mip-city-selection-sidebar">
-            <div
-              v-for="(item, index) in list"
-              :key="index"
-              @click="scrollTocity(index)"
-            >
-              <a class="mip-city-selection-link"> {{ item.key }}</a>
-            </div>
+    </div>
+    <div>
+      <mip-fixed
+        class="mip-city-selection-sidebar-wrapper"
+        type="right"
+      >
+        <div class="mip-city-selection-sidebar">
+          <div
+            v-for="(item, index) in listOnline"
+            :key="index"
+            @click="scrollTocity(index)"
+          >
+            <a class="mip-city-selection-link"> {{ item.key }}</a>
           </div>
-        </mip-fixed>
-      </div>
+        </div>
+      </mip-fixed>
     </div>
     <slot/>
   </div>
@@ -299,7 +302,6 @@ export default {
     },
     showInfo (city) {
       this.getOffsetX()
-      this.visit = true
       this.currentCity = city
       let isExit = false
       for (let i = 0; i < this.history.length; i++) {
@@ -318,7 +320,14 @@ export default {
       this.$emit('citySelected', city)
       this.cityData = JSON.parse(Storage.get('cityData'))
       this.history = this.cityData
-      this.getOffsetX()
+      let locationStorage = Storage.get('cityData', cityData)
+      if (locationStorage) {
+        this.history = JSON.parse(locationStorage)
+        this.visit = true
+      } else {
+        this.visit = false
+        return false
+      }
     },
     scrollTocity (index) {
       this.getOffsetX()
@@ -338,6 +347,7 @@ export default {
             if (res.ok) {
               res.json().then(function (data) {
                 that.listOnline = data.list
+                that.list = data.list
                 resolve(data)
               })
             } else {
@@ -348,6 +358,7 @@ export default {
           })
           that.async = true
         } else {
+          that.listOnline = that.list
           cityData = that.$element.querySelector('script[type="application/json"]')
           that.async = false
           try {
@@ -371,6 +382,8 @@ export default {
       if (locationStorage) {
         this.history = JSON.parse(locationStorage)
         this.visit = true
+      } else {
+        this.visit = false
       }
     }
   }
