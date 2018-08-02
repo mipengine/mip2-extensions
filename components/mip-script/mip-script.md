@@ -62,16 +62,16 @@ app.get('/script.js', function (req, res, next) {
 ```
 
 
-#### 要求
+## 要求
 
-##### 全局变量限制使用
+### 全局变量限制使用
 在 `mip-script` 中，只允许进行数据相关的操作，不允许直接操作 DOM 。
 因此通过 `mip-script` 编写的 JS 代码将会运行在沙盒环境（严格模式）中，仅开放部分全局对象供开发者使用，非白名单内的对象的行为将不能正常执行。mip-script 组件中的沙盒会对开发者的JS代码进行全局变量的替换和检测。
 
 白名单列表请参考：[严格模式的可用全局变量列表](
 https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E6%B2%99%E7%9B%92%E5%AE%89%E5%85%A8%E5%8F%98%E9%87%8F)
 
-#### 示例一
+## 示例一
 基础用法，例如：
 
 开发者编写的 JS 代码：
@@ -102,7 +102,7 @@ https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E
 
 `mip-script` 组件执行后，以 Chrome 浏览器为例，打开开发者工具，开发者可以在 Elements 面板中查看当前页面的组织结构，查找 DOM 节点树中有 class="mip-script" 属性信息的 script 节点，这类节点是 mip-script 编译后的执行结果，开发者可以通过其查看运行在沙盒环境中的 JS 代码，结合需求，来调整代码实现。
 
-#### 示例二
+## 示例二
 通过 `mip-script` 编写 JS 代码，观察 price 的数据变化，从而触发 title 的更新。同时利用 fetch API 异步获取数据，更新页面
 
 ```html
@@ -152,12 +152,11 @@ https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E
 </mip-script>
 ```
 
-#### 属性
+## 属性
 
-##### src
+### src
 
 说明：script 文件地址	  
 必选项：否 
 格式：字符串
 默认值：无
-
