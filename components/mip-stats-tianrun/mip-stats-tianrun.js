@@ -13,10 +13,19 @@ export default class MipStatsTianrun extends CustomElement {
     // 获取参数
     this.sub = this.element.getAttribute('sub') || 'cl2'
     this.z = this.element.getAttribute('z') || '26'
+
+    // 插入脚本位置
+    this.scriptContainer = document.body || document.documentElement
   }
 
-  connectedCallback () {
-    let {sub, z, element} = this
+  // 提前渲染
+  prerenderAllowed () {
+    return true
+  }
+
+  // 插入文档时就应加载脚本
+  build () {
+    let { sub, z, element, scriptContainer } = this
 
     // 元素需要隐藏
     util.css(element, 'display', 'none')
@@ -28,16 +37,14 @@ export default class MipStatsTianrun extends CustomElement {
       statsScript.src = `//${sub}.webterren.com/webdig.js?z=${z}`
 
       // 脚本加载成功
-      statsScript.onload = () => {
-        resolve()
-      }
+      statsScript.onload = resolve
 
       // 脚本加载失败
       statsScript.onerror = () => {
         reject(new Error('天润统计脚本加载失败'))
       }
 
-      element.appendChild(statsScript)
+      scriptContainer.appendChild(statsScript)
     })
 
     // 插入天润统计标识
@@ -45,7 +52,7 @@ export default class MipStatsTianrun extends CustomElement {
       let trackerScript = document.createElement('script')
       trackerScript.type = 'text/javascript'
       trackerScript.innerHTML = 'wd_paramtracker("_wdxid=000000000000000000000000000000000000000000");'
-      element.appendChild(trackerScript)
+      scriptContainer.appendChild(trackerScript)
     }).catch(e => {
       console.log(e)
     })
