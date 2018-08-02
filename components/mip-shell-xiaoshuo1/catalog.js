@@ -19,33 +19,31 @@ class Catalog {
   _renderCatalog (catalogs) {
     let renderCatalog
     let catalogHtml = `
-      <div class="mip-catalog-btn" style="width:100%; padding-top:0; padding-bottom:0">
-        <div class="catalog-header-wrapper" style="display:flex;flex-direction:column;font-size:16px">
-          <div style="padding-top:1.25em">
-            <p style="font-size:1.2em;" class="catalog-title">将夜</p>
-            <div style="padding-top: 0.625em;">
-              <p style="font-size:1em;font-family: PingFangSC-Regular;color: #999999;letter-spacing: 0;
-              text-align: justify;" class="content-total">已完结 共1342章</p>
+      <div class="mip-catalog-btn book-catalog-info">
+        <div class="catalog-header-wrapper book-catalog-info-header">
+          <div class="book-catalog-info-title">
+            <p class="book-catalog-title-name catalog-title">将夜</p>
+            <div class="catalog-content-total-wrapper">
+              <p class="catalog-content-total">已完结&nbsp;&nbsp;共1347章</p>
             </div>
           </div>
-          <div style="display:flex;display: -webkit-flex;flex-grow:100%;padding: 1.875em 0 0.9375em;" >
-            <div class="width-50 text-left"  style="flex-grow:1">目录</div>
-            <div class="width-50 text-right"  style="flex-grow:1">
-              <a href="#" class="catalog-reserve" style="z-index:9999">
-                <i class="icon icon-order" style="font-size: 14px;"></i>
-                <span class="reverse-name">倒序</span>
+          <div class="catalog-content-center-wrapper">
+            <div class="width-50 text-left catalog-content-center-left"><a href="#">目录</a></div>
+            <div class="width-50 text-right catalog-content-center-left">
+              <a href="#" class="catalog-reserve">
+                <i class="icon icon-order reverse-infor"><span class="reverse-name"> 倒序 </span></i>
               </a>
             </div>
             </div>
         </div>
       </div>
-      <div class="mip-shell-catalog mip-border mip-border-right" style="">
+      <div class="mip-shell-catalog mip-border mip-border-right">
         <div class="novel-catalog-content-wrapper" >
           <div class="novel-catalog-content">
           </div>
           </div>
         </div>
-        <div style="position:absolute;top:9.437em;right:0;z-index:8888">
+        <div style="position:absolute;top:133px;right:0;z-index:8888">
             <div class="catalog-scroll" >
               <div id="catalog-scroll-btn">
                 <div class="scroll-btn"></div>
@@ -56,6 +54,7 @@ class Catalog {
         </div>    
       </div> 
     `
+
     if (!catalogs) {
       // 目录配置为空
     } else if (typeof catalogs === 'string') {
@@ -63,7 +62,7 @@ class Catalog {
     } else {
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
-        <div><a class="mip-catalog-btn" mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}">${catalog.name}</a></div>`).join('\n')
+        <div><a class="mip-catalog-btn" mip-catalog-btn mip-link style="padding: 15px 16px;line-height:16px;font-size:16px;"  data-button-name="${catalog.name}" href="${catalog.link}">${catalog.name}</a></div>`).join('\n')
     }
     // 将底部 bar 插入到页面中
     let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
@@ -139,13 +138,11 @@ class Catalog {
    * @param  {object} $contentTop
    * @param  {object} $wapper
    * @param  {object} $catalogContent
-   * @return {[type]}
    */
   catalogScroll ($catalogSidebar, $catalog, $catalogScroll, $catalogButton, $contentTop, $wapper, $catalogContent) {
     let contentTop
     let setTime = null
     let scrollNow
-    $catalogScroll.style.opacity = 1
     // 滑动截止时候让滚动条滚到相应位置
     let scrollToEnd = (opacityNum) => {
       clearTimeout(setTime)
@@ -154,15 +151,18 @@ class Catalog {
         let clientHeight = rect.getElementOffset($catalog).height - (3 / 2 * rect.getElementOffset($catalogButton).height)
         let contentHeight = (rect.getElementOffset($catalogContent).height - rect.getElementOffset($catalog).height)
         let scrollTop = clientHeight * contentTop / contentHeight
-        $catalogScroll.style.opacity = opacityNum
         if (scrollTop >= clientHeight) {
           scrollTop = clientHeight
+        } else if (scrollTop <= 0) {
+          scrollTop = 0
         }
-        // 解决translateY的兼容问题，方便后续多次用到，封装函数
+        // 解决translateY的兼容问题，方便后续多次用到， 封装函数
         this.moveTranslateY($catalogScroll, scrollTop)
+        $catalogScroll.style.opacity = opacityNum
       }, 100)
     }
-    $catalogContent.addEventListener('touchstart', () => {
+    $catalogContent.addEventListener('touchstart', (e) => {
+      e.stopPropagation()
       $catalogScroll.style.opacity = 0
     })
     $catalogContent.addEventListener('touchend', () => {
@@ -171,7 +171,8 @@ class Catalog {
       scrollNow = contentTop
       if (isTouchEndOver <= 5 && isTouchEndOver >= -5) scrollToEnd(1)
     })
-    $catalogContent.addEventListener('touchmove', () => {
+    $catalogContent.addEventListener('touchmove', (e) => {
+      e.stopPropagation()
       $catalogScroll.style.opacity = 0
       scrollNow = (rect.getElementOffset($catalogContent).top - rect.getElementOffset($contentTop).height)
     })
@@ -243,10 +244,10 @@ class Catalog {
     reverse.addEventListener('click', () => {
       let catalog = [...$catalogContent.querySelectorAll('div')]
       let reverseName = $contentTop.querySelector('.reverse-name')
-      if (reverseName.innerHTML === '正序') {
-        reverseName.innerHTML = '倒序'
+      if (reverseName.innerHTML === ' 正序 ') {
+        reverseName.innerHTML = ' 倒序 '
       } else {
-        reverseName.innerHTML = '正序'
+        reverseName.innerHTML = ' 正序 '
       }
       let Temp = []
       for (let i = 0; i < catalog.length; i++) {
@@ -260,10 +261,12 @@ class Catalog {
   // 显示侧边目录
   show (shellElement) {
     let me = this
+
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     // window.setTimeout(function () {
     me.$catalogSidebar.classList.add('show')
     shellElement.toggleDOM(shellElement.$buttonMask, true)
+    me.$catalogSidebar.querySelector('.catalog-scroll').style.opacity = 1
     // }, 400)
   }
   // 隐藏侧边目录
