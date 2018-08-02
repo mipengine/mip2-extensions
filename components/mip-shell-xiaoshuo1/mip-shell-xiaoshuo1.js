@@ -20,6 +20,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 处理浏览器上下滚动边界，关闭弹性
     // todo: 目前有重复调用问题
     this._scrollBoundary()
+    // alert(1)
   }
 
   // 基类方法：绑定页面可被外界调用的事件。

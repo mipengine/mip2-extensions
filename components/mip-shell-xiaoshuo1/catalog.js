@@ -22,20 +22,20 @@ class Catalog {
       <div class="mip-catalog-btn" style="width:100%; padding-top:0; padding-bottom:0">
         <div class="catalog-header-wrapper" style="display:flex;flex-direction:column;font-size:16px">
           <div style="padding-top:1.25em">
-            <p style="font-size:1.2em;" class="catalog-title">将夜</p>
+            <p style="font-size:19px;line-height:19px;" class="catalog-title">将夜</p>
             <div style="padding-top: 0.625em;">
               <p style="font-size:1em;font-family: PingFangSC-Regular;color: #999999;letter-spacing: 0;
-              text-align: justify;font-size: 14px;height: 14px;line-height: 14px;" class="content-total">已完结 共1342章</p>
+              text-align: justify;font-size: 14px;line-height: 16px;color: #999999;letter-spacing: 0;text-align: justify;" class="content-total">已完结&nbsp;&nbsp;共1347章</p>
             </div>
           </div>
           <div style="display:flex;display: -webkit-flex;flex-grow:100%;padding:1.875em 0 0.9375em;    font-size: 1em;
     line-height: 1em;" >
             <div class="width-50 text-left"  style="flex-grow:1;opacity: 0.88;font-family: PingFangSC-Regular;
-            font-size:1em;color: #000000;line-height:1em;"height:1em>目录</div>
+            font-size:16px;color: #000000;line-height:16px;">目录</div>
             <div class="width-50 text-right"  style="flex-grow:1">
               <a href="#" class="catalog-reserve" style="z-index:9999" style="font-size:1em">
-                <i class="icon icon-order" style="font-size:14px;height:14px;line-height:14px"></i>
-                <span class="reverse-name" style="height:1em;line-height:1em">倒序</span>
+                <i class="icon icon-order" style="font-size:14px;height:14px;line-height:14px"><span class="reverse-name" style="font-size:16px;line-height:14px;">&nbsp;倒序&nbsp;</span></i>
+                
               </a>
             </div>
             </div>
@@ -65,7 +65,7 @@ class Catalog {
     } else {
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
-        <div><a class="mip-catalog-btn" mip-catalog-btn mip-link style="padding: 15px 1.06em;line-height: 16px;"  data-button-name="${catalog.name}" href="${catalog.link}">${catalog.name}</a></div>`).join('\n')
+        <div><a class="mip-catalog-btn" mip-catalog-btn mip-link style="padding: 15px 16px;line-height:16px;font-size:16px;"  data-button-name="${catalog.name}" href="${catalog.link}">${catalog.name}</a></div>`).join('\n')
     }
     // 将底部 bar 插入到页面中
     let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
