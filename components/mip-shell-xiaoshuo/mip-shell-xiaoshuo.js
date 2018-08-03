@@ -98,7 +98,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       name: 'changePageStyle'
     })
 
-    strategy.init()
+    strategy.eventAllPageHandler()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     xiaoshuoEvents.bindAll()
@@ -135,6 +135,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.header.hide()
     })
 
+    strategy.eventRootHandler()
     xiaoshuoEvents.bindRoot()
   }
 
