@@ -9,9 +9,6 @@ import state from './state'
 let event = window.MIP.util.event
 
 class XiaoshuoEvents {
-  // constructor (config) {
-  // }
-
   // 每次搜索点出，同步刷新调用
   bindRoot () {
     /**
