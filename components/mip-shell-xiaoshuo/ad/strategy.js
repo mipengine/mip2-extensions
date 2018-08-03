@@ -142,5 +142,18 @@ export default class Strategy {
       this.pageAd = true
       this.strategyStatic()
     })
+
+    /**
+     * 监听mip-custom ready状态：此情况为了兼容如果小说shell优先加载custom无法监听请求事件的问题
+     *
+     * @method
+     * @param {module:constant-config~event:customReady} e - A event.
+     * @listens module:constant-config~event:customReady
+     */
+    window.addEventListener('customReady', e => {
+      if (this.pageAd && this.novelData && window.MIP.viewer.page.isRootPage) {
+        this.strategyStatic()
+      }
+    })
   }
 }
