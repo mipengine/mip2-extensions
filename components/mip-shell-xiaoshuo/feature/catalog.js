@@ -103,6 +103,8 @@ class Catalog {
       $catalogBook.style.display = 'block'
     } else {
       $scroll.style.top = '62px'
+      $catalog.style.height = 'calc(100% - 62px)'
+      $catalog.style.height = '-webkit-calc(100% - 62px)'
     }
 
     let catalogScroll = {
@@ -114,7 +116,7 @@ class Catalog {
       wrapper: $wrapper,
       catalogContent: $catalogContent
     }
-    // 自定义滚动条，滑目录内容，右边滚动条到相应位置，这里需要监听scroll完成事件，用settimeout异步队列模拟，解决兼容问题
+    // 自定义滚动条，滑目录内容，右边滚动条到相应位置， 这里需要监听scroll完成事件，用settimeout异步队列模拟，解决兼容问题
     this.catalogScroll(catalogScroll)
     //  实现滚动条拖拽函数，拖动滚动条，左边滑到相应位置
     this.catalogDrag(catalogScroll)
@@ -139,19 +141,6 @@ class Catalog {
   moveTranslateY ($catalogScroll, scrollTop) {
     $catalogScroll.style.transform = 'translateY( ' + scrollTop + 'px)'
     $catalogScroll.style.WebkitTransform = 'translateY( ' + scrollTop + 'px)'
-  }
-  /**
-   * 函数说明：阻止事件冒泡
-   * @param  {object} e 事件源
-   */
-  forbidBubbling (e) {
-    e.stopPropagation()
-    window.event ? window.event.returnValue = false : e.preventDefault()
-    if (e && e.stopPropagation) {
-      e.stopPropagation()
-    } else {
-      window.event.cancelBubble = true
-    }
   }
   /**
    * 函数说明：自定义滚动条，滑目录内容，右边滚动条到相应位置，这里需要监听scroll完成事件，用settimeout异步队列模拟，解决兼容问题
@@ -201,7 +190,8 @@ class Catalog {
       e.stopPropagation()
       $catalogScroll.style.opacity = 0
     })
-    $catalogContent.addEventListener('touchend', () => {
+    $catalogContent.addEventListener('touchend', (e) => {
+      e.stopPropagation(e)
       let contentTop = rect.getElementOffset($catalogContent).top // 目录页距离顶部高度
       let contentHeight = rect.getElementOffset($contentTop).height // 章节以上元素的高度
       let isTouchEndOver = Math.abs(scrollNow) - Math.abs(contentTop - contentHeight)
@@ -214,7 +204,8 @@ class Catalog {
       $catalogScroll.style.opacity = 0
       scrollNow = (rect.getElementOffset($catalogContent).top - rect.getElementOffset($contentTop).height)
     })
-    $wrapper.addEventListener('scroll', () => {
+    $wrapper.addEventListener('scroll', (e) => {
+      e.stopPropagation()
       let contentTop = rect.getElementOffset($catalogContent).top
       let contentHeight = rect.getElementOffset($contentTop).height
       scrollToEnd(1, contentTop, contentHeight)
@@ -242,8 +233,6 @@ class Catalog {
     let contentHeight
     let that = this
     $catalogScroll.parentNode.addEventListener('touchstart', (e) => {
-      // 阻止事件冒泡
-      this.forbidBubbling(e)
       $catalogScroll.style.transition = 'all ease 0'
       $catalogScroll.style.webkitTransition = 'all ease 0'
       // 解决浏览器中出现顶部bar出现或消失时页面高度变化导致高度计算不对问题
@@ -294,7 +283,7 @@ class Catalog {
       let Temp = []
       for (let i = 0; i < catalog.length; i++) {
         Temp[i] = catalog[i].innerHTML
-      };
+      }
       for (let i = 0; i < Temp.length; i++) {
         catalog[i].innerHTML = Temp[Temp.length - 1 - i]
       }
@@ -308,6 +297,13 @@ class Catalog {
     this.$catalogSidebar.classList.add('show')
     shellElement.toggleDOM(shellElement.$buttonMask, true)
     this.$catalogSidebar.querySelector('.catalog-scroll').style.opacity = 1
+    // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
+    let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
+    let catalog = [...$catalogContent.querySelectorAll('div')]
+    for (let i = 0; i < catalog.length; i++) {
+      catalog[i].innerHTML = catalog[i].innerHTML
+    }
+
     // }, 400)
   }
   // 隐藏侧边目录
@@ -323,7 +319,6 @@ class Catalog {
     // sidebar 绑定一次停止冒泡事件, 防止滚到底部后外层小说内容继续滚动
     this.$catalogSidebar.addEventListener('scroll', (e) => {
       e && e.stopPropagation()
-      e && e.preventDefault()
       return false
     })
     return true
