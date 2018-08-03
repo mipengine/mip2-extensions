@@ -152,7 +152,7 @@ export default class Strategy {
      */
     window.addEventListener('customReady', e => {
       let customPageId = e && e.detail && e.detail[0] && e.detail[0].customPageId
-      if (this.pageAd && this.novelData && customPageId === window.MIP.viewer.page.currentPageId) {
+      if (this.pageAd && this.novelData && customPageId === window.MIP.viewer.page.pageId) {
         this.strategyStatic()
       }
     })
