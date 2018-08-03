@@ -15,18 +15,8 @@ export default class Strategy {
     this.adCustomReady = false
     this.fromSearch = 0
     this.novelData = {}
+    this.shellReady = false
   }
-
-  /**
-   * 初始化事件监听.
-   */
-  init () {
-    // TODO: 用于后期需要异步获取策略
-    // this.asyncUpdataStrategy()
-    // 监听阅读器的所有行为
-    this.eventHandler()
-  }
-
   /**
    * 根据当前的页面状态获取相关的广告策略
    */
@@ -91,9 +81,9 @@ export default class Strategy {
   }
 
   /**
-   * 所有root事件的处理.
+   * 所有page事件的处理.
    */
-  eventHandler () {
+  eventAllPageHandler () {
     /**
      * 监听上一页按钮被点击事件'PREVIOUS_PAGE'
      *
@@ -140,9 +130,16 @@ export default class Strategy {
     window.addEventListener(Constant.CURRENT_PAGE_READY, e => {
       this.novelData = e && e.detail && e.detail[0] && e.detail[0].novelData
       this.pageAd = true
-      this.strategyStatic()
+      if (window.MIP.viewer.page.isRootPage) {
+        this.strategyStatic()
+      }
     })
+  }
 
+  /**
+   * 所有root事件的处理.
+   */
+  eventRootHandler () {
     /**
      * 监听mip-custom ready状态：此情况为了兼容如果小说shell优先加载custom无法监听请求事件的问题
      *
@@ -151,7 +148,8 @@ export default class Strategy {
      * @listens module:constant-config~event:customReady
      */
     window.addEventListener('customReady', e => {
-      if (this.pageAd && this.novelData && window.MIP.viewer.page.isRootPage) {
+      if (this.pageAd && this.novelData) {
+        this.adCustomReady = true
         this.strategyStatic()
       }
     })
