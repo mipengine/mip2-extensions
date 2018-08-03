@@ -20,7 +20,7 @@ export default class Strategy {
   /**
    * 根据当前的页面状态获取相关的广告策略
    */
-  strategyStatic (a) {
+  strategyStatic () {
     // 修改出广告的策略
     this.changeStrategy()
     const {rootPageId, currentPage} = state
@@ -46,7 +46,6 @@ export default class Strategy {
         name: 'showAdvertising',
         data
       })
-      console.log(a)
     }
   }
 
@@ -132,7 +131,7 @@ export default class Strategy {
       this.novelData = e && e.detail && e.detail[0] && e.detail[0].novelData
       this.pageAd = true
       if (window.MIP.viewer.page.isRootPage) {
-        this.strategyStatic('root')
+        this.strategyStatic()
       }
     })
   }
@@ -151,7 +150,7 @@ export default class Strategy {
     window.addEventListener('customReady', e => {
       if (this.pageAd && this.novelData) {
         this.adCustomReady = true
-        this.strategyStatic('page')
+        this.strategyStatic()
       }
     })
   }
