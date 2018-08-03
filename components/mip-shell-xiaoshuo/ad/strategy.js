@@ -151,8 +151,7 @@ export default class Strategy {
      * @listens module:constant-config~event:customReady
      */
     window.addEventListener('customReady', e => {
-      let customPageId = e && e.detail && e.detail[0] && e.detail[0].customPageId
-      if (this.pageAd && this.novelData && customPageId === window.MIP.viewer.page.pageId) {
+      if (this.pageAd && this.novelData && window.MIP.viewer.page.isRootPage) {
         this.strategyStatic()
       }
     })

@@ -437,8 +437,8 @@ export default {
      * 按下控制点，准备滑动
      *
      * @param {Object} e 事件对象
-     * @param {Number} index 控制点下标
-     * @param {Boolean} isProcess 触控的是否为进度条
+     * @param {number} index 控制点下标
+     * @param {boolean} isProcess 触控的是否为进度条
      */
     dragStart (e, index = 0, isProcess) {
       let { canMove, setTransitionTime, disabled, fixRange, isSingle, position, getPos } = this
@@ -521,7 +521,7 @@ export default {
     /**
      * 设置控制柄最终位置
      *
-     * @param {Number} paramSpeed 速度
+     * @param {number} paramSpeed 速度
      */
     setPosition (paramSpeed) {
       let { canMove, position, currentSlider, setTransform, setTransitionTime } = this
@@ -535,8 +535,8 @@ export default {
     /**
      * 设置控制柄的位置
      *
-     * @param {Number} pos 点坐标
-     * @param {Boolean} isDrag 是否拖拽了进度bar
+     * @param {number} pos 点坐标
+     * @param {boolean} isDrag 是否拖拽了进度bar
      */
     setValueOnPos (pos, isDrag) {
       let { limit, currentSlider, gap, valueLimit, setTransform, getValueByIndex, setCurrentValue } = this
@@ -582,7 +582,7 @@ export default {
      * 计算当前控制柄距离起点的距离
      *
      * @param {Object} e 事件对象
-     * @returns {Number} 像素值
+     * @returns {number} 像素值
      */
     getPos (e) {
       let {isVertical, size, offset, bodyTop} = this
@@ -617,9 +617,9 @@ export default {
     /**
      * 设置当前数值
      *
-     * @param {Number} val 数值
-     * @param {Boolean} bool 数值
-     * @param {Boolean} isAnotherSlider 是不是正在闲着的控制柄
+     * @param {number} val 数值
+     * @param {boolean} bool 数值
+     * @param {boolean} isAnotherSlider 是不是正在闲着的控制柄
      */
     setCurrentValue (val, bool, isAnotherSlider) {
       let { min, max, anotherSlider, currentSlider } = this
@@ -636,8 +636,8 @@ export default {
     /**
      * 计算当前控制点的值
      *
-     * @param {Number} index 分段刻度值
-     * @returns {Number} 当前数值
+     * @param {number} index 分段刻度值
+     * @returns {number} 当前数值
      */
     getValueByIndex (index) {
       let { step, multiple, min } = this
@@ -648,7 +648,7 @@ export default {
      * 设置值
      *
      * @param {Array} ran 选中的范围
-     * @param {Number} speed 初始样式缓动时间
+     * @param {number} speed 初始样式缓动时间
      */
     setValue (ran, speed) {
       let { limitValue, setPosition, $nextTick } = this
@@ -661,8 +661,8 @@ export default {
     /**
      * 设置控制柄、进度bar位置
      *
-     * @param {Number} val 设置位置的数值
-     * @param {Boolean} isAnotherSlider 是否为被拖拽的控制柄
+     * @param {number} val 设置位置的数值
+     * @param {boolean} isAnotherSlider 是否为被拖拽的控制柄
      */
     setTransform (val, isAnotherSlider) {
       let { anotherSlider, currentSlider, dotSize, isVertical, position, slider } = this
@@ -695,7 +695,7 @@ export default {
     /**
      * 设置 控制柄、进度bar的缓动
      *
-     * @param {Number} time 时间
+     * @param {number} time 时间
      */
     setTransitionTime (time) {
       let process = this.$refs.process
