@@ -152,7 +152,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     this.footer = new Footer(configMeta.footer)
     this.footer.updateDom(util.getJsonld())
     // 创建目录侧边栏
-    this.catalog = new Catalog(configMeta.catalog)
+    this.catalog = new Catalog(configMeta.catalog, configMeta.book)
     this.header = new Header(this.$el)
     // 创建字体调整事件
     this.fontSize = new FontSize()

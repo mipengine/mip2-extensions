@@ -120,9 +120,9 @@
 mip-fixed.mip-shell-catalog-wrapper {
   z-index: 20002 !important;
   bottom: 0;
-  overflow: scroll;
+  overflow: hidden;
   -webkit-overflow-scrolling: touch;
-  width: 70%;
+  width: 90%;
   min-width: 200px;
   height: 100%;
   background: white;
@@ -135,16 +135,183 @@ mip-fixed.mip-shell-catalog-wrapper {
   }
 
   .mip-shell-catalog {
-    padding: 20px 0;
+    height:calc(100% - 10em);
+    padding: 0 0;
+    position: relative;
+    top:0;
+    bottom:20px;
+    padding-right: 10px;
+    box-sizing: content-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .novel-catalog-content-wrapper{
+    position:absolute; 
+    top:0;
+    width:100%; 
+    height:100%;
+    padding-right: 5px;
+    box-sizing: content-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-right: -5px;
+  }
+  /* 自己的滚动条设置不可见 */
+  .novel-catalog-content-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+    novel-catalog-content::-webkit-scrollbar{
+    display: none
+  }
+
+
+  .mip-noval-info{
+    display:block
+  }
+  .catalog-reserve{
+    color:#555555;
+    z-index:9999;
+    font-size:16px;
+  }
+
+  .reverse-infor{
+    font-size:14px;
+    height:14px;
+    line-height:14px;
+  }
+  .reverse-name{
+    font-size:16px;
+    line-height:14px;
+    letter-spacing:2px;
   }
 
   .mip-catalog-btn {
-    display: block;
-    padding: 0px 20px;
-    line-height: 2.9
+    top:0;   
+    padding: 15px 16px;
   }
 
+  .book-catalog-info{
+    width:100%;
+    padding-top:0;
+    padding-bottom:0
+  }
+  .book-catalog-info-header{
+    display:flex;
+    flex-direction:column;
+    font-size:16px
+  }
+  .book-catalog-info-title{
+    display: none;
+    padding-top:1.25em;
+  }
+  .book-catalog-title-name{
+    font-size:19px;
+    line-height:19px;
+    margin-bottom: 0;
+  }
+  .catalog-content-total{
+    font-size:1em;
+    font-family: PingFangSC-Regular;
+    color: #999999;
+    letter-spacing: 0;
+    text-align: justify;
+    font-size: 14px;
+    line-height: 16px;
+    color: #999999;
+    letter-spacing: 0;
+    text-align: justify;
+    margin-bottom: 0;
+  }
+  .catalog-content-total-wrapper{
+    padding-top: 0.625em;
+  }
+  .catalog-content-center-left{
+    flex-grow:1; 
+    font-family: PingFangSC-Regular;
+    font-size:16px;
+    color: #000000;
+    line-height:16px;
+    opacity: 0.88;
+  }
+  .catalog-content-center-left{
+    flex-grow:1
+  }
+  .catalog-content-center-wrapper{
+    display:flex;
+    display: -webkit-flex;
+    flex-grow:100%;
+    padding:1.875em 0 0.9375em;
+    font-size: 1em;
+    line-height: 1em;
+  }
+  .catalog-page{
+    line-height:16px;
+    font-size:16px;
+  }
+
+  .catalog-page-content{
+    line-height:16px;
+    font-size:16px;
+  }
+  .width-50{
+  flex-grow:1;
+    width: 50%;
+    display: inline-block;
+  }
+  .text-left{
+    text-align:left;
+  }
+  .text-right{
+    text-align:right;
+  }
+  .scroll{
+    position:absolute;
+    top:133px;
+    right:0;
+    z-index:8888;
+  }
+  .catalog-scroll{
+    display:block!important;
+    position: absolute;
+    width: 1.54em;
+    height: 2.25em;
+    right: 20px;
+    top: 0;
+    background-color: #F5F5F5;
+    border-radius: 100px;
+    transition: opacity 120ms;
+    -webkit-transition: opacity 120ms;
+  }
+
+
 }
+
+
+#catalog-scroll-btn {
+  width: 1.54em;
+  height: 2.25em;
+  background-color: #F5F5F5;
+  border-radius: 2em;
+
+}
+.scroll-btn{
+  width: 0.75em;
+  height: 0.125em;
+  background: #C1C1C1;
+  position: absolute;
+  display : inline-block;
+  top:0.75em;
+  left: 0.376em;
+  text-align: center;
+}
+.scroll-btn:nth-child(2){
+  top: 1.06em;
+}
+.scroll-btn:nth-child(3){
+  top:1.375em;
+}
+
+
 
 /*原小说shell*/
 
