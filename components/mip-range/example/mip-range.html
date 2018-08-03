@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <script src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/3.0.0/vconsole.min.js"></script>
+  <script>
+    // var vConsole = new VConsole();
+  </script>
+  <style mip-custom>
+    /* 自定义样式 */
+
+    body {
+      padding: 20px;
+    }
+
+    mip-range.her {
+      height: 50px;
+      margin-top: 40px;
+    }
+
+    mip-range.ver {
+      width: 50px;
+      margin: 30px auto;
+    }
+
+    ul li {
+      list-style: none;
+      padding: 20px 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+    }
+
+    button{
+      padding: 8px 12px;
+      display: inline-block;
+      border: none;
+      background-color: #ccc;
+      border-radius: 3px;
+      margin: 5px 10px 5px 0;
+    }
+
+    pre{
+      overflow: auto;
+      padding: 10px;
+      background: #f1f1f1;
+    }
+
+    /* QA的IOS7 pre滑动无法冒泡，整个页面就无法滑动 只能干掉了 */
+    @media only screen and (max-width: 320px) {
+      pre {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <ul>
+    <li>
+      <p> 单值、横向、上方显示、范围0-200、 步长1、预设值60、拖动显示tip </p>
+      <mip-range class="her" id="slider1" on="dragging:test.changeSpacing dragStart:test.changeSpacing">
+        <script type="application/json">
+          {
+            range: 60,
+            height: 6,
+            dotSize: 16,
+            min: 0,
+            max: 200,
+            step: 1,
+            tipShow: "dragging",
+            tipFormat: "价格：{{tip}}元"
+          }
+        </script>
+      </mip-range>
+      <button on="click:slider1.setVal([130])">设置值为130</button>
+      <button on="click:slider1.valReduce(5)">减小5</button>
+      <button on="click:slider1.valIncrease(5)">增加5</button>
+      <p>代码：</p>
+      <div>
+        <code>
+          <pre>
+&lt;mip-range class=&quot;her&quot; id=&quot;slider1&quot; on=&quot;dragging:test.changeSpacing dragStart:test.changeSpacing&quot;&gt;
+  &lt;script type=&quot;application/json&quot;&gt;
+    {
+      range: 60,
+      height: 6,
+      dotSize: 16,
+      min: 0,
+      max: 200,
+      step: 1,
+      tipShow: &quot;change&quot;,
+      tipFormat: &quot;价格：{{tip}}元&quot;
+    }
+  &lt;/script&gt;
+&lt;/mip-range&gt;
+&lt;button on=&quot;click:slider1.setVal([130])&quot;&gt;设置值为130&lt;/button&gt;
+&lt;button on=&quot;click:slider1.valReduce(5)&quot;&gt;减小5&lt;/button&gt;
+&lt;button on=&quot;click:slider1.valIncrease(5)&quot;&gt;增加5&lt;/button&gt;
+          </pre>
+        </code>
+      </div>
+    </li>
+
+    <li>
+      <p> 范围值、横向、下方显示、范围0-100、 步长1、预设20-60</p>
+      <mip-range class="her" id="slider2">
+        <script type="application/json">
+          {
+            range: [20, 60],
+            height: 6,
+            dotSize: 16,
+            min: 0,
+            max: 100,
+            step: 5,
+            tipDir: "bottom"
+          }
+        </script>
+      </mip-range>
+      <button on="click:slider2.setVal([10,80])">设置值为10-80</button>
+      <p>
+        <code>
+          <pre>
+&lt;mip-range class=&quot;her&quot; id=&quot;slider2&quot;&gt;
+  &lt;script type=&quot;application/json&quot;&gt;
+    {
+      range: [20, 60],
+      height: 6,
+      dotSize: 16,
+      min: 0,
+      max: 100,
+      step: 5,
+      tipDir: &quot;bottom&quot;
+    }
+  &lt;/script&gt;
+&lt;/mip-range&gt;
+&lt;button on=&quot;click:slider2.setVal([10,80])&quot;&gt;设置值为10-80&lt;/button&gt;
+          </pre>
+        </code>
+      </p>
+    </li>
+
+    <li>
+      <p>范围值、纵向、左方显示、范围0-100、步长3、预设20-80、自定义颜色</p>
+      <mip-range class="ver">
+        <script type="application/json">
+          {
+            range: [20, 80],
+            width: 6,
+            height: 300,
+            dotSize: 24,
+            direction: "vertical",
+            min: 0,
+            max: 100,
+            step: 3,
+            dotStyle: {
+              "background": "url('https://cambrian-images.cdn.bcebos.com/580ce3eeaa75ee03a916db594e47ae4e_1516170693203.jpeg') center center no-repeat",
+              "background-size": "100%"
+            },
+            barStyle: {
+              "background": "#f3f3f3",
+              "box-shadow": "inset 0 1px 2px rgba(0,0,0,.1)"
+            },
+            processStyle: {
+              "background-image": "-webkit-linear-gradient(top, rgb(240, 91, 114), rgb(52, 152, 219))"
+            }
+          }
+        </script>
+      </mip-range>
+      <p>代码：</p>
+      <code>
+        <pre>
+&lt;mip-range class=&quot;ver&quot;&gt;
+  &lt;script type=&quot;application/json&quot;&gt;
+    {
+      range: [20, 80],
+      width: 6,
+      height: 300,
+      dotSize: 24,
+      direction: &quot;vertical&quot;,
+      min: 0,
+      max: 100,
+      step: 3,
+      dotStyle: {
+        &quot;background&quot;: &quot;url(&#x27;https://cambrian-images.cdn.bcebos.com/580ce3eeaa75ee03a916db594e47ae4e_1516170693203.jpeg&#x27;) center center no-repeat&quot;,
+        &quot;background-size&quot;: &quot;100%&quot;
+      },
+      barStyle: {
+        &quot;background&quot;: &quot;#f3f3f3&quot;,
+        &quot;box-shadow&quot;: &quot;inset 0 1px 2px rgba(0,0,0,.1)&quot;
+      },
+      processStyle: {
+        &quot;background-image&quot;: &quot;-webkit-linear-gradient(top, rgb(240, 91, 114), rgb(52, 152, 219))&quot;
+      }
+    }
+  &lt;/script&gt;
+&lt;/mip-range&gt;
+        </pre>
+      </code>
+    </li>
+  </ul>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-range/mip-range.js"></script>
+</body>
+
+</html>
