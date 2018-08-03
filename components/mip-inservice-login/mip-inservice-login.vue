@@ -108,6 +108,7 @@ export default {
           window.cambrian.addListener('xzh-open-log', e => {
             util.log({
               action: e.action,
+              ext: e.ext,
               xzhid: self.config.appid
             })
           })
@@ -151,26 +152,36 @@ export default {
     checkConfig () {
       let config = this.config
       let hasError = false
+      let code = 0
 
       if (!config.clientId) {
+        code = 1
         this.error('组件必选属性 clientId 为空')
         hasError = true
       }
       if (!config.endpoint) {
+        code = 2
         this.error('组件必选属性 endpoint 为空')
         hasError = true
       } else if (!/^(https:)?\/\//.test(config.endpoint)) {
+        code = 3
         this.error('组件必选属性 endpoint 必须以 https:// 或者 // 开头')
         hasError = true
       }
 
       // 如果有 mip-bind 则必须有组件id -- 之后补充
       if (typeof MIP.setData === 'function' && !config.id) {
+        code = 4
         this.error('和 mip-bind 配合使用必须设置登录组件 id')
         hasError = true
       }
 
       if (hasError) {
+        util.log({
+          action: 'login_init_error',
+          ext: { code },
+          xzhid: this.config.appid
+        })
         throw new TypeError('[mip-inservice-login] 组件参数检查失败')
       }
     },
@@ -191,6 +202,12 @@ export default {
      * @returns {undefined} 结果
      */
     login (redirectUri, origin = '', replace = false) {
+      util.log({
+        action: 'invoke_login',
+        ext: { isLogin: this.isLogin ? 1 : 0 },
+        xzhid: this.config.appid
+      })
+
       // 当前页面的url
       let url = redirectUri || this.config.redirectUri
 
@@ -262,6 +279,11 @@ export default {
      */
     logout () {
       let self = this
+
+      util.log({
+        action: 'invoke_logout',
+        xzhid: self.config.appid
+      })
 
       if (!self.isLogin) {
         return
@@ -373,9 +395,18 @@ export default {
             })
             self.loginHandle('login', true, res.data, origin)
           } else {
+            util.log({
+              action: 'login_error',
+              ext: { code: res.status },
+              xzhid: self.config.appid
+            })
             throw new Error('登录失败', res)
           }
         } else if (res.status === 0 && res.data) {
+          util.log({
+            action: 'login_check_success',
+            xzhid: self.config.appid
+          })
           self.loginHandle('login', true, res.data, origin)
         }
 
@@ -383,10 +414,6 @@ export default {
         self.setData()
       }).catch(err => {
         if (data.type === 'login') {
-          util.log({
-            action: 'login_error',
-            xzhid: self.config.appid
-          })
           this.loginHandle('error', false)
           throw err
         }
