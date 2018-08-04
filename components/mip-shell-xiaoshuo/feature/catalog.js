@@ -135,8 +135,9 @@ class Catalog {
   }
   /**
    * 函数说明：解决translateY的兼容问题，多次用到，封装函数
-   * @param  {object} $catalogScroll 滚动条
-   * @param  {object} scrollTop 滚动多高
+   *
+   * @param  {Object} $catalogScroll 滚动条
+   * @param  {Object} scrollTop 滚动多高
    */
   moveTranslateY ($catalogScroll, scrollTop) {
     $catalogScroll.style.transform = 'translateY( ' + scrollTop + 'px)'
@@ -165,9 +166,10 @@ class Catalog {
     let $catalogContent = catalogScroll.catalogContent
     /**
      * 滑动截止时候让滚动条滚到相应位置
-     * @param  {Number} 透明度
-     * @param  {object} 目录页距离顶部高度
-     * @param  {object} 章节以上元素的高度
+     *
+     * @param  {number} 透明度
+     * @param  {Object} 目录页距离顶部高度
+     * @param  {Object} 章节以上元素的高度
      */
     let scrollToEnd = (opacityNum, Top, Height) => {
       clearTimeout(setTime)
@@ -213,13 +215,14 @@ class Catalog {
   }
   /**
    * 函数说明：实现滚动条拖拽函数，拖动滚动条，左边滑到相应位置
-   * @param  {object} $catalogSidebar  整个目录页
-   * @param  {object} $catalog         目录页章节
-   * @param  {object} $catalogScroll   滚动条
-   * @param  {object} $catalogButton   滚动条按钮
-   * @param  {object} $contentTop      目录页章节滚动高度
-   * @param  {object} $wrapper         章节内容最外边元素
-   * @param  {object} $catalogContent  目录页内容
+   *
+   * @param  {Object} $catalogSidebar  整个目录页
+   * @param  {Object} $catalog         目录页章节
+   * @param  {Object} $catalogScroll   滚动条
+   * @param  {Object} $catalogButton   滚动条按钮
+   * @param  {Object} $contentTop      目录页章节滚动高度
+   * @param  {Object} $wrapper         章节内容最外边元素
+   * @param  {Object} $catalogContent  目录页内容
    */
   catalogDrag (catalogScroll) {
     let $catalog = catalogScroll.catalog
@@ -267,8 +270,9 @@ class Catalog {
   }
   /**
    * 函数说明：实现倒序，点击倒序，目录顺序倒序，倒序字边正序
-   * @param  {object} $contentTop      目录页章节滚动高度
-   * @param  {object} $catalogContent  目录页章节高度
+   *
+   * @param  {Object} $contentTop      目录页章节滚动高度
+   * @param  {Object} $catalogContent  目录页章节高度
    */
   reverse ($contentTop, $catalogContent) {
     let reverse = $contentTop.querySelector('.catalog-reserve')

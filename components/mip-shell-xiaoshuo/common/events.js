@@ -36,19 +36,10 @@ class XiaoshuoEvents {
 
   // 每次翻页/页面刷新时都会触发
   bindAll () {
-    let {isRootPage, isLastPage, currentPage, chapterName} = state
-    let novelData = {
-      isLastPage: isLastPage(),
-      chapter: currentPage().chapter,
-      page: currentPage().page,
-      chapterName: chapterName()
-    }
+    let {isRootPage} = state(window)
     // 抛出“当前页ready,状态可获取”事件给阅读器
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
-      name: Constant.CURRENT_PAGE_READY,
-      data: {
-        novelData
-      }
+      name: Constant.CURRENT_PAGE_READY
     })
   }
 }

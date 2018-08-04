@@ -17,7 +17,7 @@ import {
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import util from './common/util'
+import getJsonld from './common/util'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
@@ -105,7 +105,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
-      let jsonld = util.getJsonld()
+      let jsonld = getJsonld(window)
       window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
         name: 'updateShellFooter',
         data: {
@@ -163,7 +163,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
-    this.footer.updateDom(util.getJsonld())
+    this.footer.updateDom(getJsonld(window))
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog, configMeta.book)
     this.header = new Header(this.$el)
