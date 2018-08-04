@@ -22,31 +22,44 @@ export default class Strategy {
    */
   strategyStatic () {
     // 修改出广告的策略
+    let currentWindow = this.getCurrentWindow()
+    const {isLastPage, currentPage, chapterName, rootPageId} = state(currentWindow)
+    let novelData = {
+      isLastPage: isLastPage,
+      chapter: currentPage.chapter,
+      page: currentPage.page,
+      chapterName: chapterName
+    }
     this.changeStrategy()
-    const {rootPageId, currentPage} = state
     // 全局的广告
     if (this.globalAd) {
       window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
         name: 'showAdvertising',
         data: {
-          customId: rootPageId()
+          customId: rootPageId
         }
       })
     }
     // 页内的广告
     if (this.pageAd) {
       let data = {
-        customId: currentPage().id
+        customId: currentPage.id
       }
       if (this.fromSearch === 1) {
         Object.assign(data, {fromSearch: this.fromSearch})
       }
-      Object.assign(data, {novelData: this.novelData})
+      Object.assign(data, {novelData})
       window.MIP.viewer.page.broadcastCustomEvent({
         name: 'showAdvertising',
         data
       })
     }
+  }
+
+  getCurrentWindow () {
+    let pageId = window.MIP.viewer.page.currentPageId
+    let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+    return pageInfo.targetWindow
   }
 
   /**
@@ -55,17 +68,18 @@ export default class Strategy {
    * @returns {Object} 修改出广告的策略
    */
   changeStrategy () {
-    const {isLastPage, isRootPage, nextPage} = state
-    if (isRootPage()) {
+    let currentWindow = this.getCurrentWindow()
+    const {isLastPage, isRootPage, nextPage} = state(currentWindow)
+    if (isRootPage) {
       this.fromSearch = 1
     } else {
       this.fromSearch = 0
     }
-    if (isLastPage()) {
+    if (isLastPage) {
       this.pageAd = true
     }
     // 品专第二页广告
-    if (+nextPage().page === 2) {
+    if (+nextPage.page === 2) {
       this.globalAd = true
     }
   }
@@ -107,20 +121,6 @@ export default class Strategy {
     })
 
     /**
-     * 定制化MIP组件可用事件'MIP_CUSTOM_ELEMENT_READY'
-     *
-     * @method
-     * @param {module:constant-config~event:MIP_CUSTOM_ELEMENT_READY} e - A event.
-     * @listens module:constant-config~event:MIP_CUSTOM_ELEMENT_READY
-     */
-    window.addEventListener(Constant.MIP_CUSTOM_ELEMENT_READY, e => {
-      let customId = e && e.detail && e.detail[0] && e.detail[0].customId
-      if (state.currentPage().id === customId) {
-        this.adCustomReady = true
-      }
-    })
-
-    /**
      * 当前页ready,状态可获取'CURRENT_PAGE_READY'
      *
      * @method
@@ -128,7 +128,6 @@ export default class Strategy {
      * @listens module:constant-config~event:CURRENT_PAGE_READY
      */
     window.addEventListener(Constant.CURRENT_PAGE_READY, e => {
-      this.novelData = e && e.detail && e.detail[0] && e.detail[0].novelData
       this.pageAd = true
       if (window.MIP.viewer.page.isRootPage) {
         this.strategyStatic()
@@ -148,7 +147,7 @@ export default class Strategy {
      * @listens module:constant-config~event:customReady
      */
     window.addEventListener('customReady', e => {
-      if (this.pageAd && this.novelData) {
+      if (this.pageAd) {
         this.adCustomReady = true
         this.strategyStatic()
       }
