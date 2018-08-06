@@ -1,15 +1,11 @@
 <template>
   <div
-    v-if="show"
-    class="wrapper">
+    v-if="show">
     <slot/>
   </div>
 </template>
 
 <style scoped>
-.wrapper {
-
-}
 </style>
 
 <script>
@@ -28,13 +24,10 @@ export default {
   created () {
     let isOS = false
     let osUA = navigator.userAgent.toLowerCase()
-    switch (this.os) {
-      case 'android':
-        isOS = osUA.indexOf('android') > -1
-        break
-      case 'ios':
-        isOS = !!osUA.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/i)
-        break
+    if (this.os === 'android') {
+      isOS = osUA.indexOf('android') > -1
+    } else if (this.os === 'ios') {
+      isOS = !!osUA.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/i)
     }
     this.show = isOS
   }
