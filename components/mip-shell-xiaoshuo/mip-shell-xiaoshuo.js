@@ -10,11 +10,14 @@ import './mip-shell-xiaoshuo.less'
 import Catalog from './feature/catalog' // 侧边栏目录
 import Footer from './feature/footer' // 底部控制栏
 import Header from './feature/header' // shell导航头部
-import {PageStyle, FontSize} from './feature/setting' // 背景色调整，字体大小调整
+import {
+  PageStyle,
+  FontSize
+} from './feature/setting' // 背景色调整，字体大小调整
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import util from './common/util'
+import getJsonld from './common/util'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
@@ -53,7 +56,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 功能绑定：背景色切换 使用 on="tap:xiaoshuo-shell.changeMode"调用
     this.addEventAction('changeMode', function (e, theme) {
       window.MIP.viewer.page.broadcastCustomEvent({
-        name: 'changePageStyle', data: {theme: theme}
+        name: 'changePageStyle',
+        data: {
+          theme: theme
+        }
       })
     })
 
@@ -73,10 +79,14 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     window.addEventListener('changePageStyle', (e, data) => {
       if (e.detail[0] && e.detail[0].theme) {
         // 修改主题
-        this.pageStyle.update(e, {theme: e.detail[0].theme})
+        this.pageStyle.update(e, {
+          theme: e.detail[0].theme
+        })
       } else if (e.detail[0] && e.detail[0].fontSize) {
         // 修改字号
-        this.pageStyle.update(e, {fontSize: e.detail[0].fontSize})
+        this.pageStyle.update(e, {
+          fontSize: e.detail[0].fontSize
+        })
       } else {
         // 初始化，从缓存中获取主题和字号apply到页面
         this.pageStyle.update(e)
@@ -88,17 +98,19 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       name: 'changePageStyle'
     })
 
-    strategy.init()
+    strategy.eventAllPageHandler()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     xiaoshuoEvents.bindAll()
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
-      let jsonld = util.getJsonld()
+      let jsonld = getJsonld(window)
       window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
         name: 'updateShellFooter',
-        data: {'jsonld': jsonld}
+        data: {
+          'jsonld': jsonld
+        }
       })
     }
   }
@@ -123,6 +135,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.header.hide()
     })
 
+    strategy.eventRootHandler()
     xiaoshuoEvents.bindRoot()
   }
 
@@ -150,7 +163,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
-    this.footer.updateDom(util.getJsonld())
+    this.footer.updateDom(getJsonld(window))
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog, configMeta.book)
     this.header = new Header(this.$el)
@@ -226,7 +239,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
    */
   _scrollBoundary () {
     let touchStartEvent
-    let {rect, css} = MIP.util
+    let {
+      rect,
+      css
+    } = MIP.util
     // 收集body child元素 并进行包裹
     let scrollaBoundaryTouch = document.createElement('div')
     let offsetHeight
@@ -271,12 +287,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       // 到达底部时 && 并且 向上滚动操作
       let isprevent = (
         touchRect.pageY >= startTouchReact.pageY &&
-          touchRect.clientY > startTouchReact.clientY &&
-          scrollTop < 5) ||
-          (
-            touchRect.pageY < startTouchReact.pageY &&
-            scrollTop + offsetHeight >= scrollHeight
-          )
+        touchRect.clientY > startTouchReact.clientY &&
+        scrollTop < 5) ||
+        (
+          touchRect.pageY < startTouchReact.pageY &&
+          scrollTop + offsetHeight >= scrollHeight
+        )
       if (isprevent) {
         e.preventDefault()
       }
