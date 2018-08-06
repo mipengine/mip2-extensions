@@ -1,6 +1,8 @@
 <template>
-  <div class="wrapper" v-if="show">
-    <slot></slot>
+  <div
+    v-if="show"
+    class="wrapper">
+    <slot/>
   </div>
 </template>
 
@@ -18,23 +20,23 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       show: false
     }
   },
-  created() {
-    let isOS = false;
-    let osUA = navigator.userAgent.toLowerCase();
-    switch(this.os) {
-      case 'android': isOS
-        isOS = osUA.indexOf('android') > -1;
-        break;
+  created () {
+    let isOS = false
+    let osUA = navigator.userAgent.toLowerCase()
+    switch (this.os) {
+      case 'android':
+        isOS = osUA.indexOf('android') > -1
+        break
       case 'ios':
-        isOS = !!osUA.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/i);
-        break;
+        isOS = !!osUA.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/i)
+        break
     }
-    this.show = isOS;
+    this.show = isOS
   }
 }
 </script>
