@@ -74,37 +74,40 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
   }
 
   /**
-   * 底部菜单栏导航
+   * 渲染底部菜单栏状态
    */
   renderOtherParts () {
-    this.footer._render()
+    this.footer.render()
   }
 
+  /**
+   * 更新底部菜单栏状态
+   */
   updateOtherParts () {
     this.moreAction.sendLog(this.processConfig.getLocalToken())
 
     let pageMeta = this.currentPageMeta
     this.footer.initCurrentPageMeta(pageMeta)
 
-    this.footer._update()
+    this.footer.update()
   }
 
+  /**
+   * 绑定底部菜单栏事件
+   */
   bindHeaderEvents () {
     super.bindHeaderEvents()
 
-    this.footer._bind()
+    this.footer.bind()
   }
 
+  /**
+   * 解绑底部菜单栏事件
+   */
   unbindHeaderEvents () {
     super.unbindHeaderEvents()
 
-    this.footer._unbind()
-  }
-
-  bindAllEvents () {
-    super.bindAllEvents()
-
-    this.footer._bindAll()
+    this.footer.unbind()
   }
 
   /**
@@ -113,38 +116,11 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
    * @param {Object} options 源页面与目标页面选项
    */
   beforeSwitchPage (options) {
-    console.log('beforeSwitchPage options: ', options)
-    // 固定动画切换方向为前进方向
-    // options.isForward = true
-    // 固定打开新的iframe
-    // options.newPage = true
     window.MIP_SHELL_OPTION.allowTransition = false
-
-    // MIP.util.naboo.animate(ele, {
-    //   width: "90%"
-    // }, {
-    //   duration: 2000,
-    //   cb: function () {
-    //     console.log('动画结束')
-    //   }
-    // }).start()
 
     let pageMeta = options.targetPageMeta
     this.footer.initTargetPageMeta(pageMeta)
 
-    this.footer._switchPage()
-  }
-
-  afterSwitchPage (options) {
-    // 向所有页面广播页面切换事件，并给出切换前后的 pageId
-    console.log('afterSwitchPage options: ', options)
-    let {sourcePageId, targetPageId} = options
-    window.MIP.viewer.page.broadcastCustomEvent({
-      name: 'switchPageComplete',
-      data: {
-        targetPageId,
-        sourcePageId
-      }
-    })
+    this.footer.switchPage()
   }
 }
