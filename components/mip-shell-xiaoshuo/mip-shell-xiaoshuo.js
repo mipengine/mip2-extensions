@@ -77,6 +77,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
     // 承接emit & broadcast事件：所有页面修改页主题 & 字号
     window.addEventListener('changePageStyle', (e, data) => {
+      // alert('before')
       if (e.detail[0] && e.detail[0].theme) {
         // 修改主题
         this.pageStyle.update(e, {
@@ -90,6 +91,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       } else {
         // 初始化，从缓存中获取主题和字号apply到页面
         this.pageStyle.update(e)
+      }
+      document.body.classList.add('show-xiaoshuo-container')
+      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
+      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
+      if (xiaoshuoContainer) {
+        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
       }
     })
 
@@ -233,6 +240,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     shellConfig.routes.forEach(routerConfig => {
       routerConfig.meta.header.bouncy = false
     })
+  }
+
+  // 基类方法，在页面翻页时页面由于alwaysReadOnLoad为true重新刷新，因此shell的config需要重新配置
+  // matchIndex是用来标识它符合了哪个路由，根据不同的路由修改不同的配置
+  processShellConfigInLeaf (shellConfig, matchIndex) {
+    shellConfig.routes[matchIndex].meta.header.bouncy = false
   }
   /**
    * 滚动边界处理
