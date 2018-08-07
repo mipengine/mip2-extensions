@@ -7,10 +7,20 @@
  */
 
 import './mip-shell-xiaoshuo.less'
-import Catalog from './catalog' // 侧边栏目录
-import Footer from './footer' // 底部控制栏
-import Header from './header' // shell导航头部
-import {PageStyle, FontSize} from './setting' // 背景色调整，字体大小调整
+import Catalog from './feature/catalog' // 侧边栏目录
+import Footer from './feature/footer' // 底部控制栏
+import Header from './feature/header' // shell导航头部
+import {
+  PageStyle,
+  FontSize
+} from './feature/setting' // 背景色调整，字体大小调整
+
+import XiaoshuoEvents from './common/events'
+import Strategy from './ad/strategy'
+import getJsonld from './common/util'
+
+let xiaoshuoEvents = new XiaoshuoEvents()
+let strategy = new Strategy()
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -18,7 +28,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     super(...args)
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
-    // todo: 目前有重复调用问题
     this._scrollBoundary()
   }
 
@@ -47,7 +56,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 功能绑定：背景色切换 使用 on="tap:xiaoshuo-shell.changeMode"调用
     this.addEventAction('changeMode', function (e, theme) {
       window.MIP.viewer.page.broadcastCustomEvent({
-        name: 'changePageStyle', data: {theme: theme}
+        name: 'changePageStyle',
+        data: {
+          theme: theme
+        }
       })
     })
 
@@ -67,10 +79,14 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     window.addEventListener('changePageStyle', (e, data) => {
       if (e.detail[0] && e.detail[0].theme) {
         // 修改主题
-        this.pageStyle.update(e, {theme: e.detail[0].theme})
+        this.pageStyle.update(e, {
+          theme: e.detail[0].theme
+        })
       } else if (e.detail[0] && e.detail[0].fontSize) {
         // 修改字号
-        this.pageStyle.update(e, {fontSize: e.detail[0].fontSize})
+        this.pageStyle.update(e, {
+          fontSize: e.detail[0].fontSize
+        })
       } else {
         // 初始化，从缓存中获取主题和字号apply到页面
         this.pageStyle.update(e)
@@ -81,12 +97,32 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     window.MIP.viewer.page.emitCustomEvent(window, true, {
       name: 'changePageStyle'
     })
+
+    strategy.eventAllPageHandler()
+
+    // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
+    xiaoshuoEvents.bindAll()
+
+    // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
+    if (!isRootPage) {
+      let jsonld = getJsonld(window)
+      window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
+        name: 'updateShellFooter',
+        data: {
+          'jsonld': jsonld
+        }
+      })
+    }
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
   bindRootEvents () {
     super.bindRootEvents()
+    // 承接emit事件：根页面底部控制栏内容更新
+    window.addEventListener('updateShellFooter', (e) => {
+      this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
+    })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
       this.footer.show(this)
@@ -98,6 +134,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.footer.hide()
       this.header.hide()
     })
+
+    strategy.eventRootHandler()
+    xiaoshuoEvents.bindRoot()
   }
 
   // 基类root方法：初始化。用于除头部bar之外的元素
@@ -124,8 +163,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
+    this.footer.updateDom(getJsonld(window))
     // 创建目录侧边栏
-    this.catalog = new Catalog(configMeta.catalog)
+    this.catalog = new Catalog(configMeta.catalog, configMeta.book)
     this.header = new Header(this.$el)
     // 创建字体调整事件
     this.fontSize = new FontSize()
@@ -180,13 +220,16 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // }
 
   // 基类方法 非root执行：页面跳转后更新shell
-  updateOtherParts () {
-    super.updateOtherParts()
-    // 重新渲染footer
-    this.footer._render(this.currentPageMeta.footer)
-  }
+  // updateOtherParts () {
+  //   super.updateOtherParts()
+  //   // 重新渲染footer
+  //   // this.footer._render(this.currentPageMeta.footer)
+  // }
+
   // 基类方法，设置默认的shellConfig
   processShellConfig (shellConfig) {
+    MIP.mipshellXiaoshuo = this
+    this.shellConfig = shellConfig
     shellConfig.routes.forEach(routerConfig => {
       routerConfig.meta.header.bouncy = false
     })
@@ -196,7 +239,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
    */
   _scrollBoundary () {
     let touchStartEvent
-    let {rect, css} = MIP.util
+    let {
+      rect,
+      css
+    } = MIP.util
     // 收集body child元素 并进行包裹
     let scrollaBoundaryTouch = document.createElement('div')
     let offsetHeight
@@ -241,12 +287,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       // 到达底部时 && 并且 向上滚动操作
       let isprevent = (
         touchRect.pageY >= startTouchReact.pageY &&
-          touchRect.clientY > startTouchReact.clientY &&
-          scrollTop < 5) ||
-          (
-            touchRect.pageY < startTouchReact.pageY &&
-            scrollTop + offsetHeight >= scrollHeight
-          )
+        touchRect.clientY > startTouchReact.clientY &&
+        scrollTop < 5) ||
+        (
+          touchRect.pageY < startTouchReact.pageY &&
+          scrollTop + offsetHeight >= scrollHeight
+        )
       if (isprevent) {
         e.preventDefault()
       }
