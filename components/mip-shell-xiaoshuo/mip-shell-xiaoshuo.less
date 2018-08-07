@@ -581,6 +581,7 @@ html[mip-shell-xiaoshuo-font-size="6"] body p {
   font-size: 30px;
 }
 
+
 /* 换主题 */
 html {
   body,
@@ -599,6 +600,60 @@ html {
   .light-mode {
     display: none;
   }
+  .mip-shell-xiaoshuo-container {
+    visibility: hidden;
+    opacity: 0;
+  }
+  .show-xiaoshuo-container {
+    animation: showXiaoshuoContainer ease-in .2s;
+    animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards;
+  }
+  @keyframes showXiaoshuoContainer
+  {
+    from {
+      opacity: 0;
+      visibility: hidden;
+    }
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  @-moz-keyframes showXiaoshuoContainer /* Firefox */
+  {
+    from {
+      opacity: 0;
+      visibility: hidden;
+    }
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  @-webkit-keyframes showXiaoshuoContainer /* Safari and Chrome */
+  {
+    from {
+      opacity: 0;
+      visibility: hidden;
+    }
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  @-o-keyframes showXiaoshuoContainer /* Opera */
+  {
+    from {
+      opacity: 0;
+      visibility: hidden;
+    }
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
 
 }
 
@@ -620,6 +675,12 @@ html[mip-shell-xiaoshuo-theme="paper"] {
 html[mip-shell-xiaoshuo-theme="night"] {
 
   /*#mip-page-loading-wrapper shell加载中效果*/
+  #mip-page-loading-wrapper {
+    background: #191919 !important;
+    .mip-shell-header {
+      background: #191919 !important;
+    }
+  }
   #mip-page-loading-wrapper,
   .mip-page-fade-header-wrapper {
     background: #191919 !important;
