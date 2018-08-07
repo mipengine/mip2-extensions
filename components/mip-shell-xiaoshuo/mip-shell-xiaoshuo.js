@@ -77,7 +77,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
     // 承接emit & broadcast事件：所有页面修改页主题 & 字号
     window.addEventListener('changePageStyle', (e, data) => {
-      // alert('before')
       if (e.detail[0] && e.detail[0].theme) {
         // 修改主题
         this.pageStyle.update(e, {
