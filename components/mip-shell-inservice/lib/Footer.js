@@ -22,6 +22,15 @@ export default class Footer {
   }
 
   /**
+   * 初始化源页面Meta配置信息
+   *
+   * @param {Object} sourcePageMeta 源页面配置信息
+   */
+  initSourcePageMeta (sourcePageMeta) {
+    this.sourcePageMeta = sourcePageMeta
+  }
+
+  /**
    * 初始化目标页面Meta配置信息
    *
    * @param {Object} targetPageMeta 目标页面配置信息
@@ -56,7 +65,10 @@ export default class Footer {
     let shellConfig = this.shellConfig
     let { borderColor, backgroundColor } = shellConfig.footer
 
-    if (!isNaN(pageMeta.footer)) {
+    if (pageMeta.footer >= 0) {
+      if (!this.$footerWrapper.innerHTML) {
+        this.$footerWrapper.appendChild(this.$footer)
+      }
       this.$footer.style.cssText = 'border-top: 1px solid ' + borderColor + ' !important'
       this.$footer.style.backgroundColor = backgroundColor
       this.renderFooter(pageMeta, shellConfig)
@@ -158,7 +170,7 @@ export default class Footer {
    * 解绑点击事件
    */
   unbind () {
-    if (this.footEventHandler) {
+    if (typeof this.footEventHandler === 'function') {
       this.footEventHandler()
       this.footEventHandler = undefined
     }

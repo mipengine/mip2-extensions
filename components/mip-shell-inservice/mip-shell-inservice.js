@@ -116,10 +116,13 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
    * @param {Object} options 源页面与目标页面选项
    */
   beforeSwitchPage (options) {
-    window.MIP_SHELL_OPTION.allowTransition = false
-
-    let pageMeta = options.targetPageMeta
-    this.footer.initTargetPageMeta(pageMeta)
+    let sourcePageMeta = options.sourcePageMeta
+    let targetPageMeta = options.targetPageMeta
+    this.footer.initSourcePageMeta(sourcePageMeta)
+    this.footer.initTargetPageMeta(targetPageMeta)
+    if (sourcePageMeta.footer >= 0 && targetPageMeta.footer >= 0) {
+      window.MIP_SHELL_OPTION.allowTransition = false
+    }
 
     this.footer.switchPage()
   }
