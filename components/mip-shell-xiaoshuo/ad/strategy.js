@@ -15,48 +15,51 @@ export default class Strategy {
     this.adCustomReady = false
     this.fromSearch = 0
     this.novelData = {}
+    this.shellReady = false
   }
-
-  /**
-   * 初始化事件监听.
-   */
-  init () {
-    // TODO: 用于后期需要异步获取策略
-    // this.asyncUpdataStrategy()
-    // 监听阅读器的所有行为
-    this.eventHandler()
-  }
-
   /**
    * 根据当前的页面状态获取相关的广告策略
    */
   strategyStatic () {
     // 修改出广告的策略
+    let currentWindow = this.getCurrentWindow()
+    const {isLastPage, currentPage, chapterName, rootPageId} = state(currentWindow)
+    let novelData = {
+      isLastPage: isLastPage,
+      chapter: currentPage.chapter,
+      page: currentPage.page,
+      chapterName: chapterName
+    }
     this.changeStrategy()
-    const {rootPageId, currentPage} = state
     // 全局的广告
     if (this.globalAd) {
       window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
         name: 'showAdvertising',
         data: {
-          customId: rootPageId()
+          customId: rootPageId
         }
       })
     }
     // 页内的广告
     if (this.pageAd) {
       let data = {
-        customId: currentPage().id
+        customId: currentPage.id
       }
       if (this.fromSearch === 1) {
         Object.assign(data, {fromSearch: this.fromSearch})
       }
-      Object.assign(data, {novelData: this.novelData})
+      Object.assign(data, {novelData})
       window.MIP.viewer.page.broadcastCustomEvent({
         name: 'showAdvertising',
         data
       })
     }
+  }
+
+  getCurrentWindow () {
+    let pageId = window.MIP.viewer.page.currentPageId
+    let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+    return pageInfo.targetWindow
   }
 
   /**
@@ -65,17 +68,18 @@ export default class Strategy {
    * @returns {Object} 修改出广告的策略
    */
   changeStrategy () {
-    const {isLastPage, isRootPage, nextPage} = state
-    if (isRootPage()) {
+    let currentWindow = this.getCurrentWindow()
+    const {isLastPage, isRootPage, nextPage} = state(currentWindow)
+    if (isRootPage) {
       this.fromSearch = 1
     } else {
       this.fromSearch = 0
     }
-    if (isLastPage()) {
+    if (isLastPage) {
       this.pageAd = true
     }
     // 品专第二页广告
-    if (+nextPage().page === 2) {
+    if (+nextPage.page === 2) {
       this.globalAd = true
     }
   }
@@ -91,9 +95,9 @@ export default class Strategy {
   }
 
   /**
-   * 所有root事件的处理.
+   * 所有page事件的处理.
    */
-  eventHandler () {
+  eventAllPageHandler () {
     /**
      * 监听上一页按钮被点击事件'PREVIOUS_PAGE'
      *
@@ -117,20 +121,6 @@ export default class Strategy {
     })
 
     /**
-     * 定制化MIP组件可用事件'MIP_CUSTOM_ELEMENT_READY'
-     *
-     * @method
-     * @param {module:constant-config~event:MIP_CUSTOM_ELEMENT_READY} e - A event.
-     * @listens module:constant-config~event:MIP_CUSTOM_ELEMENT_READY
-     */
-    window.addEventListener(Constant.MIP_CUSTOM_ELEMENT_READY, e => {
-      let customId = e && e.detail && e.detail[0] && e.detail[0].customId
-      if (state.currentPage().id === customId) {
-        this.adCustomReady = true
-      }
-    })
-
-    /**
      * 当前页ready,状态可获取'CURRENT_PAGE_READY'
      *
      * @method
@@ -138,9 +128,29 @@ export default class Strategy {
      * @listens module:constant-config~event:CURRENT_PAGE_READY
      */
     window.addEventListener(Constant.CURRENT_PAGE_READY, e => {
-      this.novelData = e && e.detail && e.detail[0] && e.detail[0].novelData
       this.pageAd = true
-      this.strategyStatic()
+      if (window.MIP.viewer.page.isRootPage) {
+        this.strategyStatic()
+      }
+    })
+  }
+
+  /**
+   * 所有root事件的处理.
+   */
+  eventRootHandler () {
+    /**
+     * 监听mip-custom ready状态：此情况为了兼容如果小说shell优先加载custom无法监听请求事件的问题
+     *
+     * @method
+     * @param {module:constant-config~event:customReady} e - A event.
+     * @listens module:constant-config~event:customReady
+     */
+    window.addEventListener('customReady', e => {
+      if (this.pageAd) {
+        this.adCustomReady = true
+        this.strategyStatic()
+      }
     })
   }
 }
