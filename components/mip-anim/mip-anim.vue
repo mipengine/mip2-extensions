@@ -77,10 +77,10 @@ export default {
       if (placeholderImg && placeholderImg.getAttribute('src')) {
         let placeholder = this.$refs.placeholder
         util.css(placeholder, {
-          'width': placeholderImg.getAttribute('width'),
-          'height': placeholderImg.getAttribute('height'),
-          'src': placeholderImg.getAttribute('src'),
-          'alt': placeholderImg.getAttribute('alt')
+          width: placeholderImg.getAttribute('width'),
+          height: placeholderImg.getAttribute('height'),
+          src: placeholderImg.getAttribute('src'),
+          alt: placeholderImg.getAttribute('alt')
         })
         this.placeholderShow = true
       } else {
