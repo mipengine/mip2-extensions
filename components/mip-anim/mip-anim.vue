@@ -44,6 +44,7 @@
 </style>
 
 <script>
+let util = MIP.util
 export default {
   props: {
     show: {
@@ -71,14 +72,16 @@ export default {
   methods: {
     init () {
       let gif = this.$refs.gif
-      let obj = this.$el.querySelector('.slot mip-img')
+      let placeholderImg = this.$el.querySelector('.slot mip-img')
       // 判断组件内是否有dom 是否有默认pic 复制默认pic属性到模板mip-img中
-      if (obj && obj.getAttribute('src')) {
+      if (placeholderImg && placeholderImg.getAttribute('src')) {
         let placeholder = this.$refs.placeholder
-        placeholder.width = obj.getAttribute('width')
-        placeholder.height = obj.getAttribute('height')
-        placeholder.src = obj.getAttribute('src')
-        placeholder.alt = 'big' || obj.getAttribute('alt')
+        util.css(placeholder, {
+          'width': placeholderImg.getAttribute('width'),
+          'height': placeholderImg.getAttribute('height'),
+          'src': placeholderImg.getAttribute('src'),
+          'alt': placeholderImg.getAttribute('alt')
+        })
         this.placeholderShow = true
       } else {
         this.placeholderShow = false
