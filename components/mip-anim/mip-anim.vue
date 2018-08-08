@@ -79,7 +79,6 @@ export default {
         placeholder.height = obj.getAttribute('height')
         placeholder.src = obj.getAttribute('src')
         placeholder.alt = 'big' || obj.getAttribute('alt')
-        console.log(placeholder.height)
         this.placeholderShow = true
       } else {
         this.placeholderShow = false
