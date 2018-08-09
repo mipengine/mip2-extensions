@@ -834,12 +834,13 @@ export default {
 
 所以，type=login时后端处理的逻辑应该是：
 
+```
 sessionid是否存在，
-    * 如果存在，sessionid是否已过期，
+    + 如果存在，sessionid是否已过期，
         * 如果没过期，直接返回用户数据，
         * 如果过期，使用code+redirect_uri发起换取access_token的操作，成功获取百度用户信息后，更新sessionid，并将最新数据返回给组件
-    * 如果不存在，使用code+redirect_uri发起换取access_token的操作，成功获取百度用户信息后，将最新数据返回给组件
-
+    + 如果不存在，使用code+redirect_uri发起换取access_token的操作，成功获取百度用户信息后，将最新数据返回给组件
+```
 
 9. 为什么`type=login`时，也有`code+redirect_uri`值，但还是返回`invalid redirecturi`?
 

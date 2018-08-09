@@ -86,6 +86,15 @@ export default {
       this.$element.customElement.addEventAction('logout', () => {
         this.logout()
       })
+      window.addEventListener('show-page', e => {
+        // 只要页面返回就重新触发一遍查询
+        this.getUserInfo().then(() => {
+          if (this.config.autologin && !this.isLogin) {
+            // TODO,考虑让业务方自己处理
+            this.login()
+          }
+        })
+      })
       window.addEventListener('inservice-auth-logined', e => {
         // 开始进行数据更新
         this.updateLogin(e.detail[0])
@@ -270,6 +279,11 @@ export default {
         },
         fail (data) {
           console.error(data.msg)
+        },
+        complete (data) {
+          if (data.msg === 'oauth:cancle') {
+            self.loginHandle('cancle', false)
+          }
         }
       })
     },
