@@ -38,21 +38,23 @@
 </head>
 
 <body>
-  <button on="tap:my-lightbox.toggle" id="btn-open" role="button" tabindex="0">
-    Open lightbox
-  </button>
+<button on="tap:my-lightbox3.toggle" id="btn-open" role="button" tabindex="0">
+  Open lightbox
+</button>
 
-  <mip-lightbox id="my-lightbox" layout="nodisplay" class="mip-hidden">
-    <div class="lightbox">
-      <h1>Hello, World!</h1>
-      <p> this is the lightbox</p>
-      <span on="tap:my-lightbox.toggle" class="lightbox-close">关闭弹层</span>
-    </div>
-  </mip-lightbox>
-  <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
-  <script src="https://c.mipcdn.com/static/v1/mip.js"></script>
-  <!-- <script src="/mip-lightbox/mip-lightbox.js"></script> -->
-  <script src="../mip-lightbox/mip-lightbox1.js"></script>
+<mip-lightbox
+  autoclosetime="5"
+  id="my-lightbox3"
+  layout="nodisplay"
+  class="mip-hidden">
+  <div class="lightbox">
+    <h1>Hello, World!</h1>
+    <p> this is the lightbox</p>
+    <div class="mip-lightbox-countdown">倒计时<span class="mip-lightbox-seconds"></span>秒关闭</div>
+  </div>
+</mip-lightbox>
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="/mip-lightbox/mip-lightbox.js"></script>
 </body>
 
 </html>
