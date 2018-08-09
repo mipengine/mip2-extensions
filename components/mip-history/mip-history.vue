@@ -41,13 +41,12 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   mip-history.mip-history-default > div {
     display: block;
     padding: 10px;
     margin: 10px;
     background: #eee;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, .1);
     tap-highlight-color: rgba(0, 0, 0, .1);
   }
   mip-history.mip-history-default > div :hover {
