@@ -15,31 +15,31 @@
 
 ```html
 <header>
-    <div id="logo" on="tap:sidebar.open">Open mip-sidebar</div>
+  <div id="logo" on="tap:sidebar.open">Open mip-sidebar</div>
 </header>
 <mip-sidebar 
-    id="sidebar"
-    layout="nodisplay"
-    class="mip-hidden">
-    <ul>
-        <li>
-            <a href="https://www.mipengine.org/">MIP官网</a>
-            <button on="tap:sidebar.close"> X </button>
-        </li>
-        <li>Nav item 1</li>
-        <li>Nav item 2</li>
-        <li>Nav item 3</li>
-        <li>
-            Nav item 4 - Image
-            <mip-img
-                src="https://www.mipengine.org/favicon.ico"
-                width="32"
-                height="32"
-                alt="mipengine ico"></mip-img>
-        </li>
-        <li>Nav item 5</li>
-        <li>Nav item 6</li>
-    </ul>
+  id="sidebar"
+  layout="nodisplay"
+  class="mip-hidden">
+  <ul>
+      <li>
+          <a href="https://www.mipengine.org/">MIP官网</a>
+          <button on="tap:sidebar.close"> X </button>
+      </li>
+      <li>Nav item 1</li>
+      <li>Nav item 2</li>
+      <li>Nav item 3</li>
+      <li>
+          Nav item 4 - Image
+          <mip-img
+              src="https://www.mipengine.org/favicon.ico"
+              width="32"
+              height="32"
+              alt="mipengine ico"></mip-img>
+      </li>
+      <li>Nav item 5</li>
+      <li>Nav item 6</li>
+  </ul>
 </mip-sidebar>
 ```
 
@@ -47,46 +47,46 @@
 
 ```html
 <header>
-    <div id="logo" on="tap:right-sidebar.open">Open mip-sidebar</div>
+  <div id="logo" on="tap:right-sidebar.open">Open mip-sidebar</div>
 </header>
 <mip-sidebar 
-    id="right-sidebar"
-    layout="nodisplay"
-    side="right"
-    class="mip-hidden">
-    <ul>
-        <li>
-            <a href="https://www.mipengine.org/">MIP官网</a>
-            <button on="tap:right-sidebar.close"> X </button>
-        </li>
-        <li>Nav item 1</li>
-        <li>Nav item 2</li>
-        <li>Nav item 3</li>
-        <li>
-            Nav item 4 - Image
-            <mip-img
-                src="https://www.mipengine.org/favicon.ico"
-                width="32"
-                height="32"
-                alt="mipengine ico"></mip-img>
-        </li>
-        <li>Nav item 5</li>
-        <li>Nav item 6</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-        <li>placeholder</li>
-    </ul>
+  id="right-sidebar"
+  layout="nodisplay"
+  side="right"
+  class="mip-hidden">
+  <ul>
+      <li>
+          <a href="https://www.mipengine.org/">MIP官网</a>
+          <button on="tap:right-sidebar.close"> X </button>
+      </li>
+      <li>Nav item 1</li>
+      <li>Nav item 2</li>
+      <li>Nav item 3</li>
+      <li>
+          Nav item 4 - Image
+          <mip-img
+              src="https://www.mipengine.org/favicon.ico"
+              width="32"
+              height="32"
+              alt="mipengine ico"></mip-img>
+      </li>
+      <li>Nav item 5</li>
+      <li>Nav item 6</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+  </ul>
 </mip-sidebar>
 ```
 

@@ -1,44 +1,54 @@
 <template>
-  <div >
+  <div>
     <mip-fixed
       type="top"
       still
-      class="MIP-SIDEBAR">
+      class="sidebar">
       <transition name="fold">
         <div
-          v-show="IsOpen"
-          class="MIP-SIDEBAR-CONTENT"><slot/></div>
+          v-show="isOpen"
+          class="mip-sidebar-content"><slot/></div>
       </transition>
       <div
-        v-show="IsOpen"
-        class="MIP-SIDEBAR-MASK"
+        v-show="isOpen"
+        class="mip-sidebar-mask"
+        @touchmove.prevent
         @click="closeSidebar"/>
     </mip-fixed>
   </div>
 </template>
 
 <style scoped>
+
+.fold-enter {
+  display: none;
+}
+
 mip-sidebar[side="left"] .fold-enter-active {
+  -webkit-animation: sidebarLeftOpen 233ms cubic-bezier(0, 0, 0.21, 1);
   animation: sidebarLeftOpen 233ms cubic-bezier(0, 0, 0.21, 1);
 }
 
 mip-sidebar[side="left"] .fold-leave-active {
+  -webkit-animation: sidebarLeftLeave 233ms cubic-bezier(0, 0, 0.21, 1);
   animation: sidebarLeftLeave 233ms cubic-bezier(0, 0, 0.21, 1);
 }
 
 mip-sidebar[side="right"] .fold-enter-active {
+  -webkit-animation: sidebarRightOpen 233ms cubic-bezier(0, 0, 0.21, 1);
   animation: sidebarRightOpen 233ms cubic-bezier(0, 0, 0.21, 1);
 }
 
 mip-sidebar[side="right"] .fold-leave-active {
+  -webkit-animation: sidebarRightLeave 233ms cubic-bezier(0, 0, 0.21, 1);
   animation: sidebarRightLeave 233ms cubic-bezier(0, 0, 0.21, 1);
 }
 
-.MIP-SIDEBAR {
+.sidebar {
   height: 100%;
 }
 
-.MIP-SIDEBAR-CONTENT {
+.mip-sidebar-content {
   position: absolute !important;
   top: 0;
   max-height: 100% !important;
@@ -103,15 +113,15 @@ mip-sidebar[side="right"] .fold-leave-active {
   }
 }
 
-mip-sidebar[side="left"] .MIP-SIDEBAR-CONTENT {
+mip-sidebar[side="left"] .mip-sidebar-content {
   left: 0 !important;
 }
 
-mip-sidebar[side="right"] .MIP-SIDEBAR-CONTENT {
+mip-sidebar[side="right"] .mip-sidebar-content {
   right: 0 !important;
 }
 
-.MIP-SIDEBAR-MASK {
+.mip-sidebar-mask {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   position: absolute !important;
   top: 0 !important;
@@ -126,6 +136,7 @@ mip-sidebar[side="right"] .MIP-SIDEBAR-CONTENT {
 </style>
 
 <script>
+
 const ANIMATION_TIMEOUT = 400
 
 const util = MIP.util
@@ -133,7 +144,7 @@ const util = MIP.util
 export default {
   data () {
     return {
-      IsOpen: false,
+      isOpen: false,
       Runing: false
     }
   },
@@ -149,13 +160,12 @@ export default {
         self.side = 'left'
         self.$element.setAttribute('side', self.side)
       }
-      if (!self.IsOpen) {
+      if (!self.isOpen) {
         self.$element.setAttribute('aria-hidden', 'true')
       }
     },
     bindEvents () {
       let self = this
-      let mask = self.$element.querySelector('.MIP-SIDEBAR-MASK')
       self.$on('toggle', function (event) {
         self.toggle(self, event)
       })
@@ -165,36 +175,22 @@ export default {
       self.$on('close', function (event) {
         self.close(self, event)
       })
-      document.addEventListener(
-        'keydown',
-        function (event) {
-          if (event.keyCode === 27) {
-            self.close(self, event)
-          }
-        },
-        false
-      )
-      mask.addEventListener('touchmove', function (evt) {
-        evt.preventDefault()
-      }, false)
     },
     /**
      * [open 打开 sidebar和 mask]
      */
     open () {
-      let self = this
-
-      if (self.IsOpen) {
+      if (this.isOpen) {
         return
       }
-      util.css(self.$element, { display: 'block' })
-      self.IsOpen = !self.IsOpen
+      util.css(this.$element, { display: 'block' })
+      this.isOpen = !this.isOpen
       setTimeout(() => {
-        self.Runing = !self.Runing
+        this.Runing = !this.Runing
       }, ANIMATION_TIMEOUT)
-      self.bodyOverflow = getComputedStyle(document.body).overflow
+      this.bodyOverflow = getComputedStyle(document.body).overflow
       document.body.style.overflow = 'hidden'
-      self.$element.setAttribute('aria-hidden', 'false')
+      this.$element.setAttribute('aria-hidden', 'false')
     },
     /**
      * [close 关闭 sidebar和 mask]
@@ -209,12 +205,9 @@ export default {
       setTimeout(() => {
         self.Runing = !self.Runing
       }, ANIMATION_TIMEOUT)
-      self.IsOpen = !self.IsOpen
-      e.preventDefault()
+      self.isOpen = !self.isOpen
       self.$element.setAttribute('aria-hidden', 'true')
-
       document.body.style.overflow = self.bodyOverflow
-
       let closeTimer = setTimeout(() => {
         util.css(self.$element, { display: 'none' })
         clearTimeout(closeTimer)
@@ -231,7 +224,7 @@ export default {
      * [toggle 打开或关闭 sidebar 入口]
      */
     toggle (event) {
-      this.IsOpen ? this.close(this, event) : this.open(this)
+      this.isOpen ? this.close(this, event) : this.open(this)
     }
   },
   prerenderAllowed () {
