@@ -307,11 +307,12 @@ class Catalog {
     for (let i = 0; i < catalog.length; i++) {
       catalog[i].innerHTML = catalog[i].innerHTML
     }
-
+    document.querySelector('body').classList.add('bodyForbid')
     // }, 400)
   }
   // 隐藏侧边目录
   hide () {
+    document.querySelector('body').classList.remove('bodyForbid')
     this.$catalogSidebar.classList.remove('show')
   }
   // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
