@@ -6,7 +6,7 @@
 ----|----
 类型|通用
 支持布局|responsive, fixed-height, fill, container, fixed
-所需脚本|https://c.mipcdn.com/static/v1/mip-semi-fixed/mip-semi-fixed.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-semi-fixed/mip-semi-fixed.js
 
 ## 说明
 
@@ -18,9 +18,9 @@
 
 ```html
 <mip-semi-fixed id="semi-fixed" fixedClassNames="fixedStyle">
-    <div mip-semi-fixed-container class="absoluteStyle">
-        距离顶部0px时自动贴顶 magic
-    </div>
+  <div mip-semi-fixed-container class="absoluteStyle">
+    距离顶部0px时自动贴顶 magic
+  </div>
 </mip-semi-fixed>
 <!--以下为占位符，仅用于查看组件效果-->
 <div class="placeholder">小毛驴滴滴答答，</div>
@@ -35,9 +35,9 @@
 
 ```html
 <mip-semi-fixed id="semi-fixed2" threshold="100" fixedClassNames="fixedStyle">
-	<div mip-semi-fixed-container class="absoluteStyle">
-	    距离顶部100px时停下
-	</div>
+  <div mip-semi-fixed-container class="absoluteStyle">
+	距离顶部100px时停下
+  </div>
 </mip-semi-fixed>
 <!--以下为占位符，仅用于查看组件效果-->
 <div class="placeholder">小毛驴滴滴答答，</div>

@@ -1,16 +1,47 @@
 <template>
-  <div>
+  <div class="wrap">
     <slot/>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="less">
+  .wrap {
+    position: relative;
+    width: 100%;
 
+    /deep/ div[mip-semi-fixed-scrollStatus] {
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      transform: translate3d(0, 0, 0);
+    }
+
+    /deep/ div[mip-semi-fixed-fixedStatus] {
+      position: fixed;
+      width: 100%;
+      z-index: 999;
+    }
+  }
+
+  .mip-fixedlayer div[mip-semi-fixed-scrollStatus] {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .mip-fixedlayer mip-semi-fixed {
+    position: fixed!important;
+    width: 100%;
+  }
+
+  .mip-fixedlayer div[mip-semi-fixed-fixedStatus] {
+    position: fixed;
+    width: 100%;
+  }
 </style>
 
 <script>
-import './mip-semi-fixed.less'
-
 let util = MIP.util
 let viewport = MIP.viewport
 let viewer = MIP.viewer
@@ -111,7 +142,8 @@ export default {
         try {
           let wrapp = fixedElement._fixedLayer.querySelector('#' + element.id)
           this.fixedContainer = wrapp.querySelector('div[mip-semi-fixed-container]')
-          this.fixedContainer.className += self.fixedClassNames
+          console.log(element)
+          this.fixedContainer.className += this.fixedClassNames
           this.fixedContainer.setAttribute(STATUS.STATUS_FIXED, '')
           this.fixedContainer.removeAttribute(STATUS.STATUS_SCROLL)
           util.css(this.fixedContainer, {
