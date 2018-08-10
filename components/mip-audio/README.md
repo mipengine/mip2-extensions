@@ -17,27 +17,11 @@
 
 ``` html
 <mip-audio 
-    src="https://mip-doc.bj.bcebos.com/guitar.mp3"
-    layout="fixed-height"
-    height="50">
+  src="https://mip-doc.bj.bcebos.com/guitar.mp3"
+  layout="fixed-height"
+  height="50">
 </mip-audio>
 ```
-
-<!--
-升级校验中, 预计2018年开放使用。  
-### 使用source定义多音频源
-
-``` html
-<mip-audio
-    controls
-    height="50">
-    <source src="https://mip-doc.bj.bcebos.com/horse.mp3">
-    <source src="https://mip-doc.bj.bcebos.com/horse.ogg">
-    您的浏览器不支持音频播放。
-</mip-audio>
-```
--->
-
 
 ### 自定义控件皮肤
 使用 `controller` 属性在 `<mip-audio>` 中声明自定义交互控件。可以任意更改 DOM 位置，通过增加 `class` 及 CSS 为控件添加皮肤。  
@@ -64,19 +48,19 @@
 
 ``` html
 <mip-audio 
-    src="https://mip-doc.bj.bcebos.com/guitar.mp3"
-    class="all-pink"
-    layout="fixed-height"
-    height="50">
-    <div controller class="bg-color-pink">
-        <i play-button class="mip-audio-stopped-icon"></i>
-        <div seekbar>
-            <div seekbar-fill class="bg-color-pink2"></div>
-            <div seekbar-button class="bg-color-pink3"></div>
-        </div>
-        <div current-time class="color-gray">00:00</div>
-        <div total-time class="color-gray">--:--</div>
+  src="https://mip-doc.bj.bcebos.com/guitar.mp3"
+  class="all-pink"
+  layout="fixed-height"
+  height="50">
+  <div controller class="bg-color-pink">
+    <i play-button class="mip-audio-stopped-icon"></i>
+    <div seekbar>
+      <div seekbar-fill class="bg-color-pink2"></div>
+      <div seekbar-button class="bg-color-pink3"></div>
     </div>
+    <div current-time class="color-gray">00:00</div>
+    <div total-time class="color-gray">--:--</div>
+  </div>
 </mip-audio>
 ```
 
