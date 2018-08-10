@@ -53,6 +53,9 @@ export default {
     // 清空登录update
     util.store.remove(this.config.endpoint + '_login_handle')
   },
+  prerenderAllowed () {
+    return true
+  },
   mounted () {
     // 熊掌号sdk
     let url = 'https://xiongzhang.baidu.com/sdk/c.js?appid=' + this.config.appid
