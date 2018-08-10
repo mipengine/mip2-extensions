@@ -296,11 +296,12 @@ export default class MipAudio extends CustomElement {
     let status = 'paused'
 
     // 兼容PC端和移动端。移动端不触发mousemove事件，用touchmove代替
-    // let isPhone = this.judgeIsPhone()
+    // 是否是移动设备
+    let isPhone = 'ontouchmove' in document
     let pointer = 'ontouchmove' in document ? 'touch' : 'mouse'
     // 拖动开始时记录当前位置，是否播放中
-    button.addEventListener(pointer === 'touch' ? 'touchstart' : 'mousedown', function (e) {
-      let event = 'ontouchmove' in document ? e.touches[0] : e
+    button.addEventListener(isPhone ? 'touchstart' : 'mousedown', function (e) {
+      let event = isPhone ? e.touches[0] : e
       startX = event.clientX
       startBtnLeft = button.offsetLeft + button.offsetWidth * 0.5
       status = me.audioElement.paused ? 'paused' : 'playing'
@@ -316,7 +317,7 @@ export default class MipAudio extends CustomElement {
       e.preventDefault()
       e.stopPropagation()
 
-      let event = 'ontouchmove' in document ? e.touches[0] : e
+      let event = isPhone ? e.touches[0] : e
       let moveX = event.clientX
       let moveXDelta = moveX - startX
 
@@ -334,7 +335,7 @@ export default class MipAudio extends CustomElement {
     }, false)
 
     // 结束拖动时，回复之前的播放状态
-    button.addEventListener(pointer === 'touch' ? 'touchend' : 'mouseup', function (event) {
+    button.addEventListener(isPhone ? 'touchend' : 'mouseup', function (event) {
       isSeeking = false
       if (status === 'playing') {
         me.audioElement.play()
