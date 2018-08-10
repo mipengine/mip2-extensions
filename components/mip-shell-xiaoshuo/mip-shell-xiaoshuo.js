@@ -294,7 +294,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       bodyPaddingTop = bodyPaddingTop || parseInt(css(body, 'paddingTop'), 10)
       let scrollTop = body.scrollTop || rect.getScrollTop()
       let scrollHeight = rect.getElementRect(scrollaBoundaryTouch).height + bodyPaddingTop
-
       // 到达顶部时 && 是向下滚动操作
       // 到达底部时 && 并且 向上滚动操作
       let isprevent = (
@@ -306,7 +305,13 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
           scrollTop + offsetHeight >= scrollHeight
         )
       if (isprevent) {
+        MIP.viewer.sendMessage('switchheader', {visable: true})
         e.preventDefault()
+      }
+      if (touchRect.pageY - startTouchReact.pageY < -10) {
+        MIP.viewer.sendMessage('switchheader', {visable: false})
+      } else if (touchRect.pageY - startTouchReact.pageY > 10) {
+        MIP.viewer.sendMessage('switchheader', {visable: true})
       }
       e.stopPropagation()
     })
