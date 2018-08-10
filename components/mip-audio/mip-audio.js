@@ -33,17 +33,17 @@ export default class MipAudio extends CustomElement {
     ]
   }
   /**
-   * Get attribute Set from attribute List
-   *
-   * @param {NamedNodeMap} attributes the attribute list, spec: https://dom.spec.whatwg.org/#interface-namednodemap
-   * @return {Object} the attribute set, legacy:
-   * @example
-   * {
-   *     "src": "http://xx.mp4",
-   *     "autoplay": "",
-   *     "width": "720"
-   * }
-   */
+         * Get attribute Set from attribute List
+         *
+         * @param {NamedNodeMap} attributes the attribute list, spec: https://dom.spec.whatwg.org/#interface-namednodemap
+         * @return {Object} the attribute set, legacy:
+         * @example
+         * {
+         *     "src": "http://xx.mp4",
+         *     "autoplay": "",
+         *     "width": "720"
+         * }
+         */
   getAttributeSet (attributes) {
     let attrs = {}
     for (let i = 0; i < attributes.length; i++) {
@@ -55,10 +55,10 @@ export default class MipAudio extends CustomElement {
     return attrs
   }
   /**
-   * 初始化
-   *
-   * @private
-   */
+         * 初始化
+         *
+         * @private
+         */
   _init () {
     // 根据用户配置创建audio标签，插入文档流
     this.audioElement = this._createAudioTag()
@@ -106,11 +106,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-   * 根据用户配置，创建audio标签
-   *
-   * @private
-   * @return {Object} 创建的audio元素
-   */
+     * 根据用户配置，创建audio标签
+     *
+     * @private
+     * @return {Object} 创建的audio元素
+     */
   _createAudioTag () {
     let audioEle = document.createElement('audio')
     for (let k in this.audioAttrs) {
@@ -123,14 +123,14 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-   * 创建默认交互控件DOM
-   *
-   * @private
-   * @return {string} 创建的audio控件DOM
-   */
+     * 创建默认交互控件DOM
+     *
+     * @private
+     * @return {string} 创建的audio控件DOM
+     */
   _createDefaultController () {
     let audioDom =
-      `
+            `
         <div controller>
         <i play-button class="mip-audio-stopped-icon"></i>
         <div current-time>00:00</div>
@@ -146,11 +146,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-   * 获取音频总时长 填充DOM, this为 Audio
-   * FIXME： 在安卓UC上获取的duration为0.1
-   *
-   * @private
-   */
+     * 获取音频总时长 填充DOM, this为 Audio
+     * FIXME： 在安卓UC上获取的duration为0.1
+     *
+     * @private
+     */
   _applyTotalTime () {
     let duration = this.audioElement.duration
     if (isNaN(duration)) {
@@ -160,11 +160,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-   * 音频播放时更新当前时间 填充DOM, this为 Audio
-   *
-   * @private
-   * @param {number} percent 进度条百分比
-   */
+     * 音频播放时更新当前时间 填充DOM, this为 Audio
+     *
+     * @private
+     * @param {number} percent 进度条百分比
+     */
   _timeUpdate (percent) {
     let now
     // XXX: 在安卓UC上loadedmetadata事件触发获取的duration为0.1，需要重新计算一遍时间。
@@ -192,10 +192,10 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-   * 音频播放时更新进度条
-   *
-   * @private
-   */
+     * 音频播放时更新进度条
+     *
+     * @private
+     */
   _progressShow () {
     let currentTime = this.audioElement.currentTime
     let percent = currentTime / this.audioElement.duration * 100
@@ -205,12 +205,12 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-   * 时长格式化换算小工具。例 100s -> 1:40
-   *
-   * @private
-   * @param {number} now 秒数
-   * @return {string} 格式化后的时间
-   */
+     * 时长格式化换算小工具。例 100s -> 1:40
+     *
+     * @private
+     * @param {number} now 秒数
+     * @return {string} 格式化后的时间
+     */
   _msToDate (now) {
     if (isNaN(now)) {
       return '--:--'
@@ -249,11 +249,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-   * 开始&停止播放音频
-   *
-   * @param {string} action 如为'pause'，强制暂停
-   * @private
-   */
+     * 开始&停止播放音频
+     *
+     * @param {string} action 如为'pause'，强制暂停
+     * @private
+     */
   _playOrPause (action) {
     let classList = this.container.querySelector('[play-button]').classList
     if (!this.audioElement.paused || action === 'pause') {
@@ -270,10 +270,10 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-   * 绑定进度条拖动事件
-   *
-   * @private
-   */
+     * 绑定进度条拖动事件
+     *
+     * @private
+     */
   _bindSeekEvent () {
     let button = this.container.querySelector('[seekbar-button]')
     let seekbar = this.container.querySelector('[seekbar]')
@@ -284,8 +284,6 @@ export default class MipAudio extends CustomElement {
       width: seekbarProp.width,
       right: seekbarProp.right
     }
-    // 需定义me变量，不然下面监听事件里的this会指向button
-    let me = this
     let startX
     let startBtnLeft
     let seekPercent
@@ -294,22 +292,21 @@ export default class MipAudio extends CustomElement {
     let isSeeking
     // 保存拖动时音频状态：playing paused
     let status = 'paused'
-
     // 兼容PC端和移动端。移动端不触发mousemove事件，用touchmove代替
     // 是否是移动设备
     let isPhone = 'ontouchmove' in document
     let pointer = 'ontouchmove' in document ? 'touch' : 'mouse'
     // 拖动开始时记录当前位置，是否播放中
-    button.addEventListener(isPhone ? 'touchstart' : 'mousedown', function (e) {
+    button.addEventListener(isPhone ? 'touchstart' : 'mousedown', e => {
       let event = isPhone ? e.touches[0] : e
       startX = event.clientX
       startBtnLeft = button.offsetLeft + button.offsetWidth * 0.5
-      status = me.audioElement.paused ? 'paused' : 'playing'
+      status = this.audioElement.paused ? 'paused' : 'playing'
       isSeeking = true
-      me.audioElement.pause()
+      this.audioElement.pause()
     }, false)
     // 拖动事件
-    this.container.addEventListener(pointer + 'move', function (e) {
+    this.container.addEventListener(pointer + 'move', e => {
       if (!isSeeking) {
         return
       }
@@ -331,23 +328,23 @@ export default class MipAudio extends CustomElement {
       } else { // 正常拖动
         seekPercent = (startBtnLeft + moveXDelta) / seekbarProperty.width
       }
-      me._timeUpdate(seekPercent)
+      this._timeUpdate(seekPercent)
     }, false)
 
     // 结束拖动时，回复之前的播放状态
-    button.addEventListener(isPhone ? 'touchend' : 'mouseup', function (event) {
+    button.addEventListener(isPhone ? 'touchend' : 'mouseup', e => {
       isSeeking = false
       if (status === 'playing') {
-        me.audioElement.play()
+        this.audioElement.play()
       }
     }, false)
   }
 
   /**
-   * 音频播放到结尾，强制转为暂停
-   *
-   * @private
-   */
+     * 音频播放到结尾，强制转为暂停
+     *
+     * @private
+     */
   _playEnded () {
     this._playOrPause('pause')
     this._timeUpdate(0)
