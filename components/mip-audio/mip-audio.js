@@ -352,28 +352,6 @@ export default class MipAudio extends CustomElement {
     this._timeUpdate(0)
   }
 
-  /**
-   * 判断是否是移动设备，是返回true，否 false
-   *
-   * @private
-   */
-  judgeIsPhone () {
-    let sUserAgent = navigator.userAgent.toLowerCase()
-    let bIsIpad = sUserAgent.indexOf('ipad') > -1
-    let bIsIphoneOs = sUserAgent.indexOf('iphone os') > -1
-    let bIsMidp = sUserAgent.indexOf('midp') > -1
-    let bIsUc7 = sUserAgent.indexOf('rv:1.2.3.4') > -1
-    let bIsUc = sUserAgent.indexOf('ucweb') > -1
-    let bIsAndroid = sUserAgent.indexOf('android') > -1
-    let bIsCE = sUserAgent.indexOf('windows ce') > -1
-    let bIsWM = sUserAgent.indexOf('windows mobile') > -1
-    if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
-      return true
-    } else {
-      return false
-    }
-  }
-
   firstInviewCallback () {
     let ele = this.element
     if (ele.rendered) {
