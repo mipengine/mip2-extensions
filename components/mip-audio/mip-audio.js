@@ -59,9 +59,9 @@ export default class MipAudio extends CustomElement {
          *
          * @private
          */
-  _init () {
+  firstInit () {
     // 根据用户配置创建audio标签，插入文档流
-    this.audioElement = this._createAudioTag()
+    this.audioElement = this.createAudioTag()
     // 将原来mip-audio内容插入audio.
     // 由于每次元素移出content， content.length会减少, 提前保存length
     let length = this.content.length
@@ -75,7 +75,7 @@ export default class MipAudio extends CustomElement {
 
     // 如果不存在用户自定义DOM，新建交互控件
     if (!this.customControls) {
-      this.customControls = this._createDefaultController()
+      this.customControls = this.createDefaultController()
       this.container.classList.add('mip-audio-default-style')
       this.container.innerHTML += this.customControls
     } else {
@@ -87,22 +87,22 @@ export default class MipAudio extends CustomElement {
     // FIXME: 由于ios10手机百度不执行loadedmetadata函数，
     // 魅族自带浏览器在播放前获取总播放时长为0.需要修改
     this.audioElement
-      .addEventListener('loadedmetadata', this._applyTotalTime.bind(this), false)
+      .addEventListener('loadedmetadata', this.applyTotalTime.bind(this), false)
 
     // 事件绑定：点击播放暂停按钮，播放&暂停音频
     this.container.querySelector('[play-button]')
-      .addEventListener('click', this._playOrPause.bind(this), false)
+      .addEventListener('click', this.playOrPause.bind(this), false)
 
     // 事件绑定：音频播放中，更新时间DOM
     this.audioElement
-      .addEventListener('timeupdate', this._timeUpdate.bind(this), false)
+      .addEventListener('timeupdate', this.timeUpdate.bind(this), false)
 
     // 事件绑定：拖动进度条事件
-    this._bindSeekEvent()
+    this.bindSeekEvent()
 
     // 事件绑定：音频播放完毕，显示停止DOM
     this.audioElement
-      .addEventListener('ended', this._playEnded.bind(this), false)
+      .addEventListener('ended', this.playEnded.bind(this), false)
   }
 
   /**
@@ -111,7 +111,7 @@ export default class MipAudio extends CustomElement {
      * @private
      * @return {Object} 创建的audio元素
      */
-  _createAudioTag () {
+  createAudioTag () {
     let audioEle = document.createElement('audio')
     for (let k in this.audioAttrs) {
       if (this.audioAttrs.hasOwnProperty(k) && this.audioAttributes.indexOf(k) > -1) {
@@ -128,7 +128,7 @@ export default class MipAudio extends CustomElement {
      * @private
      * @return {string} 创建的audio控件DOM
      */
-  _createDefaultController () {
+  createDefaultController () {
     let audioDom =
             `
         <div controller>
@@ -151,12 +151,12 @@ export default class MipAudio extends CustomElement {
      *
      * @private
      */
-  _applyTotalTime () {
+  applyTotalTime () {
     let duration = this.audioElement.duration
     if (isNaN(duration)) {
       return
     }
-    this.container.querySelector('[total-time]').innerHTML = this._msToDate(duration)
+    this.container.querySelector('[total-time]').innerHTML = this.msToDate(duration)
   }
 
   /**
@@ -165,11 +165,11 @@ export default class MipAudio extends CustomElement {
      * @private
      * @param {number} percent 进度条百分比
      */
-  _timeUpdate (percent) {
+  timeUpdate (percent) {
     let now
     // XXX: 在安卓UC上loadedmetadata事件触发获取的duration为0.1，需要重新计算一遍时间。
     if (!this.totalTimeShown) {
-      this._applyTotalTime()
+      this.applyTotalTime()
       this.totalTimeShown = true
     }
     if (typeof percent === 'number') {
@@ -179,10 +179,10 @@ export default class MipAudio extends CustomElement {
     }
 
     // 更新进度条
-    this._progressShow()
+    this.progressShow()
 
     // now为进度条显示的时间，如1:40
-    now = this._msToDate(this.audioElement.currentTime)
+    now = this.msToDate(this.audioElement.currentTime)
     // timeupdate 每秒执行多次，当时间真正改变时才更新dom，减少DOM操作
     if (this.audioElement.currentTimeShown !== now) {
       this.audioElement.currentTimeShown = now
@@ -196,7 +196,7 @@ export default class MipAudio extends CustomElement {
      *
      * @private
      */
-  _progressShow () {
+  progressShow () {
     let currentTime = this.audioElement.currentTime
     let percent = currentTime / this.audioElement.duration * 100
 
@@ -211,7 +211,7 @@ export default class MipAudio extends CustomElement {
      * @param {number} now 秒数
      * @return {string} 格式化后的时间
      */
-  _msToDate (now) {
+  msToDate (now) {
     if (isNaN(now)) {
       return '--:--'
     }
@@ -254,7 +254,7 @@ export default class MipAudio extends CustomElement {
      * @param {string} action 如为'pause'，强制暂停
      * @private
      */
-  _playOrPause (action) {
+  playOrPause (action) {
     let classList = this.container.querySelector('[play-button]').classList
     if (!this.audioElement.paused || action === 'pause') {
       // 暂停播放
@@ -274,7 +274,7 @@ export default class MipAudio extends CustomElement {
      *
      * @private
      */
-  _bindSeekEvent () {
+  bindSeekEvent () {
     let button = this.container.querySelector('[seekbar-button]')
     let seekbar = this.container.querySelector('[seekbar]')
     let seekbarProp = seekbar.getBoundingClientRect()
@@ -328,7 +328,7 @@ export default class MipAudio extends CustomElement {
       } else { // 正常拖动
         seekPercent = (startBtnLeft + moveXDelta) / seekbarProperty.width
       }
-      this._timeUpdate(seekPercent)
+      this.timeUpdate(seekPercent)
     }, false)
 
     // 结束拖动时，回复之前的播放状态
@@ -345,9 +345,9 @@ export default class MipAudio extends CustomElement {
      *
      * @private
      */
-  _playEnded () {
-    this._playOrPause('pause')
-    this._timeUpdate(0)
+  playEnded () {
+    this.playOrPause('pause')
+    this.timeUpdate(0)
   }
 
   firstInviewCallback () {
@@ -357,6 +357,6 @@ export default class MipAudio extends CustomElement {
     }
     this.x = 1
     ele.rendered = true
-    this._init()
+    this.firstInit()
   }
 }
