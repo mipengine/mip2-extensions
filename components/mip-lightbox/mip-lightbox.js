@@ -21,12 +21,6 @@ let scrollTop = {
   offset: 0
 }
 export default class MipLightbox extends CustomElement {
-  constructor (...args) {
-    // 继承父类属性、方法
-    super(...args)
-    // eslint 会报 Useless  constructor 错 ，加了这句解决这个问题
-    this._prerenderAllowed = this.prerenderAllowed()
-  }
   // 自动关闭弹层
   autoClose () {
     let count = this.element.getAttribute('autoclosetime')
@@ -48,8 +42,8 @@ export default class MipLightbox extends CustomElement {
   }
   changeParentNode () {
     let nodes = []
-    let CHILDRENS = this.element.childNodes
-    for (let elem of CHILDRENS) {
+    let childrens = this.element.childNodes
+    for (let elem of childrens) {
       if (elem.nodeType === 1) {
         nodes.push(elem)
       }
@@ -63,18 +57,19 @@ export default class MipLightbox extends CustomElement {
   }
 
   /**
-   * [toggle description]
+   * toggle description
    *
-   * @param  {Object} event [事件对象]
+   * @param  {Object} event 事件对象]
+   *
    */
   toggle (event) {
     this.isOpen() ? this.close(event) : this.openBox(event)
   }
 
   /**
-   * [open 打开 sidebar]
+   * open 打开 sidebar
    *
-   * @param  {Object} event [事件对象]
+   * @param  {Object} event 事件对象
    */
 
   openBox (event) {
@@ -105,9 +100,9 @@ export default class MipLightbox extends CustomElement {
   }
 
   /**
-   * [close 关闭 sidebar]
+   * close 关闭 sidebar
    *
-   * @param  {Object} event [事件对象]
+   * @param  {Object} event 事件对象
    */
   close (event) {
     if (!this.open) {
@@ -137,22 +132,22 @@ export default class MipLightbox extends CustomElement {
   }
 
   /**
-   * [isOpen description]
+   * isOpen description
    *
-   * @return {boolean} [是否打开标志]
+   * @return {boolean} 是否打开标志
    */
   isOpen () {
     return this.open
   }
 
   /**
-   * [openMask 打开浮层]
+   * openMask 打开浮层
    */
   openMask () {
     // 不存在遮盖层时先创建
     if (!this.maskElement) {
       let mask = document.createElement('div')
-      mask.id = 'MIP-LLIGTBOX-MASK'
+      mask.id = 'mip-lightbox-mask'
       mask.setAttribute('on', 'tap:' + this.id + '.close')
       mask.style.display = 'block'
 
@@ -173,7 +168,7 @@ export default class MipLightbox extends CustomElement {
   }
 
   /**
-   * [closeMask 关闭遮盖层]
+   * closeMask 关闭遮盖层
    *
    */
   closeMask () {
@@ -206,15 +201,9 @@ export default class MipLightbox extends CustomElement {
     this.changeParentNode(this)
 
     // 事件注册
-    this.addEventAction('close', event => {
-      this.close(event)
-    })
-    this.addEventAction('openBox', event => {
-      this.openBox(event)
-    })
-    this.addEventAction('toggle', event => {
-      this.toggle(event)
-    })
+    this.addEventAction('close', this.close.bind(this))
+    this.addEventAction('openBox', this.openBox.bind(this))
+    this.addEventAction('toggle', this.toggle.bind(this))
   }
   // 元素从 DOM 上移除之后清除定时器
   disconnectedCallback () {
