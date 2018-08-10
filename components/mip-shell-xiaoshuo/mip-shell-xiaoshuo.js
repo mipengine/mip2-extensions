@@ -29,6 +29,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     this._scrollBoundary()
+    this.viewportScroll()
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -305,14 +306,14 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
           scrollTop + offsetHeight >= scrollHeight
         )
       if (isprevent) {
-        MIP.viewer.sendMessage('switchheader', {visable: true})
+        // MIP.viewer.sendMessage('switchheader', {visable: true})
         e.preventDefault()
       }
-      if (touchRect.pageY - startTouchReact.pageY < -10) {
-        MIP.viewer.sendMessage('switchheader', {visable: false})
-      } else if (touchRect.pageY - startTouchReact.pageY > 10) {
-        MIP.viewer.sendMessage('switchheader', {visable: true})
-      }
+      // if (touchRect.pageY - startTouchReact.pageY < -10) {
+      //   MIP.viewer.sendMessage('switchheader', {visable: false})
+      // } else if (touchRect.pageY - startTouchReact.pageY > 10) {
+      //   MIP.viewer.sendMessage('switchheader', {visable: true})
+      // }
       e.stopPropagation()
     })
 
@@ -321,6 +322,42 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         touchTarget.removeEventListener('touchmove', stopProFun)
       }
     })
+  }
+
+  /**
+   * Listerning viewport scroll
+   *
+   * @private
+   */
+  viewportScroll () {
+    let dist = 0
+    let viewport = MIP.viewport
+    let scrollTop = viewport.getScrollTop()
+    let scrollHeight = viewport.getScrollHeight()
+    let lastScrollTop = 0
+    let wrapper = viewport.scroller
+
+    wrapper.addEventListener('touchstart', e => {
+      scrollTop = viewport.getScrollTop()
+      scrollHeight = viewport.getScrollHeight()
+    })
+    function pagemove (e) {
+      scrollTop = viewport.getScrollTop()
+      scrollHeight = viewport.getScrollHeight()
+      if (scrollTop > 0 && scrollTop < scrollHeight) {
+        dist = lastScrollTop - scrollTop
+        lastScrollTop = scrollTop
+        if (dist > 10 || dist < -10) {
+          // 转向判断，暂时没用到，后续升级需要
+          let visable = dist > 10
+          MIP.viewer.sendMessage('switchheader', {visable: visable})
+        }
+      } else if (scrollTop === 0) {
+        MIP.viewer.sendMessage('switchheader', {visable: false})
+      }
+    }
+    wrapper.addEventListener('touchmove', event => pagemove(event))
+    wrapper.addEventListener('touchend', event => pagemove(event))
   }
 
   /**

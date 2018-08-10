@@ -49,15 +49,6 @@ class Catalog {
           </div>
           </div>
         </div>
-        <div class="scroll">
-            <div class="catalog-scroll" >
-              <div id="catalog-scroll-btn">
-                <div class="scroll-btn"></div>
-                <div class="scroll-btn"></div>
-                <div class="scroll-btn"></div>
-              </div>
-            </div>
-        </div>    
       </div> 
     `
     if (!catalogs) {
@@ -90,36 +81,36 @@ class Catalog {
       )
     }
     $catalogSidebar.innerHTML = catalogHtml // 目录页HTML
-    let $wrapper = $catalogSidebar.querySelector('.novel-catalog-content-wrapper')
+    // let $wrapper = $catalogSidebar.querySelector('.novel-catalog-content-wrapper')
     let $catalog = $catalogSidebar.querySelector('.mip-shell-catalog')
     let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
-    let $catalogScroll = $catalogSidebar.querySelector('.catalog-scroll') // 滚动条
-    let $scroll = $catalogSidebar.querySelector('.scroll') // 滚动条
-    let $catalogButton = $catalogSidebar.querySelector('#catalog-scroll-btn') // 小按钮
+    // let $catalogScroll = $catalogSidebar.querySelector('.catalog-scroll') // 滚动条
+    // let $scroll = $catalogSidebar.querySelector('.scroll') // 滚动条
+    // let $catalogButton = $catalogSidebar.querySelector('#catalog-scroll-btn') // 小按钮
     let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
     $catalogContent.innerHTML = renderCatalog(catalogs)
     let $catalogBook = $catalogSidebar.querySelector('.book-catalog-info-title')
     if (book) {
       $catalogBook.style.display = 'block'
     } else {
-      $scroll.style.top = '62px'
+      // $scroll.style.top = '62px'
       $catalog.style.height = 'calc(100% - 62px)'
       $catalog.style.height = '-webkit-calc(100% - 62px)'
     }
 
-    let catalogScroll = {
-      catalogSidebar: $catalogSidebar,
-      catalog: $catalog,
-      catalogScroll: $catalogScroll,
-      catalogButton: $catalogButton,
-      contentTop: $contentTop,
-      wrapper: $wrapper,
-      catalogContent: $catalogContent
-    }
+    // let catalogScroll = {
+    //   catalogSidebar: $catalogSidebar,
+    //   catalog: $catalog,
+    //   catalogScroll: $catalogScroll,
+    //   catalogButton: $catalogButton,
+    //   contentTop: $contentTop,
+    //   wrapper: $wrapper,
+    //   catalogContent: $catalogContent
+    // }
     // 自定义滚动条，滑目录内容，右边滚动条到相应位置， 这里需要监听scroll完成事件，用settimeout异步队列模拟，解决兼容问题
-    this.catalogScroll(catalogScroll)
+    // this.catalogScroll(catalogScroll)
     //  实现滚动条拖拽函数，拖动滚动条，左边滑到相应位置
-    this.catalogDrag(catalogScroll)
+    // this.catalogDrag(catalogScroll)
     // 实现倒序，点击倒序，目录顺序倒序，倒序字边正序
     this.reverse($contentTop, $catalogContent)
 
@@ -300,7 +291,7 @@ class Catalog {
     // window.setTimeout(function () {
     this.$catalogSidebar.classList.add('show')
     shellElement.toggleDOM(shellElement.$buttonMask, true)
-    this.$catalogSidebar.querySelector('.catalog-scroll').style.opacity = 1
+    // this.$catalogSidebar.querySelector('.catalog-scroll').style.opacity = 1
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let catalog = [...$catalogContent.querySelectorAll('div')]
