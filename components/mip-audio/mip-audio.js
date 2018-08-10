@@ -4,7 +4,10 @@
  * @time 2016.8.1
  */
 import './mip-audio.less'
-let { CustomElement, util } = MIP
+let {
+  CustomElement,
+  util
+} = MIP
 export default class MipAudio extends CustomElement {
   constructor (...args) {
     // 继承父类属性、方法
@@ -33,17 +36,17 @@ export default class MipAudio extends CustomElement {
     ]
   }
   /**
-         * Get attribute Set from attribute List
-         *
-         * @param {NamedNodeMap} attributes the attribute list, spec: https://dom.spec.whatwg.org/#interface-namednodemap
-         * @return {Object} the attribute set, legacy:
-         * @example
-         * {
-         *     "src": "http://xx.mp4",
-         *     "autoplay": "",
-         *     "width": "720"
-         * }
-         */
+   * Get attribute Set from attribute List
+   *
+   * @param {NamedNodeMap} attributes the attribute list, spec: https://dom.spec.whatwg.org/#interface-namednodemap
+   * @return {Object} the attribute set, legacy:
+   * @example
+   * {
+   *     "src": "http://xx.mp4",
+   *     "autoplay": "",
+   *     "width": "720"
+   * }
+   */
   getAttributeSet (attributes) {
     let attrs = {}
     for (let i = 0; i < attributes.length; i++) {
@@ -55,10 +58,10 @@ export default class MipAudio extends CustomElement {
     return attrs
   }
   /**
-         * 初始化
-         *
-         * @private
-         */
+   * 初始化
+   *
+   * @private
+   */
   firstInit () {
     // 根据用户配置创建audio标签，插入文档流
     this.audioElement = this.createAudioTag()
@@ -106,11 +109,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 根据用户配置，创建audio标签
-     *
-     * @private
-     * @return {Object} 创建的audio元素
-     */
+   * 根据用户配置，创建audio标签
+   *
+   * @private
+   * @return {Object} 创建的audio元素
+   */
   createAudioTag () {
     let audioEle = document.createElement('audio')
     for (let k in this.audioAttrs) {
@@ -123,11 +126,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 创建默认交互控件DOM
-     *
-     * @private
-     * @return {string} 创建的audio控件DOM
-     */
+   * 创建默认交互控件DOM
+   *
+   * @private
+   * @return {string} 创建的audio控件DOM
+   */
   createDefaultController () {
     let audioDom =
             `
@@ -146,11 +149,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 获取音频总时长 填充DOM, this为 Audio
-     * FIXME： 在安卓UC上获取的duration为0.1
-     *
-     * @private
-     */
+   * 获取音频总时长 填充DOM, this为 Audio
+   * FIXME： 在安卓UC上获取的duration为0.1
+   *
+   * @private
+   */
   applyTotalTime () {
     let duration = this.audioElement.duration
     if (isNaN(duration)) {
@@ -160,11 +163,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 音频播放时更新当前时间 填充DOM, this为 Audio
-     *
-     * @private
-     * @param {number} percent 进度条百分比
-     */
+   * 音频播放时更新当前时间 填充DOM, this为 Audio
+   *
+   * @private
+   * @param {number} percent 进度条百分比
+   */
   timeUpdate (percent) {
     let now
     // XXX: 在安卓UC上loadedmetadata事件触发获取的duration为0.1，需要重新计算一遍时间。
@@ -192,10 +195,10 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 音频播放时更新进度条
-     *
-     * @private
-     */
+   * 音频播放时更新进度条
+   *
+   * @private
+   */
   progressShow () {
     let currentTime = this.audioElement.currentTime
     let percent = currentTime / this.audioElement.duration * 100
@@ -205,12 +208,12 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 时长格式化换算小工具。例 100s -> 1:40
-     *
-     * @private
-     * @param {number} now 秒数
-     * @return {string} 格式化后的时间
-     */
+   * 时长格式化换算小工具。例 100s -> 1:40
+   *
+   * @private
+   * @param {number} now 秒数
+   * @return {string} 格式化后的时间
+   */
   msToDate (now) {
     if (isNaN(now)) {
       return '--:--'
@@ -249,11 +252,11 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 开始&停止播放音频
-     *
-     * @param {string} action 如为'pause'，强制暂停
-     * @private
-     */
+   * 开始&停止播放音频
+   *
+   * @param {string} action 如为'pause'，强制暂停
+   * @private
+   */
   playOrPause (action) {
     let classList = this.container.querySelector('[play-button]').classList
     if (!this.audioElement.paused || action === 'pause') {
@@ -270,10 +273,10 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 绑定进度条拖动事件
-     *
-     * @private
-     */
+   * 绑定进度条拖动事件
+   *
+   * @private
+   */
   bindSeekEvent () {
     let button = this.container.querySelector('[seekbar-button]')
     let seekbar = this.container.querySelector('[seekbar]')
@@ -341,10 +344,10 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-     * 音频播放到结尾，强制转为暂停
-     *
-     * @private
-     */
+   * 音频播放到结尾，强制转为暂停
+   *
+   * @private
+   */
   playEnded () {
     this.playOrPause('pause')
     this.timeUpdate(0)
