@@ -204,26 +204,32 @@ export default {
   height: 100%;
   padding-bottom: 40px;
   overflow: hidden;
+
   .mip-tabs-label-wrap {
     font-size: 14px;
     line-height: 1.5;
     position: relative;
     background: #fff;
     z-index: 2;
+
     .optionColor {
       color: #1890ff;
+
       span {
         color: #1890ff;
       }
     }
+
     & > div {
       overflow-x: auto;
       white-space: nowrap;
       position: relative;
+
       &::-webkit-scrollbar {
         display: none;
       }
     }
+
     &::after {
       content: '';
       position: absolute;
@@ -247,12 +253,12 @@ export default {
       color: #303133;
       position: relative;
       text-decoration: none;
-      -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
       cursor: pointer;
+
       &[disabled] {
         color: #ccc;
       }
@@ -265,9 +271,10 @@ export default {
       height: 2px;
       background-color: #409eff;
       z-index: 2;
-      transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      // transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
       list-style: none;
-      transition: all 0.3s;
+      // transition: all 0.3s;
     }
   }
 
@@ -281,9 +288,9 @@ export default {
     display: flex;
     box-sizing: content-box;
     transition: all 0.3s;
+
     /deep/ mip-tabs-item {
       padding-left: 20px;
-      width: 100%;
       box-sizing: border-box;
       overflow: auto;
       flex-shrink: 0;
