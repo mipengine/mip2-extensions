@@ -43,10 +43,14 @@ export default {
   width: 100%;
   margin: 0 auto;
 }
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .3s;
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
 }
-.fade-enter, .fade-leave-to {
+
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

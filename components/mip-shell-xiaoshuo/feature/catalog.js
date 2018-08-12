@@ -4,6 +4,7 @@
  * TODO：
  *     1. catalog数据支持异步获取
  */
+
 let util = MIP.util
 let rect = util.rect
 class Catalog {
@@ -57,8 +58,8 @@ class Catalog {
                 <div class="scroll-btn"></div>
               </div>
             </div>
-        </div>    
-      </div> 
+        </div>
+      </div>
     `
     if (!catalogs) {
       // 目录配置为空
@@ -69,7 +70,7 @@ class Catalog {
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
-          <a class="mip-catalog-btn catalog-page-content" 
+          <a class="mip-catalog-btn catalog-page-content"
           mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
           ${catalog.name}
           </a>
@@ -164,12 +165,13 @@ class Catalog {
     let $contentTop = catalogScroll.contentTop
     let $wrapper = catalogScroll.wrapper
     let $catalogContent = catalogScroll.catalogContent
+
     /**
      * 滑动截止时候让滚动条滚到相应位置
      *
-     * @param  {number} 透明度
-     * @param  {Object} 目录页距离顶部高度
-     * @param  {Object} 章节以上元素的高度
+     * @param  {number} opacityNum 透明度
+     * @param  {Object} Top 目录页距离顶部高度
+     * @param  {Object} Height 章节以上元素的高度
      */
     let scrollToEnd = (opacityNum, Top, Height) => {
       clearTimeout(setTime)
