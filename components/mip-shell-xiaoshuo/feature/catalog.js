@@ -14,7 +14,7 @@ class Catalog {
     this.propagationStopped = this._stopPropagation()
   }
 
-  // 根据配置渲染目录侧边栏到 mip-sidebar组件中
+  // 根据配置渲染目录侧边栏到  mip-sidebar组件中
   // 支持从页面直接获取目录，异步获取目录
   _renderCatalog (catalogs, book) {
     let renderCatalog
@@ -307,11 +307,12 @@ class Catalog {
     for (let i = 0; i < catalog.length; i++) {
       catalog[i].innerHTML = catalog[i].innerHTML
     }
-
+    document.body.classList.add('body-forbid')
     // }, 400)
   }
   // 隐藏侧边目录
   hide () {
+    document.body.classList.remove('body-forbid')
     this.$catalogSidebar.classList.remove('show')
   }
   // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
