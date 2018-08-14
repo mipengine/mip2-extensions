@@ -18,23 +18,30 @@ export default class MipAccordion extends CustomElement {
     super(...args)
     this.localurl = location.href
   }
-  // 恢复用户上次选择
+  /**
+   * 恢复用户上次选择
+   *
+   * @param  {string} id 上次用户选择的id
+   */
   userSelect (id) {
-    let self = this
     let sessionsKey = 'MIP-' + id + '-' + this.localurl
     let datajson = this.getSession(sessionsKey)
     for (let data of Object.entries(datajson)) {
       let [prop] = data
       let expand = datajson[prop]
       if (expand) {
-        let content = self.element.querySelector('#' + prop)
+        let content = this.element.querySelector('#' + prop)
         content.setAttribute('aria-expanded', 'open')
         content.parentElement.setAttribute('expanded', 'open')
       }
     }
   }
-  // 绑定事件
-  bindEven (elem, self) {
+  /**
+   * 绑定事件
+   *
+   * @param  {Object} elem 整个mip-accordion对象
+   */
+  bindEvent (elem) {
     let aniTime = elem.getAttribute('animatetime')
     if (aniTime === undefined || isNaN(aniTime)) {
       // if transition time is not set, set into 0.24s
@@ -45,8 +52,8 @@ export default class MipAccordion extends CustomElement {
     }
     elem.addEventListener('click', e => {
       let showHeader = e.target
-      let $showMore = self.element.querySelector('.show-more')
-      let $showLess = self.element.querySelector('.show-less')
+      let $showMore = this.element.querySelector('.show-more')
+      let $showLess = this.element.querySelector('.show-less')
       if ($showMore || $showLess) {
         showHeader = showHeader.parentElement
       }
@@ -59,33 +66,33 @@ export default class MipAccordion extends CustomElement {
       if (expanded === 'open') {
         // 收起内容区域
         // fold animation
-        self.heightAni({
+        this.heightAni({
           ele: $targetdom,
           type: 'fold',
           transitionTime: aniTime,
-          cbFun: function (expanded) {
-            expanded.setAttribute('aria-expanded', 'close')
-          }.bind(undefined, $targetdom)
+          cbFun () {
+            $targetdom.setAttribute('aria-expanded', 'close')
+          }
         })
         showHeader.parentElement.setAttribute('expanded', '')
-        if ($showMore && !!$showMore.length && !!$showLess.length) {
+        if ($showMore && $showMore.length && $showLess.length) {
           $showMore.css('display', 'block')
           $showLess.css('display', 'none')
         }
-        self.setSession(elem, targetId, false)
+        this.setSession(elem, targetId, false)
       } else {
         // 同时只能展开一个节点
         if (elem.hasAttribute('expaned-limit')) {
           let sections = elem.querySelectorAll('section')
-          for (let value of sections) {
-            let cont = value.querySelector('.mip-accordion-content')
-            let header = value.querySelector('.mip-accordion-header')
+          for (let section of sections) {
+            let cont = section.querySelector('.mip-accordion-content')
+            let header = section.querySelector('.mip-accordion-header')
             let id = header.getAttribute('aria-controls')
-            value.removeAttribute('expanded')
+            section.removeAttribute('expanded')
             cont.removeAttribute('aria-expanded')
-            self.setSession(elem, id, false)
+            this.setSession(elem, id, false)
             // fold animation
-            self.heightAni({
+            this.heightAni({
               ele: cont,
               type: 'fold',
               transitionTime: aniTime
@@ -99,24 +106,35 @@ export default class MipAccordion extends CustomElement {
           $showMore.css('display', 'none')
         }
         // unfold animation
-        self.heightAni({
+        this.heightAni({
           ele: $targetdom,
           type: 'unfold',
           oriHeight: 0,
           transitionTime: aniTime
         })
-        self.setSession(elem, targetId, true)
+        this.setSession(elem, targetId, true)
       }
     })
   }
-  // 设置session storage
+  /**
+   * 设置session storage
+   *
+   * @param {Object} element 整个mip-accordion对象
+   * @param {Object} obj     aria-controls属性值，记录哪个节点
+   * @param {boolean} expand true 展开 或者 false 收起
+   */
   setSession (element, obj, expand) {
     let sessionsKey = 'MIP-' + element.getAttribute('sessions-key') + '-' + this.localurl
     let objsession = this.getSession(sessionsKey)
     objsession[obj] = expand
     sessionStorage[sessionsKey] = JSON.stringify(objsession)
   }
-  // 获取 sission
+  /**
+   * 获取 sission
+   *
+   * @param  {Object} sessionsKey 之前记录的session
+   * @return {Object} data        返回session里的数据
+   */
   getSession (sessionsKey) {
     let data = sessionStorage[sessionsKey]
     return data ? JSON.parse(data) : {}
@@ -191,7 +209,12 @@ export default class MipAccordion extends CustomElement {
       cbFun()
     }, transitionTime * 1000)
   }
-  // 获取最近的下一个兄弟元素
+  /**
+   * 获取最近的下一个兄弟元素
+   *
+   * @param  {Object} ele  当前元素
+   * @return {Object} item 最近的下一个兄弟元素
+   */
   nextSibling (ele) {
     if (ele.nextElementSibling !== undefined) {
       return ele.nextElementSibling
@@ -203,10 +226,11 @@ export default class MipAccordion extends CustomElement {
       return item
     }
   }
-  // 插入文档时执行
-  build () {
+  /**
+   * 进入首屏执行函数
+   */
+  firstInviewCallback () {
     let element = this.element
-    this.section = [...element.querySelectorAll('section')]
     this.currentState = this.getSession(this)
     element.setAttribute('type', element.getAttribute('type') || 'automatic')
     this.sections = [...element.querySelectorAll('section')]
@@ -240,6 +264,6 @@ export default class MipAccordion extends CustomElement {
     if (element.getAttribute('type') === 'automatic') {
       this.userSelect(this.id)
     }
-    this.bindEven(element, this)
+    this.bindEvent(element)
   }
 }
