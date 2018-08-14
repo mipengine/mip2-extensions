@@ -24,6 +24,7 @@
 .background {
   background-color: #aaa;
 }
+
 .fade-enter-active {
   opacity: 0;
 }

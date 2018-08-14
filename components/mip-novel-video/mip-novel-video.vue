@@ -325,9 +325,11 @@ mip-novel-video {
   font-size: 14px;
   left: 0;
   top: 0;
+
   span {
     color: #ff6767;
   }
+
   .video-container {
     height: 100%;
     width: 100%;
@@ -335,6 +337,7 @@ mip-novel-video {
     z-index: 100;
     opacity: 0;
   }
+
   .close-container {
     animation: close 500ms ease;
     -webkit-animation: close 500ms ease;
@@ -342,27 +345,27 @@ mip-novel-video {
     -webkit-animation-fill-mode: forwards;
   }
 
-  @keyframes close
-  {
+  @keyframes close {
     from {
       transform: scale3d(1, 1, 1);
-      opacity: 1
+      opacity: 1;
     }
+
     to {
       transform: scale3d(0, 0, 0);
-      opacity: 0
+      opacity: 0;
     }
   }
 
-  @-webkit-keyframes close
-  {
+  @-webkit-keyframes close {
     from {
       transform: scale3d(1, 1, 1);
-      opacity: 1
+      opacity: 1;
     }
+
     to {
       transform: scale3d(0, 0, 0);
-      opacity: 0
+      opacity: 0;
     }
   }
 
@@ -371,65 +374,72 @@ mip-novel-video {
     -webkit-animation: show 500ms ease;
     animation-fill-mode: forwards;
     -webkit-animation-fill-mode: forwards;
-    opacity: 1
+    opacity: 1;
   }
+
   .show-content {
     animation: showScale 500ms ease;
     -webkit-animation: showScale 500ms ease;
     animation-fill-mode: forwards;
     -webkit-animation-fill-mode: forwards;
-    opacity: 1
+    opacity: 1;
   }
-  @keyframes showScale
-  {
+
+  @keyframes showScale {
     from {
       transform: scale3d(0, 0, 0);
-      opacity: 0
+      opacity: 0;
     }
+
     to {
       transform: scale3d(1, 1, 1);
-      opacity: 1
+      opacity: 1;
     }
   }
-  @-webkit-keyframes showScale
-  {
+
+  @-webkit-keyframes showScale {
     from {
       transform: scale3d(0, 0, 0);
-      opacity: 0
+      opacity: 0;
     }
+
     to {
       transform: scale3d(1, 1, 1);
-      opacity: 1
+      opacity: 1;
     }
   }
+
   .close-content {
     animation: closeScale 500ms ease;
     -webkit-animation: closeScale 500ms ease;
     animation-fill-mode: forwards;
     -webkit-animation-fill-mode: forwards;
   }
-  @keyframes closeScale
-  {
+
+  @keyframes closeScale {
     from {
       transform: scale3d(1, 1, 1);
-      opacity: 1
+      opacity: 1;
     }
+
     to {
       transform: scale3d(0, 0, 0);
-      opacity: 0
+      opacity: 0;
     }
   }
-  @-webkit-keyframes closeScale
-  {
+
+  @-webkit-keyframes closeScale {
     from {
       transform: scale3d(1, 1, 1);
-      opacity: 1
+      opacity: 1;
     }
+
     to {
       transform: scale3d(0, 0, 0);
-      opacity: 0
+      opacity: 0;
     }
   }
+
   .video-mask {
     width: 100%;
     height: 100%;
@@ -439,6 +449,7 @@ mip-novel-video {
     position: absolute;
     left: 0;
   }
+
   .content-video {
     width: 100%;
     height: 100%;
@@ -446,40 +457,50 @@ mip-novel-video {
     left: 0;
     position: absolute;
     display: -webkit-flex;
-    display:         flex;
+    display: flex;
     -webkit-align-items: center;
-            align-items: center;
+    align-items: center;
     -webkit-justify-content: center;
-            justify-content: center;
+    justify-content: center;
   }
+
   .content {
     width: 95%;
     height: 53.5vw;
     z-index: 1000;
     position: relative;
+
     &-title {
       width: 100%;
       height: 50px;
       line-height: 40px;
+
+      /* stylelint-disable function-linear-gradient-no-nonstandard-direction */
       background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1), transparent);
-      background:         linear-gradient(top, rgba(0, 0, 0, 1), transparent);
+      background: linear-gradient(top, rgba(0, 0, 0, 1), transparent);
+      /* stylelint-enable function-linear-gradient-no-nonstandard-direction */
+
       position: absolute;
       z-index: 1001;
       display: flex;
       justify-content: space-between;
     }
+
     &-count {
       margin-right: 10px;
     }
+
     &-tip {
       margin-left: 10px;
     }
   }
+
   .close-video {
     padding-right: 10px;
     width: 100px;
     text-align: right;
   }
+
   .pinpai {
     width: 54px;
     height: 23px;
@@ -489,14 +510,16 @@ mip-novel-video {
     align-items: center;
     justify-content: center;
   }
+
   .pinpai-back {
     width: 100%;
     height: 100%;
     position: absolute;
     background-color: #666;
-    opacity: .75;
+    opacity: 0.75;
     bottom: 0;
   }
+
   .pinpai-title {
     width: 100%;
     height: 100%;
@@ -508,42 +531,41 @@ mip-novel-video {
     text-align: center;
     position: absolute;
   }
+
   .video {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
   }
-  .video-cover {
-    width: 100%;
-    height: 100%;
-  }
 
-  @keyframes show
-  {
+  @keyframes show {
     from {
-      opacity: 0
+      opacity: 0;
     }
+
     to {
-      opacity: 1
+      opacity: 1;
     }
   }
 
-  @-webkit-keyframes show
-  {
+  @-webkit-keyframes show {
     from {
-      opacity: 0
+      opacity: 0;
     }
+
     to {
-      opacity: 1
+      opacity: 1;
     }
   }
+
   .video-cover {
     background-size: cover;
     height: 100%;
     width: 100%;
     position: absolute;
   }
+
   .video-canvas {
     position: absolute;
     opacity: 0;

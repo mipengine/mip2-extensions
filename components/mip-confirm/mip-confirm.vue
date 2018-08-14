@@ -60,6 +60,7 @@
   line-height: 1.5;
   background-color: rgba(255, 255, 255, 0.95);
 }
+
 .mask {
   top: 0;
   left: 0;
@@ -67,11 +68,13 @@
   right: 0;
   background-color: rgba(0, 0, 0, 0.5);
 }
+
 .toast {
   border: 1px solid rgba(0, 0, 0, 0.6);
   margin: 0 auto;
   background: white;
-  /*border-radius: 10px;*/
+
+  /* border-radius: 10px; */
   color: black;
   text-align: center;
   white-space: nowrap;
@@ -79,27 +82,32 @@
   line-height: 100%;
   height: auto;
 }
+
 .confirm-title {
   position: relative;
   padding: 20px 20px 10px;
   margin-bottom: -25px;
   text-align: center;
 }
+
 .confirm-title div {
   margin: 0;
   padding: 0;
   font-weight: 400px;
   font-size: 18px;
 }
+
 .confirm-content {
   margin: 25px 20px;
   color: #666;
   text-align: center;
   font-size: 15px;
 }
+
 .confirm-footer-btn {
   flex: 1;
-  display: block;
+
+  /* display: block; */
   position: relative;
   display: inline-block;
   outline: none;
@@ -114,29 +122,35 @@
   text-decoration: none;
   background-color: transparent;
 }
+
 .mip-img {
   margin-top: 10px;
 }
+
 .toast p {
   padding: 10px 0;
   white-space: normal;
   line-height: 0.24rem;
 }
+
 .confirm-footer {
   display: flex;
   position: relative;
   font-size: 0;
   border: 0;
 }
+
 .confirm-footer-left {
   border-right-width: 0;
   border-left-width: 0;
   border-bottom-width: 0;
 }
+
 .confirm-footer-right {
   border-right-width: 0;
   border-bottom-width: 0;
 }
+
 .confirm-footer-bottom {
   border-right-width: 0;
   border-left-width: 0;
