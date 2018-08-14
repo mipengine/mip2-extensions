@@ -49,7 +49,7 @@ export default class MipAudio extends CustomElement {
    */
   getAttributeSet (attributes) {
     let attrs = {}
-    for (let i = 0; i < attributes.length; i++) {
+    for (let i = 0, len = attributes.length; i < len; i++) {
       attrs[attributes[i].name] = attributes[i].value
     }
     // Array.prototype.slice.apply(attributes).forEach((attr) => {
@@ -133,7 +133,7 @@ export default class MipAudio extends CustomElement {
    */
   createDefaultController () {
     let audioDom =
-            `
+      `
         <div controller>
         <i play-button class="mip-audio-stopped-icon"></i>
         <div current-time>00:00</div>
