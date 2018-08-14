@@ -665,12 +665,14 @@ export default {
   margin: 0 auto;
   text-align: center;
 }
+
 .text {
   height: 32px;
   line-height: 32px;
   font-size: 18px;
   margin-bottom: 5px;
 }
+
 .input {
   height: 30px;
   line-height: 30px;
