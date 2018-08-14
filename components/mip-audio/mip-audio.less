@@ -1,20 +1,21 @@
-mip-audio.mip-audio-default-style{
+mip-audio.mip-audio-default-style {
   font-size: 0;
-  max-width: 100%!important;
+  max-width: 100% !important;
   min-width: 250px;
   min-height: 40px;
   display: block;
-  overflow: visible!important;
+  overflow: visible !important;
   -webkit-tap-highlight-color: transparent;
   -moz-user-select: none;
   -webkit-user-select: none;
-  -ms-user-select: none; 
-  user-select: none; 
+  -ms-user-select: none;
+  user-select: none;
+
   audio {
-    /* iOS7.1.2 audio标签有占位，需要手动清除*/
     display: none;
     height: 0;
   }
+
   [controller] {
     background-color: #434343;
     border-radius: 5px;
@@ -29,9 +30,9 @@ mip-audio.mip-audio-default-style{
     -webkit-box-align: center;
     align-content: center;
     align-items: center;
-    box-align: center;
     height: 100%;
   }
+
   [play-button] {
     width: 20px;
     min-width: 20px;
@@ -43,16 +44,19 @@ mip-audio.mip-audio-default-style{
     background-clip: content-box;
     flex: 0 0 auto;
   }
+
   [play-button].mip-audio-stopped-icon {
     background-image: url('https://mipcache.bdstatic.com/static/static/auido/audioimg.png');
     background-position: 9px 11px;
   }
+
   [play-button].mip-audio-playing-icon {
     background-image: url('https://mipcache.bdstatic.com/static/static/auido/audioimg.png');
     background-position: -13px 11px;
   }
+
   [seekbar] {
-    width : 120px;
+    width: 120px;
     height: 8px;
     box-sizing: border-box;
     background-color: #818181;
@@ -62,14 +66,16 @@ mip-audio.mip-audio-default-style{
     border-radius: 8px;
     flex-grow: 2;
   }
+
   [seekbar-fill] {
     height: 6px;
     background-color: #414141;
     position: absolute;
     top: 50%;
-    margin-top: -3px; 
-    border-radius: 8px; 
+    margin-top: -3px;
+    border-radius: 8px;
   }
+
   [seekbar-button] {
     width: 20px;
     background-color: #fff;
@@ -77,9 +83,11 @@ mip-audio.mip-audio-default-style{
     border-radius: 10px;
     position: relative;
     margin-top: -7px;
-    margin-left: -10px
+    margin-left: -10px;
   }
-  [current-time], [total-time] {
+
+  [current-time],
+  [total-time] {
     font-size: 13px;
     color: #fff;
     margin-left: 10px;
@@ -87,8 +95,8 @@ mip-audio.mip-audio-default-style{
     white-space: nowrap;
     flex: 0 0;
   }
+
   [total-time] {
     margin: 0 0 0 20px;
   }
-
 }
