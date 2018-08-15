@@ -135,13 +135,13 @@ export default class MipAudio extends CustomElement {
     let audioDom =
       `
         <div controller>
-        <i play-button class="mip-audio-stopped-icon"></i>
-        <div current-time>00:00</div>
-        <div seekbar>
-        <div seekbar-fill></div>
-        <div seekbar-button></div>
-        </div>
-        <div total-time>--:--</div>
+          <i play-button class="mip-audio-stopped-icon"></i>
+          <div current-time>00:00</div>
+          <div seekbar>
+            <div seekbar-fill></div>
+            <div seekbar-button></div>
+          </div>
+          <div total-time>--:--</div>
         </div>
       `
 
