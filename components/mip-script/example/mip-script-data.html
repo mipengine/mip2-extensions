@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP script example</title>
+  <link rel="canonical" href="">
+  <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
+  <style mip-custom>
+    body {
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 15px
+    }
+
+    span {
+      color: red;
+      opacity: 0.7;
+    }
+    input {
+      width: 200px;
+      line-height: 24px;
+      border-color: #999;
+      margin-top: 12px;
+      padding: 2px;
+    }
+
+    .header {
+      line-height: 34px;
+      font-size: 22px;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+
+    ul {
+      padding: 0 25px;
+    }
+
+    li {
+      line-height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <mip-data>
+      <script type="application/json">
+        {
+          "price": 20,
+          "title": "初始值 Price = 20",
+          "userList": []
+        }
+      </script>
+    </mip-data>
+
+    <h3><span>【注】</span>本示例与 mip-bind 组件有较多关联，请先学习 mip-bind 相关内容。mip-script 在本示例中的用法，请查看源代码学习</会>
+
+    <p m-text="title" class="header"></p>
+    
+    输入数字，单击回车可改变 price 的值<br />（price = input.value * price）:
+    <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
+
+    <p class="header">以下是异步获取的数据列表：</p>
+    <ul>
+      <li m-text="userList[0]"></li>
+      <li m-text="userList[1]"></li>
+      <li m-text="userList[2]"></li>
+    </ul>
+
+    <mip-script>
+      console.log('mip-script executed')
+
+      MIP.watch('price', (newVal, oldVal) => {
+        MIP.setData({
+          title: `price = ${newVal}`
+        })
+      })
+
+      fetch('./list.json')
+        .then(data => {
+          return data.json()
+        })
+        .then(data => {
+          MIP.setData({
+            userList: data.userList
+          })
+        })  
+        .catch(e => {
+          console.error(e.message); 
+        })
+    </mip-script>
+  </div>
+  <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
+  <script src="/mip-script/mip-script.js"></script>
+</body>
+
+</html>
+

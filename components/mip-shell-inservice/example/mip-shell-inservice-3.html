@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
+  <style mip-custom>
+  /* 自定义样式 */
+  [mip-link]{
+    display: block;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    background-color: #f3f3f3;
+    margin: 30px;
+    border-radius: 30px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+  [mip-link]:active{
+    background-color: #d3d3d3;
+    border-radius: 30px;
+  }
+  .pcenter {
+    font-size: 18px;
+    height: 100px;
+    width: 100%;
+    /* display: flex;
+    justify-content: center;
+    align-items: center */
+  }
+  .imageBox{
+    display: flex;
+
+  }
+  .imageBox > div{
+    display: flex;
+    flex: 1;
+    height: 200px;
+    padding: 30px;
+  }
+  </style>
+</head>
+
+<body>
+  <mip-shell-inservice mip-shell>
+    <script type="application/json">
+      {
+        "routes": [
+          {
+            "pattern": "./index.html",
+            "meta": {
+              "header": {
+                "show": true
+              },
+              "view": {
+                "isIndex": true
+              }
+            }
+          },
+          {
+            "pattern": "./mip-shell-inservice.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "微咖啡PAGE2"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "./mip-shell-inservice-2.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "PAGE3"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "./mip-shell-inservice-3.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "芒果系列"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "*",
+            "meta": {
+              "header": {
+                "show": true
+              }
+            }
+          }
+        ],
+        "isId": "1569699517752663"
+      }
+      </script>
+    </mip-shell-inservice>
+  <div>
+
+  </div>
+  <div class="pcenter">
+  <a class="link" href="./index.html" mip-link>Go to index</a>
+  <div class="imageBox">
+      <mip-img layout="responsive" width="960" height="960" src="https://mip-extensions.cdn.bcebos.com/wecoffee/images/%E6%A9%99%E6%B1%81.jpg">
+  </div>
+  </div>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <!-- <script src="http://172.24.132.24:8080/dist/mip.js"></script> -->
+  <!-- <script src="/dist/mip.js"></script> -->
+  <script src="/mip-shell-inservice/mip-shell-inservice.js"></script>
+  <!-- <script src="/dist/mip-shell-inservice/mip-shell-inservice.js"></script> -->
+</body>
+
+</html>

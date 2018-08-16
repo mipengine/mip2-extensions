@@ -14,9 +14,9 @@
 
 `git clone` 出来的项目结构与 `mip2 init` 命令初始化的项目结构类似，我们可以在 `components` 目录新增组件。
 
-- [组件开发](https://github.com/mip-project/mip/blob/master/docs/cli/start-writing-first-mip.md#%E7%BC%96%E5%86%99-mip-%E7%BB%84%E4%BB%B6)
-- [调试](https://github.com/mip-project/mip/blob/master/docs/cli/cli-usage.md#%E5%90%AF%E5%8A%A8%E8%B0%83%E8%AF%95%E6%9C%8D%E5%8A%A1%E5%99%A8)
-- [校验](https://github.com/mip-project/mip/blob/master/docs/cli/cli-usage.md#%E7%BB%84%E4%BB%B6%E5%92%8C%E9%A1%B5%E9%9D%A2%E6%A0%A1%E9%AA%8C)
+- [组件开发](https://github.com/mipengine/mip2/blob/master/docs/guide/mip-cli/component-development.md)
+- [调试](https://github.com/mipengine/mip2/blob/master/docs/guide/mip-cli/component-testing.md)
+- [校验](https://github.com/mipengine/mip2/blob/master/docs/guide/mip-cli/cli-usage.md#mip2-validate-%E7%BB%84%E4%BB%B6%E5%92%8C%E9%A1%B5%E9%9D%A2%E6%A0%A1%E9%AA%8C)
 
 3.**发起 Pull Request**
 
@@ -25,4 +25,3 @@
 4.**官方审核通过，合入上线**
 
 官方审核通过后，代码将合入 `master` 分支并上线。若不通过，请根据反馈修改后再次提交。
-

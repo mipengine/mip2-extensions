@@ -1,0 +1,372 @@
+<!DOCTYPE html >
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
+  <style mip-custom>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box
+    }
+
+    li,
+    ol {
+      list-style: none
+    }
+
+    h2 {
+      margin: 50px auto;
+      text-align: center
+    }
+
+    .servicePro [role=list] {
+      display: -webkit-flex;
+      display: flex;
+      width: 100%;
+      flex-direction: row
+    }
+
+    .servicePro [role=listitem] {
+      width: 25%;
+      padding: 15px 0
+    }
+
+    .servicePro [role=listitem]>li {
+      width: 100%
+    }
+
+    .servicePro [role=listitem] li .mip-layout-container {
+      display: block;
+      width: 30px;
+      height: 30px;
+      margin: 10px auto
+    }
+
+    .servicePro [role=listitem] li>p {
+      text-align: center
+    }
+
+    .p-border {
+      border-top: #e9ebee solid 1px;
+      border-bottom: #e9ebee solid 1px
+    }
+
+    .uccessNum {
+      padding: 15px;
+      text-align: center;
+      background: #f8f9fa;
+      display: block;
+      color: #888c91
+    }
+
+    .uccessNum span {
+      font-size: 20px;
+      color: #000;
+      padding: 0 5px;
+      letter-spacing: 5px
+    }
+
+    .QandA {
+      margin-top: 20px
+    }
+
+    .QandA .title {
+      padding: 0 .3rem;
+      height: .8rem;
+      line-height: .8rem;
+      font-size: .28rem;
+      color: #f10215;
+      border-bottom: 1px solid #e9ebee
+    }
+
+    .QandA .title::before {
+      margin-right: .2rem;
+      visibility: visible;
+      content: '';
+      width: .35rem;
+      height: .42rem;
+      background: url(https://rs.jikexiu.com/appresources/images2016/landing/img14.png) no-repeat;
+      background-size: 100% 100%;
+      display: inline-block;
+      vertical-align: -.15rem
+    }
+
+    .QandA ol {
+      padding-left: .3rem
+    }
+
+    .QandA section::after {
+      position: absolute;
+      right: .3rem;
+      top: .35rem;
+      content: '';
+      width: .24rem;
+      height: .13rem;
+      background: url(https://rs.jikexiu.com/appresources/images/arrow_gray_dow.png) no-repeat;
+      background-size: 100% 100%;
+      display: block;
+      transform: all .2s ease-in
+    }
+
+    .QandA section[expanded=open]::after {
+      content: '';
+      transform: rotate(180deg)
+    }
+
+    .QandA section {
+      position: relative;
+      padding: 0 .3rem;
+      border-bottom: 1px solid #e9ebee
+    }
+
+    .QandA section h4 {
+      padding: .22rem .2rem .22rem 0;
+      line-height: .44rem;
+      font-size: .3rem;
+      font-weight: 400
+    }
+
+    .QandA section p {
+      padding-bottom: .2rem;
+      line-height: .4rem;
+      font-size: .24rem;
+      color: #666
+    }
+
+    .fixed_btn {
+      overflow: hidden;
+      height: 50px;
+      background-color: #fff;
+      padding: 0 4%;
+      text-align: center
+    }
+
+    .fixed_btn span {
+      margin-top: 6px;
+      background-color: #F10215;
+      overflow: hidden;
+      border-radius: 4px;
+      border: 1px solid #f10215;
+      height: 38px;
+      display: inline-block;
+      float: left;
+      width: 48.5%;
+      line-height: 38px
+    }
+
+    .fixed_btn span:first-child {
+      margin-right: 3%;
+      background-color: #fff
+    }
+
+    .ask_btn,
+    .fast_order {
+      padding-left: 28px;
+      color: #F10215;
+      font-size: 16px;
+      background: url(//rs.jikexiu.com/appresources/images2016/landing/tell1.png) no-repeat left center;
+      background-size: auto 90%
+    }
+
+    .fast_order {
+      color: #fff;
+      background: url(//rs.jikexiu.com/appresources/images2016/landing/tool.png) no-repeat left center;
+      background-size: auto 90%
+    }
+  </style>
+
+</head>
+
+<body>
+  <mip-shell-inservice mip-shell>
+    <script type="application/json">
+      {
+        "routes": [
+          {
+            "pattern": "./index.html",
+            "meta": {
+              "header": {
+                "show": true
+              },
+              "view": {
+                "isIndex": true
+              }
+            }
+          },
+          {
+            "pattern": "./mip-shell-inservice.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "微咖啡PAGE2"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "./mip-shell-inservice-2.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "PAGE3"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "./mip-shell-inservice-3.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "芒果系列"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          },
+          {
+            "pattern": "*",
+            "meta": {
+              "header": {
+                "show": true
+              }
+            }
+          }
+        ],
+        "isId": "1569699517752663"
+      }
+    </script>
+  </mip-shell-inservice>
+  <mip-data>
+    <script type="application/json">
+      {
+      "phonenum":2230151
+      }
+    </script>
+  </mip-data>
+  <mip-carousel autoplay layout="responsive" width="750" height="316">
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
+      <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_pg.jpg">
+      </mip-img>
+    </a>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
+      <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_gz.jpg">
+      </mip-img>
+    </a>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
+      <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_jgtm.jpg">
+      </mip-img>
+    </a>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
+      <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_pa.jpg">
+      </mip-img>
+    </a>
+    <a class="link" href="./mip-shell-inservice.html" mip-link>
+      <mip-img layout="responsive" src="https://rs.jikexiu.com/resources/Nimages/banner/m/banner_gome.jpg">
+      </mip-img>
+    </a>
+  </mip-carousel>
+  <mip-list synchronous-data class="servicePro">
+    <script type="application/json">
+      {
+        "items": [
+          {
+          "name": "免费上门",
+          "alias": "https://rs.jikexiu.com/appresources/images2016/landing/icon_mian.png"
+          },{
+          "name": "修好付费",
+          "alias": "https://rs.jikexiu.com/appresources/images2016/landing/icon_pay.png"
+          },{
+          "name": "全国连锁",
+          "alias": "https://rs.jikexiu.com/appresources/images2016/landing/icon_shop.png"
+          },{
+          "name": "180天保修",
+          "alias": "https://rs.jikexiu.com/appresources/images2016/landing/icon_bao.png"
+          }
+        ]
+      }
+    </script>
+    <template type="mip-mustache">
+      <li>
+        <a class="link" href="./mip-shell-inservice-2.html" mip-link>
+          <mip-img src="{{alias}}"></mip-img>
+        </a>
+
+        <p>{{name}}</p>
+      </li>
+    </template>
+  </mip-list>
+  <div class="uccessNum p-border">
+    <div>
+      已成功复活
+      <span m-text="phonenum"></span>部手机</div>
+  </div>
+  <article class="QandA">
+    <header class="clearfix border_lst_color title">常见问答</header>
+    <mip-accordion sessions-key="mip_1" animatetime='0.24'>
+      <section>
+        <h4>1、哪些城市支持手机上门维修？</h4>
+        <p class="mip-accordion-content">目前支持上门的分别为：北京、上海、广州、深圳、重庆、成都、天津、南京、武汉、郑州、西安、长沙、东莞、佛山、惠州、昆明、玉溪、贵阳、合肥、苏州、无锡、常州、徐州、杭州、宁波、济南、青岛、南昌、 延安、兰州、福州、厦门、海口、银川、大连、太原、南宁、石家庄、邢台、呼和浩特、南通、沧州、孝感、哈尔滨、沈阳等城市。</p>
+      </section>
+      <section>
+        <h4>2、不支持手机上门维修的城市想要维修怎么办？</h4>
+        <p class="mip-accordion-content">邮寄到距离最近的维修中心，极客修负责双向邮寄费用。</p>
+      </section>
+      <section>
+        <h4>3、手机上门维修收上门费吗？</h4>
+        <p class="mip-accordion-content">上门手机维修，免收上门费。</p>
+      </section>
+      <section>
+        <h4>4、手机维修后更换的配件保修期是多久？</h4>
+        <p class="mip-accordion-content">屏幕180天，电池180天，苹果内存扩容30天，主板30天，其余配件终身保修。</p>
+      </section>
+      <section>
+        <h4>5、在线预约之后的服务流程是怎样的?</h4>
+        <p class="mip-accordion-content">工作时间(8:00-22:00)将有来自工程师或区号023的座机与您联系，并在要求时间内上门进行维修，维修完成后在线支付。</p>
+      </section>
+      <section>
+        <h4>6、外屏碎和内屏碎有什么区别？</h4>
+        <p class="mip-accordion-content">如果屏幕碎了，但图像可以正常显示，表示只是外屏碎。如果图片显示不正常或者完全无法显示，则内屏已碎。</p>
+      </section>
+      <section>
+        <h4>7、外屏碎，但手机触摸和图像显示正常，不维修可以吗？</h4>
+        <p class="mip-accordion-content">手机外屏是保护内屏的屏障，外屏碎裂后，汗液或水渍直接 穿过外屏玻璃，或者一次微小的跌落或撞击，都会对手机屏幕总成造成无可挽回的损伤，强烈建议及时更换屏幕。</p>
+      </section>
+      <section>
+        <h4>8、能提供单独更换苹果手机外屏玻璃服务吗？</h4>
+        <p class="mip-accordion-content">不提供。单换iPhone手机外屏玻璃，会造成液晶屏漏液或者触摸不灵敏，经过温度变化出现不牢靠的现象，故障率高、体验差。</p>
+      </section>
+      <section>
+        <h4>9、下单时需要支付费用吗？</h4>
+        <p class="mip-accordion-content">您只需在维修完成后支付。</p>
+      </section>
+    </mip-accordion>
+  </article>
+  <mip-fixed type="bottom" data-slide>
+    <div class="fixed_btn jj_fixBtn">
+      <span>
+        <a id="float_tel" class="ask_btn" href="tel:4008917616" rel="external">电话咨询</a>
+      </span>
+      <span>
+        <a href="/zhida/repair" class="fast_order" rel="external">免费预约</a>
+      </span>
+    </div>
+  </mip-fixed>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <!-- <script src="https://c.mipcdn.com/static/v2/mip-shell-inservice/mip-shell-inservice.js"></script> -->
+  <script src="/mip-shell-inservice/mip-shell-inservice.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-list/mip-list.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-accordion/mip-accordion.js"></script>
+</body>
+
+</html>
