@@ -102,8 +102,8 @@ export default {
           // 页面返回重新触发一遍查询
           this.getUserInfo().then(() => {
             if (this.config.autologin && !this.isLogin) {
-              // TODO,考虑让业务方自己处理
-              this.login()
+              // TODO,抛出事件，让业务方自己处理
+              this.$emit('autoLoginCancel')
             }
           })
         }
@@ -300,8 +300,9 @@ export default {
         },
         complete (data) {
           // 单词拼错，待依赖的文件升级再修改
-          if (data.msg === 'oauth:cancle') {
-            self.loginHandle('cancle', false)
+          if (data.msg === 'oauth:cancel' && self.config.autologin) {
+            // TODO,抛出事件，让业务方自己处理
+            self.$emit('autoLoginCancel')
           }
         }
       })
