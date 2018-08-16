@@ -2,19 +2,20 @@
 
 用于调起 App。
 
-标题|内容
-----|----
-类型|通用
-支持布局|responsive, fixed-height, fill, container, fixed
-所需脚本|https://c.mipcdn.com/static/v2/mip-app-banner/mip-app-banner.js
+| 标题     | 内容                                                            |
+| -------- | --------------------------------------------------------------- |
+| 类型     | 通用                                                            |
+| 支持布局 | responsive, fixed-height, fill, container, fixed                |
+| 所需脚本 | https://c.mipcdn.com/static/v2/mip-app-banner/mip-app-banner.js |
 
 ## 示例
 
 ### 基本用法
+
 ```html
 <head>
-	<meta name="apple-itunes-app" content="app-id=xxxx, app-argument=medium://xxxx">
-	<link rel="manifest" href="xxxx/manifest">
+  <meta name="apple-itunes-app" content="app-id=xxxx, app-argument=medium://xxxx">
+  <link rel="manifest" href="xxxx/manifest">
 </head>
 ...
 <mip-app-banner id="my-app-banner" layout="nodisplay">
@@ -52,19 +53,17 @@
 
 ## 浏览器兼容性
 
-浏览器|Android+chrome|Android+baidu|iOS+safari |其他情况
----|---|---|---|---
-结果页打开|支持|不支持屏蔽|不支持，暂时屏蔽|支持
-非结果页打开|不支持屏蔽|不支持屏蔽|浏览器 banner|支持
-
+| 浏览器       | Android+chrome | Android+baidu | iOS+safari       | 其他情况 |
+| ------------ | -------------- | ------------- | ---------------- | -------- |
+| 结果页打开   | 支持           | 不支持屏蔽    | 不支持，暂时屏蔽 | 支持     |
+| 非结果页打开 | 不支持屏蔽     | 不支持屏蔽    | 浏览器 banner    | 支持     |
 
 ## 注意事项
 
-- 在引用组件的页面头部head标签中需要加两个标签
-    - iOS 使用：`<meta name="apple-itunes-app" content="app-id=app的id, app-argument=medium://xxxx">`。
-    - Android 使用：`<link rel="manifest" href="https://xxxx/manifest.json">`。
-    - manifest 的 url 必须是 HTTPS 的。
-
+- 在引用组件的页面头部 head 标签中需要加两个标签
+  - iOS 使用：`<meta name="apple-itunes-app" content="app-id=app的id, app-argument=medium://xxxx">`。
+  - Android 使用：`<link rel="manifest" href="https://xxxx/manifest.json">`。
+  - manifest 的 url 必须是 HTTPS 的。
 - manifest.json 示例
 
 ```

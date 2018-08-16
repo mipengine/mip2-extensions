@@ -142,7 +142,7 @@ class Catalog {
    */
   moveTranslateY ($catalogScroll, scrollTop) {
     $catalogScroll.style.transform = 'translateY( ' + scrollTop + 'px)'
-    $catalogScroll.style.WebkitTransform = 'translateY( ' + scrollTop + 'px)'
+    $catalogScroll.style.webkitTransform = 'translateY( ' + scrollTop + 'px)'
   }
   /**
    * 函数说明：自定义滚动条，滑目录内容，右边滚动条到相应位置，这里需要监听scroll完成事件，用settimeout异步队列模拟，解决兼容问题

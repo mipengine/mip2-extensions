@@ -2,72 +2,72 @@
  * @file mip-app-banner 组件
  *
  * @author wangpei07@baidu.com
+ * @author caoru@baidu.com
  */
 import './mip-app-banner.less'
-let {CustomElement, util, viewer} = MIP
+let {
+  CustomElement,
+  util,
+  viewer
+} = MIP
 let platform = util.platform
 let fetchJsonp = MIP.sandbox.fetchJsonp
+// app 调起
 let openButton = {
-  setup: function (openButton, openInAppUrl, installAppUrl) {
-    let self = this
-    openButton.addEventListener('click', function () {
-      self.onClick(openInAppUrl, installAppUrl)
+  setup (openButton, openInAppUrl, installAppUrl) {
+    openButton.addEventListener('click', () => {
+      this.onClick(openInAppUrl, installAppUrl)
     })
   },
-  onClick: function (openInAppUrl, installAppUrl) {
+  onClick (openInAppUrl, installAppUrl) {
     let timer = setTimeout(function () {
       window.top.location.href = installAppUrl
-      console.log(installAppUrl)
-      clearTimeout(timer)
-      console.log(window.top.location.href)
     }, 1500)
-    // 没有赋值成功？
-    console.log(window.top.location.href)
+    window.open(openInAppUrl, '_top')
     let visibilitychange = function () {
       let tag = document.hidden || document.webkitHidden
       tag && clearTimeout(timer)
     }
-
-    document.addEventListener('visibilitychange', visibilitychange, false)
-    document.addEventListener('webkitvisibilitychange', visibilitychange, false)
+    document.addEventListener('visibilitychange', visibilitychange)
+    document.addEventListener('webkitvisibilitychange', visibilitychange)
     window.addEventListener('pagehide', function () {
       clearTimeout(timer)
-    }, false)
+    })
   }
 }
-
+// storage的获取、判断、设置
 let ls = {
-  getSotrageKey: function (id) {
+  getSotrageKey (id) {
     return 'mip-app-banner:' + id
   },
-  hasItem: function (id) {
+  hasItem (id) {
     return !!localStorage.getItem(ls.getSotrageKey(id))
   },
-  setSotrage: function (id) {
+  setSotrage (id) {
     localStorage.setItem(this.getSotrageKey(id), true)
   }
 }
-
+// 去掉banne并设置storage
 let dismissButton = {
   element: null,
-  add: function (element) {
+  add (element) {
     this.element = element
     let dismissBtn = document.createElement('span')
     dismissBtn.classList.add('mip-app-banner-dismiss-button')
     dismissBtn.addEventListener('click', this.onClick.bind(this))
     element.appendChild(dismissBtn)
   },
-  onClick: function () {
+  onClick () {
     ls.setSotrage(this.element.id)
     this.element.remove()
   }
 }
-
+// banner 初始化
 let preProcess = {
-  isDismissed: function (id) {
+  isDismissed (id) {
     return ls.hasItem(id)
   },
-  init: function (element) {
+  init (element) {
     if (this.isDismissed(element.id)) {
       element.remove()
       return
@@ -79,14 +79,14 @@ let preProcess = {
   }
 }
 
-export default class MipDemo extends CustomElement {
-  constructor (...args) {
-    // 继承父类属性、方法
-    super(...args)
-    this.openButton = openButton
-  }
+export default class MipAppBanner extends CustomElement {
+  /**
+   * 判断打开平台
+   *
+   * @return {boolean}
+   */
   canShowBanner () {
-    this.isSysBanner = platform.isSafari() || platform.isBaidu()// || platform.isQQ();
+    this.isSysBanner = platform.isSafari() || platform.isBaidu() // || platform.isQQ();
     this.showSysBanner = !viewer.isIframed && this.isSysBanner
     if (this.showSysBanner) {
       return false
@@ -101,39 +101,38 @@ export default class MipDemo extends CustomElement {
     }
     return true
   }
-
+  /**
+   *  是不是ios的app调起
+   */
   iosAppBanner () {
-    let self = this
-    if (!this.canShowBanner.call(self)) {
-      // console.log("Ss")
+    if (!this.canShowBanner()) {
       this.element.remove()
-      // return
     }
     this.metaTag = document.head.querySelector('meta[name=apple-itunes-app]')
-    let openButton1 = this.element.querySelector('button[open-button]')
+    let openBtn = this.element.querySelector('button[open-button]')
     preProcess.init(this.element)
     let content = this.metaTag.getAttribute('content')
     let parts = content.replace(/\s/, '').split(',')
     let config = {}
-    parts.forEach(function (part) {
+    for (let part of parts) {
       let params = part.split('=')
       config[params[0]] = params[1]
-    })
+    }
     let appId = config['app-id']
     let openUrl = config['app-argument']
     let installAppUrl = 'https://itunes.apple.com/us/app/id' + appId
     let openInAppUrl = openUrl || installAppUrl
-    openButton.setup(openButton1, openInAppUrl, installAppUrl)
+    openButton.setup(openBtn, openInAppUrl, installAppUrl)
   }
-
+  /**
+   * 判断是否是Android的app调起
+   */
   andriodAppBanner () {
-    let self = this
     if (!this.canShowBanner()) {
       this.element.remove()
       return
     }
     let anOpenButton = this.element.querySelector('button[open-button]')
-
     preProcess.init(this.element)
     this.manifestLink = null
     this.manifestHref = ''
@@ -155,16 +154,14 @@ export default class MipDemo extends CustomElement {
     if (/http:\/\//.test(this.manifestHref)) {
       console.error('必须是https的连接')
     }
-
-    fetchJsonp(this.manifestHref).then(function (res) {
+    fetchJsonp(this.manifestHref).then(res => {
       return res.json()
-    }).then(function (data) {
+    }).then(data => {
       let apps = data.related_applications
       if (!apps) {
-        self.element.remove()
+        this.element.remove()
       }
-      for (let i = 0; i < apps.length; i++) {
-        let app = apps[i]
+      for (let app of apps) {
         if (app.platform === 'play') {
           let installAppUrl = app.install
           let openInAppUrl = app.open
@@ -173,21 +170,18 @@ export default class MipDemo extends CustomElement {
       }
     })
   }
-
   // 提前渲染
   prerenderAllowed () {
     return true
   }
   // 插入文档时执行
-  firstInviewCallback () {
-    let self = this
-    let element = self.element
+  connectedCallback () {
+    let element = this.element
     preProcess.isDismissed(element.id)
-    util.css(this.element, {
+    util.css(element, {
       display: '',
       visibility: 'hidden'
     })
-
     if (platform.isIos()) {
       this.iosAppBanner()
     } else {
