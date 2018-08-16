@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style>
+    mip-lightbox {
+      padding: 10px;
+    }
+
+    #btn-open,
+    .lightbox-close {
+      border: 1px solid #f1f1f1;
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin: 20px 0;
+      font-size: 14px;
+      background: #fff;
+      display: block;
+      box-sizing: border-box;
+    }
+
+    .lightbox {
+      padding: 10px;
+      background: white;
+    }
+
+    .lightbox p {
+      margin: 80px 0;
+      display: block;
+    }
+
+  </style>
+</head>
+
+<body>
+<button on="tap:my-lightbox3.toggle" id="btn-open" role="button" tabindex="0">
+  Open lightbox
+</button>
+
+<mip-lightbox
+  autoclosetime="5"
+  id="my-lightbox3"
+  layout="nodisplay"
+  class="mip-hidden">
+  <div class="lightbox">
+    <h1>Hello, World!</h1>
+    <p> this is the lightbox</p>
+    <div class="mip-lightbox-countdown">倒计时<span class="mip-lightbox-seconds"></span>秒关闭</div>
+  </div>
+</mip-lightbox>
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="/mip-lightbox/mip-lightbox.js"></script>
+</body>
+
+</html>
