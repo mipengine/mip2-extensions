@@ -18,23 +18,20 @@ export default class MipAudio extends CustomElement {
     this.timeoutArray = []
     this.increaseId = 0
     this.ShowmoreInstance = {}
-    let ele = this.element
-    this.ele = this.element
-    this.clickBtn = ele.querySelector('[showmorebtn]')
+    this.clickBtn = this.element.querySelector('[showmorebtn]')
     this.clickBtnSpan = this.clickBtn && this.clickBtn.querySelector('.mip-showmore-btnshow')
     // 获取内容显示框，v1.0.0 方法
-    this.showBox = ele.querySelector('[showmorebox]')
+    this.showBox = this.element.querySelector('[showmorebox]')
     // 获取动画时间, 默认为0.24，兼容0的写法
-    this.animateTime = ele.getAttribute('animatetime')
+    this.animateTime = this.element.getAttribute('animatetime')
     if (this.animateTime === null || isNaN(this.animateTime)) {
-      // if transition time is not set, set into 0.24s
       this.animateTime = 0.24
     }
     // 折叠高度类型
     this.heightType = ['HEIGHTSCREEN', 'HEIGHT', 'LENGTH']
     // 对应的收起按钮，因收起按钮可能不在 showmore组件中，故使用 document.querySelector 全局选择
-    this.btn = document.querySelector('div[on="tap:' + ele.id + '.toggle"]') || document.querySelector('div[on="click:' + this.ele.id + '.toggle"]')
-    this.eleid = ele.id
+    this.btn = document.querySelector('div[on="tap:' + this.element.id + '.toggle"]') || document.querySelector('div[on="click:' + this.element.id + '.toggle"]')
+    this.eleid = this.element.id
 
     this.bottomShadow = false
     this.showType = ''
@@ -47,7 +44,7 @@ export default class MipAudio extends CustomElement {
 
     // 获取内容显示框，v1.1.0 方法
     if (!this.showBox) {
-      this.showBox = this.ele
+      this.showBox = this.element
     }
   }
 
@@ -58,16 +55,16 @@ export default class MipAudio extends CustomElement {
     this.analysisDep()
     this.firstInit()
     this.bindClick()
-    this.addEventAction('toggle', function (event) {
+    this.addEventAction('toggle', event => {
       this.toggle(event)
     })
 
-    window.addEventListener('orientationchange', function () {
+    window.addEventListener('orientationchange', () => {
       this.firstInit()
     }, false)
 
-    this.addEventAction('refresh', function (event) {
-      this.init()
+    this.addEventAction('refresh', event => {
+      this.firstInit()
     })
   }
 
@@ -83,13 +80,13 @@ export default class MipAudio extends CustomElement {
     }
 
     // 获取高度阈值
-    this.maxHeight = this.ele.getAttribute('maxheight')
+    this.maxHeight = this.element.getAttribute('maxheight')
     // 获取字数阈值
-    this.maxLen = this.ele.getAttribute('maxlen')
+    this.maxLen = this.element.getAttribute('maxlen')
     // 获取是否需要bottom渐变
-    this.bottomShadow = this.ele.getAttribute('bottomshadow') === '1'
+    this.bottomShadow = this.element.getAttribute('bottomshadow') === '1'
     // 弹性高度，判断高度阈值时会增加此弹性
-    this.bufferHeight = this.ele.getAttribute('bufferheight')
+    this.bufferHeight = this.element.getAttribute('bufferheight')
     this.bufferHeight = +this.bufferHeight ? +this.bufferHeight : 0
     // 渐变className
     this.bottomShadowClassName = 'linear-gradient'
@@ -128,7 +125,7 @@ export default class MipAudio extends CustomElement {
     }
 
     // 避免初始加载闪现
-    util.css(this.ele, {
+    util.css(this.element, {
       visibility: 'visible'
     })
     this.runInitShowMore()
@@ -150,8 +147,8 @@ export default class MipAudio extends CustomElement {
    */
   changeBtnStyle (type) {
     // v1.0.0显示更多按钮
-    let showMoreBtn = this.ele.querySelector('.mip-showmore-btnshow')
-    let showMoreBtnHide = this.ele.querySelector('.mip-showmore-btnhide')
+    let showMoreBtn = this.element.querySelector('.mip-showmore-btnshow')
+    let showMoreBtnHide = this.element.querySelector('.mip-showmore-btnhide')
 
     // v1.1.0选中 showmore的div
     let showMoreBtn2 = this.btn || showMoreBtn
@@ -162,7 +159,6 @@ export default class MipAudio extends CustomElement {
       this.bottomShadow && this.showBox.classList.add(this.bottomShadowClassName)
     } else if ((type === 'unfold')) {
       util.css(showMoreBtn2, 'display', 'none')
-      // showMoreBtnHide && util.css(showMoreBtnHide, 'display', 'inline-block');
 
       // 处理bottom渐变
       this.bottomShadow && this.showBox.classList.remove(this.bottomShadowClassName)
@@ -245,9 +241,8 @@ export default class MipAudio extends CustomElement {
     if (!this.clickBtn) {
       return
     }
-    let showmore = this
-    this.clickBtn.addEventListener('click', function () {
-      showmore.toggle.apply(showmore)
+    this.clickBtn.addEventListener('click', () => {
+      this.toggle()
     }, false)
   };
   /**
@@ -270,10 +265,9 @@ export default class MipAudio extends CustomElement {
    * 根据当前模式以及打开的状态切换状态
    */
   toggle (event) {
-    let me = this
-    let classList = this.ele.classList
+    let classList = this.element.classList
     let clickBtn = event && event.target
-      ? this.matchOriginTarget(this.ele.id.trim(), event.target)
+      ? this.matchOriginTarget(this.element.id.trim(), event.target)
       : null
     let opt = {}
     opt.aniTime = this.animateTime
@@ -282,7 +276,7 @@ export default class MipAudio extends CustomElement {
       opt.oriHeight = util.rect.getElementOffset(this.showBox).height + 'px'
       let originDom = this.oriDiv
       let cutDom = this.cutDiv
-
+      // 包含子showmore
       if (classList.contains('mip-showmore-boxshow')) {
         // 隐藏超出字数的内容
         originDom.classList.add('mip-showmore-nodisplay')
@@ -292,25 +286,25 @@ export default class MipAudio extends CustomElement {
         cutDom.classList.add('mip-showmore-nodisplay')
         this.bottomShadow && this.showBox.classList.add(this.bottomShadowClassName)
         opt.type = 'fold'
-        opt.cbFun = function (showmore) {
-          showmore.toggleClickBtn(clickBtn, 'showOpen')
+        opt.cbFun = () => {
+          this.toggleClickBtn(clickBtn, 'showOpen')
           classList.remove('mip-showmore-boxshow')
           originDom.classList.add('mip-showmore-nodisplay')
           cutDom.classList.remove('mip-showmore-nodisplay')
-        }.bind(undefined, this)
+        }
       } else {
-        // 显示超出字数的内容
+        // 显示超出字数的内容 嵌套使用 字数
         this.bottomShadow && this.showBox.classList.remove(this.bottomShadowClassName)
         opt.type = 'unfold'
         originDom.classList.remove('mip-showmore-nodisplay')
         cutDom.classList.add('mip-showmore-nodisplay')
         opt.tarHeight = this.getHeightUnfold(this.showBox) + 'px'
         this.showBox.style.height = this.maxHeight + 'px'
-        opt.cbFun = function (showmore) {
-          showmore.toggleClickBtn(clickBtn, 'showClose')
+        opt.cbFun = () => {
+          this.toggleClickBtn(clickBtn, 'showClose')
           classList.add('mip-showmore-boxshow')
-          me.addClassWhenUnfold()
-        }.bind(undefined, this)
+          this.addClassWhenUnfold()
+        }
       }
     } else if (this.showType === this.heightType[1] || this.showType === this.heightType[0]) {
       if (classList.contains('mip-showmore-boxshow')) {
@@ -319,19 +313,19 @@ export default class MipAudio extends CustomElement {
         classList.remove('mip-showmore-boxshow')
         opt.type = 'fold'
         opt.tarHeight = this.maxHeight + 'px'
-        opt.cbFun = function (showmore, clickBtn) {
-          showmore.toggleClickBtn(clickBtn, 'showOpen')
-        }.bind(undefined, this, clickBtn)
+        opt.cbFun = () => {
+          this.toggleClickBtn(clickBtn, 'showOpen')
+        }
       } else {
         // 显示超出高度的内容
         this.bottomShadow && this.showBox.classList.remove(this.bottomShadowClassName)
         classList.add('mip-showmore-boxshow')
         opt.type = 'unfold'
-        opt.cbFun = function (showmore, clickBtn) {
-          showmore.toggleClickBtn(clickBtn, 'showClose')
-          showmore.ele.style.height = 'auto'
-          me.addClassWhenUnfold()
-        }.bind(undefined, this, clickBtn)
+        opt.cbFun = () => {
+          this.toggleClickBtn(clickBtn, 'showClose')
+          this.element.style.height = 'auto'
+          this.addClassWhenUnfold()
+        }
       }
     }
     this.heightAni({
@@ -439,8 +433,8 @@ export default class MipAudio extends CustomElement {
    * @param {showBtnObj, hideBtnObj}
    */
   changeBtnText (showBtnObj, hideBtnObj) {
-    let btnShow = this.ele.querySelector('.mip-showmore-btnshow')
-    let btnHide = this.ele.querySelector('.mip-showmore-btnhide')
+    let btnShow = this.element.querySelector('.mip-showmore-btnshow')
+    let btnHide = this.element.querySelector('.mip-showmore-btnhide')
     this.changeBtnShow(btnShow, showBtnObj)
     this.changeBtnShow(btnHide, hideBtnObj)
   };
@@ -475,11 +469,11 @@ export default class MipAudio extends CustomElement {
    * this.containSMChild = true;
    */
   analysisDep () {
-    let childMipShowmore = this.ele.querySelectorAll('mip-showmore')
+    let childMipShowmore = this.element.querySelectorAll('mip-showmore')
     if (!childMipShowmore.length) {
       return
     }
-    let parentId = this.getId(this.ele)
+    let parentId = this.getId(this.element)
     this.ShowmoreInstance[parentId] = this.ShowmoreInstance[parentId] || { deps: [] }
     this.ShowmoreInstance[parentId].instance = this
 
@@ -503,8 +497,8 @@ export default class MipAudio extends CustomElement {
    * @private
    */
   runInitShowMore () {
-    let depIds = this.ShowmoreInstance[this.getId(this.ele)]
-    depIds && depIds.deps.forEach(function (depid) {
+    let depIds = this.ShowmoreInstance[this.getId(this.element)]
+    depIds && depIds.deps.forEach(depid => {
       let instan = this.ShowmoreInstance[depid]
       instan && instan.instance && !instan.instance.initialized && instan.instance.init()
     })
