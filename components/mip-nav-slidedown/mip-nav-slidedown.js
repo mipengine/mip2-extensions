@@ -15,14 +15,13 @@ export default class MipNavSlidedown extends CustomElement {
   }
 
   render () {
-    let ele = this.element
-    let id = ele.getAttribute('data-id')
-    let showBrand = !(ele.getAttribute('data-showBrand') === 0)
-    let brandName = ele.getAttribute('data-brandName') || ''
-    let brandHref = ele.getAttribute('data-brandhref') || '#'
-    let ulNav = ele.querySelector('#' + id)
+    const id = this.element.getAttribute('data-id')
+    const showBrand = !(this.element.getAttribute('data-showBrand') === 0)
+    const brandName = this.element.getAttribute('data-brandName') || ''
+    const brandHref = this.element.getAttribute('data-brandhref') || '#'
+    const ulNav = this.element.querySelector('#' + id)
     let container = document.createElement('div')
-    let btnWrap =
+    const btnWrap =
       `
       <div class="navbar-header">
         <button class="navbar-toggle collapsed" type="button" data-target="#${id}" aria-controls="${id}" aria-expanded="false">
@@ -34,9 +33,9 @@ export default class MipNavSlidedown extends CustomElement {
         ${showBrand ? '<a href=' + brandHref + ' class="navbar-brand">' + brandName + '</a>' : ''}
       </div>
     `
-    container.innerHTML = btnWrap
+    container.appendChild(util.dom.create(btnWrap))
     container.appendChild(ulNav)
-    ele.appendChild(container)
+    this.element.appendChild(container)
     document.querySelector('.mip-nav-wrapper').classList.add('show')
   }
 
@@ -101,7 +100,7 @@ export default class MipNavSlidedown extends CustomElement {
       util.css(document.querySelector('.navbar-wise-close'), 'margin-top', '20px')
       document.body.classList.add('no-scroll')
       document.querySelector('html').classList.add('no-scroll')
-      setTimeout(function () {
+      setTimeout(() => {
         $wiseNav.classList.remove('in')
       }, 500)
     } else {
