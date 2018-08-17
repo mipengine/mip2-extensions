@@ -226,10 +226,14 @@ export default class MipAccordion extends CustomElement {
       return item
     }
   }
+  // 提前渲染
+  prerenderAllowed () {
+    return true
+  }
   /**
-   * 进入首屏执行函数
+   * 需要提前加载，包图片需要提前加载否则部分浏览器不显示
    */
-  firstInviewCallback () {
+  build () {
     let element = this.element
     this.currentState = this.getSession(this)
     element.setAttribute('type', element.getAttribute('type') || 'automatic')
