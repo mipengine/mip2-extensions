@@ -39,7 +39,7 @@ export default class MipNavSlidedown extends CustomElement {
     document.querySelector('.mip-nav-wrapper').classList.add('show')
   }
 
-  // 给菜单和关闭按钮绑定事件
+  // 给菜单和关闭按钮绑定事件，mip1引用了zepto，clseBtn点击trigger
   bindEvents () {
     this.element.querySelector('.navbar-header .navbar-toggle').addEventListener('click', this.navClickHandler, false)
     this.addHoverClass(document.querySelector('#navbar-wise-close-btn'))
