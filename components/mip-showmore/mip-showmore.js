@@ -5,19 +5,19 @@
  * @transfer 2018-8
  */
 import './mip-showmore.less'
-let {
+const {
   CustomElement,
   util,
   viewport
 } = MIP
-export default class MipAudio extends CustomElement {
+export default class MipShowMore extends CustomElement {
   constructor (...args) {
     // 继承父类属性，方法
     super(...args)
 
     this.timeoutArray = []
     this.increaseId = 0
-    this.ShowmoreInstance = {}
+    this.showmoreInstance = {}
     this.clickBtn = this.element.querySelector('[showmorebtn]')
     this.clickBtnSpan = this.clickBtn && this.clickBtn.querySelector('.mip-showmore-btnshow')
     // 获取内容显示框，v1.0.0 方法
@@ -61,7 +61,7 @@ export default class MipAudio extends CustomElement {
 
     window.addEventListener('orientationchange', () => {
       this.firstInit()
-    }, false)
+    })
 
     this.addEventAction('refresh', event => {
       this.firstInit()
@@ -73,7 +73,7 @@ export default class MipAudio extends CustomElement {
    *
    * @private
    */
-  firstInit (deps) {
+  firstInit () {
     // 如果动画不是数字
     if (isNaN(this.animateTime)) {
       return
@@ -98,19 +98,13 @@ export default class MipAudio extends CustomElement {
       if (maxHeightArr.length > 1) {
         key = maxHeightArr[0].trim()
         value = maxHeightArr[1].trim()
-
-        switch (key) {
-          case 'screen':
-            this.showType = this.heightType[0]
-            this.maxHeight = viewport.getHeight() * value
-            this.initHeight()
-            break
-          case 'heightpx':
-            this.showType = this.heightType[1]
-            this.initHeight()
-            break
-          default:
-            break
+        if (key === 'screen') {
+          this.showType = this.heightType[0]
+          this.maxHeight = viewport.getHeight() * value
+          this.initHeight()
+        } else if (key === 'heightpx') {
+          this.showType = this.heightType[1]
+          this.initHeight()
         }
       }
     } else if (this.maxHeight && !isNaN(this.maxHeight)) {
@@ -143,7 +137,7 @@ export default class MipAudio extends CustomElement {
    * 改变按钮的样式值 - showmore改为隐藏状态, 按钮为“收起”
    *
    * @private
-   * @param {type} fold unfold 当前的状态是否打开。
+   * @param {string} type
    */
   changeBtnStyle (type) {
     // v1.0.0显示更多按钮
@@ -181,8 +175,8 @@ export default class MipAudio extends CustomElement {
     // 如果高度大于阈值
     if (height > (+this.maxHeight) + this.bufferHeight) {
       util.css(this.showBox, {
-        'height': this.maxHeight + 'px',
-        'overflow': 'hidden'
+        height: this.maxHeight + 'px',
+        overflow: 'hidden'
       })
       // 改变按钮的样式值 - 改为隐藏状态
       this.changeBtnStyle('fold')
@@ -243,7 +237,7 @@ export default class MipAudio extends CustomElement {
     }
     this.clickBtn.addEventListener('click', () => {
       this.toggle()
-    }, false)
+    })
   };
   /**
    * 点击时按钮添加class
@@ -261,7 +255,7 @@ export default class MipAudio extends CustomElement {
    * 高度阈值控制
    *
    * @private
-   * @param {event} 事件对象
+   * @param {obj} event 事件对象
    * 根据当前模式以及打开的状态切换状态
    */
   toggle (event) {
@@ -299,7 +293,9 @@ export default class MipAudio extends CustomElement {
         originDom.classList.remove('mip-showmore-nodisplay')
         cutDom.classList.add('mip-showmore-nodisplay')
         opt.tarHeight = this.getHeightUnfold(this.showBox) + 'px'
-        this.showBox.style.height = this.maxHeight + 'px'
+        util.css(this.showBox, {
+          height: this.maxHeight + 'px'
+        })
         opt.cbFun = () => {
           this.toggleClickBtn(clickBtn, 'showClose')
           classList.add('mip-showmore-boxshow')
@@ -323,7 +319,9 @@ export default class MipAudio extends CustomElement {
         opt.type = 'unfold'
         opt.cbFun = () => {
           this.toggleClickBtn(clickBtn, 'showClose')
-          this.element.style.height = 'auto'
+          util.css(this.element, {
+            height: 'auto'
+          })
           this.addClassWhenUnfold()
         }
       }
@@ -342,7 +340,8 @@ export default class MipAudio extends CustomElement {
    * 切换按钮状态
    *
    * @private
-   * @param {clickBtn status} 按钮 状态
+   * @param {domObject} clickBtn dom对象
+   * @param {string} status 状态
    * 根据当前模式以及打开的状态切换状态
    */
   toggleClickBtn (clickBtn, status) {
@@ -392,8 +391,7 @@ export default class MipAudio extends CustomElement {
    * 剪切字符串
    *
    * @private
-   * @param {maxLen} 字数最大限制
-   * @return 剩余的字数
+   * @param {number} maxLen 字数最大限制
    */
   cutHtmlStr (maxLen) {
     let allChildList = this.showBox.childNodes
@@ -403,7 +401,7 @@ export default class MipAudio extends CustomElement {
     for (let i = 0; i < allChildList.length; i++) {
       let tmpHtml = allChildList[i].textContent.replace(/(^\s*)|(\s*$)/g, '')
       if ((cutHtml.length + tmpHtml.length) <= maxLen) { // 如果长度没有达到最大字数
-        cutHtml = cutHtml + tmpHtml
+        cutHtml += tmpHtml
         tmpNum = cutHtml.length
         newNodeList.push(allChildList[i])
       } else { // 已经大于
@@ -418,9 +416,9 @@ export default class MipAudio extends CustomElement {
     for (let j = 0; j < newNodeList.length; j++) {
       let nodeType = newNodeList[j].nodeType
       if (nodeType === 1) {
-        endHtml = endHtml + newNodeList[j].outerHTML
+        endHtml += newNodeList[j].outerHTML
       } else if (nodeType === 3) {
-        endHtml = endHtml + newNodeList[j].textContent
+        endHtml += newNodeList[j].textContent
       }
     }
     return endHtml
@@ -430,30 +428,21 @@ export default class MipAudio extends CustomElement {
    * 按钮文案切换
    *
    * @private
-   * @param {showBtnObj, hideBtnObj}
+   * @param {domObject} showBtnObj 展示按钮
+   * @param {domObject} hideBtnObj 隐藏按钮
    */
   changeBtnText (showBtnObj, hideBtnObj) {
     let btnShow = this.element.querySelector('.mip-showmore-btnshow')
     let btnHide = this.element.querySelector('.mip-showmore-btnhide')
-    this.changeBtnShow(btnShow, showBtnObj)
-    this.changeBtnShow(btnHide, hideBtnObj)
-  };
-
-  /**
-  * 文案切换显示
-   *
-  * @private
-  * @param {obj, cssObj}
-  */
-  changeBtnShow (obj, cssObj) {
-    util.css(obj, cssObj)
+    util.css(btnShow, showBtnObj)
+    util.css(btnHide, hideBtnObj)
   };
 
   /**
    * 获取id
    *
    * @private
-   * @param {showmore}
+   * @param {domObject} showmore dom对象
    */
   getId (showmore) {
     if (!showmore.dataset.showmoreId) {
@@ -474,8 +463,8 @@ export default class MipAudio extends CustomElement {
       return
     }
     let parentId = this.getId(this.element)
-    this.ShowmoreInstance[parentId] = this.ShowmoreInstance[parentId] || { deps: [] }
-    this.ShowmoreInstance[parentId].instance = this
+    this.showmoreInstance[parentId] = this.showmoreInstance[parentId] || { deps: [] }
+    this.showmoreInstance[parentId].instance = this
 
     let currendParentNode = childMipShowmore[0]
     for (let i = 0; i < childMipShowmore.length; i++) {
@@ -483,9 +472,9 @@ export default class MipAudio extends CustomElement {
         return
       }
       let id = this.getId(childMipShowmore[i])
-      let childIns = this.ShowmoreInstance[id] || {}
+      let childIns = this.showmoreInstance[id] || {}
       childIns.deps = (childIns.deps || []).concat([parentId])
-      this.ShowmoreInstance[id] = childIns
+      this.showmoreInstance[id] = childIns
       currendParentNode = childMipShowmore[i]
     }
     this.containSMChild = true
@@ -497,9 +486,9 @@ export default class MipAudio extends CustomElement {
    * @private
    */
   runInitShowMore () {
-    let depIds = this.ShowmoreInstance[this.getId(this.element)]
+    let depIds = this.showmoreInstance[this.getId(this.element)]
     depIds && depIds.deps.forEach(depid => {
-      let instan = this.ShowmoreInstance[depid]
+      let instan = this.showmoreInstance[depid]
       instan && instan.instance && !instan.instance.initialized && instan.instance.init()
     })
   };
@@ -535,27 +524,38 @@ export default class MipAudio extends CustomElement {
       if (opt.tarHeight !== undefined) {
         tarHeight = opt.tarHeight
       } else {
-        element.style.transition = 'height .3s'
-        element.style.height = 'auto'
+        util.css(element, {
+          transition: 'height .3s',
+          height: 'auto'
+        })
         tarHeight = getComputedStyle(element).height
       }
       let timeout1 = setTimeout(function () {
-        element.style.transition = 'height 0s'
-        element.style.height = 'auto'
+        util.css(element, {
+          transition: 'height 0s',
+          height: 'auto'
+        })
       }, transitionTime * 1000)
       timeoutArr[0] = timeout1
     } else if (type === 'fold') {
       tarHeight = opt.tarHeight || 0
     }
 
-    element.style.height = oriHeight
-    element.style.transition = 'height ' + transitionTime + 's'
-
-    let timeout2 = requestAnimationFrame ? (requestAnimationFrame)(function () {
-      element.style.height = tarHeight
-    }) : setTimeout(function () {
-      element.style.height = tarHeight
-    }, 10)
+    util.css(element, {
+      height: oriHeight,
+      transition: 'height ' + transitionTime + 's'
+    })
+    let timeout2 = requestAnimationFrame
+      ? (requestAnimationFrame)(function () {
+        util.css(element, {
+          height: tarHeight
+        })
+      })
+      : setTimeout(function () {
+        util.css(element, {
+          height: tarHeight
+        })
+      }, 10)
     let timeout3 = setTimeout(function () {
       cbFun()
     }, transitionTime * 1000)
@@ -567,38 +567,40 @@ export default class MipAudio extends CustomElement {
   }
 
   /**
-  * 获取真实高度
+   * 获取真实高度
    *
-  * @param  {Object} dom some dom
-  * @return {number}     height
-  */
+   * @param  {Object} dom some dom
+   * @return {number}     height
+   */
   getHeightUnfold (dom) {
     let fakeNode = document.createElement('div')
     let style = getComputedStyle(dom)
     fakeNode.innerHTML = dom.innerHTML
 
-    fakeNode.style.padding = style.padding
-    fakeNode.style.margin = style.margin
-    fakeNode.style.border = style.border
-
-    fakeNode.style.position = 'absolute'
+    util.css(fakeNode, {
+      padding: style.padding,
+      margin: style.margin,
+      border: style.border,
+      position: 'absolute'
+    })
     // 先插入再改样式，以防元素属性在createdCallback中被添加覆盖
     dom.parentNode.insertBefore(fakeNode, dom)
-    fakeNode.style.height = 'auto'
-    fakeNode.style.visibility = 'hidden'
-
+    util.css(fakeNode, {
+      height: 'auto',
+      visibility: 'hidden'
+    })
     let height = util.rect.getElementOffset(fakeNode).height
+    // 移除fakeNode后的height已改变重新获取会与预期不符，在此需要对height进行一个存储
     dom.parentNode.removeChild(fakeNode)
-
     return height
   }
 
   /**
-  * 匹配target
+   * 匹配target
    *
-  * @param  {id, node}
-  * @return {Object} node节点
-  */
+   * @param  {id, node}
+   * @return {Object} node节点
+   */
   matchOriginTarget (id, node) {
     while (node.parentNode) {
       let attr = node.getAttribute('on')
