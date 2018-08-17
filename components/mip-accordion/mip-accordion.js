@@ -231,7 +231,7 @@ export default class MipAccordion extends CustomElement {
     return true
   }
   /**
-   * 需要提前加载，包图片需要提前加载否则部分浏览器不显示
+   * 需要提前加载，图片需要提前加载否则部分浏览器不显示
    */
   build () {
     let element = this.element
