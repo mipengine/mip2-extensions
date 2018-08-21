@@ -7,6 +7,7 @@ import './mip-shell-inservice.less'
 import scrollBoundary from './lib/scrollBoundary'
 import MoreAction from './lib/MoreAction'
 import ProcessConfig from './lib/ProcessConfig'
+import Footer from './lib/Footer' // 底部控制栏
 
 export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
   constructor (...args) {
@@ -17,6 +18,7 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
     this.moreAction = new MoreAction(this.headerInfo = {})
     scrollBoundary.init()
     this.processConfig = new ProcessConfig()
+    this.footer = new Footer()
   }
 
   /**
@@ -33,6 +35,9 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
    * @param {Object} shellConfig 继承MipShell config
    */
   async processShellConfig (shellConfig) {
+    this.shellConfig = shellConfig
+    this.footer.initShellConfig(shellConfig)
+
     await this.processConfig.init(this.headerInfo, shellConfig).process()
     this.updateShellConfig(shellConfig)
     if (shellConfig.isId) {
@@ -68,7 +73,57 @@ export default class MIPShellInservice extends MIP.builtinComponents.MIPShell {
     return canClose && canClose.value === 'true'
   }
 
+  /**
+   * 渲染底部菜单栏状态
+   */
+  renderOtherParts () {
+    this.footer.render()
+  }
+
+  /**
+   * 更新底部菜单栏状态
+   */
   updateOtherParts () {
     this.moreAction.sendLog(this.processConfig.getLocalToken())
+
+    let pageMeta = this.currentPageMeta
+    this.footer.initCurrentPageMeta(pageMeta)
+
+    this.footer.update()
+  }
+
+  /**
+   * 绑定底部菜单栏事件
+   */
+  bindHeaderEvents () {
+    super.bindHeaderEvents()
+
+    this.footer.bind()
+  }
+
+  /**
+   * 解绑底部菜单栏事件
+   */
+  unbindHeaderEvents () {
+    super.unbindHeaderEvents()
+
+    this.footer.unbind()
+  }
+
+  /**
+   * 页面切换动画
+   *
+   * @param {Object} options 源页面与目标页面选项
+   */
+  beforeSwitchPage (options) {
+    let sourcePageMeta = options.sourcePageMeta
+    let targetPageMeta = options.targetPageMeta
+    this.footer.initSourcePageMeta(sourcePageMeta)
+    this.footer.initTargetPageMeta(targetPageMeta)
+    if (sourcePageMeta.footer >= 0 && targetPageMeta.footer >= 0) {
+      window.MIP_SHELL_OPTION.allowTransition = false
+    }
+
+    this.footer.switchPage()
   }
 }
