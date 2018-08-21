@@ -86,7 +86,7 @@ export default class MipShowMore extends CustomElement {
     // 获取是否需要bottom渐变
     this.bottomShadow = this.element.getAttribute('bottomshadow') === '1'
     // 弹性高度，判断高度阈值时会增加此弹性
-    this.bufferHeight = this.element.getAttribute('bufferheight')
+    this.bufferHeight = parseInt(this.element.getAttribute('bufferheight'))
     this.bufferHeight = +this.bufferHeight ? +this.bufferHeight : 0
     // 渐变className
     this.bottomShadowClassName = 'linear-gradient'
