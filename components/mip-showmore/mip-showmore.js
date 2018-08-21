@@ -137,7 +137,7 @@ export default class MipShowMore extends CustomElement {
    * 改变按钮的样式值 - showmore改为隐藏状态, 按钮为“收起”
    *
    * @private
-   * @param {string} type
+   * @param {string} type fold类型
    */
   changeBtnStyle (type) {
     // v1.0.0显示更多按钮
@@ -340,7 +340,7 @@ export default class MipShowMore extends CustomElement {
    * 切换按钮状态
    *
    * @private
-   * @param {HTMLElement} clickBtn dom对象
+   * @param {HTMLElement} clickBtn dom节点
    * @param {String} status 状态
    * 根据当前模式以及打开的状态切换状态
    */
@@ -391,7 +391,7 @@ export default class MipShowMore extends CustomElement {
    * 剪切字符串
    *
    * @private
-   * @param {number} 字数最大限制
+   * @param {number} maxLen 字数最大限制
    */
   cutHtmlStr (maxLen) {
     let allChildList = this.showBox.childNodes
@@ -428,8 +428,8 @@ export default class MipShowMore extends CustomElement {
    * 按钮文案切换
    *
    * @private
-   * @param {HTMLElement} 展示按钮
-   * @param {HTMLElement} 隐藏按钮
+   * @param {HTMLElement} showBtnObj 展示按钮
+   * @param {HTMLElement} hideBtnObj 隐藏按钮
    */
   changeBtnText (showBtnObj, hideBtnObj) {
     let btnShow = this.element.querySelector('.mip-showmore-btnshow')
@@ -442,7 +442,7 @@ export default class MipShowMore extends CustomElement {
    * 获取id
    *
    * @private
-   * @param {HTMLElement} showmore dom对象
+   * @param {HTMLElement} showmore dom节点
    */
   getId (showmore) {
     if (!showmore.dataset.showmoreId) {
@@ -497,7 +497,7 @@ export default class MipShowMore extends CustomElement {
    * 动画
    *
    * @private
-   * @param {object} 参数对象
+   * @param {Object} opt 参数对象
    */
   heightAni (opt) {
     let element = opt.ele
@@ -569,8 +569,7 @@ export default class MipShowMore extends CustomElement {
   /**
    * 获取真实高度
    *
-   * @param  {HTMLElement} dom节点
-   * @return {number} 高度
+   * @param  {HTMLElement} dom dom节点
    */
   getHeightUnfold (dom) {
     let fakeNode = document.createElement('div')
@@ -599,7 +598,7 @@ export default class MipShowMore extends CustomElement {
    * 匹配target
    *
    * @param  {String} id
-   * @return {HTMLElement} dom节点
+   * @param  {HTMLElement} node dom节点
    */
   matchOriginTarget (id, node) {
     while (node.parentNode) {
