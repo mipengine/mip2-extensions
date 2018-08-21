@@ -4,6 +4,7 @@
  * TODO：
  *     1. catalog数据支持异步获取
  */
+
 let util = MIP.util
 let rect = util.rect
 class Catalog {
@@ -14,7 +15,7 @@ class Catalog {
     this.propagationStopped = this._stopPropagation()
   }
 
-  // 根据配置渲染目录侧边栏到 mip-sidebar组件中
+  // 根据配置渲染目录侧边栏到  mip-sidebar组件中
   // 支持从页面直接获取目录，异步获取目录
   _renderCatalog (catalogs, book) {
     let renderCatalog
@@ -57,8 +58,8 @@ class Catalog {
                 <div class="scroll-btn"></div>
               </div>
             </div>
-        </div>    
-      </div> 
+        </div>
+      </div>
     `
     if (!catalogs) {
       // 目录配置为空
@@ -69,7 +70,7 @@ class Catalog {
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
-          <a class="mip-catalog-btn catalog-page-content" 
+          <a class="mip-catalog-btn catalog-page-content"
           mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
           ${catalog.name}
           </a>
@@ -141,7 +142,7 @@ class Catalog {
    */
   moveTranslateY ($catalogScroll, scrollTop) {
     $catalogScroll.style.transform = 'translateY( ' + scrollTop + 'px)'
-    $catalogScroll.style.WebkitTransform = 'translateY( ' + scrollTop + 'px)'
+    $catalogScroll.style.webkitTransform = 'translateY( ' + scrollTop + 'px)'
   }
   /**
    * 函数说明：自定义滚动条，滑目录内容，右边滚动条到相应位置，这里需要监听scroll完成事件，用settimeout异步队列模拟，解决兼容问题
@@ -164,12 +165,13 @@ class Catalog {
     let $contentTop = catalogScroll.contentTop
     let $wrapper = catalogScroll.wrapper
     let $catalogContent = catalogScroll.catalogContent
+
     /**
      * 滑动截止时候让滚动条滚到相应位置
      *
-     * @param  {number} 透明度
-     * @param  {Object} 目录页距离顶部高度
-     * @param  {Object} 章节以上元素的高度
+     * @param  {number} opacityNum 透明度
+     * @param  {Object} Top 目录页距离顶部高度
+     * @param  {Object} Height 章节以上元素的高度
      */
     let scrollToEnd = (opacityNum, Top, Height) => {
       clearTimeout(setTime)
@@ -307,11 +309,12 @@ class Catalog {
     for (let i = 0; i < catalog.length; i++) {
       catalog[i].innerHTML = catalog[i].innerHTML
     }
-
+    document.body.classList.add('body-forbid')
     // }, 400)
   }
   // 隐藏侧边目录
   hide () {
+    document.body.classList.remove('body-forbid')
     this.$catalogSidebar.classList.remove('show')
   }
   // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
