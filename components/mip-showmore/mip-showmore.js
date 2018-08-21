@@ -87,7 +87,7 @@ export default class MipShowMore extends CustomElement {
     this.bottomShadow = this.element.getAttribute('bottomshadow') === '1'
     // 弹性高度，判断高度阈值时会增加此弹性
     this.bufferHeight = parseInt(this.element.getAttribute('bufferheight'))
-    this.bufferHeight = +this.bufferHeight ? +this.bufferHeight : 0
+    this.bufferHeight = this.bufferHeight ? this.bufferHeight : 0
     // 渐变className
     this.bottomShadowClassName = 'linear-gradient'
     // 处理阈值高度(高度优先于字体长度,不允许两个同时存在)
@@ -392,6 +392,7 @@ export default class MipShowMore extends CustomElement {
    *
    * @private
    * @param {number} maxLen 字数最大限制
+   * @return {String} endHtml 剩余的字符串
    */
   cutHtmlStr (maxLen) {
     let allChildList = this.showBox.childNodes
@@ -443,6 +444,7 @@ export default class MipShowMore extends CustomElement {
    *
    * @private
    * @param {HTMLElement} showmore dom节点
+   * @return {String} 传入dom的id
    */
   getId (showmore) {
     if (!showmore.dataset.showmoreId) {
@@ -482,7 +484,6 @@ export default class MipShowMore extends CustomElement {
 
   /**
    * 运行嵌套的showmore组件实例
-   *
    * @private
    */
   runInitShowMore () {
@@ -569,7 +570,8 @@ export default class MipShowMore extends CustomElement {
   /**
    * 获取真实高度
    *
-   * @param  {HTMLElement} dom dom节点
+   * @param {HTMLElement} dom dom节点
+   * @return {Number} height
    */
   getHeightUnfold (dom) {
     let fakeNode = document.createElement('div')
@@ -599,6 +601,7 @@ export default class MipShowMore extends CustomElement {
    *
    * @param  {String} id
    * @param  {HTMLElement} node dom节点
+   * @return {HTMLElement} node dom节点
    */
   matchOriginTarget (id, node) {
     while (node.parentNode) {
