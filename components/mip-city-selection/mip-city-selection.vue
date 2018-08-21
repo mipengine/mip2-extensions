@@ -129,7 +129,7 @@
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: 0 0 800px 0;
+  padding: 0 0 0 0;
   color: #333;
 }
 
@@ -148,7 +148,7 @@
   padding-top: 18px;
 
   &:last-child {
-    margin-bottom: 800px;
+    margin-bottom: 0;
   }
 }
 
