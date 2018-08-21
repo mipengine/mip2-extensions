@@ -255,7 +255,7 @@ export default class MipShowMore extends CustomElement {
    * 高度阈值控制
    *
    * @private
-   * @param {obj} event 事件对象
+   * @param {Object} event 事件对象
    * 根据当前模式以及打开的状态切换状态
    */
   toggle (event) {
@@ -340,8 +340,8 @@ export default class MipShowMore extends CustomElement {
    * 切换按钮状态
    *
    * @private
-   * @param {domObject} clickBtn dom对象
-   * @param {string} status 状态
+   * @param {HTMLElement} clickBtn dom对象
+   * @param {String} status 状态
    * 根据当前模式以及打开的状态切换状态
    */
   toggleClickBtn (clickBtn, status) {
@@ -391,7 +391,7 @@ export default class MipShowMore extends CustomElement {
    * 剪切字符串
    *
    * @private
-   * @param {number} maxLen 字数最大限制
+   * @param {number} 字数最大限制
    */
   cutHtmlStr (maxLen) {
     let allChildList = this.showBox.childNodes
@@ -428,8 +428,8 @@ export default class MipShowMore extends CustomElement {
    * 按钮文案切换
    *
    * @private
-   * @param {domObject} showBtnObj 展示按钮
-   * @param {domObject} hideBtnObj 隐藏按钮
+   * @param {HTMLElement} 展示按钮
+   * @param {HTMLElement} 隐藏按钮
    */
   changeBtnText (showBtnObj, hideBtnObj) {
     let btnShow = this.element.querySelector('.mip-showmore-btnshow')
@@ -442,7 +442,7 @@ export default class MipShowMore extends CustomElement {
    * 获取id
    *
    * @private
-   * @param {domObject} showmore dom对象
+   * @param {HTMLElement} showmore dom对象
    */
   getId (showmore) {
     if (!showmore.dataset.showmoreId) {
@@ -497,7 +497,7 @@ export default class MipShowMore extends CustomElement {
    * 动画
    *
    * @private
-   * @param {opt}
+   * @param {object} 参数对象
    */
   heightAni (opt) {
     let element = opt.ele
@@ -569,8 +569,8 @@ export default class MipShowMore extends CustomElement {
   /**
    * 获取真实高度
    *
-   * @param  {Object} dom some dom
-   * @return {number}     height
+   * @param  {HTMLElement} dom节点
+   * @return {number} 高度
    */
   getHeightUnfold (dom) {
     let fakeNode = document.createElement('div')
@@ -598,8 +598,8 @@ export default class MipShowMore extends CustomElement {
   /**
    * 匹配target
    *
-   * @param  {id, node}
-   * @return {Object} node节点
+   * @param  {String} id
+   * @return {HTMLElement} dom节点
    */
   matchOriginTarget (id, node) {
     while (node.parentNode) {
