@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    body {
+      padding: 0 22px;
+      background-color: #fff;
+    }
+    h3 {
+      padding: 0;
+    }
+    p {
+      text-align: left;
+      font-size: 18px;
+      margin-top: 20px;
+      color: green;
+    }
+    mip-img {
+      margin: 10px auto;
+    }
+  </style>
+</head>
+<body>
+<p>示例1</p>
+<p>非 MIP 页投放方式</p>
+<!-- 图+原代码位 示例 -->
+<script type="text/javascript">
+  let baiduImagePlus = {
+    unionId: "u888888"
+  }
+</script>
+<script src="//cpro.baidustatic.com/cpro/ui/mi.js"></script>
+
+<p>MIP 页投放方式</p>
+<mip-ad
+  type="ad-imageplus"
+  unionId="u888888"
+>
+</mip-ad>
+
+<p>示例2</p>
+<p>非 MIP 页投放方式</p>
+<!-- 图+原代码位 示例 -->
+<script type="text/javascript">
+  let baiduImagePlus = {
+    unionId: "u888888",
+    formList: [{formId:21}, {formId:22}]
+  }
+</script>
+<script src="//cpro.baidustatic.com/cpro/ui/mi.js"></script>
+
+<p>MIP 页投放方式</p>
+<mip-ad
+  type="ad-imageplus"
+  unionId="u888888"
+  FormList="[{formId:21}, {formId:22}]"
+>
+</mip-ad>
+
+<p>示例3</p>
+<p>非 MIP 页投放方式</p>
+<!-- 图+原代码位 示例 -->
+<script type="text/javascript">
+  let baiduImagePlus = {
+    unionId: "u888888",
+    formList: [{formId:21}, {formId:22}],
+    nopicFormList: [{formId:25}]
+  }
+</script>
+<script src="//cpro.baidustatic.com/cpro/ui/mi.js"></script>
+
+<p>MIP 页投放方式</p>
+<mip-ad
+  type="ad-imageplus"
+  unionId="u888888"
+  FormList="[{formId:21}, {formId:22}]"
+  nopicFormList="[{formId:25}]"
+>
+</mip-ad>
+
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="/mip-ad/mip-ad.js"></script>
+</body>
+</html>

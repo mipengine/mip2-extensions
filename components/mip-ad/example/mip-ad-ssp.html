@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    body {
+      padding: 0 22px;
+      background-color: #fff;
+    }
+    h3 {
+      padding: 0;
+    }
+    p {
+      text-align: left;
+      font-size: 18px;
+      margin-top: 20px;
+      color: green;
+    }
+    mip-img {
+      margin: 10px auto;
+    }
+  </style>
+</head>
+<body>
+<p>页面内嵌 ssp 广告</p>
+<mip-ad
+  type="ad-ssp"
+  data-site-id="1118394"
+  data-block-id="2683"
+>
+</mip-ad>
+
+<p>页面浮动 ssp 广告</p>
+<mip-fixed type="top" >
+  <mip-ad
+    type="ad-ssp"
+    data-site-id="1118394"
+    data-block-id="2684"
+    layout="fixed-height"
+    height="75px"
+  >
+  </mip-ad>
+</mip-fixed>
+
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="/mip-ad/mip-ad.js"></script>
+</body>
+</html>
