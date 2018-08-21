@@ -94,8 +94,12 @@
   padding-right: 5%;
 }
 
-.city-json-content:first-child p,
 .lasted-visted-hot p {
+  border-bottom: 0;
+}
+
+.lasted-visted-hot p,
+.city-json-content:first-child p {
   border-bottom: 0;
   display: inline-block;
   width: 20%;
@@ -136,16 +140,13 @@
   padding-top: 18px;
 }
 
-.lasted-visted-hot p {
-  border-bottom: 0;
-}
-
 .hotCity {
   background: #666;
 }
 
 .mip-city-selection-city {
   padding-top: 18px;
+
   &:last-child {
     margin-bottom: 800px;
   }

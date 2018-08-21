@@ -1,53 +1,9 @@
 # `mip-shell-xiaoshuo`
 
 ## 说明
-为极速小说阅读器定制的 mip-shell
+为极速小说阅读器定制的 mip-shell, 详细使用方法见[wiki](https://github.com/mipengine/mip2-extensions-platform/wiki/%E4%B8%87%E5%8D%B7%E8%AE%A1%E5%88%92-%E6%9E%81%E9%80%9F%E9%98%85%E8%AF%BB%E5%99%A8%E6%8E%A5%E5%85%A5%E6%96%87%E6%A1%A3)。
 
-## 示例
-```html
-<mip-shell-xiaoshuo mip-shell>
-    <script type="application/json">
-        {
-        "routes": [
-            {
-                "pattern": "./index.html",
-                "meta": {
-                    "header": {
-                        "show": true
-                    },
-                    "view":{
-                        "isIndex": true
-                    }
-                }
-            },
-            {
-                "pattern": "./mip-shell-xiaoshuo.html",
-                "meta": {
-                    "header": {
-                        "show": true,
-                        "title": "微咖啡PAGE2"
-                    },
-                    "view":{
-                    "isIndex": false
-                    }
-                }
-            },
-            {
-                "pattern": "*",
-                "meta": {
-                    "header": {
-                        "show": true
-                    }
-                }
-            }
-        ],
-        "isId":"156786663788884"
-    }
-    </script>
-</mip-shell-xiaoshuo>
-```
-
-## 说明
+## 简单示例
 为极速小说阅读器定制的 mip-shell-xiaoshuo 目录页传入格式
 ```
 <mip-shell-xiaoshuo mip-shell="" id="xiaoshuo-shell">
@@ -91,13 +47,6 @@
         </script>
     </mip-shell-xiaoshuo>
 ```
-## 属性
-
-### isId
-说明：熊掌号ID
-必选项：是
-类型：`string`  
-示例："123456678"
 
 ### routes 
 [参考mip-shell用法](https://github.com/mipengine/mip2/blob/master/docs/page/shell.md)

@@ -274,6 +274,7 @@ export default {
 #allmap {
   width: 100%;
   height: 100%;
+
   &.hideMap {
     width: 0;
     height: 0;
