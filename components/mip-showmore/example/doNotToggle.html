@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>不再展开</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    .mip-showmore-btn-hide {
+      display: none !important
+    }
+  </style>
+</head>
+
+<body>
+  <h2>不再展开</h2>
+  <mip-showmore maxheight='40' animatetime='.3' id="showmore01">
+    <div>MIP （Mobile Instant Pages - 移动网页加速器）, 是一套应用于移动网页的开放性技术标准。通过提供MIP-HTML规范、MIP-JS运行环境以及MIP-Cache页面缓存系统，实现移动网页加速。</div>
+  </mip-showmore>
+  <!--当 '点击显示' 按钮处于展开状态，按钮会存在 'mip-showmore-btn-hide' 类-->
+  <div on="tap:showmore01.toggle" data-closetext="收起" class="mip-showmore-btn">点击显示</div>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-showmore/mip-showmore.js"></script>
+</body>
+
+</html>
