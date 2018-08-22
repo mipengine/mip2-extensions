@@ -47,9 +47,10 @@ export default {
     padding: 10px;
     margin: 10px;
     background: #eee;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, .1);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
   }
+
   mip-history.mip-history-default > div :hover {
-    background-color: rgba(0, 0, 0, .1);
+    background-color: rgba(0, 0, 0, 0.1);
   }
 </style>
