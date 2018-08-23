@@ -67,7 +67,7 @@ export default class MipInfiniteScroll extends CustomElement {
     this.pushResult = function (rn, status) {
       // 异步获取数据示例
       let defer = new Promise(function (resolve, reject) {
-        if (rn > this.rn) {
+        if (rn > self.params.rn) {
           resolve('NULL')
         } else {
           window.fetchJsonp(self.url, {
@@ -81,9 +81,11 @@ export default class MipInfiniteScroll extends CustomElement {
               if (rn > self.params.rn || !data.data.items) {
                 resolve('NULL')
               }
+
               templates.render(self.element, data.data.items).then(function (htmls) {
                 resolve(htmls)
               })
+
               self.params.pn++
               self.url = self.getUrl(src)
             } else {

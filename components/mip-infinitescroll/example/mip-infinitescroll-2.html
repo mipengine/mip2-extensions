@@ -21,8 +21,13 @@
   </style>
 </head>
 <body>
-<p>最简单用法</p>
-<mip-infinitescroll data-src="https://www.chuangyejia.vip/mip/list-new-mip?catid=0">
+<p>根据返回值判断请求结束</p>
+<mip-infinitescroll data-src="https://www.chuangyejia.vip/mip/list-new-mip?catid=1">
+  <script type="application/json">
+    {
+      "rn": "Infinity"
+    }
+  </script>
   <template type="mip-mustache">
     <li>
       <p>{{title}}</p>

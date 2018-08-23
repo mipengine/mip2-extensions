@@ -5,7 +5,7 @@
  */
 
 let { viewport, util } = MIP
-let { css, rect } = util
+let { css, rect, dom } = util
 
 let InfiniteScroll = function (opt) {
   if (!opt.$result || !opt.$loading || !opt.pushResult) {
@@ -167,9 +167,6 @@ InfiniteScroll.prototype = {
       // 当不支持orientation且返回高分屏尺寸时,这里会出bug
       verticalScreenWidth = Math.min(window.screen.width, window.screen.height)
     }
-    // this.options.$result.css({
-    //   'max-width': verticalScreenWidth + 'px'
-    // })
     let result = this.options.$result
     css(result, 'max-width', verticalScreenWidth + 'px')
   },
@@ -186,7 +183,7 @@ InfiniteScroll.prototype = {
 
       // 获取当前滚动条位置
       self.currentScrollTop = viewport.getScrollTop()
-      // 某些浏览器(安卓QQ)滚动时会隐藏头部但不触发resize,需要反复获取 wtf...
+      // 某些浏览器(安卓QQ)滚动时会隐藏头部但不触发resize,需要反复获取
       self.wrapperHeight = viewport.getHeight()
 
       // 到顶了
@@ -236,14 +233,13 @@ InfiniteScroll.prototype = {
 
     // 还有数据
     if (pn <= dn) {
-      // 有你就刷，别废话！
       this._updateScrollElement(pn)
       // 执行回调
       this.options.onLoadNewPage && this.options.onLoadNewPage.call(self, pn)
     }
     // 数据不够 && 数据状态为默认(!无数据 && !请求中 && !请求失败)
     if (this.dataStatus === 1 && pn + this.options.preLoadPn >= dn) {
-      // 调用cb:pushResult请求新数据,由于数据请求一般为异步,使用标准Deferred对象处理(同时也兼容同步数据返回)
+      // 调用cb:pushResult请求新数据,由于数据请求一般为异步,使用Promise对象处理(同时也兼容同步数据返回)
       let dataDeferred = this.options.pushResult((dn + 1) * self.options.pageResultNum, dn - pn)
       // 标记数据状态为请求中
       this.dataStatus = 2
@@ -287,12 +283,13 @@ InfiniteScroll.prototype = {
    */
   _updateScrollElement: function (pn) {
     let domNewPage = this._wrapPageParentDom(this.scrollPageCache.content[pn], pn)
+    domNewPage = dom.create(domNewPage)
     this.options.$result.appendChild(domNewPage)
 
     // 更新变量
     this.currentLoadPage = pn
     this.scrollerHeight = this._getScrollerHeight()
-    this.scrollPageCache.topPosition.push(util.getElementRect(domNewPage).top)
+    this.scrollPageCache.topPosition.push(rect.getElementRect(domNewPage).top)
   },
   _getScrollerHeight: function () {
     return viewport.getScrollHeight()
