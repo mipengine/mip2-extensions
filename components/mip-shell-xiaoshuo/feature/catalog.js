@@ -151,7 +151,6 @@ class Catalog {
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     // window.setTimeout(function () {
     this.$catalogSidebar.classList.add('show')
-    shellElement.toggleDOM(shellElement.$buttonMask, true)
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let catalog = [...$catalogContent.querySelectorAll('div')]
