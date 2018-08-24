@@ -137,10 +137,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       let swipeDelete = new util.Gesture(this.$buttonMask, {
         preventX: true
       })
-      swipeDelete.on('swipeup', (e) => {
+      swipeDelete.on('swipeup', () => {
         this._closeEverything()
       })
-      swipeDelete.on('swipedown', (e) => {
+      swipeDelete.on('swipedown', () => {
         this._closeEverything()
       })
     })

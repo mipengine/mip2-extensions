@@ -120,17 +120,17 @@ class Catalog {
     let reverse = $contentTop.querySelector('.catalog-reserve')
     let catalog = $catalogContent.querySelectorAll('div')
     let reverseName = $contentTop.querySelector('.reverse-name')
-    let Temp = []
+    let temp = []
     for (let i = 0; i < catalog.length; i++) {
-      Temp[i] = catalog[i].outerHTML
+      temp[i] = catalog[i].outerHTML
     }
     reverse.addEventListener('click', () => {
       if (reverseName.innerHTML === ' 正序 ') {
         reverseName.innerHTML = ' 倒序 '
-        $catalogContent.innerHTML = Temp.reverse().join('')
+        $catalogContent.innerHTML = temp.reverse().join('')
       } else {
         reverseName.innerHTML = ' 正序 '
-        $catalogContent.innerHTML = Temp.reverse().join('')
+        $catalogContent.innerHTML = temp.reverse().join('')
       }
     })
   }
@@ -139,7 +139,7 @@ class Catalog {
     let swipeLeft = new util.Gesture(document, {
       preventX: true
     })
-    swipeLeft.on('swipeleft', (e) => {
+    swipeLeft.on('swipeleft', e => {
       e.preventDefault()
       this.hide()
       shellElement.toggleDOM(shellElement.$buttonMask, false)
