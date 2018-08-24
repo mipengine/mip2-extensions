@@ -27,10 +27,11 @@
                             "next": "下一页"
                         }
                     },
-                    "book": {
-                        "title": "将夜",
-                        "chapterNumber": "已完结&nbsp;&nbsp;共1347章"
-                    },
+                   "book": {
+                       "title": "将夜",
+                       "chapterNumber": "共1347章",
+                       "chapterStatus": "已完结"
+                   },
                     "catalog": [
                         {
                             "name": "第1章 灵魂重生",
