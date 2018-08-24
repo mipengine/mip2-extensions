@@ -125,13 +125,8 @@ class Catalog {
       temp[i] = catalog[i].outerHTML
     }
     reverse.addEventListener('click', () => {
-      if (reverseName.innerHTML === ' 正序 ') {
-        reverseName.innerHTML = ' 倒序 '
-        $catalogContent.innerHTML = temp.reverse().join('')
-      } else {
-        reverseName.innerHTML = ' 正序 '
-        $catalogContent.innerHTML = temp.reverse().join('')
-      }
+      $catalogContent.innerHTML = temp.reverse().join('')
+      reverseName.innerHTML = reverseName.innerHTML === ' 正序' ? ' 倒序' : ' 正序'
     })
   }
 
