@@ -923,3 +923,22 @@ sessionid是否存在，
 3. 支持在mip1页面下使用吗？
 
 答：不支持。
+
+4. 关注之后在哪能看到？
+
+答： 百度app/简搜app -> 关注中心
+
+
+## changelog
+
+### 2018-08-23
+
+增加熊掌号关注功能
+
+* 授权弹窗
+
+<img src="https://babylillian.github.io/images/%E6%8E%88%E6%9D%83%E5%BC%B9%E7%AA%971.png"  alt="授权弹窗" align=center width="200"/>
+
+* 登录授权页
+
+<img src="https://babylillian.github.io/images/%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%951.png"  alt="授权登录" align=center width="300"/>
