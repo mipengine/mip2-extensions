@@ -62,17 +62,14 @@
   font-size: 18px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
-  .mip-shell-header-button-group .button,
-  .mip-shell-header-button-group-standalone {
-    &:active {
-      background-color: @activeColor;
-    }
-  }
-
   /* stylelint-disable no-descending-specificity */
   .mip-shell-header-button-group-standalone {
     top: 0;
     height: 100%;
+
+    &:active {
+      background-color: @activeColor;
+    }
   }
   /* stylelint-enable no-descending-specificity */
 
@@ -80,7 +77,7 @@
     top: 0;
     height: 100%;
     left: 0;
-    width: 42px;
+    width: 41.828px;
 
     &:active {
       background-color: @activeColor;
@@ -88,7 +85,35 @@
   }
 
   .mip-shell-header-button-group {
-    width: 85px;
+    /* 和SF环境保持一致 */
+    width: 84.662px;
+    right: 3.333px;
     box-sizing: content-box;
+
+    .button {
+      width: 41.828px;
+
+      &:active {
+        background-color: @activeColor;
+      }
+    }
+
+    .button.more {
+      margin-left: -5px;
+      padding-left: 7px;
+    }
+
+    .button.close {
+      left: -3.2525px;
+      margin-right: -5px;
+      padding-right: 7px;
+    }
+  }
+
+  .mip-shell-header-logo-title .mip-shell-header-logo {
+    width: 26px;
+    height: 26px;
+    margin-top: 8px;
+    margin-right: 5px;
   }
 }
