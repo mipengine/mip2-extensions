@@ -169,6 +169,8 @@ export default {
             }
           })
           util.store.set(key, 'finish')
+        }).catch(err => {
+          throw err
         })
       }
     },
@@ -293,6 +295,8 @@ export default {
                 { isMipLink: true, replace }
               )
             }
+          }).catch(err => {
+            throw err
           })
         },
         fail (data) {
