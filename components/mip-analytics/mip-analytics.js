@@ -21,10 +21,20 @@ export default class MipAnalytics extends CustomElement {
     this.isSendDisp[this.defaultDispKey] = 0
     this.triggers = {
 
+      /**
+       * 点击
+       *
+       * @param {Object} triggers
+       */
       click (triggers) {
         this.clickHandle(triggers, 'click')
       },
 
+      /**
+       * 触摸结束
+       *
+       * @param {Object} triggers
+       */
       touchend (triggers) {
         this.clickHandle(triggers, 'touchend')
       },
@@ -110,7 +120,7 @@ export default class MipAnalytics extends CustomElement {
    * 判断dom是否处于ready
    *
    * @param {Object}} performance 触发update事件的返回对象
-   * @return {String || false} data返回的对象含有定义的eventPoint，data不存在即返回false
+   * @return {String || Boolean} data返回的对象含有定义的eventPoint，data不存在即返回false
    */
   isDomReady (data) {
     return data ? this.eventPoint.every(el => {
