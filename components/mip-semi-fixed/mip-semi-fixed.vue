@@ -141,7 +141,6 @@ export default {
         try {
           let wrapp = fixedElement._fixedLayer.querySelector('#' + element.id)
           this.fixedContainer = wrapp.querySelector('div[mip-semi-fixed-container]')
-          console.log(element)
           this.fixedContainer.className += this.fixedClassNames
           this.fixedContainer.setAttribute(STATUS.STATUS_FIXED, '')
           this.fixedContainer.removeAttribute(STATUS.STATUS_SCROLL)
