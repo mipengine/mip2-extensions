@@ -24,8 +24,8 @@ export default class MipForm extends CustomElement {
     if (addClearBtn) {
       let clearArr = ['text', 'input', 'datetime', 'email', 'number', 'search', 'tel', 'url']
       let clearList = ''
-      for (let i in clearArr) {
-        clearList += ',input[type=' + clearArr[i] + ']'
+      for (let clear of clearArr) {
+        clearList += ',input[type=' + clear + ']'
       }
       clearList = clearList.slice(1)
       // clearItems为类数组对象

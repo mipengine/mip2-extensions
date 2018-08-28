@@ -20,7 +20,6 @@ export default class Form {
    * @param {HTMLElement} element 组件节点
    */
   createDom (element) {
-    let me = this
     let url = element.getAttribute('url')
     let target = element.getAttribute('target')
     let form = document.createElement('form')
@@ -33,14 +32,15 @@ export default class Form {
     util.dom.insert(form, element.children)
 
     // 按钮提交
+    let me = this
     let curEles = element.querySelectorAll('form')
-    Array.prototype.forEach.call(curEles, function (item) {
+    for (let item of curEles) {
       item.addEventListener('submit', function (event) {
         event.preventDefault()
         evt = event
         me.onSubmit(element, event)
       })
-    })
+    }
 
     // 部分浏览器回车不触发submit,
     element.addEventListener('keydown', function (event) {
@@ -50,14 +50,14 @@ export default class Form {
         event.preventDefault()
         me.onSubmit(this)
       }
-    }, false)
+    })
   }
 
   /**
    * 事件通信
    *
    * @description 在 input focus 或 blur 时向iframe外层文档发送数据，iframe外层文档返回设置预览头部为 absolute
-   * @param  {Object} event 事件对象
+   * @param {Object} event 事件对象
    */
   sendFormMessage (event) {
     if (windowInIframe) {
@@ -70,12 +70,12 @@ export default class Form {
    * 事件发送处理
    *
    * @description 给 input 绑定事件，向 SF 发送数据，为了解决 ios 的 UC 浏览器在iframe外层文档悬浮头部 fixed 位置混乱问题
-   * @param  {HTMLElement} element mip 组件标签
+   * @param {HTMLElement} element mip 组件标签
    */
   initMessageEvents (element) {
     let me = this
     let inputAll = element.querySelectorAll('input')
-    Array.prototype.forEach.call(inputAll, function (item, index) {
+    for (let item of inputAll) {
       item.addEventListener('focus', function () {
         me.sendFormMessage('focus')
       }, false)
@@ -83,14 +83,14 @@ export default class Form {
       item.addEventListener('blur', function () {
         me.sendFormMessage('blur')
       }, false)
-    })
+    }
   }
 
   /**
    * 文案格式验证
    *
-   * @param  {string} type 验证类型
-   * @param  {string} value 需要验证的文案
+   * @param {string} type 验证类型
+   * @param {string} value 需要验证的文案
    * @returns {boolean} 是否符合自定义校验
    */
   verification (type, value) {
@@ -100,7 +100,7 @@ export default class Form {
   /**
    * 点击提交按钮事件处理函数
    *
-   * @param  {HTMLElement} element form节点
+   * @param {HTMLElement} element form节点
    */
   onSubmit (element) {
     let me = this

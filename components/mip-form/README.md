@@ -4,7 +4,7 @@
 ----|----
 类型|
 支持布局|responsive, fixed-height, fill, container, fixed
-所需脚本|https://c.mipcdn.com/static/v1/mip-form/mip-form.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-form/mip-form.js
 
 ## 示例
 
