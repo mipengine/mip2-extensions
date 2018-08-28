@@ -1,0 +1,26 @@
+mip-accordion {
+  .mip-accordion-content {
+    display: none !important;
+    overflow: hidden;
+  }
+
+  section .show-more {
+    display: block;
+  }
+
+  section[expanded=open] .show-more {
+    display: none !important;
+  }
+
+  .mip-accordion-content[aria-expanded="open"] {
+    display: block !important;
+  }
+
+  section .show-less {
+    display: none;
+  }
+
+  section[expanded=open] .show-less {
+    display: block;
+  }
+}
