@@ -15,7 +15,11 @@
 }
 
 .mip-shell-more-button-mask {
-  background: none;
+  background: rgba(0, 0, 0, 0);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .mip-border {
@@ -71,6 +75,11 @@
       i p {
         margin-top: 6px;
         font-size: 12px;
+        margin-bottom: 20px;
+      }
+
+      i {
+        margin-top: 20px;
       }
     }
 
@@ -129,7 +138,7 @@ mip-fixed.mip-shell-catalog-wrapper {
   bottom: 0;
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
-  width: 90%;
+  width: 80%;
   min-width: 200px;
   height: 100%;
   background: white;
@@ -158,7 +167,6 @@ mip-fixed.mip-shell-catalog-wrapper {
     top: 0;
     width: 100%;
     height: 100%;
-    // padding-right: 5px;
     box-sizing: content-box;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -239,6 +247,10 @@ mip-fixed.mip-shell-catalog-wrapper {
     margin-bottom: 0;
   }
 
+  .chapter-number {
+    margin-left: 14px;
+  }
+
   .catalog-content-total-wrapper {
     padding-top: 0.625em;
   }
@@ -251,10 +263,6 @@ mip-fixed.mip-shell-catalog-wrapper {
     line-height: 16px;
     opacity: 0.88;
   }
-
-  // .catalog-content-center-left {
-  //   flex-grow: 1;
-  // }
 
   .catalog-content-center-wrapper {
     display: flex;
