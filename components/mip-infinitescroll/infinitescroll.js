@@ -7,39 +7,37 @@
 let { viewport, util } = MIP
 let { css, rect, dom } = util
 
-let InfiniteScroll = function (opt) {
-  if (!opt.$result || !opt.$loading || !opt.pushResult) {
-    return
+export default class InfiniteScroll {
+  constructor (opt) {
+    if (!opt.$result || !opt.$loading || !opt.pushResult) {
+      return
+    }
+    let body = document.body
+
+    // 设置默认值
+    this.options = Object.assign({
+      // 视窗
+      $wrapper: window,
+      // 滚动容器
+      $scroller: body,
+      // firstResult支持可选
+      firstResult: [],
+      // 内容列表每页className
+      scrollPageClass: 'mip-infinitescroll-page',
+      loadingHtml: '加载中...',
+      loadFailHtml: '加载失败,点击重试',
+      loadOverHtml: '加载完毕',
+      bufferHeightPx: 10,
+      pageResultNum: 10,
+      limitShowPn: 2,
+      preLoadPn: 1
+    }, opt)
+
+    this.version = '0.1.0'
+    this._init()
   }
-  let body = document.querySelector('body')
 
-  // 设置默认值
-  this.options = Object.assign({
-    // 视窗
-    $wrapper: window,
-    // 滚动容器
-    $scroller: body,
-    // firstResult支持可选
-    firstResult: [],
-    // 内容列表每页className
-    scrollPageClass: 'mip-infinitescroll-page',
-    loadingHtml: '加载中...',
-    loadFailHtml: '加载失败,点击重试',
-    loadOverHtml: '加载完毕',
-    bufferHeightPx: 10,
-    pageResultNum: 10,
-    limitShowPn: 2,
-    preLoadPn: 1
-  }, opt)
-
-  this._init()
-}
-
-InfiniteScroll.prototype = {
-
-  version: '0.1.0',
-
-  _init: function () {
+  _init () {
     let self = this
     this.eventSpace = '.InfiniteScroll'
     // 标识状态 start-执行 pause-暂停
@@ -84,10 +82,10 @@ InfiniteScroll.prototype = {
     if (!this.options.firstResult.length) {
       this._scrollBottomFn()
     }
-  },
+  }
 
   // 重新获取环境变量
-  refresh: function () {
+  refresh () {
     // 若为暂停状态,什么也不做
     if (this.state === 'pause') {
       return
@@ -99,10 +97,10 @@ InfiniteScroll.prototype = {
     this.scrollerHeight = this._getScrollerHeight()
     // 当前滚动条位置
     this.currentScrollTop = viewport.getScrollTop()
-  },
+  }
 
   // destroy方法
-  destroy: function () {
+  destroy () {
     // 注销resize事件
     let eventSpace = this.eventSpace
     window.removeEventListener('resize' + eventSpace)
@@ -112,12 +110,12 @@ InfiniteScroll.prototype = {
     viewport.off('scroll', scrollHaandler)
     // 删除cache数据
     this.scrollPageCache = null
-  },
+  }
 
   /**
    * pause方法,外部接口,用于暂停infiniteScroll
    */
-  pause: function () {
+  pause () {
     // 若已经为暂停状态,什么也不做
     if (this.state === 'pause') {
       return
@@ -126,12 +124,12 @@ InfiniteScroll.prototype = {
     // 记录当前滚动位置
     this.pauseScrollTop = this.currentScrollTop
     this.state = 'pause'
-  },
+  }
 
   /**
    * start方法,外部接口,用于恢复infiniteScroll
    */
-  start: function () {
+  start () {
     // 若已经为执行状态,什么也不做
     if (this.state === 'start') {
       return
@@ -143,14 +141,14 @@ InfiniteScroll.prototype = {
 
     this.refresh()
     this.state = 'start'
-  },
+  }
 
   /**
    * 横屏hack
    * 为保证横屏下滚动容器定位,横竖屏结果高度必须相同
    * 目前百度栅格系统采用流式布局,因此强制横屏下父容器宽度与竖屏相同
    */
-  _horizontalHack: function () {
+  _horizontalHack () {
     let verticalScreenWidth
     if (window.orientation !== undefined) {
       // 安卓某些系统下screen返回的是高分屏尺寸...
@@ -169,9 +167,9 @@ InfiniteScroll.prototype = {
     }
     let result = this.options.$result
     css(result, 'max-width', verticalScreenWidth + 'px')
-  },
+  }
 
-  _bindScroll: function () {
+  _bindScroll () {
     let self = this
     let scrollHandler
     viewport.on('scroll', function scrollHandler () {
@@ -219,12 +217,12 @@ InfiniteScroll.prototype = {
     }
 
     this.scrollHandler = scrollHandler
-  },
+  }
 
   /**
    * 当滚动条滚动到页面底部时执行
    */
-  _scrollBottomFn: function () {
+  _scrollBottomFn () {
     let self = this
     // 需要加载的页码(从0计)
     let pn = this.currentLoadPage + 1
@@ -274,14 +272,15 @@ InfiniteScroll.prototype = {
         }
       )
     }
-  },
+  }
 
   /**
    * 按页更新滚动元素内容
    *
    * @param  {number} pn 页码
    */
-  _updateScrollElement: function (pn) {
+
+  _updateScrollElement (pn) {
     let domNewPage = this._wrapPageParentDom(this.scrollPageCache.content[pn], pn)
     domNewPage = dom.create(domNewPage)
     this.options.$result.appendChild(domNewPage)
@@ -290,10 +289,12 @@ InfiniteScroll.prototype = {
     this.currentLoadPage = pn
     this.scrollerHeight = this._getScrollerHeight()
     this.scrollPageCache.topPosition.push(rect.getElementRect(domNewPage).top)
-  },
-  _getScrollerHeight: function () {
+  }
+
+  _getScrollerHeight () {
     return viewport.getScrollHeight()
-  },
+  }
+
   /**
    * 清理&恢复dom方法
    * IP:[number]当前可视区页码
@@ -301,7 +302,7 @@ InfiniteScroll.prototype = {
    *
    * @param  {number} pn 页码
    */
-  _cycleScrollElement: function (pn) {
+  _cycleScrollElement (pn) {
     let self = this
 
     let recycleClass = 'infinite-recycle'
@@ -332,7 +333,7 @@ InfiniteScroll.prototype = {
       // 这里有可能导致整体高度变化,需要重新更新高度
       self.scrollerHeight = this._getScrollerHeight()
     }
-  },
+  }
 
   /**
    * 将结果处理成分页的数组结构返回
@@ -342,7 +343,7 @@ InfiniteScroll.prototype = {
    * @param  {Array} listArr 结果
    * @returns {Array}   html array
    */
-  _separatePage: function (listArr) {
+  _separatePage (listArr) {
     if (!listArr.length || listArr === 'NULL') {
       return
     }
@@ -355,7 +356,7 @@ InfiniteScroll.prototype = {
       pageHtmlArr.push(listArr.slice(i * pageResultNum, i * pageResultNum + pageResultNum).join(''))
     }
     return pageHtmlArr
-  },
+  }
 
   /**
    * 为每页内容包裹父容器
@@ -366,7 +367,7 @@ InfiniteScroll.prototype = {
    * @param  {number} pn 页码
    * @returns {string}   拼接好的html
    */
-  _wrapPageParentDom: function (html, pn) {
+  _wrapPageParentDom (html, pn) {
     return (
       [
         '<ul class="' + this.options.scrollPageClass + '" data-page="' + pn + '">',
@@ -374,14 +375,14 @@ InfiniteScroll.prototype = {
         '</ul>'
       ].join('')
     )
-  },
+  }
 
   /**
    * 获取当前可视区页码的方法(从0计)
    *
    * @returns {number} 0 或 1
    */
-  getShowPage: function () {
+  getShowPage () {
     let scrollPageCacheTopPosition = this.scrollPageCache.topPosition.concat()
     for (let i = scrollPageCacheTopPosition.length - 1; i >= 0; i--) {
       if (this.currentScrollTop >= scrollPageCacheTopPosition[i]) {
@@ -389,17 +390,13 @@ InfiniteScroll.prototype = {
       }
     }
     return 0
-  },
+  }
 
-  once: function (dom, type, callback) {
+  once (dom, type, callback) {
     let handle = function () {
       callback()
       dom.removeEventListener(type, handle)
     }
     dom.addEventListener(type, handle)
-  },
-
-  constructor: InfiniteScroll
+  }
 }
-
-export default InfiniteScroll

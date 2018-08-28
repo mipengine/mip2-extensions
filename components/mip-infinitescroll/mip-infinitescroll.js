@@ -19,9 +19,8 @@ export default class MipInfiniteScroll extends CustomElement {
     return true
   }
 
-  // 构造元素，只会运行一次
+  // 挂载到DOM上之后，首次出现在视口内时执行
   firstInviewCallback () {
-    let self = this
     let element = this.element
     let src = element.getAttribute('data-src') || ''
 
@@ -49,7 +48,7 @@ export default class MipInfiniteScroll extends CustomElement {
     try {
       let script = element.querySelector('script[type="application/json"]')
       if (script) {
-        this.params = util.fn.extend(self.params, JSON.parse(script.textContent.toString()))
+        this.params = util.fn.extend(this.params, JSON.parse(script.textContent.toString()))
         // 由于JSON.parse() 内不能填写Infinity(number), 只能填"Infinity"(string)来转换
         this.params.rn = (this.params.rn === 'Infinity' ? Infinity : this.params.rn)
       }
@@ -64,6 +63,7 @@ export default class MipInfiniteScroll extends CustomElement {
     this.url = this.getUrl(src)
 
     // 异步请求返回后，解析数据，使用mustache 渲染插入页面
+    let self = this
     this.pushResult = function (rn, status) {
       // 异步获取数据示例
       let defer = new Promise(function (resolve, reject) {
@@ -115,7 +115,7 @@ export default class MipInfiniteScroll extends CustomElement {
     })
   }
 
-  detachedCallback () {
+  disconnectedCallback () {
     this.infiniteScroll = null
   }
 
