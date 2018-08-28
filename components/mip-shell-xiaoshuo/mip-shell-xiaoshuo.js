@@ -21,7 +21,6 @@ import getJsonld from './common/util'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
-let util = MIP.util
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -134,15 +133,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     window.addEventListener('showShellFooter', (e, data) => {
       this.footer.show(this)
       this.header.show()
-      let swipeDelete = new util.Gesture(this.$buttonMask, {
-        preventX: true
-      })
-      swipeDelete.on('swipeup', () => {
-        this._closeEverything()
-      })
-      swipeDelete.on('swipedown', () => {
-        this._closeEverything()
-      })
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
@@ -203,6 +193,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 基类方法 每个页面执行：绑定头部弹层事件。
   bindHeaderEvents () {
     super.bindHeaderEvents()
+
     let event = window.MIP.util.event
     let me = this
 
@@ -327,9 +318,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
   }
 
-  prerenderAllowed () {
-    return true
-  }
   /**
    * 获取上级可scroll的元素
    *
