@@ -60,19 +60,17 @@
 
 .mip-shell-header {
   font-size: 18px;
+  line-height: 48px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-
-  .mip-shell-header-button-group .button,
-  .mip-shell-header-button-group-standalone {
-    &:active {
-      background-color: @activeColor;
-    }
-  }
 
   /* stylelint-disable no-descending-specificity */
   .mip-shell-header-button-group-standalone {
     top: 0;
     height: 100%;
+
+    &:active {
+      background-color: @activeColor;
+    }
   }
   /* stylelint-enable no-descending-specificity */
 
@@ -88,7 +86,36 @@
   }
 
   .mip-shell-header-button-group {
+    /* 和SF环境尽量保持一致，误差在1px范围内 */
     width: 85px;
+    right: 3px;
     box-sizing: content-box;
+    border-radius: 16px;
+
+    .button {
+      width: 42px;
+
+      &:active {
+        background-color: @activeColor;
+      }
+    }
+
+    .button.more {
+      margin-left: -5px;
+      padding-left: 7px;
+    }
+
+    .button.close {
+      left: -3px;
+      margin-right: -5px;
+      padding-right: 8px;
+    }
+  }
+
+  .mip-shell-header-logo-title .mip-shell-header-logo {
+    width: 28px;
+    height: 28px;
+    margin-top: 10px;
+    margin-right: 8px;
   }
 }
