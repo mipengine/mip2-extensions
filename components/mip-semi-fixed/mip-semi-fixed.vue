@@ -5,6 +5,23 @@
 </template>
 
 <style scoped lang="less">
+  .mip-fixedlayer div[mip-semi-fixed-scrollStatus] {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .mip-fixedlayer mip-semi-fixed {
+    position: fixed !important;
+    width: 100%;
+  }
+
+  .mip-fixedlayer div[mip-semi-fixed-fixedStatus] {
+    position: fixed;
+    width: 100%;
+  }
+
   .wrap {
     position: relative;
     width: 100%;
@@ -22,29 +39,11 @@
       z-index: 999;
     }
   }
-
-  .mip-fixedlayer div[mip-semi-fixed-scrollStatus] {
-    position: absolute;
-    z-index: 1;
-    width: 100%;
-    transform: translate3d(0, 0, 0);
-  }
-
-  .mip-fixedlayer mip-semi-fixed {
-    position: fixed!important;
-    width: 100%;
-  }
-
-  .mip-fixedlayer div[mip-semi-fixed-fixedStatus] {
-    position: fixed;
-    width: 100%;
-  }
 </style>
 
 <script>
 let util = MIP.util
 let viewport = MIP.viewport
-let viewer = MIP.viewer
 let fixedElement = MIP.viewer.fixedElement
 /**
  * [YOFFSET 默认fixed top 的距离]
@@ -138,7 +137,7 @@ export default {
       container.setAttribute(STATUS.STATUS_SCROLL, '')
 
       // iframe 中
-      if (viewer.isIframed && util.platform.isIos()) {
+      if (MIP.standalone && util.platform.isIos()) {
         try {
           let wrapp = fixedElement._fixedLayer.querySelector('#' + element.id)
           this.fixedContainer = wrapp.querySelector('div[mip-semi-fixed-container]')
@@ -179,7 +178,7 @@ export default {
         }
         container.setAttribute(STATUS.STATUS_FIXED, '')
         util.css(container, 'top', this.threshold + 'px')
-      } else if (util.platform.isIos() && viewer.isIframed && offsetTop <= this.threshold) {
+      } else if (util.platform.isIos() && MIP.standalone && offsetTop <= this.threshold) {
         util.css(this.fixedContainer.parentNode, {display: 'block'})
         util.css(this.fixedContainer, {opacity: 1})
         util.css(container, {opacity: 0})
@@ -193,7 +192,7 @@ export default {
         util.css(element, {
           display: 'none'
         })
-        if (viewer.isIframed) {
+        if (MIP.standalone) {
           util.css(this.fixedContainer, {
             display: 'none'
           })
