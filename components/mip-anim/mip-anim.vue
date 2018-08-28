@@ -1,11 +1,10 @@
 <template>
-  <div>
+  <div class="wrap">
     <transition name="imgFade">
-      <mip-img
+      <img
         v-show="placeholderShow"
         ref="placeholder"
-        class="mip-hidden"
-      />
+      >
     </transition>
     <transition name="fade">
       <img
@@ -15,6 +14,9 @@
         :alt="alt"
       >
     </transition>
+    <div class="slot">
+      <slot/>
+    </div>
   </div>
 </template>
 
@@ -22,6 +24,7 @@
 .background {
   background-color: #aaa;
 }
+
 .fade-enter-active {
   opacity: 0;
 }
@@ -42,15 +45,12 @@
 </style>
 
 <script>
+let util = MIP.util
 export default {
   props: {
     show: {
       type: Boolean,
       default: false
-    },
-    srcPlaceholder: {
-      type: String,
-      default: ''
     },
     src: {
       type: String,
@@ -64,7 +64,7 @@ export default {
   data () {
     return {
       imgShow: false,
-      placeholderShow: true
+      placeholderShow: false
     }
   },
   firstInviewCallback () {
@@ -73,19 +73,22 @@ export default {
   methods: {
     init () {
       let gif = this.$refs.gif
+      let placeholderImg = this.$el.querySelector('.slot mip-img')
       // 判断组件内是否有dom 是否有默认pic 复制默认pic属性到模板mip-img中
-      if (Object.keys(this.$slots).length !== 0 && this.$slots.default.length) {
+      if (placeholderImg && placeholderImg.getAttribute('src')) {
         let placeholder = this.$refs.placeholder
-        this.srcPlaceholder = this.$slots.default[0].data.attrs.src
-        let obj = this.$slots.default[0].data.attrs
-        for (let attr in obj) {
-          placeholder.setAttribute(attr, obj[attr])
-        }
+        util.css(placeholder, {
+          width: placeholderImg.getAttribute('width'),
+          height: placeholderImg.getAttribute('height'),
+          src: placeholderImg.getAttribute('src'),
+          alt: placeholderImg.getAttribute('alt')
+        })
+        this.placeholderShow = true
       } else {
         this.placeholderShow = false
       }
       // 有默认图情况
-      if (this.srcPlaceholder) {
+      if (this.placeholderShow) {
         // 有默认图且有gif图情况  gif加载成功前显示默认图
         if (this.src) {
           promiseIf({ img: gif, src: this.src, alt: this.alt }).then(() => {

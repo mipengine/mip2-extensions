@@ -44,7 +44,14 @@ export default {
        *
        * @type {boolean}
        */
-      isLogin: false
+      isLogin: false,
+
+      /**
+       * 是否要在页面显示的时候查询登录状态，默认需要
+       *
+       * @type {boolean}
+       */
+      doAutoQuery: true
     }
   },
   created () {
@@ -52,6 +59,9 @@ export default {
     this.checkConfig()
     // 清空登录update
     util.store.remove(this.config.endpoint + '_login_handle')
+  },
+  prerenderAllowed () {
+    return true
   },
   mounted () {
     // 熊掌号sdk
@@ -83,17 +93,37 @@ export default {
         let args = str.split(',')
         this.login(...args)
       })
+
       this.$element.customElement.addEventAction('logout', () => {
         this.logout()
       })
+
+      window.addEventListener('show-page', e => {
+        // 如果不在进行登录状态的更新中
+        if (this.doAutoQuery) {
+          // 页面返回重新触发一遍查询
+          this.getUserInfo().then(() => {
+            if (this.config.autologin && !this.isLogin) {
+              // TODO,抛出事件，让业务方自己处理
+              this.$emit('autoLoginCancel')
+            }
+          })
+        }
+      })
+
       window.addEventListener('inservice-auth-logined', e => {
+        // 标示在进行登录数据的更新
+        this.doAutoQuery = false
         // 开始进行数据更新
         this.updateLogin(e.detail[0])
       })
+
       window.addEventListener('inservice-auth-data-updated', e => {
         let res = e.detail[0]
         // 没设置过就执行
         if (this.sessionId !== res.data.sessionId) {
+          // 标示在进行登录数据的更新
+          this.doAutoQuery = false
           this.loginHandle('login', true, res.data.userInfo, res.origin)
           // 更新数据哦
           this.setData()
@@ -143,6 +173,8 @@ export default {
             }
           })
           util.store.set(key, 'finish')
+        }).catch(err => {
+          throw err
         })
       }
     },
@@ -254,6 +286,7 @@ export default {
         },
         success (data) {
           // 弹窗情况会进入该回调
+          self.doAutoQuery = false
           // 是返回原页面，就进行事件通知
           self.updateLogin({
             code: data.result.code,
@@ -266,10 +299,19 @@ export default {
                 { isMipLink: true, replace }
               )
             }
+          }).catch(err => {
+            throw err
           })
         },
         fail (data) {
           console.error(data.msg)
+        },
+        complete (data) {
+          // 单词拼错，待依赖的文件升级再修改
+          if (data.msg === 'oauth:cancel' && self.config.autologin) {
+            // TODO,抛出事件，让业务方自己处理
+            self.$emit('autoLoginCancel')
+          }
         }
       })
     },

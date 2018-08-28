@@ -21,6 +21,7 @@ import getJsonld from './common/util'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
+let util = MIP.util
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -91,6 +92,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         // 初始化，从缓存中获取主题和字号apply到页面
         this.pageStyle.update(e)
       }
+      document.body.classList.add('show-xiaoshuo-container')
+      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
+      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
+      if (xiaoshuoContainer) {
+        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
+      }
     })
 
     // 初始化页面时执行一次背景色+字号初始化
@@ -127,6 +134,15 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     window.addEventListener('showShellFooter', (e, data) => {
       this.footer.show(this)
       this.header.show()
+      let swipeDelete = new util.Gesture(this.$buttonMask, {
+        preventX: true
+      })
+      swipeDelete.on('swipeup', () => {
+        this._closeEverything()
+      })
+      swipeDelete.on('swipedown', () => {
+        this._closeEverything()
+      })
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
@@ -187,7 +203,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 基类方法 每个页面执行：绑定头部弹层事件。
   bindHeaderEvents () {
     super.bindHeaderEvents()
-
     let event = window.MIP.util.event
     let me = this
 
@@ -233,6 +248,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     shellConfig.routes.forEach(routerConfig => {
       routerConfig.meta.header.bouncy = false
     })
+  }
+
+  // 基类方法，在页面翻页时页面由于alwaysReadOnLoad为true重新刷新，因此shell的config需要重新配置
+  // matchIndex是用来标识它符合了哪个路由，根据不同的路由修改不同的配置
+  processShellConfigInLeaf (shellConfig, matchIndex) {
+    shellConfig.routes[matchIndex].meta.header.bouncy = false
   }
   /**
    * 滚动边界处理
@@ -306,6 +327,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
   }
 
+  prerenderAllowed () {
+    return true
+  }
   /**
    * 获取上级可scroll的元素
    *
