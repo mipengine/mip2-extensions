@@ -129,15 +129,26 @@ class Catalog {
       reverseName.innerHTML = reverseName.innerHTML === ' 正序' ? ' 倒序' : ' 正序'
     })
   }
-
+  swipeHidden (e, shellElement) {
+    e.preventDefault()
+    this.hide()
+    e.stopPropagation()
+    shellElement.toggleDOM(shellElement.$buttonMask, false)
+  }
   bindShowEvent (shellElement) {
+    let catalog = document.querySelector('.mip-shell-catalog-wrapper')
     let swipeLeft = new util.Gesture(document, {
       preventX: true
     })
+    let swipeLeftCatalog = new util.Gesture(catalog, {
+      preventX: true
+    })
     swipeLeft.on('swipeleft', e => {
-      e.preventDefault()
-      this.hide()
-      shellElement.toggleDOM(shellElement.$buttonMask, false)
+      this.swipeHidden(e, shellElement)
+    })
+    // 解决UC浏览器document不滑动问题
+    swipeLeftCatalog.on('swipeleft', e => {
+      this.swipeHidden(e, shellElement)
     })
   }
   // 显示侧边目录
