@@ -12,6 +12,7 @@ class Catalog {
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
+    this.nowCatNum = this.getQuery().crid
   }
 
   /**
@@ -38,6 +39,7 @@ class Catalog {
   // 支持从页面直接获取目录，异步获取目录
   _renderCatalog (catalogs, book) {
     let renderCatalog
+    let isCatFetch = true
     let title = ''
     let chapterStatus = ''
     let chapterNumber = ''
@@ -77,9 +79,29 @@ class Catalog {
     `
     if (!catalogs) {
       // 目录配置为空
-    } else if (typeof catalogs === 'string') {
+    } else if (catalogs.length === 0) {
+      isCatFetch = false
       // 目录配置的是字符串，远程地址。需要异步获取
-
+      MIP.sandbox.fetchJsonp('http://yq01-psdy-diaoyan1016.yq01.baidu.com:8848/novel/api/mipinfo?originUrl=http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1', {
+        jsonpCallback: 'callback'
+      })
+        .then(res => {
+          return res.json()
+        }).then(data => {
+          let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
+          let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
+          let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
+          catalogs = data.data.catalog.chapters
+          renderCatalog = catalogs => catalogs.map(catalog => `
+        <div class="catalog-page">
+          <a class="mip-catalog-btn catalog-page-content"
+          mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
+          ${catalog.name}
+          </a>
+        </div>`).join('\n')
+          $catalogContent.innerHTML = renderCatalog(catalogs)
+          this.reverse($contentTop, $catalogContent)
+        })
     } else {
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
@@ -109,7 +131,10 @@ class Catalog {
     let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
     let $scroll = $catalogSidebar.querySelector('.scroll') // 滚动条
     let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
-    $catalogContent.innerHTML = renderCatalog(catalogs)
+    if (isCatFetch) {
+      $catalogContent.innerHTML = renderCatalog(catalogs)
+      this.reverse($contentTop, $catalogContent)
+    }
     let $catalogBook = $catalogSidebar.querySelector('.book-catalog-info-title')
     if (book) {
       $catalogBook.style.display = 'block'
@@ -119,7 +144,6 @@ class Catalog {
       $catalog.style.height = '-webkit-calc(100% - 62px)'
     }
     // 实现倒序，点击倒序，目录顺序倒序，倒序字边正序
-    this.reverse($contentTop, $catalogContent)
     if (!hadCatalog) {
       $catalogSidebar.appendChild($catalog)
       document.body.appendChild($catalogSidebar)
@@ -141,7 +165,7 @@ class Catalog {
     let catalog = $catalogContent.querySelectorAll('div')
     let reverseName = $contentTop.querySelector('.reverse-name')
     let temp = []
-    for (let i = 0; i < catalog.length; i++) {
+    for (let i = 0, len = catalog.length; i < len; i++) {
       temp[i] = catalog[i].outerHTML
     }
     reverse.addEventListener('click', () => {
@@ -149,19 +173,19 @@ class Catalog {
       reverseName.innerHTML = reverseName.innerHTML === ' 正序' ? ' 倒序' : ' 正序'
       let catalog = $catalogContent.querySelectorAll('div')
       let $catWrapper = document.querySelector('.novel-catalog-content-wrapper')
-      let wrapperHeight = $catWrapper.clientHeight
       let catLocation = {
         section: this.getQuery().crid,
         page: this.getQuery().pg
       }
+      catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
       if (reverseName.innerHTML === ' 倒序') {
-        this.cleanClassActive()
         catalog[catLocation.section - 1].querySelector('a').classList.add('active')
-        $catWrapper.scrollTop = catLocation.section * 46 - wrapperHeight
+        this.nowCatNum = catLocation.section
+        $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
       } else {
-        this.cleanClassActive()
         catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
-        $catWrapper.scrollTop = (catalog.length - catLocation.section + 1) * 46 - wrapperHeight
+        this.nowCatNum = catLocation.section
+        $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop
       }
     })
   }
@@ -185,28 +209,16 @@ class Catalog {
       shellElement.toggleDOM(shellElement.$buttonMask, false)
     })
   }
-
-  /**
-   * 在高亮前先清空带有active的类
-   */
-  cleanClassActive () {
-    let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
-    let catalog = [...$catalogContent.querySelectorAll('div')]
-    for (let i = 0; i < catalog.length; i++) {
-      catalog[i].querySelector('a').classList.remove('active')
-    }
-  }
   // 显示侧边目录
   show (shellElement) {
     this.bindShowEvent(shellElement)
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     this.$catalogSidebar.classList.add('show')
-    // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
-    let wrapperHeight = $catWrapper.clientHeight
     let reverseName = this.$catalogSidebar.querySelector('.reverse-name')
     let catalog = [...$catalogContent.querySelectorAll('div')]
+    // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     for (let i = 0; i < catalog.length; i++) {
       catalog[i].innerHTML = catalog[i].innerHTML
     }
@@ -215,15 +227,15 @@ class Catalog {
       page: this.getQuery().pg
     }
     document.body.classList.add('body-forbid')
-    // 初次渲染找不到' 倒序'，所以和reverse的逻辑反着来
+    catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
     if (reverseName.innerHTML === ' 正序') {
-      this.cleanClassActive()
       catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
-      $catWrapper.scrollTop = (catalog.length - catLocation.section + 1) * 46 - wrapperHeight
+      this.nowCatNum = catLocation.section
+      $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop
     } else {
-      this.cleanClassActive()
       catalog[catLocation.section - 1].querySelector('a').classList.add('active')
-      $catWrapper.scrollTop = catLocation.section * 46 - wrapperHeight
+      this.nowCatNum = catLocation.section
+      $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
     }
   }
   // 隐藏侧边目录
