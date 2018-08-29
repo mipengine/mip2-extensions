@@ -17,29 +17,29 @@ let filterKey = 'mipFilterKey'
 
 const customUtil = {
   // used multiple times
-  containReg: function (txt) {
+  containReg (txt) {
     return new RegExp('(\\s+|^)' + txt + '(\\s+|$)')
   },
   // check if dom has certain class
-  hasClass: function (ele, cls) {
+  hasClass (ele, cls) {
     return ele.className.match(this.containReg(cls))
   },
   // add certain class to dom
-  addClass: function (ele, cls) {
+  addClass (ele, cls) {
     if (this.hasClass(ele, cls)) {
       return
     }
     ele.className = (ele.className + ' ' + cls).trim()
   },
   // remove certain class from dom
-  removeClass: function (ele, cls) {
+  removeClass (ele, cls) {
     if (!this.hasClass(ele, cls)) {
       return
     }
     ele.className = ele.className.replace(this.containReg(cls), ' ').trim()
   },
   // toggle certain class of dom
-  toggleClass: function (ele, cls) {
+  toggleClass (ele, cls) {
     if (this.hasClass(ele, cls)) {
       this.removeClass(ele, cls)
     } else {
@@ -63,12 +63,11 @@ export default class MipFilter extends CustomElement {
 }
 
 class Filter {
-  constructor (opt) {
+  constructor (opt = {}) {
     let {
       filterWrap,
       itemWrap
     } = opt
-    let self = this
     this.opt = opt
 
     // opt opt.filterWrap opt.itemWrap必须被定义
@@ -112,18 +111,15 @@ class Filter {
       }
     }
 
-    /**
-     * add click event to all filters
-     * when clicked, select the filter,
-     * if wise, collapse filter list.
-     */
+    // add click event to all filters when clicked, select the filter,
+    // if wise, collapse filter list.
+    let self = this
+
     util.event.delegate(opt.filterWrap, '.filter-link', 'click', function () {
       self.filterSelect(this)
     })
-    /**
-     * add click event to filter result, which show only on wise.
-     * when clicked, uncollapse and collapse filter list.
-     */
+    // add click event to filter result, which show only on wise.
+    // when clicked, uncollapse and collapse filter list.
     opt.filterWrap.querySelector('.filter-result').addEventListener('click', self.toggleFilter)
     // opt.filterWrap.querySelector('.filter-result').addEventListener('click', self.toggleFilter)
   }
@@ -140,7 +136,10 @@ class Filter {
     this.filterSelect(filterTarget)
   }
 
-  // 修改url
+  /**
+   * @param {string} setValue
+   * 修改url
+   */
   setHash (setValue) {
     let hasTreeKeys = Object.keys(hash.hashTree)
     let hashKeys = []
@@ -156,6 +155,7 @@ class Filter {
   }
 
   /**
+   * @param {Object} target HTML Element
    * shoot: when a filter is clicked.
    * add filter color and text to selected one.
    */
@@ -183,20 +183,21 @@ class Filter {
    * Get Node Text
    *
    * @param {Object} node HTML Element
-   * @return {string} node Text
+   * @returns {string} node Text
    */
   getText (node) {
     let output = ''
-    let childs = node.childNodes || [];
-    [].slice.call(childs).forEach(function (node) {
+    let childs = node.childNodes || []
+    for (let node of childs) {
       if (node.nodeType === 3) {
         output = output.concat(node.textContent)
       }
-    })
+    }
     return output
   }
 
   /**
+   * @param {string} filter
    * shoot: when filter btn is clicked.
    * hide items that cant pass the filter.
    */
@@ -218,7 +219,7 @@ class Filter {
         customUtil.addClass(emptyTip, 'filter-emptytip')
         emptyTip.innerHTML = this.opt.emptyTip
         this.opt.itemWrap.appendChild(emptyTip)
-      } else {}
+      }
     } else {
       let emptyTip = this.opt.itemWrap.querySelector('.filter-emptytip')
       if (emptyTip) {
