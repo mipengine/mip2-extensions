@@ -79,10 +79,8 @@ class Catalog {
     `
     if (!catalogs) {
       // 目录配置为空
-    } else if (catalogs.length === 0) {
       isCatFetch = false
-      // 目录配置的是字符串，远程地址。需要异步获取
-      MIP.sandbox.fetchJsonp('http://yq01-psdy-diaoyan1016.yq01.baidu.com:8848/novel/api/mipinfo?originUrl=http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1', {
+      MIP.sandbox.fetchJsonp('https://yq01-psdy-diaoyan1016.yq01.baidu.com:8001/novel/api/mipinfo?originUrl=http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1', {
         jsonpCallback: 'callback'
       })
         .then(res => {
@@ -102,6 +100,8 @@ class Catalog {
           $catalogContent.innerHTML = renderCatalog(catalogs)
           this.reverse($contentTop, $catalogContent)
         })
+    } else if (catalogs.length === 0) {
+      // 目录的长度为0
     } else {
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
