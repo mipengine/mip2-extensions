@@ -6,12 +6,49 @@
  */
 
 let util = MIP.util
+let viewer = MIP.viewer
+let readMethods = 'loadding'
+let readCatalogStatus = 'loadding'
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
+  }
+
+  // 发送 搜索点出/二跳 日志
+  sendIsRootPageMessage () {
+    viewer.sendMessage('interaction-log', {
+      info: {
+        isRootPage: false,
+        twice: 'catalog'
+      },
+      dim: { pd: 'novel' }
+    })
+  }
+
+  // 目录章节绑定发送日志函数
+  _bindMessageEvent () {
+    let self = this
+    let event = window.MIP.util.event
+    event.delegate(document.documentElement, '.novel-catalog-content .mip-catalog-btn', 'click', () => {
+      self.sendIsRootPageMessage()
+    })
+  }
+
+  // 稳定性：目录获取失败发送日志函数
+  _catalogFailMessageEvent (catalogs) {
+    let len = catalogs.length
+    readMethods = '本地'
+    !len || !catalogs[0].name || !catalogs[len - 1].name ? readCatalogStatus = false : readCatalogStatus = true
+    viewer.sendMessage('stability-log', {
+      info: {
+        readCatalogStatus: readCatalogStatus,
+        readMethods: readMethods
+      },
+      dim: { pd: 'novel' }
+    })
   }
 
   // 根据配置渲染目录侧边栏到  mip-sidebar组件中
@@ -28,7 +65,7 @@ class Catalog {
     }
     let catalogHtml = `
       <div class="mip-catalog-btn book-catalog-info">
-        <div class="catalog-header-wrapper book-catalog-info-header">
+        <div class="catalog-header-wrapper book-catalogitg-info-header">
           <div class="book-catalog-info-title">
             <p class="book-catalog-title-name catalog-title">${title}</p>
             <div class="catalog-content-total-wrapper">
@@ -56,9 +93,12 @@ class Catalog {
     if (!catalogs) {
       // 目录配置为空
     } else if (typeof catalogs === 'string') {
+      readMethods = '异步'
       // 目录配置的是字符串，远程地址。需要异步获取
-
     } else {
+      this.catalog = catalogs
+      this._catalogFailMessageEvent(catalogs)
+
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
@@ -106,6 +146,8 @@ class Catalog {
       $catalogSidebar.removeChild($catalogSidebar.querySelector('.mip-shell-catalog'))
       $catalogSidebar.appendChild($catalog)
     }
+    this._bindMessageEvent()
+
     return $catalogSidebar
   }
   /**

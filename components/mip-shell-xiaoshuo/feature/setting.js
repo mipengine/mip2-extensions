@@ -33,11 +33,11 @@ export function settingHtml () {
   return `
     <div class="mip-shell-xiaoshuo-control-fontsize">
         <ul>
-            <li><span class="reduce click-cursor" on="click:xiaoshuo-shell.changeFont(smaller)">A-</span></li>
+            <li><span class="reduce click-cursor font-size-button" on="click:xiaoshuo-shell.changeFont(smaller)">A-</span></li>
             <li class="progress">
                 <input type="range" step="0.5" min="1" max="6" value="${__getConfig().fontSize}">
             </li>
-            <li><span class="increase click-cursor" on="click:xiaoshuo-shell.changeFont(bigger)">A+</span></li>
+            <li><span class="increase click-cursor font-size-button" on="click:xiaoshuo-shell.changeFont(bigger)">A+</span></li>
         </ul>
     </div>
     <div class="mip-shell-xiaoshuo-control-theme">

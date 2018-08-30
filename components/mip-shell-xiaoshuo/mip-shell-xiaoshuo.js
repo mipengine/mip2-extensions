@@ -18,29 +18,80 @@ import {
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
 import getJsonld from './common/util'
+import state from './common/state'
 
+let viewer = MIP.viewer
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
 let util = MIP.util
+let timerScroll
+let whiteScreen
+let hasCustom = false
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
     super(...args)
+    timerScroll = setTimeout(() => {
+      console.log('5s constructor ')
+      whiteScreen = true
+      viewer.sendMessage('stability-log', {
+        info: {
+          white: whiteScreen
+        },
+        dim: { pd: 'novel' }
+      })
+    }, 5000)
+    // let timer1 = setTimeout(()=>{
+    //   console.log("1s")
+    //   super(...args)
+    // },1000)
+    console.log('window11111')
+    // 发送白屏  (页面打开白屏超过5秒，文字不可见) 日志
+    // this.whitecreen()
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     this._scrollBoundary()
+
+    console.log('window333333')
+  }
+
+  // // 发送白屏日志打点
+  // build () {
+  //   timer = setTimeout(()=>{
+  //     console.log("白屏")
+  //     console.log("window")
+  //     console.log(window)
+  //     console.log("Top")
+  //     console.log(top)
+  //   },0)
+  // }
+
+  // 发送 搜索点出/二跳 日志
+  sendIsRootPageMessage (isRootPage) {
+    viewer.sendMessage('interaction-log', {
+      info: {
+        isRootPage: isRootPage,
+        search: 'click'
+      },
+      dim: { pd: 'novel' }
+    })
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
   bindAllEvents () {
+    console.log('bindAllEvents1')
     super.bindAllEvents()
+    console.log('bindAllEvents2d')
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     this.pageStyle = new PageStyle()
     const isRootPage = MIP.viewer.page.isRootPage
 
+    if (isRootPage) {
+      this.sendIsRootPageMessage(isRootPage)
+    }
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
     this.addEventAction('showShellFooter', function () {
@@ -120,12 +171,51 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         }
       })
     }
+    //  小说最后一个事件执行完后
+    //  非白屏，清除发送，测得白屏率
+    whiteScreen = false
+    clearTimeout(timerScroll)
+
+    //  文末凤巢广告填充率 发送日志
+    this.customReady()
+  }
+
+  //  文末凤巢广告填充率 发送日志
+  customReady () {
+    let currentWindow = this.getCurrentWindow()
+    const {isLastPage} = state(currentWindow)
+    if (isLastPage) {
+      let custom = document.querySelector('mip-custom')
+      hasCustom = !!(custom && custom.childNodes && !(custom.style.display === 'none'))
+      if (!hasCustom) {
+        viewer.sendMessage('stability-log', {
+          info: {
+            mipCustom: hasCustom
+          },
+          dim: { pd: 'novel' }
+        })
+      }
+    }
+  }
+
+  getCurrentWindow () {
+    let pageId = window.MIP.viewer.page.currentPageId
+    let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+    return pageInfo.targetWindow
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
   bindRootEvents () {
+    //
+    // let timer1 = setTimeout(()=>{
+    //   console.log("3s bindRootEvents ")
+    //
+    // },3000)
+
+    console.log('bindRootEvents1')
     super.bindRootEvents()
+    console.log('bindRootEvents2')
     // 承接emit事件：根页面底部控制栏内容更新
     window.addEventListener('updateShellFooter', (e) => {
       this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
@@ -157,6 +247,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 基类root方法：初始化。用于除头部bar之外的元素
   renderOtherParts () {
+    console.log('renderOtherParts')
     super.renderOtherParts()
     // 初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
     this._initAllObjects()
@@ -164,6 +255,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 自有方法：关闭所有元素，包括弹层、目录、设置栏
   _closeEverything (e) {
+    console.log('_closeEverything')
     // 关闭所有可能弹出的bar
     this.toggleDOM(this.$buttonWrapper, false)
     this.footer.hide()
@@ -176,6 +268,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 自有方法 仅root：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
   _initAllObjects () {
+    console.log('_initAllObjects')
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
@@ -204,6 +297,17 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   bindHeaderEvents () {
     super.bindHeaderEvents()
 
+    // let timer1 = setTimeout(()=>{
+    //   console.log("3s bindHeaderEvents ")
+    //
+    // },3000)
+
+    //  模拟白屏
+    // while (true) {
+    //   console.log("ddd")
+    // }
+
+    console.log('bindHeaderEvents2')
     let event = window.MIP.util.event
     let me = this
 
@@ -244,6 +348,11 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 基类方法，设置默认的shellConfig
   processShellConfig (shellConfig) {
+    // let timer1 = setTimeout(()=>{
+    //   console.log("3s processShellConfig ")
+    //
+    // },3000)
+    console.log('processShellConfig')
     MIP.mipshellXiaoshuo = this
     this.shellConfig = shellConfig
     shellConfig.routes.forEach(routerConfig => {
@@ -254,12 +363,15 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 基类方法，在页面翻页时页面由于alwaysReadOnLoad为true重新刷新，因此shell的config需要重新配置
   // matchIndex是用来标识它符合了哪个路由，根据不同的路由修改不同的配置
   processShellConfigInLeaf (shellConfig, matchIndex) {
+    console.log('processShellConfigInLeaf')
     shellConfig.routes[matchIndex].meta.header.bouncy = false
   }
   /**
    * 滚动边界处理
    */
   _scrollBoundary () {
+    console.log('_scrollBoundary')
+
     let touchStartEvent
     let {
       rect,
@@ -334,6 +446,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
    * @param {Object} element 目标元素
    */
   getClosestScrollElement (element) {
+    console.log('getClosestScrollElement')
     while (element && !element.getAttribute('mip-shell-scrollboundary')) {
       if (MIP.util.css(element, 'overflow-y') === 'auto' && element.clientHeight < element.scrollHeight) {
         return element
