@@ -129,7 +129,6 @@ class Catalog {
     $catalogSidebar.innerHTML = catalogHtml // 目录页HTML
     let $catalog = $catalogSidebar.querySelector('.mip-shell-catalog')
     let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
-    let $scroll = $catalogSidebar.querySelector('.scroll') // 滚动条
     let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
     if (isCatFetch) {
       $catalogContent.innerHTML = renderCatalog(catalogs)
@@ -139,10 +138,10 @@ class Catalog {
     if (book) {
       $catalogBook.style.display = 'block'
     } else {
-      $scroll.style.top = '62px'
       $catalog.style.height = 'calc(100% - 62px)'
       $catalog.style.height = '-webkit-calc(100% - 62px)'
     }
+
     // 实现倒序，点击倒序，目录顺序倒序，倒序字边正序
     if (!hadCatalog) {
       $catalogSidebar.appendChild($catalog)
@@ -154,11 +153,23 @@ class Catalog {
     }
     return $catalogSidebar
   }
+
   /**
-   * 函数说明：实现倒序，点击倒序，目录顺序倒序，倒序字边正序
+   * 函数说明：目录消失函数
    *
-   * @param  {Object} $contentTop      目录页章节滚动高度
-   * @param  {Object} $catalogContent  目录页章节高度
+   * @param  {Object} e      事件源
+   * @param  {Object} shellElement 小说章节
+   */
+  swipeHidden (e, shellElement) {
+    e.preventDefault()
+    this.hide()
+    e.stopPropagation()
+    shellElement.toggleDOM(shellElement.$buttonMask, false)
+  }
+  /**
+   * 函数说明：绑定滑动事件，左滑目录消失
+   *
+   * @param  {Object} shellElement 小说章节
    */
   reverse ($contentTop, $catalogContent) {
     let reverse = $contentTop.querySelector('.catalog-reserve')
@@ -191,22 +202,19 @@ class Catalog {
   }
 
   bindShowEvent (shellElement) {
-    let mask = document.querySelector('.mip-shell-catalog-wrapper')
+    let catalog = document.querySelector('.mip-shell-catalog-wrapper')
     let swipeLeft = new util.Gesture(document, {
       preventX: true
     })
-    let swipeLeftMask = new util.Gesture(mask, {
+    let swipeLeftCatalog = new util.Gesture(catalog, {
       preventX: true
     })
     swipeLeft.on('swipeleft', e => {
-      e.preventDefault()
-      this.hide()
-      shellElement.toggleDOM(shellElement.$buttonMask, false)
+      this.swipeHidden(e, shellElement)
     })
-    swipeLeftMask.on('swipeleft', e => {
-      e.preventDefault()
-      this.hide()
-      shellElement.toggleDOM(shellElement.$buttonMask, false)
+    // 解决UC浏览器document不滑动问题
+    swipeLeftCatalog.on('swipeleft', e => {
+      this.swipeHidden(e, shellElement)
     })
   }
   // 显示侧边目录
@@ -214,6 +222,7 @@ class Catalog {
     this.bindShowEvent(shellElement)
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     this.$catalogSidebar.classList.add('show')
+    // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
     let reverseName = this.$catalogSidebar.querySelector('.reverse-name')
