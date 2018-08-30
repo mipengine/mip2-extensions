@@ -23,9 +23,10 @@
   z-index: 1000;
   margin: 0 auto;
   text-align: center;
-  top: 33%
+  top: 33%;
 }
-.toast{
+
+.toast {
   margin: 0 auto;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 4px;
@@ -37,22 +38,28 @@
   height: auto;
   width: 1.4rem;
 }
-.center{
-  top: 33%
+
+.center {
+  top: 33%;
 }
-.top{
-  top: 10%
+
+.top {
+  top: 10%;
 }
-.bottom{
-  top: 70%
+
+.bottom {
+  top: 70%;
 }
-.icon{
+
+.icon {
   margin-top: 12px;
-  width:60%;
+  width: 60%;
 }
-.toast p{
+
+.toast p {
   padding: 15px 10px;
 }
+
 .fade-enter-active {
   opacity: 0;
 }
