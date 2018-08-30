@@ -706,76 +706,89 @@ export default {
 </script>
 
 <style scoped lang="less">
+/* stylelint-disable no-descending-specificity */
 .mip-range {
   position: relative;
   box-sizing: border-box;
   user-select: none;
+
   &.mip-range-disabled {
     opacity: 0.5;
     cursor: not-allowed;
+
     .mip-range-dot {
       cursor: not-allowed;
     }
   }
+
   .hideV {
     visibility: hidden;
   }
+
   .mip-range-container {
     position: relative;
     display: block;
     border-radius: 15px;
     background: #f5f5f5;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    .mip-range-dot{
-      .mip-range-tip-wrap{
+
+    .mip-range-dot {
+      .mip-range-tip-wrap {
         opacity: 0;
         transition-property: opacity;
         transition-timing-function: ease-in-out;
       }
     }
-    .mip-range-tip{
-      &-always{
-        .mip-range-tip-wrap{
+
+    .mip-range-tip {
+      &-always {
+        .mip-range-tip-wrap {
           opacity: 0.5;
         }
       }
-      &-none{
-        .mip-range-tip-wrap{
-          opacity: 0!important;
+
+      &-none {
+        .mip-range-tip-wrap {
+          opacity: 0 !important;
         }
       }
     }
   }
+
   &.mip-range-state-process-drag,
-  &.mip-range-state-drag{
-    .mip-range-tip{
-      &-dragging{
-        .mip-range-tip-wrap{
+  &.mip-range-state-drag {
+    .mip-range-tip {
+      &-dragging {
+        .mip-range-tip-wrap {
           opacity: 0.5;
         }
       }
     }
   }
-  &.mip-range-state-change{
-    .mip-range-tip{
-      &-change{
-        .mip-range-tip-wrap{
-          opacity:0.5;
+
+  &.mip-range-state-change {
+    .mip-range-tip {
+      &-change {
+        .mip-range-tip-wrap {
+          opacity: 0.5;
         }
       }
     }
   }
+
   .mip-range-process {
     position: absolute;
     border-radius: 15px;
     background-color: #38f;
     transition: all 0s;
     z-index: 1;
+
     &.mip-range-process-dragable {
       cursor: pointer;
       z-index: 3;
     }
   }
+
   &.mip-range-horizontal {
     .mip-range-process {
       width: 0;
@@ -783,10 +796,12 @@ export default {
       top: 0;
       left: 0;
     }
+
     .mip-range-dot {
       left: 0;
     }
   }
+
   &.mip-range-vertical {
     .mip-range-process {
       width: 100%;
@@ -794,10 +809,12 @@ export default {
       bottom: 0;
       left: 0;
     }
+
     .mip-range-dot {
       bottom: 0;
     }
   }
+
   .mip-range-dot {
     position: absolute;
     border-radius: 50%;
@@ -808,10 +825,12 @@ export default {
     z-index: 9;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
+
     &.mip-range-dot-dragging {
       z-index: 5;
     }
   }
+
   .mip-range-tip-wrap {
     position: absolute;
     z-index: 9;
@@ -825,6 +844,7 @@ export default {
     border-radius: 5px;
     background: #000;
     opacity: 0.5;
+
     &::after {
       content: '';
       position: absolute;
@@ -833,11 +853,13 @@ export default {
       height: 0;
       border-style: solid;
     }
+
     &.mip-range-tip {
       &-top {
         top: -9px;
         left: 50%;
         transform: translate(-50%, -100%);
+
         &::after {
           left: 50%;
           top: 100%;
@@ -846,10 +868,12 @@ export default {
           border-color: #000 transparent transparent transparent;
         }
       }
+
       &-bottom {
         bottom: -9px;
         left: 50%;
         transform: translate(-50%, 100%);
+
         &::after {
           left: 50%;
           bottom: 100%;
@@ -858,10 +882,12 @@ export default {
           border-color: transparent transparent #000 transparent;
         }
       }
+
       &-left {
         top: 50%;
         left: -9px;
         transform: translate(-100%, -50%);
+
         &::after {
           left: 100%;
           top: 50%;
@@ -870,10 +896,12 @@ export default {
           border-color: transparent transparent transparent #000;
         }
       }
+
       &-right {
         top: 50%;
         right: -9px;
         transform: translate(100%, -50%);
+
         &::after {
           right: 100%;
           top: 50%;
@@ -884,6 +912,7 @@ export default {
       }
     }
   }
+
   .mip-range-range {
     height: 1px;
     width: 1px;

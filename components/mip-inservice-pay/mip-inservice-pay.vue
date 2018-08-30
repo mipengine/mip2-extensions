@@ -15,7 +15,6 @@
             <svg
               t="1529369317928"
               class="icon"
-              style=""
               viewBox="0 0 1024 1024"
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +47,6 @@
                 v-if="payItem.id==='baifubao'"
                 t="1529115277984"
                 class="icon"
-                style=""
                 viewBox="0 0 1024 1024"
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +62,6 @@
                 v-if="payItem.id==='alipay'"
                 t="1529369172790"
                 class="icon"
-                style=""
                 viewBox="0 0 1024 1024"
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +76,6 @@
                 v-if="payItem.id==='weixin'"
                 t="1529112834387"
                 class="icon"
-                style=""
                 viewBox="0 0 1025 1024"
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +102,6 @@
                   v-if="payItem.id !== selectId"
                   t="1529368844799"
                   class="icon"
-                  style=""
                   viewBox="0 0 1024 1024"
                   version="1.1"
                   xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +116,6 @@
                   v-if="payItem.id === selectId"
                   t="1529117556854"
                   class="icon"
-                  style=""
                   viewBox="0 0 1024 1024"
                   version="1.1"
                   xmlns="http://www.w3.org/2000/svg"
@@ -603,23 +597,27 @@ export default {
 
 <style scoped lang="less">
 @border-color: #f1f1f1;
+
 .fade-enter-active {
-    transition: opacity 0.5s;
-    animation-name: layout-fade-in;
-    animation-duration: .2s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
+  transition: opacity 0.5s;
+  animation-name: layout-fade-in;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
 }
+
 .fade-enter /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
+
 .btn {
   &:active {
     opacity: 0.8;
   }
 }
+
 .paybox {
-  font-family: "PingFangSC-Regular";
+  font-family: "PingFangSC-Regular", serif;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -640,6 +638,7 @@ export default {
     background-color: rgba(0, 0, 0, 0.5);
   }
 }
+
 .payContain {
   position: relative;
   z-index: 1;
@@ -649,6 +648,7 @@ export default {
   border-radius: 6px;
   padding-bottom: 28px;
   max-width: 410px;
+
   &__shadow {
     position: absolute;
     display: none;
@@ -658,37 +658,44 @@ export default {
     right: 0;
     background-color: rgba(255, 255, 255, 0.65);
   }
+
   &__close {
     position: absolute;
     top: 0;
     right: 0;
     padding: 13px;
+
     i {
       display: inline-block;
       width: 12px;
       height: 12px;
       background-size: contain;
     }
-    &:active{
-          background-color: rgb(235, 235, 235);
+
+    &:active {
+      background-color: rgb(235, 235, 235);
     }
   }
+
   &__header {
     // margin-bottom: 28px;
     border-bottom: 1px solid @border-color;
     padding: 28px 16px;
+
     h3 {
       font-weight: normal;
       font-size: 20px;
       text-align: center;
       margin-bottom: 10px;
     }
+
     .info {
       // font-size:
       text-align: center;
       color: #999;
     }
   }
+
   .payTypeList {
     &__list {
       display: flex;
@@ -697,35 +704,44 @@ export default {
       height: 57px;
       border-bottom: 1px solid @border-color;
       box-sizing: border-box;
-      &:last-child{
-        border: none
+
+      &:last-child {
+        border: none;
       }
     }
+
     &__listIcon {
       width: 28px;
       height: 28px;
       margin-right: 8px;
       background-size: contain;
-      svg{
-        transform: translate3d(0,0,0);
-        -webkit-transform: translate3d(0,0,0)
+
+      svg {
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
       }
+
       &.baifubao svg {
         color: #e84848;
       }
+
       &.alipay svg {
         color: #00acef;
       }
+
       &.weixin svg {
         color: #27b52f;
       }
     }
+
     &__payName {
       flex: 1;
+
       h4 {
         font-size: 14px;
         font-weight: normal;
       }
+
       span {
         display: inline-block;
         margin-top: 5px;
@@ -733,17 +749,20 @@ export default {
         font-size: 12px;
       }
     }
+
     &__select {
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 17px;
+
       .icon {
         display: inline-block;
         width: 21px;
         height: 21px;
-        color: #eeeeee;
+        color: #eee;
       }
+
       &.selected {
         .icon {
           color: #555;
@@ -762,68 +781,79 @@ export default {
     text-align: center;
     background-color: #3c76ff;
     border-radius: 3px;
-    color: #ffffff;
+    color: #fff;
     white-space: nowrap;
     word-break: normal;
     text-overflow: ellipsis;
     overflow: hidden;
+
     &.loading {
       background-color: #bbb;
     }
+
     &.error {
       background-color: #f15253;
     }
   }
 
   @keyframes layout-fade-in {
-      from {
-          transform: scale(0.7);
-          -webkit-transform: scale(0.7);
-      }
-      to {
-          transform: scale(1);
-          -webkit-transform: scale(1);
-      }
+    from {
+      transform: scale(0.7);
+      -webkit-transform: scale(0.7);
+    }
+
+    to {
+      transform: scale(1);
+      -webkit-transform: scale(1);
+    }
   }
 }
 
-.confirmDialog{
+.confirmDialog {
   color: #000;
   position: relative;
   z-index: 1;
   display: inline-block;
-  background-color: #FFF;
+  background-color: #fff;
   border-radius: 4px;
   max-width: 80%;
   text-align: center;
   overflow: hidden;
-  h4{
+
+  /* stylelint-disable no-descending-specificity */
+  h4 {
     color: #333;
-    margin: 28px 0 0px 0;
+    margin: 28px 0 0 0;
     font-size: 24px;
     font-weight: normal;
   }
-  &__info{
+  /* stylelint-enable no-descending-specificity */
+
+  &__info {
     padding: 24px 37px;
     font-size: 16px;
     line-height: 1.3;
     color: #999;
   }
-  &__btnGroup{
+
+  &__btnGroup {
     display: flex;
     font-size: 18px;
-    border-top: 1px solid #E0E0E0;
-    .btn{
+    border-top: 1px solid #e0e0e0;
+
+    .btn {
       display: flex;
       flex: 1;
       padding: 13px;
       justify-content: center;
       align-content: center;
-      &:first-child{
-        border-right: 1px solid #E0E0E0;
+
+      &:first-child {
+        border-right: 1px solid #e0e0e0;
       }
-      &:active{
-            background-color: rgb(235, 235, 235);
+
+      &:active {
+        background-color: rgb(235, 235, 235);
       }
     }
   }

@@ -205,6 +205,10 @@
 
 在退出登录时（由 `on="tap:组件id.logout"` 调用触发）调用其他组件的组件行为。
 
+#### 取消自动登录事件 - `<mip-inservice-login on="autoLoginCancel:其他组件id.其他组件行为">`
+
+在`自动登录`时若用户取消登录（指，在登录页点击mip-shelll上的`返回`按钮 回到触发登录的页面， 或者 是点击授权弹窗上的`取消`按钮）时触发。
+
 
 ### 后端数据说明
 
@@ -665,12 +669,14 @@ export default {
   margin: 0 auto;
   text-align: center;
 }
+
 .text {
   height: 32px;
   line-height: 32px;
   font-size: 18px;
   margin-bottom: 5px;
 }
+
 .input {
   height: 30px;
   line-height: 30px;
@@ -834,12 +840,13 @@ export default {
 
 所以，type=login时后端处理的逻辑应该是：
 
+```
 sessionid是否存在，
-    * 如果存在，sessionid是否已过期，
+    + 如果存在，sessionid是否已过期，
         * 如果没过期，直接返回用户数据，
         * 如果过期，使用code+redirect_uri发起换取access_token的操作，成功获取百度用户信息后，更新sessionid，并将最新数据返回给组件
-    * 如果不存在，使用code+redirect_uri发起换取access_token的操作，成功获取百度用户信息后，将最新数据返回给组件
-
+    + 如果不存在，使用code+redirect_uri发起换取access_token的操作，成功获取百度用户信息后，将最新数据返回给组件
+```
 
 9. 为什么`type=login`时，也有`code+redirect_uri`值，但还是返回`invalid redirecturi`?
 
@@ -916,3 +923,22 @@ sessionid是否存在，
 3. 支持在mip1页面下使用吗？
 
 答：不支持。
+
+4. 关注之后在哪能看到？
+
+答： 百度app/简搜app -> 关注中心
+
+
+## changelog
+
+### 2018-08-23
+
+增加熊掌号关注功能
+
+* 授权弹窗
+
+<img src="https://babylillian.github.io/images/%E6%8E%88%E6%9D%83%E5%BC%B9%E7%AA%971.png"  alt="授权弹窗" align=center width="200"/>
+
+* 登录授权页
+
+<img src="https://babylillian.github.io/images/%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%951.png"  alt="授权登录" align=center width="300"/>

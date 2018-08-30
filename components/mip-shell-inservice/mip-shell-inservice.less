@@ -1,25 +1,28 @@
 
 @activeColor: rgb(235, 235, 235);
 
-[mip-shell-scrollboundary]{
-  min-height: 100%
+[mip-shell-scrollboundary] {
+  min-height: 100%;
 }
 
-.mip-shell-more-button-wrapper{
+.mip-shell-more-button-wrapper {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-size: 18px;
-  .mip-shell-button{
-    border-color: #EEE;
-    &:active{
+
+  .mip-shell-button {
+    border-color: #eee;
+
+    &:active {
       background-color: @activeColor;
     }
-    &:last-child{
+
+    &:last-child {
       height: 58px;
     }
   }
 }
 
-.mip-shell-more-button-mask{
+.mip-shell-more-button-mask {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
@@ -33,13 +36,14 @@
   display: none;
   z-index: 20001;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
   &.show {
     display: block !important;
   }
 }
 
 .mip-shell-share-wrapper {
-  transition: all .35s ease;
+  transition: all 0.35s ease;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -47,34 +51,71 @@
   background: #fff;
   z-index: 20002;
   transform: translateY(100%);
+
   &.show {
     transform: translateY(0);
     display: block !important;
   }
 }
-.mip-shell-header{
+
+.mip-shell-header {
   font-size: 18px;
+  line-height: 48px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  .mip-shell-header-button-group .button, .mip-shell-header-button-group-standalone {
-      &:active{
-        background-color: @activeColor;
-      }
-  }
-  .mip-shell-header-button-group-standalone{
+
+  /* stylelint-disable no-descending-specificity */
+  .mip-shell-header-button-group-standalone {
     top: 0;
     height: 100%;
-  }
-  .back-button{
-    top: 0;
-    height: 100%;
-    left: 0px;
-    width: 42px;
-    &:active{
+
+    &:active {
       background-color: @activeColor;
     }
   }
-  .mip-shell-header-button-group{
+  /* stylelint-enable no-descending-specificity */
+
+  .back-button {
+    top: 0;
+    height: 100%;
+    left: 0;
+    width: 42px;
+
+    &:active {
+      background-color: @activeColor;
+    }
+  }
+
+  .mip-shell-header-button-group {
+    /* 和SF环境尽量保持一致，误差在1px范围内 */
     width: 85px;
-    box-sizing: content-box
+    right: 3px;
+    box-sizing: content-box;
+    border-radius: 16px;
+
+    .button {
+      width: 42px;
+
+      &:active {
+        background-color: @activeColor;
+      }
+    }
+
+    .button.more {
+      margin-left: -5px;
+      padding-left: 7px;
+    }
+
+    .button.close {
+      left: -3px;
+      margin-right: -5px;
+      padding-right: 8px;
+    }
+  }
+
+  .mip-shell-header-logo-title .mip-shell-header-logo {
+    width: 28px;
+    height: 28px;
+    margin-top: 10px;
+    margin-right: 8px;
   }
 }

@@ -110,11 +110,12 @@ mip-appdl {
       z-index: 99;
       box-sizing: border-box;
       width: 100%;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.8);
       overflow: hidden;
-      left:0px;
+      left: 0;
       height: 70px;
     }
+
     &-textbox {
       color: #fff;
       font-size: 12px;
@@ -125,9 +126,7 @@ mip-appdl {
       right: 84px;
       text-align: left;
     }
-    &-pm10 &-textbox {
-      left: 30px;
-    }
+
     &-imgbox {
       width: 50px;
       height: 50px;
@@ -135,6 +134,7 @@ mip-appdl {
       left: 30px;
       top: 10px;
     }
+
     &-downbtn {
       position: absolute;
       width: 60px;
@@ -142,14 +142,15 @@ mip-appdl {
       line-height: 35px;
       right: 14px;
       top: 17px;
-      border:solid 1px #fff;
+      border: solid 1px #fff;
       border-radius: 5px;
       font-size: 12px;
+
       > a {
-      color: #fff;
-      display: block;
-      text-align: center;
-      -webkit-tap-highlight-color: transparent;
+        color: #fff;
+        display: block;
+        text-align: center;
+        -webkit-tap-highlight-color: transparent;
       }
     }
 
@@ -180,9 +181,14 @@ mip-appdl {
       }
     }
 
+    &-pm10 &-textbox {
+      left: 30px;
+    }
+
     &-textbox-lingh {
       line-height: 30px;
     }
+
     &-pm10 {
       margin: 10px 0;
       padding: 10px 0;
