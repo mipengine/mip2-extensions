@@ -41,7 +41,7 @@ export default class MipAnalytics extends CustomElement {
       },
 
       /**
-       * 处理组件使用时定义的click事件
+       * 处理组件使用时定义的disp事件
        *
        * @param {Object} triggers
        */
@@ -64,7 +64,7 @@ export default class MipAnalytics extends CustomElement {
       },
 
       /**
-       * 处理组件使用时定义的click事件
+       * 处理组件使用时定义的timer
        *
        * @param {Object} triggers
        */
@@ -108,10 +108,10 @@ export default class MipAnalytics extends CustomElement {
   }
 
   /**
-   * 点击事件handle
+   * 点击事件处理
    *
    * @param {Object} triggers
-   * @return {String}
+   * @param {String} eventName 事件名
    */
   clickHandle (triggers, eventName) {
     triggers.forEach(el => {
@@ -130,7 +130,8 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 判断dom是否处于ready
    *
-   * @param {Object} triggers
+   * @param {Object}
+   * @return {Boolean}
    */
   isDomReady (data) {
     return data ? this.eventPoint.every(el => {
@@ -153,7 +154,6 @@ export default class MipAnalytics extends CustomElement {
    * 使用img的方式发送日志
    *
    * @param {String} url src链接
-   * @return {Undefined}
    */
   imgSendLog (url) {
     let key = 'IMAGE' + (new Date()).getTime()
@@ -173,7 +173,6 @@ export default class MipAnalytics extends CustomElement {
    *
    * @param {String}  str 被替换的字符串
    * @param {String}  vars 替换变量
-   * @return {String}
    */
   valReplace (str, vars) {
     vars = vars || {}
@@ -192,7 +191,6 @@ export default class MipAnalytics extends CustomElement {
    *
    * @param {Object} obj 必须是对象
    * @param {String} vars 配置变量,用于替换1级参数的插值
-   * @return {String}
    */
   serialize (obj, lets) {
     if (!obj) {
