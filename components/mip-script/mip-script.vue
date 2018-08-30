@@ -12,7 +12,7 @@ import detect from 'mip-sandbox/lib/unsafe-detect'
 
 const SIZE_UNIT = 1024
 const SYNC_SIZE = 2
-const ASYNC_SIZE = 5
+const ASYNC_SIZE = 10
 
 function getSize (script) {
   return script.replace(/[^\x00-\xff]/g, 'aa').length // eslint-disable-line no-control-regex
