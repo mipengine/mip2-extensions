@@ -236,12 +236,13 @@ class Catalog {
       page: this.getQuery().pg
     }
     document.body.classList.add('body-forbid')
-    catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
     if (reverseName.innerHTML === ' 正序') {
+      catalog[catalog.length - this.nowCatNum].querySelector('a').classList.remove('active')
       catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
       this.nowCatNum = catLocation.section
       $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop
     } else {
+      catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
       catalog[catLocation.section - 1].querySelector('a').classList.add('active')
       this.nowCatNum = catLocation.section
       $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
