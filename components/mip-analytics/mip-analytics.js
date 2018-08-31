@@ -25,7 +25,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的click
        *
-       * @param {Object} triggers
+       * @param {object} triggers
        */
       click (triggers) {
         this.clickHandle(triggers, 'click')
@@ -34,7 +34,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的touchend
        *
-       * @param {Object} triggers
+       * @param {object} triggers
        */
       touchend (triggers) {
         this.clickHandle(triggers, 'touchend')
@@ -43,7 +43,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的disp事件
        *
-       * @param {Object} triggers
+       * @param {object} triggers
        */
       disp (triggers) {
         performance.on('update', data => {
@@ -66,7 +66,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的timer
        *
-       * @param {Object} triggers
+       * @param {object} triggers
        */
       timer (triggers) {
         triggers.forEach(el => {
@@ -110,8 +110,8 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 点击事件处理
    *
-   * @param {Object} triggers
-   * @param {String} eventName 事件名
+   * @param {object} triggers
+   * @param {string} eventName 事件名
    */
   clickHandle (triggers, eventName) {
     triggers.forEach(el => {
@@ -128,10 +128,10 @@ export default class MipAnalytics extends CustomElement {
   }
 
   /**
-   * 判断dom是否处于ready
+   * 根据performance定义的事件和this.eventPoint 判断当前文档dom是否构建完毕
    *
-   * @param {Object}
-   * @return {Boolean}
+   * @param {object} data 为performance模块定义的事件
+   * @return {number || boolean}
    */
   isDomReady (data) {
     return data ? this.eventPoint.every(el => {
@@ -141,19 +141,9 @@ export default class MipAnalytics extends CustomElement {
   }
 
   /**
-   * 判断是否为对象
-   *
-   * @param {Object} 期望是Object
-   * @return {Boolean}
-   */
-  isObject (obj) {
-    return typeof obj === 'object'
-  }
-
-  /**
    * 使用img的方式发送日志
    *
-   * @param {String} url src链接
+   * @param {string} url src链接
    */
   imgSendLog (url) {
     let key = 'IMAGE' + (new Date()).getTime()
@@ -171,8 +161,8 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 替换插值 ${var}
    *
-   * @param {String}  str 被替换的字符串
-   * @param {String}  vars 替换变量
+   * @param {string} str 被替换的字符串
+   * @param {string} vars 替换变量
    */
   valReplace (str, vars) {
     vars = vars || {}
@@ -189,30 +179,22 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 数据序列化处理
    *
-   * @param {Object} obj 必须是对象
-   * @param {String} vars 配置变量,用于替换1级参数的插值
+   * @param {object} obj 必须是对象
+   * @param {string} vars 配置变量,用于替换1级参数的插值
    */
   serialize (obj, lets) {
     if (!obj) {
       return ''
     }
     let str = ''
-    let item = ''
-    if (this.isObject(obj)) {
-      for (let k in obj) {
-        if (obj.hasOwnProperty(k)) {
-          item = obj[k]
-          if (typeof item === 'undefined') {
-            continue
-          }
-          if (this.isObject(item)) {
-            item = JSON.stringify(item)
-          }
-          str += k + '=' + encodeURIComponent(this.valReplace(item, lets)) + '&'
-        }
-      }
+    if (typeof obj === 'object') {
+      Object.keys(obj).filter(k => {
+        return obj[k] === 'object'
+      }).map(m => {
+        str += m + '=' + encodeURIComponent(this.valReplace(obj[m], lets)) + '&'
+      })
       str = str.substring(0, str.length - 1) // 去掉末尾的&
-    } else if (this.isString(obj)) {
+    } else if (typeof str === 'string') {
       str = obj
     }
     return str
@@ -221,8 +203,8 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 发送请求
    *
-   * @param {Object} cfg triggers对象包含的事件
-   * @param {String} params 组件使用时配置的参数对象
+   * @param {object} cfg triggers对象包含的事件
+   * @param {string} params 组件使用时配置的参数对象
    */
   send (cfg, params) {
     if (params) {
