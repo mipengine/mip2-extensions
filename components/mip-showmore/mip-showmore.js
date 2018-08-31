@@ -341,7 +341,7 @@ export default class MipShowMore extends CustomElement {
    *
    * @private
    * @param {HTMLElement} clickBtn dom节点
-   * @param {String} status 状态
+   * @param {string} status 状态
    * 根据当前模式以及打开的状态切换状态
    */
   toggleClickBtn (clickBtn, status) {
@@ -392,7 +392,7 @@ export default class MipShowMore extends CustomElement {
    *
    * @private
    * @param {number} maxLen 字数最大限制
-   * @return {String} endHtml 剩余的字符串
+   * @return {string} endHtml 剩余的字符串
    */
   cutHtmlStr (maxLen) {
     let allChildList = this.showBox.childNodes
@@ -444,7 +444,7 @@ export default class MipShowMore extends CustomElement {
    *
    * @private
    * @param {HTMLElement} showmore dom节点
-   * @return {String} 传入dom的id
+   * @return {string} 传入dom的id
    */
   getId (showmore) {
     if (!showmore.dataset.showmoreId) {
@@ -484,6 +484,7 @@ export default class MipShowMore extends CustomElement {
 
   /**
    * 运行嵌套的showmore组件实例
+   *
    * @private
    */
   runInitShowMore () {
@@ -571,7 +572,7 @@ export default class MipShowMore extends CustomElement {
    * 获取真实高度
    *
    * @param {HTMLElement} dom dom节点
-   * @return {Number} height
+   * @return {number} height
    */
   getHeightUnfold (dom) {
     let fakeNode = document.createElement('div')
@@ -599,7 +600,7 @@ export default class MipShowMore extends CustomElement {
   /**
    * 匹配target
    *
-   * @param  {String} id
+   * @param  {string} id
    * @param  {HTMLElement} node dom节点
    * @return {HTMLElement} node dom节点
    */

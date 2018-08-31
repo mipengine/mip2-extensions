@@ -5,6 +5,8 @@
  *     1. catalog数据支持异步获取
  */
 
+// TODO： 示例发送请求的代码，上线时删掉-liangjiaying
+import {sendLog} from '../common/log'
 let util = MIP.util
 class Catalog {
   constructor (config, book) {
@@ -12,6 +14,8 @@ class Catalog {
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
+    // TODO： 示例发送请求的代码，上线时删掉-liangjiaying
+    sendLog('a', {b: 1})
   }
 
   // 根据配置渲染目录侧边栏到  mip-sidebar组件中
