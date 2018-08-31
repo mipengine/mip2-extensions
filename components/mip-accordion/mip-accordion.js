@@ -125,9 +125,13 @@ export default class MipAccordion extends CustomElement {
    */
   setSession (element, obj, expand) {
     let sessionsKey = 'MIP-' + element.getAttribute('sessions-key') + '-' + this.localurl
-    let objsession = this.getSession(sessionsKey)
-    objsession[obj] = expand
-    sessionStorage[sessionsKey] = JSON.stringify(objsession)
+    try {
+      let objsession = this.getSession(sessionsKey)
+      objsession[obj] = expand
+      sessionStorage[sessionsKey] = JSON.stringify(objsession)
+    } catch (e) {
+      console.warn('用户无痕模式不支持 session')
+    }
   }
   /**
    * 获取 sission
@@ -136,8 +140,13 @@ export default class MipAccordion extends CustomElement {
    * @return {Object} data        返回session里的数据
    */
   getSession (sessionsKey) {
-    let data = sessionStorage[sessionsKey]
-    return data ? JSON.parse(data) : {}
+    try {
+      let data = sessionStorage[sessionsKey]
+      return data ? JSON.parse(data) : {}
+    } catch (e) {
+      console.warn('用户无痕模式不支持 session')
+      return {}
+    }
   }
 
   /**
