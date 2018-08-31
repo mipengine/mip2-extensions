@@ -25,7 +25,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的click
        *
-       * @param {object} triggers
+       * @param {Object} triggers
        */
       click (triggers) {
         this.clickHandle(triggers, 'click')
@@ -34,7 +34,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的touchend
        *
-       * @param {object} triggers
+       * @param {Object} triggers
        */
       touchend (triggers) {
         this.clickHandle(triggers, 'touchend')
@@ -43,7 +43,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的disp事件
        *
-       * @param {object} triggers
+       * @param {Object} triggers
        */
       disp (triggers) {
         performance.on('update', data => {
@@ -66,7 +66,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的timer
        *
-       * @param {object} triggers
+       * @param {Object} triggers
        */
       timer (triggers) {
         triggers.forEach(el => {
@@ -110,7 +110,7 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 点击事件处理
    *
-   * @param {object} triggers
+   * @param {Object} triggers
    * @param {string} eventName 事件名
    */
   clickHandle (triggers, eventName) {
@@ -130,7 +130,7 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 根据performance定义的事件和this.eventPoint 判断当前文档dom是否构建完毕
    *
-   * @param {object} data 为performance模块定义的事件
+   * @param {Object} data 为performance模块定义的事件
    * @return {number || boolean}
    */
   isDomReady (data) {
@@ -179,7 +179,7 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 数据序列化处理
    *
-   * @param {object} obj 必须是对象
+   * @param {Object} obj 必须是对象
    * @param {string} vars 配置变量,用于替换1级参数的插值
    */
   serialize (obj, lets) {
@@ -203,7 +203,7 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 发送请求
    *
-   * @param {object} cfg triggers对象包含的事件
+   * @param {Object} cfg triggers对象包含的事件
    * @param {string} params 组件使用时配置的参数对象
    */
   send (cfg, params) {
