@@ -4,7 +4,7 @@
  */
 
 export function sendLog (type, info) {
-  let data = Object.assign(info, {
+  let data = Object.assign({info: info}, {
     dim: {
       pd: 'novel'
     }
