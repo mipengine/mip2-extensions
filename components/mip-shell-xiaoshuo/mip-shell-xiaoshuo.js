@@ -18,20 +18,40 @@ import {
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
 import getJsonld from './common/util'
+import state from './common/state'
+import {sendLog} from './common/log'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
 let util = MIP.util
+let timerScroll
+let whiteScreen
+let hasCustom = false
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
     super(...args)
+    timerScroll = setTimeout(() => {
+      whiteScreen = true
+      sendLog('stability', {
+        white: whiteScreen
+      })
+    }, 5000)
+    // 发送白屏  (页面打开白屏超过5秒，文字不可见) 日志
+    // this.whitecreen()
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     this._scrollBoundary()
   }
 
+  // 发送 搜索点出/二跳 日志
+  sendIsRootPageMessage (isRootPage) {
+    sendLog('interaction', {
+      isRootPage: isRootPage,
+      search: 'click'
+    })
+  }
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
   bindAllEvents () {
@@ -40,6 +60,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 创建模式切换（背景色切换）
     this.pageStyle = new PageStyle()
     const isRootPage = MIP.viewer.page.isRootPage
+
+    if (isRootPage) {
+      this.sendIsRootPageMessage(isRootPage)
+    }
 
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
@@ -120,6 +144,34 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         }
       })
     }
+    //  小说最后一个事件执行完后
+    //  非白屏，清除发送，测得白屏率
+    whiteScreen = false
+    clearTimeout(timerScroll)
+
+    //  文末凤巢广告填充率 发送日志
+    this.customReady()
+  }
+
+  //  文末凤巢广告填充率 发送日志
+  customReady () {
+    let currentWindow = this.getCurrentWindow()
+    const {isLastPage} = state(currentWindow)
+    if (isLastPage) {
+      let custom = document.querySelector('mip-custom')
+      hasCustom = !!(custom && custom.childNodes && !(custom.style.display === 'none'))
+      if (!hasCustom) {
+        sendLog('stability', {
+          mipCustom: hasCustom
+        })
+      }
+    }
+  }
+
+  getCurrentWindow () {
+    let pageId = window.MIP.viewer.page.currentPageId
+    let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+    return pageInfo.targetWindow
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。

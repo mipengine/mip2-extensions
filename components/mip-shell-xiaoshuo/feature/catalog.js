@@ -5,13 +5,47 @@
  *     1. catalog数据支持异步获取
  */
 
+// TODO： 示例发送请求的代码，上线时删掉-liangjiaying
+import {sendLog} from '../common/log'
 let util = MIP.util
+let readMethods = 'loadding'
+let readCatalogStatus = 'loadding'
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
+    // TODO： 示例发送请求的代码，上线时删掉-liangjiaying
+    // sendLog('a', {b: 1})
+  }
+
+  // 发送 搜索点出/二跳 日志
+  sendIsRootPageMessage () {
+    sendLog('interaction', {
+      isRootPage: false,
+      twice: 'catalog'
+    })
+  }
+
+  // 目录章节绑定发送日志函数
+  _bindMessageEvent () {
+    let self = this
+    let event = window.MIP.util.event
+    event.delegate(document.documentElement, '.novel-catalog-content .mip-catalog-btn', 'click', () => {
+      self.sendIsRootPageMessage()
+    })
+  }
+
+  // 稳定性：目录获取失败发送日志函数
+  _catalogFailMessageEvent (catalogs) {
+    let len = catalogs.length
+    readMethods = '本地'
+    !len || !catalogs[0].name || !catalogs[len - 1].name ? readCatalogStatus = false : readCatalogStatus = true
+    sendLog('stability', {
+      readCatalogStatus: readCatalogStatus,
+      readMethods: readMethods
+    })
   }
 
   // 根据配置渲染目录侧边栏到  mip-sidebar组件中
@@ -57,8 +91,11 @@ class Catalog {
       // 目录配置为空
     } else if (typeof catalogs === 'string') {
       // 目录配置的是字符串，远程地址。需要异步获取
-
+      readMethods = '异步'
     } else {
+      this.catalog = catalogs
+      this._catalogFailMessageEvent(catalogs)
+
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
@@ -106,6 +143,8 @@ class Catalog {
       $catalogSidebar.removeChild($catalogSidebar.querySelector('.mip-shell-catalog'))
       $catalogSidebar.appendChild($catalog)
     }
+
+    this._bindMessageEvent()
     return $catalogSidebar
   }
   /**

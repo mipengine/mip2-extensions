@@ -13,9 +13,11 @@ function __getConfig () {
   let config = DEFAULTS
   try {
     config = extend(config, JSON.parse(storage.get(STORAGE_KEY)))
-  } catch (e) {}
+  } catch (e) {
+  }
   return config
 };
+
 // 将配置应用在页面上
 function __setConfig (config) {
   config = extend(__getConfig(), config)
@@ -32,20 +34,20 @@ function __setConfig (config) {
 export function settingHtml () {
   return `
     <div class="mip-shell-xiaoshuo-control-fontsize">
-        <ul>
-            <li><span class="reduce click-cursor" on="click:xiaoshuo-shell.changeFont(smaller)">A-</span></li>
-            <li class="progress">
-                <input type="range" step="0.5" min="1" max="6" value="${__getConfig().fontSize}">
-            </li>
-            <li><span class="increase click-cursor" on="click:xiaoshuo-shell.changeFont(bigger)">A+</span></li>
-        </ul>
+      <ul>
+        <li><span class="reduce click-cursor  font-size-butto" on="click:xiaoshuo-shell.changeFont(smaller)">A-</span></li>
+        <li class="progress">
+          <input type="range" step="0.5" min="1" max="6" value="${__getConfig().fontSize}">
+        </li>
+        <li><span class="increase click-cursor font-size-butto" on="click:xiaoshuo-shell.changeFont(bigger)">A+</span></li>
+      </ul>
     </div>
     <div class="mip-shell-xiaoshuo-control-theme">
-        <ul>
-            <li><span class="theme-default click-cursor" on="click:xiaoshuo-shell.changeMode(default)"></span></li>
-            <li><span class="theme-paper click-cursor" on="click:xiaoshuo-shell.changeMode(paper)"></span></li>
-            <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
-        </ul>
+      <ul>
+        <li><span class="theme-default click-cursor" on="click:xiaoshuo-shell.changeMode(default)"></span></li>
+        <li><span class="theme-paper click-cursor" on="click:xiaoshuo-shell.changeMode(paper)"></span></li>
+        <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
+      </ul>
     </div>`
 }
 
@@ -72,11 +74,13 @@ export class FontSize {
     // 为方便使用，只保存selector内容
     this.elementSelector = '.mip-shell-footer-wrapper .mip-shell-xiaoshuo-control-fontsize'
   }
+
   // 获取当前滑块位置/字体大小
   _getInputValue () {
     let fontInput = document.querySelector(this.elementSelector + ' input[type="range"]')
     return parseFloat(fontInput.value)
   }
+
   // 调整滑块位置和字体大小
   _setInputValue (value) {
     let fontInput = document.querySelector(this.elementSelector + ' input[type="range"]')
@@ -91,6 +95,7 @@ export class FontSize {
       name: 'changePageStyle', data: {fontSize: value}
     })
   }
+
   // 绑定点击事件
   changeFont (data) {
     if (data === 'bigger') {
@@ -101,6 +106,7 @@ export class FontSize {
       this._setInputValue(this._getInputValue() - 0.5)
     }
   }
+
   // 绑定字体大小改变事件
   bindDragEvent () {
     let event = window.MIP.util.event
@@ -113,10 +119,12 @@ export class FontSize {
       this._setInputValue(this._getInputValue())
     })
   }
+
   // 显示小说字体设置bar
   showFontBar (e) {
     document.querySelector('.mip-xiaoshuo-settings').classList.add('show')
   }
+
   hideFontBar (e) {
     document.querySelector('.mip-xiaoshuo-settings').classList.remove('show')
   }

@@ -4,13 +4,72 @@
  */
 
 import {settingHtml} from './setting'
-// 整个底 bar 控制栏
+import {sendLog} from '../common/log'
+
+let STORAGE_KEY = 'mip-shell-xiaoshuo-mode'
+let CustomStorage = MIP.util.customStorage
+let storage = new CustomStorage(0)
+let extend = MIP.util.fn.extend
+// 默认配置
+let DEFAULTS = {
+  theme: 'default',
+  fontSize: 3.5
+}
+let fontSize = DEFAULTS.fontSize
+let theme = DEFAULTS.theme
+let drag = false
+let button = false
+
+// 整个底 bar  控制栏
 class footer {
   constructor (config) {
     this.config = config
     this.$footerWrapper = this._render() // 底部包裹控制栏的mip-fixed元素
     // 禁止冒泡，防止从小说层，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
+  }
+
+  // 发送 搜索点出/二跳 日志
+  sendIsRootPageMessage () {
+    sendLog('interaction', {
+      isRootPage: false,
+      twice: 'page'
+    })
+  }
+
+  // 发送 设置 日志
+  sendSettingMessage () {
+    sendLog('interaction', {
+      theme: theme,
+      fontSize: fontSize,
+      button: button,
+      drag: drag
+    })
+  }
+
+  _getConfig () {
+    let config = DEFAULTS
+    try {
+      config = extend(config, JSON.parse(storage.get(STORAGE_KEY)))
+    } catch (e) {}
+    return config
+  }
+
+  /**
+   * 发送二跳日志
+   */
+  initEvent () {
+    let self = this
+    let event = window.MIP.util.event
+    event.delegate(document.documentElement, '.page-button', 'click', () => {
+      self.sendIsRootPageMessage()
+    })
+    event.delegate(document.documentElement, '.font-size-button', 'click', () => {
+      button = true
+    })
+    event.delegate(document.documentElement, '.progress input', 'touchmove', () => {
+      drag = true
+    })
   }
 
   // 创建底部控制栏并插入页面
@@ -81,6 +140,7 @@ class footer {
         </div>
         <div class="mip-xiaoshuo-settings">${settingHtml()}</div>
         `
+    this.initEvent()
     return footerHTML
   }
 
@@ -117,6 +177,9 @@ class footer {
   // 隐藏底bar
   hide () {
     this.$footerWrapper.classList.remove('show')
+    theme = this._getConfig().theme
+    fontSize = this._getConfig().fontSize
+    this.sendSettingMessage()
   }
   // 禁止冒泡，防止从控制栏触发外层小说页面滚动
   _stopPropagation () {
