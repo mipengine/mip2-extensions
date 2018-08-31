@@ -32,23 +32,22 @@ export default class Form {
     util.dom.insert(form, element.children)
 
     // 按钮提交
-    let me = this
     let curEles = element.querySelectorAll('form')
     for (let item of curEles) {
-      item.addEventListener('submit', function (event) {
+      item.addEventListener('submit', event => {
         event.preventDefault()
         evt = event
-        me.onSubmit(element, event)
+        this.onSubmit(element)
       })
     }
 
     // 部分浏览器回车不触发submit,
-    element.addEventListener('keydown', function (event) {
+    element.addEventListener('keydown', event => {
       if (event.keyCode === 13) {
         // 为了使余下浏览器不多次触发submit, 使用prevent
         evt = event
         event.preventDefault()
-        me.onSubmit(this)
+        this.onSubmit(this)
       }
     })
   }
@@ -73,16 +72,15 @@ export default class Form {
    * @param {HTMLElement} element mip 组件标签
    */
   initMessageEvents (element) {
-    let me = this
     let inputAll = element.querySelectorAll('input')
     for (let item of inputAll) {
-      item.addEventListener('focus', function () {
-        me.sendFormMessage('focus')
-      }, false)
+      item.addEventListener('focus', () => {
+        this.sendFormMessage('focus')
+      })
 
-      item.addEventListener('blur', function () {
-        me.sendFormMessage('blur')
-      }, false)
+      item.addEventListener('blur', () => {
+        this.sendFormMessage('blur')
+      })
     }
   }
 
@@ -103,7 +101,6 @@ export default class Form {
    * @param {HTMLElement} element form节点
    */
   onSubmit (element) {
-    let me = this
     let preventSubmit = false
     let inputs = element.querySelectorAll('input, textarea, select')
     let url = element.getAttribute('url') || ''
@@ -111,16 +108,16 @@ export default class Form {
     let isHttp = getUrl.match('http://')
     let valueJson = ''
     let hasFetch = element.getAttribute('fetch-url') || ''
-    me.method = (element.getAttribute('method') || 'GET').toUpperCase()
-    let isGet = me.method === 'GET'
+    this.method = (element.getAttribute('method') || 'GET').toUpperCase()
+    let isGet = this.method === 'GET'
 
     this.ele = element
     this.successEle = element.querySelector('[submit-success]')
     this.errorEle = element.querySelector('[submit-error]')
     // 执行提交句柄
-    me.submitHandle()
+    this.submitHandle()
     // 校验输入内容是否合法
-    Array.prototype.forEach.call(inputs, function (item) {
+    for (let item of inputs) {
       let type = item.getAttribute('validatetype')
       let target = item.getAttribute('validatetarget')
       let regval = item.getAttribute('validatereg')
@@ -138,13 +135,12 @@ export default class Form {
         if (regval) {
           reg = value === '' ? false : (new RegExp(regval)).test(value)
         } else {
-          reg = me.verification(type, value)
+          reg = this.verification(type, value)
         }
-        util.css(element.querySelectorAll('div[target="' + target + '"]'),
-          {display: (!reg ? 'block' : 'none')})
+        util.css(element.querySelectorAll('div[target="' + target + '"]'), {display: (!reg ? 'block' : 'none')})
         preventSubmit = !reg ? true : preventSubmit
       }
-    })
+    }
 
     if (preventSubmit) {
       return
@@ -169,7 +165,7 @@ export default class Form {
       }
       window.parent.postMessage(message, '*')
     } else if (hasFetch.trim()) {
-      me.fetchUrl(hasFetch)
+      this.fetchUrl(hasFetch)
     } else {
       // https请求 或 post请求 或 非iframe下不做处理
       element.getElementsByTagName('form')[0].submit()
