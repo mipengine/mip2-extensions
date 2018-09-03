@@ -198,7 +198,6 @@ export default class MipAnalytics extends CustomElement {
         }
         str += key + '=' + encodeURIComponent(this.valReplace(obj[key], vars)) + '&'
       })
-      console.log(str)
       str = str.substring(0, str.length - 1) // 去掉末尾的&
     } else if (typeof str === 'string') {
       str = obj
