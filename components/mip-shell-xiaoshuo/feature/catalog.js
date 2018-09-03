@@ -16,9 +16,9 @@ class Catalog {
   }
 
   /**
-   * 通过query获取参数
+   * 通过浏览器地址栏url获取query参数
    *
-   * @param  {string} 地址栏链接或自传链接参数
+   * @param  {string} 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
    * @return {Object} 参数对象
    */
   getQuery (url) {
@@ -33,6 +33,29 @@ class Catalog {
       obj[data[0]] = decodeURIComponent(data[1])
       return obj
     }, {})
+  }
+
+  /**
+   * 函数说明：异步获取目录成功的回调渲染函数
+   *
+   * @param {undefined} renderCatalog 不需要过多关注，是_renderCatalog函数定义的，只需要传过去即可，后面会变为function
+   * @param {Object} data 异步成功返回获取的数据
+   * @param {Array} catalogs 定义在模板里的catalogs，同样是_renderCatalog函数定义的，只需要传过去即可
+   */
+  renderCatalogCallBack (renderCatalog, data, catalogs) {
+    let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
+    let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
+    let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
+    catalogs = data.data.catalog.chapters
+    renderCatalog = catalogs => catalogs.map(catalog => `
+      <div class="catalog-page">
+        <a class="mip-catalog-btn catalog-page-content"
+        mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
+        ${catalog.name}
+        </a>
+      </div>`).join('\n')
+    $catalogContent.innerHTML = renderCatalog(catalogs)
+    this.reverse($contentTop, $catalogContent)
   }
 
   // 根据配置渲染目录侧边栏到  mip-sidebar组件中
@@ -82,24 +105,11 @@ class Catalog {
       isCatFetch = false
       MIP.sandbox.fetchJsonp('https://yq01-psdy-diaoyan1016.yq01.baidu.com:8001/novel/api/mipinfo?originUrl=http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1', {
         jsonpCallback: 'callback'
+      }).then(res => {
+        return res.json()
+      }).then(data => {
+        this.renderCatalogCallBack(renderCatalog, data, catalogs)
       })
-        .then(res => {
-          return res.json()
-        }).then(data => {
-          let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
-          let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
-          let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
-          catalogs = data.data.catalog.chapters
-          renderCatalog = catalogs => catalogs.map(catalog => `
-        <div class="catalog-page">
-          <a class="mip-catalog-btn catalog-page-content"
-          mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
-          ${catalog.name}
-          </a>
-        </div>`).join('\n')
-          $catalogContent.innerHTML = renderCatalog(catalogs)
-          this.reverse($contentTop, $catalogContent)
-        })
     } else if (catalogs.length === 0) {
       // 目录的长度为0
     } else {
@@ -157,7 +167,7 @@ class Catalog {
   /**
    * 函数说明：目录消失函数
    *
-   * @param  {Object} e      事件源
+   * @param  {Event}} e 事件对象
    * @param  {Object} shellElement 小说章节
    */
   swipeHidden (e, shellElement) {
