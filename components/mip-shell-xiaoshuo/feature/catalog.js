@@ -176,6 +176,7 @@ class Catalog {
     e.stopPropagation()
     shellElement.toggleDOM(shellElement.$buttonMask, false)
   }
+
   /**
    * 函数说明：绑定滑动事件，左滑目录消失
    *
