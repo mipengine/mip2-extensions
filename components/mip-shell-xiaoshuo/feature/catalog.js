@@ -18,7 +18,7 @@ class Catalog {
   /**
    * 通过浏览器地址栏url获取query参数
    *
-   * @param  {string} 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
+   * @param {string} 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
    * @return {Object} 参数对象
    */
   getLocationQuery (url) {
@@ -58,8 +58,13 @@ class Catalog {
     this.reverse($contentTop, $catalogContent)
   }
 
-  // 根据配置渲染目录侧边栏到  mip-sidebar组件中
-  // 支持从页面直接获取目录，异步获取目录
+  /**
+   * 根据配置渲染目录侧边栏到  mip-sidebar组件中，支持从页面直接获取目录，异步获取目录
+   *
+   * @param {Array} catalogs constructor构造传入的变量config
+   * @param {Object} book
+   * @return {HTMLElement} $catalogSidebar 目录dom
+   */
   _renderCatalog (catalogs, book) {
     let renderCatalog
     let isCatFetch = true
@@ -165,10 +170,10 @@ class Catalog {
   }
 
   /**
-   * 函数说明：目录消失函数
+   * 目录消失
    *
-   * @param  {Event}} e 事件对象
-   * @param  {Object} shellElement 小说章节
+   * @param {Event} e 事件对象
+   * @param {Object} shellElement 小说章节
    */
   swipeHidden (e, shellElement) {
     e.preventDefault()
@@ -178,9 +183,10 @@ class Catalog {
   }
 
   /**
-   * 函数说明：绑定滑动事件，左滑目录消失
+   * 目录倒序正序
    *
-   * @param  {Object} shellElement 小说章节
+   * @param {HTMLElement} $contentTop 目录头部信息栏dom
+   * @param {HTMLElement} $catalogContent 目录列表dom
    */
   reverse ($contentTop, $catalogContent) {
     let reverse = $contentTop.querySelector('.catalog-reserve')
@@ -228,6 +234,7 @@ class Catalog {
       this.swipeHidden(e, shellElement)
     })
   }
+
   // 显示侧边目录
   show (shellElement) {
     this.bindShowEvent(shellElement)
@@ -259,11 +266,13 @@ class Catalog {
       $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
     }
   }
+
   // 隐藏侧边目录
   hide () {
     document.body.classList.remove('body-forbid')
     this.$catalogSidebar.classList.remove('show')
   }
+
   // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
   _stopPropagation () {
     if (this.propagationStopped) {
