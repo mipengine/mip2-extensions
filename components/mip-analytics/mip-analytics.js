@@ -182,17 +182,23 @@ export default class MipAnalytics extends CustomElement {
    * @param {Object} obj 必须是对象
    * @param {string} vars 配置变量,用于替换1级参数的插值
    */
-  serialize (obj, lets) {
+  serialize (obj, vars) {
     if (!obj) {
       return ''
     }
     let str = ''
     if (typeof obj === 'object') {
-      Object.keys(obj).filter(k => {
-        return obj[k] === 'object'
-      }).map(m => {
-        str += m + '=' + encodeURIComponent(this.valReplace(obj[m], lets)) + '&'
+      // 这一块不是做筛选，obj[key] 一般情况是string，所以如果是object转为字符串，不是就直接走字符串拼接，而不是筛选出为object的项
+      Object.keys(obj).forEach(key => {
+        if (typeof obj[key] === 'undefined') {
+          return
+        }
+        if (typeof obj[key] === 'object') {
+          obj[key] = JSON.stringify(obj[key])
+        }
+        str += key + '=' + encodeURIComponent(this.valReplace(obj[key], vars)) + '&'
       })
+      console.log(str)
       str = str.substring(0, str.length - 1) // 去掉末尾的&
     } else if (typeof str === 'string') {
       str = obj
