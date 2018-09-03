@@ -12,7 +12,7 @@ class Catalog {
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
-    this.nowCatNum = this.getQuery().crid
+    this.nowCatNum = this.getLocationQuery().crid
   }
 
   /**
@@ -21,7 +21,7 @@ class Catalog {
    * @param  {string} 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
    * @return {Object} 参数对象
    */
-  getQuery (url) {
+  getLocationQuery (url) {
     url = url || location.href
     let query = url.split('?')[1] || ''
     query = query.split('#')[0] || ''
@@ -196,8 +196,8 @@ class Catalog {
       let catalog = $catalogContent.querySelectorAll('div')
       let $catWrapper = document.querySelector('.novel-catalog-content-wrapper')
       let catLocation = {
-        section: this.getQuery().crid,
-        page: this.getQuery().pg
+        section: this.getLocationQuery().crid,
+        page: this.getLocationQuery().pg
       }
       catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
       if (reverseName.innerHTML === ' 倒序') {
@@ -243,8 +243,8 @@ class Catalog {
       catalog[i].innerHTML = catalog[i].innerHTML
     }
     let catLocation = {
-      section: this.getQuery().crid,
-      page: this.getQuery().pg
+      section: this.getLocationQuery().crid,
+      page: this.getLocationQuery().pg
     }
     document.body.classList.add('body-forbid')
     if (reverseName.innerHTML === ' 正序') {
