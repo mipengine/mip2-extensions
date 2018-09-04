@@ -17,6 +17,12 @@ export default (currentWindow) => {
       *
       * @returns {Array} [1, 3] 第一章第三节
       */
+    originalUrl: currentWindow.MIP.util.getOriginalUrl(),
+    /**
+      * 返回当前页面状态
+      *
+      * @returns {Array} [1, 3] 第一章第三节
+      */
     isRootPage: currentWindow.MIP.viewer.page.isRootPage,
     /**
       * 返回当前页面状态
