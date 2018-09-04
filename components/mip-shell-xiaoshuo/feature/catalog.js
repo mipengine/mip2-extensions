@@ -8,19 +8,17 @@
 // TODO： 示例发送请求的代码，上线时删掉-liangjiaying
 import {sendLog} from '../common/log'
 let util = MIP.util
-let readMethods = 'loadding'
-let readCatalogStatus = 'loadding'
+let readMethods = 'loading'
+let readCatalogStatus = 'loading'
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
-    // TODO： 示例发送请求的代码，上线时删掉-liangjiaying
-    // sendLog('a', {b: 1})
   }
 
-  // 发送 搜索点出/二跳 日志
+  // 发送 搜索点出/二跳 日志  点击目录章节绑定发送日志函数
   sendIsRootPageMessage () {
     sendLog('interaction', {
       isRootPage: false,
@@ -32,7 +30,7 @@ class Catalog {
   _bindMessageEvent () {
     let self = this
     let event = window.MIP.util.event
-    event.delegate(document.documentElement, '.novel-catalog-content .mip-catalog-btn', 'click', () => {
+    event.delegate(document.documentElement, '.novel-catalog-content .catalog-page-content', 'click', () => {
       self.sendIsRootPageMessage()
     })
   }
@@ -40,7 +38,7 @@ class Catalog {
   // 稳定性：目录获取失败发送日志函数
   _catalogFailMessageEvent (catalogs) {
     let len = catalogs.length
-    readMethods = '本地'
+    readMethods = 'local'
     !len || !catalogs[0].name || !catalogs[len - 1].name ? readCatalogStatus = false : readCatalogStatus = true
     sendLog('stability', {
       readCatalogStatus: readCatalogStatus,
@@ -91,7 +89,7 @@ class Catalog {
       // 目录配置为空
     } else if (typeof catalogs === 'string') {
       // 目录配置的是字符串，远程地址。需要异步获取
-      readMethods = '异步'
+      readMethods = 'async'
     } else {
       this.catalog = catalogs
       this._catalogFailMessageEvent(catalogs)
