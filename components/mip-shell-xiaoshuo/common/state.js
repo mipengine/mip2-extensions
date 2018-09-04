@@ -13,6 +13,12 @@ export default (currentWindow) => {
   return {
     // 获取html head 中json-ld 配置
     /**
+      * 返回当前页面的原始URL
+      *
+      * @returns {string} 当前页面的原始URL
+      */
+    originalUrl: currentWindow.MIP.util.getOriginalUrl(),
+    /**
       * 返回当前页面状态
       *
       * @returns {Array} [1, 3] 第一章第三节
