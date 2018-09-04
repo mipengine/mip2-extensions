@@ -18,8 +18,8 @@ class Catalog {
   /**
    * 通过浏览器地址栏url获取query参数
    *
-   * @param {string} 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
-   * @return {Object} 参数对象
+   * @param {string=} url 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
+   * @returns {Object} 参数对象
    */
   getLocationQuery (url) {
     url = url || location.href
@@ -38,16 +38,15 @@ class Catalog {
   /**
    * 函数说明：异步获取目录成功的回调渲染函数
    *
-   * @param {undefined} renderCatalog 不需要过多关注，是_renderCatalog函数定义的，只需要传过去即可，后面会变为function
    * @param {Object} data 异步成功返回获取的数据
    * @param {Array} catalogs 定义在模板里的catalogs，同样是_renderCatalog函数定义的，只需要传过去即可
    */
-  renderCatalogCallBack (renderCatalog, data, catalogs) {
+  renderCatalogCallBack (data, catalogs) {
     let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
     let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
     let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
     catalogs = data.data.catalog.chapters
-    renderCatalog = catalogs => catalogs.map(catalog => `
+    let renderCatalog = catalogs => catalogs.map(catalog => `
       <div class="catalog-page">
         <a class="mip-catalog-btn catalog-page-content"
         mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
@@ -62,8 +61,8 @@ class Catalog {
    * 根据配置渲染目录侧边栏到  mip-sidebar组件中，支持从页面直接获取目录，异步获取目录
    *
    * @param {Array} catalogs constructor构造传入的变量config
-   * @param {Object} book
-   * @return {HTMLElement} $catalogSidebar 目录dom
+   * @param {Object} book 书本信息
+   * @returns {HTMLElement} $catalogSidebar 目录dom
    */
   _renderCatalog (catalogs, book) {
     let renderCatalog
@@ -113,7 +112,7 @@ class Catalog {
       }).then(res => {
         return res.json()
       }).then(data => {
-        this.renderCatalogCallBack(renderCatalog, data, catalogs)
+        this.renderCatalogCallBack(data, catalogs)
       })
     } else if (catalogs.length === 0) {
       // 目录的长度为0
