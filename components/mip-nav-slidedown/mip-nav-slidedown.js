@@ -82,16 +82,16 @@ export default class MipNavSlidedown extends CustomElement {
       }
 
       if ((mode === 'resize' && hasClass($wiseNav, 'in')) || mode === 'open') {
-        let listNum = this.element.querySelectorAll('#bs-navbar li').length
+        let listNum = document.querySelectorAll('#bs-navbar li').length
         let offsetTop = document.querySelector('mip-nav-slidedown') ? document.querySelector('mip-nav-slidedown').getBoundingClientRect().top : 0
-        let navHeight = window.innerHeight - this.element.querySelector('.navbar-header').clientHeight - offsetTop
+        let navHeight = window.innerHeight - document.querySelector('.navbar-header').clientHeight - offsetTop
         util.css($wiseNav, 'height', navHeight + 'px')
         // 关闭按钮距离底部固定为90px
-        let closeBtnTop = navHeight - (this.element.querySelector('.navbar-right li').clientHeight) * listNum - 90
+        let closeBtnTop = navHeight - (document.querySelector('.navbar-right li').clientHeight) * listNum - 90
         if (closeBtnTop > 20) {
-          util.css(this.element.querySelector('.navbar-wise-close'), 'margin-top', closeBtnTop + 'px')
+          util.css(document.querySelector('.navbar-wise-close'), 'margin-top', closeBtnTop + 'px')
         } else {
-          util.css(this.element.querySelector('.navbar-wise-close'), 'margin-top', '20px')
+          util.css(document.querySelector('.navbar-wise-close'), 'margin-top', '20px')
         }
       }
     }
@@ -99,12 +99,12 @@ export default class MipNavSlidedown extends CustomElement {
     if (window.innerWidth > 767) {
       return
     }
-    let $wiseNav = this.element.querySelector('#bs-navbar')
+    let $wiseNav = document.querySelector('#bs-navbar')
     // 关闭菜单
     if (hasClass($wiseNav, 'in')) {
       util.css($wiseNav, 'height', '0px')
       util.css(document.body, 'overflow', 'scroll')
-      util.css(this.element.querySelector('.navbar-wise-close'), 'margin-top', '20px')
+      util.css(document.querySelector('.navbar-wise-close'), 'margin-top', '20px')
       document.body.classList.add('no-scroll')
       document.querySelector('html').classList.add('no-scroll')
       setTimeout(() => {
