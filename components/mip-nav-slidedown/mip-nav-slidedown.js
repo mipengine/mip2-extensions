@@ -5,7 +5,7 @@
  * @transfer 2018.08
  */
 import './mip-nav-slidedown.less'
-let { CustomElement, util } = MIP
+const { CustomElement, util } = MIP
 export default class MipNavSlidedown extends CustomElement {
   constructor (...args) {
     super(...args)
