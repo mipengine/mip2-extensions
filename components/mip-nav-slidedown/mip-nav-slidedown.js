@@ -47,9 +47,12 @@ export default class MipNavSlidedown extends CustomElement {
    */
   bindEvents () {
     this.element.querySelector('.navbar-header .navbar-toggle').addEventListener('click', this.navClickHandler, false)
-    this.addHoverClass(this.element.querySelector('#navbar-wise-close-btn'))
-    this.element.querySelector('#navbar-wise-close-btn').addEventListener('click', this.navClickHandler, false)
-    this.element.querySelector('#navbar-wise-close-btn').addEventListener('touchend', this.navClickHandler, false)
+    let $closeBtn = this.element.querySelector('#navbar-wise-close-btn')
+    if ($closeBtn.length > 0) {
+      this.addHoverClass(this.element.querySelector('#navbar-wise-close-btn'))
+      this.element.querySelector('#navbar-wise-close-btn').addEventListener('click', this.navClickHandler, false)
+      this.element.querySelector('#navbar-wise-close-btn').addEventListener('touchend', this.navClickHandler, false)
+    }
   }
 
   /**
