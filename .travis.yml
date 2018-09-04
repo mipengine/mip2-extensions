@@ -5,7 +5,7 @@ node_js:
 os:
   - linux
 install:
-  - npm install
+  - travis_retry npm install
 script:
   - npm run lint
 
