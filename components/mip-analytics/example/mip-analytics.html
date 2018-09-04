@@ -22,6 +22,7 @@
   <mip-analytics>
     <script type="application/json">
       {
+<<<<<<< HEAD
           "hosts" : {
               "className1" : "https://m.baidu.com/div1?",
               "disp" : "https://m.baidu.com/${disp}?",
@@ -98,6 +99,85 @@
           }
       }
       </script>
+=======
+        "hosts" : {
+          "className1" : "https://m.baidu.com/div1?",
+          "disp" : "https://m.baidu.com/${disp}?",
+          "className2" : "https://m.baidu.com/_${div2}.gif?"
+        },
+  
+        "setting" : {
+          "click" : [
+            {
+              "selector" : ".className1",
+              "tag": "button",
+              "host" : "className1",
+              "queryString" : {
+                "name" : "alan",
+                "mipstart" : "${MIPStart}",
+                "list": {
+                  "age":"123"
+                }
+              }
+            },
+  
+            {
+              "selector" : ".className2",
+              "host" : "className2",
+              "queryString" : {
+                "name" : "alan",
+                "mipstart" : "${MIPStart}",
+                "list": {
+                  "age":"45"
+                }
+              }
+            },
+  
+            {
+              "selector" : ".className3",
+              "host" : "className3",
+              "queryString" : {},
+              "vars" : {
+                "div2" : "divfdsf"
+              }
+            }
+          ],
+  
+          "disp" : [
+            {
+              "host" : "disp",
+              "queryString" : {
+                "MIPStart" : "${MIPStart}",
+                "MIPPageShow" : "${MIPPageShow}",
+                "MIPDomContentLoaded" : "${MIPDomContentLoaded}",
+                "MIPFirstScreen" : "${MIPFirstScreen}"
+              },
+              "vars" : {
+                "disp" : "displog"
+              }
+            }
+          ],
+
+          "timerxx" : [
+            {
+              "host" : "className2",
+              "queryString" : {
+                "timer" : "timer"
+              },
+              "vars" : {
+                "div2" : "div2"
+              },
+              "option" : {
+                "interval" : 2000
+              }
+            }
+          ],
+
+          "scroll" : []
+        }
+      }
+    </script>
+>>>>>>> c87ff93698ca4aa43ec91d885e895645fe8c9456
   </mip-analytics>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
   <script src="/mip-analytics/mip-analytics.js"></script>

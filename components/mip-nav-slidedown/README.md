@@ -12,28 +12,28 @@
 ### 基本使用
 ```html
 <div class="mip-nav-wrapper">
-    <mip-nav-slidedown
-        data-id="bs-navbar"
-        class="mip-element-sidebar container"
-        data-showbrand="1"
-        data-brandname="MIP官网">
-        <nav id="bs-navbar" class="navbar-collapse collapse navbar navbar-static-top">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="//www.mipengine.org/">首页</a>
-                </li>
-                <li>
-                    <a href="//www.mipengine.org/timeline.html">动态</a>
-                </li>
-                <li>
-                    <a href="http://www.cnblogs.com/mipengine/">博客</a>
-                </li>
-                <li class="navbar-wise-close">
-                    <span id="navbar-wise-close-btn"></span>
-                </li>
-            </ul>
-        </nav>
-    </mip-nav-slidedown>
+  <mip-nav-slidedown
+    data-id="bs-navbar"
+    class="mip-element-sidebar container"
+    data-showbrand="1"
+    data-brandname="MIP官网">
+    <nav id="bs-navbar" class="navbar-collapse collapse navbar navbar-static-top">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="//www.mipengine.org/">首页</a>
+        </li>
+        <li>
+          <a href="//www.mipengine.org/timeline.html">动态</a>
+        </li>
+        <li>
+          <a href="http://www.cnblogs.com/mipengine/">博客</>
+        </li>
+        <li class="navbar-wise-close">
+          <span id="navbar-wise-close-btn"></span>
+        </li>
+      </ul>
+    </nav>
+  </mip-nav-slidedown>
 </div>
 ```
 
@@ -41,30 +41,30 @@
 导航菜单个数较多时，菜单展开可以上下滚动。
 ```html
 <div class="mip-nav-wrapper">
-    <mip-nav-slidedown
-        data-id="bs-navbar"
-        class="mip-element-sidebar container"
-        data-showbrand="1"
-        data-brandname="MIP官网">
-        <nav id="bs-navbar" class="navbar-collapse collapse navbar navbar-static-top">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="//www.mipengine.org/">菜单1</a></li>
-                <li><a href="//www.mipengine.org/">菜单2</a></li>
-                <li><a href="//www.mipengine.org/">菜单3</a></li>
-                <li><a href="//www.mipengine.org/">菜单4</a></li>
-                <li><a href="//www.mipengine.org/">菜单5</a></li>
-                <li><a href="//www.mipengine.org/">菜单6</a></li>
-                <li><a href="//www.mipengine.org/">菜单7</a></li>
-                <li><a href="//www.mipengine.org/">菜单8</a></li>
-                <li><a href="//www.mipengine.org/">菜单9</a></li>
-                <li><a href="//www.mipengine.org/">菜单10</a></li>
-                <li><a href="//www.mipengine.org/">菜单11</a></li>
-                <li class="navbar-wise-close">
-                    <span id="navbar-wise-close-btn"></span>
-                </li>
-            </ul>
-        </nav>
-    </mip-nav-slidedown>
+  <mip-nav-slidedown
+    data-id="bs-navbar"
+    class="mip-element-sidebar container"
+    data-showbrand="1"
+    data-brandname="MIP官网">
+    <nav id="bs-navbar" class="navbar-collapse collapse navbar navbar-static-top">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="//www.mipengine.org/">菜单1</a></li>
+        <li><a href="//www.mipengine.org/">菜单2</a></li>
+        <li><a href="//www.mipengine.org/">菜单3</a></li>
+        <li><a href="//www.mipengine.org/">菜单4</a></li>
+        <li><a href="//www.mipengine.org/">菜单5</a></li>
+        <li><a href="//www.mipengine.org/">菜单6</a></li>
+        <li><a href="//www.mipengine.org/">菜单7</a></li>
+        <li><a href="//www.mipengine.org/">菜单8</a></li>
+        <li><a href="//www.mipengine.org/">菜单9</a></li>
+        <li><a href="//www.mipengine.org/">菜单10</a></li>
+        <li><a href="//www.mipengine.org/">菜单11</a></li>
+        <li class="navbar-wise-close">
+          <span id="navbar-wise-close-btn"></span>
+        </li>
+      </ul>
+    </nav>
+  </mip-nav-slidedown>
 </div>
 ```
 
@@ -72,43 +72,43 @@
 直接添加`<ul>`可以展现二级菜单效果。
 ```html
 <div class="mip-nav-wrapper">
-    <mip-nav-slidedown 
-        data-id="bs-navbar"
-        class="mip-element-sidebar container"
-        data-showbrand="1"
-        data-brandname="MIP官网">
-        <nav id="bs-navbar" class="navbar-collapse collapse navbar navbar-static-top">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="//www.mipengine.org/">首页</a>
-                </li>
-                <li>
-                    <span class="navbar-more">常用工具</span>
-                    <ul>
-                        <li> <a href="//www.mipengine.org/">子菜单01</a> </li>
-                        <li> <a href="//www.mipengine.org/">子菜单02</a> </li>
-                        <li> <a href="//www.mipengine.org/">子菜单03</a> </li>
-                        <li> <a href="//www.mipengine.org/">子菜单04</a> </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="//www.mipengine.org/timeline.html">动态</a>
-                </li>
-                <li>
-                    <span class="navbar-more">下拉菜单</span>
-                    <ul>
-                        <li> <a href="//www.mipengine.org/">子菜单01</a> </li>
-                        <li> <a href="//www.mipengine.org/">子菜单02</a> </li>
-                        <li> <a href="//www.mipengine.org/">子菜单03</a> </li>
-                        <li> <a href="//www.mipengine.org/">子菜单04</a> </li>
-                    </ul>
-                </li>
-                <li class="navbar-wise-close">
-                    <span id="navbar-wise-close-btn"></span>
-                </li>
-            </ul>
-        </nav>
-    </mip-nav-slidedown>
+  <mip-nav-slidedown 
+    data-id="bs-navbar"
+    class="mip-element-sidebar container"
+    data-showbrand="1"
+    data-brandname="MIP官网">
+    <nav id="bs-navbar" class="navbar-collapse collapse navbar navbar-static-top">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="//www.mipengine.org/">首页</a>
+        </li>
+        <li>
+          <span class="navbar-more">常用工具</span>
+          <ul>
+            <li> <a href="//www.mipengine.org/">子菜单01</a> </li>
+            <li> <a href="//www.mipengine.org/">子菜单02</a> </li>
+            <li> <a href="//www.mipengine.org/">子菜单03</a> </li>
+            <li> <a href="//www.mipengine.org/">子菜单04</a> </li>
+          </ul>
+        </li>
+        <li>
+          <a href="//www.mipengine.org/timeline.html">动态</a>
+        </li>
+        <li>
+          <span class="navbar-more">下拉菜单</span>
+          <ul>
+            <li> <a href="//www.mipengine.org/">子菜单01</a> </li>
+            <li> <a href="//www.mipengine.org/">子菜单02</a> </li>
+            <li> <a href="//www.mipengine.org/">子菜单03</a> </li>
+            <li> <a href="//www.mipengine.org/">子菜单04</a> </li>
+          </ul>
+        </li>
+        <li class="navbar-wise-close">
+          <span id="navbar-wise-close-btn"></span>
+        </li>
+      </ul>
+    </nav>
+  </mip-nav-slidedown>
 </div>
 ```
 
