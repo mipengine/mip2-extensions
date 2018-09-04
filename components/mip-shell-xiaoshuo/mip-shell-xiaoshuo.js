@@ -203,7 +203,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 基类方法 每个页面执行：绑定头部弹层事件。
   bindHeaderEvents () {
     super.bindHeaderEvents()
-
     let event = window.MIP.util.event
     let me = this
 
@@ -328,6 +327,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
   }
 
+  prerenderAllowed () {
+    return true
+  }
   /**
    * 获取上级可scroll的元素
    *
