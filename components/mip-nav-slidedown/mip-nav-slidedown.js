@@ -59,21 +59,31 @@ export default class MipNavSlidedown extends CustomElement {
    * 按钮事件处理
    */
   navClickHandler () {
-    /**
-     * 判断dom是否含有某个class
-     *
-     * @param {HTMLElement} obj dom对象
-     * @param {string} oclass 类名
-     * @returns {boolean} true为含有该class，反之则为没有
-     */
-    function hasClass (obj, oclass) {
-      for (let i = 0, len = obj.classList.length; i < len; i++) {
-        if (oclass === obj.classList[i]) {
-          return true
-        }
-      }
-      return false
+    if (window.innerWidth > 767) {
+      return
     }
+    let $wiseNav = document.querySelector('#bs-navbar')
+    // 关闭菜单
+    if ($wiseNav.classList.contains('in')) {
+      util.css($wiseNav, 'height', '0px')
+      util.css(document.body, 'overflow', 'scroll')
+      util.css(document.querySelector('.navbar-wise-close'), 'margin-top', '20px')
+      document.body.classList.add('no-scroll')
+      document.documentElement.classList.add('no-scroll')
+      setTimeout(() => {
+        $wiseNav.classList.remove('in')
+      }, 500)
+    } else {
+      // 打开菜单
+      document.body.classList.add('no-scroll')
+      document.documentElement.classList.add('no-scroll')
+      setNavHeight('open')
+      window.addEventListener('orientationchange', () => {
+        setTimeout(setNavHeight('resize'), 100) // hack: orientationchange 取window高度不及时
+      })
+      window.addEventListener('resize', setNavHeight('resize'))
+    }
+
     /**
      * 重新定义列表高度
      *
@@ -84,7 +94,7 @@ export default class MipNavSlidedown extends CustomElement {
         $wiseNav.classList.add('in')
       }
 
-      if ((mode === 'resize' && hasClass($wiseNav, 'in')) || mode === 'open') {
+      if ((mode === 'resize' && $wiseNav.classList.contains('in')) || mode === 'open') {
         let listNum = document.querySelectorAll('#bs-navbar li').length
         let offsetTop = document.querySelector('mip-nav-slidedown') ? document.querySelector('mip-nav-slidedown').getBoundingClientRect().top : 0
         let navHeight = window.innerHeight - document.querySelector('.navbar-header').clientHeight - offsetTop
@@ -97,31 +107,6 @@ export default class MipNavSlidedown extends CustomElement {
           util.css(document.querySelector('.navbar-wise-close'), 'margin-top', '20px')
         }
       }
-    }
-
-    if (window.innerWidth > 767) {
-      return
-    }
-    let $wiseNav = document.querySelector('#bs-navbar')
-    // 关闭菜单
-    if (hasClass($wiseNav, 'in')) {
-      util.css($wiseNav, 'height', '0px')
-      util.css(document.body, 'overflow', 'scroll')
-      util.css(document.querySelector('.navbar-wise-close'), 'margin-top', '20px')
-      document.body.classList.add('no-scroll')
-      document.querySelector('html').classList.add('no-scroll')
-      setTimeout(() => {
-        $wiseNav.classList.remove('in')
-      }, 500)
-    } else {
-      // 打开菜单
-      document.body.classList.add('no-scroll')
-      document.querySelector('html').classList.add('no-scroll')
-      setNavHeight('open')
-      window.addEventListener('orientationchange', () => {
-        window.setTimeout(setNavHeight('resize'), 100) // hack: orientationchange 取window高度不及时
-      })
-      window.addEventListener('resize', setNavHeight('resize'))
     }
   }
 
