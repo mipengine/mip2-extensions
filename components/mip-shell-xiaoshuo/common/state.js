@@ -2,15 +2,21 @@
  * @file 小说中的各种状态
  * @author JennyL, LiuJing
  */
-import getJsonld from './util'
+import {getJsonld, getOfficeId} from './util'
 
 export default (currentWindow) => {
   const jsonld = getJsonld(currentWindow)
-
+  const officeId = getOfficeId(currentWindow)
   if (!jsonld.currentPage) {
     throw new Error('请检查head中json-ld配置，currentPage 不存在')
   }
   return {
+    /**
+      * 返回熊掌号id
+      *
+      * @returns {string} 熊掌号id
+      */
+    officeId: officeId,
     // 获取html head 中json-ld 配置
     /**
       * 返回当前页面的原始URL

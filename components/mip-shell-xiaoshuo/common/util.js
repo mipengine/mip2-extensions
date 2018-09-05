@@ -3,7 +3,7 @@
  * @author JennyL
  */
 
-export default (currentWindow) => {
+export const getJsonld = (currentWindow) => {
   // 获取<head>中声明的mip-shell-xiaoshuo 配置。
   // 每个页面不同，如上一页链接，当前章节名
   let jsonld = currentWindow.document.head.querySelector("script[type='application/ld+json']")
@@ -17,4 +17,20 @@ export default (currentWindow) => {
     console.error(e)
   }
   return jsonldConf
+}
+
+export const getOfficeId = (currentWindow) => {
+  // 获取<head>中声明的mip-shell-xiaoshuo 配置。
+  // 每个页面不同，如上一页链接，当前章节名
+  let jsonld = currentWindow.document.querySelector("script[type='application/json']")
+  let officeId
+  try {
+    officeId = JSON.parse(jsonld.innerText).routes[0].meta.officeId
+    if (!officeId) {
+      throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json officeId')
+    }
+  } catch (e) {
+    console.error(e)
+  }
+  return officeId
 }

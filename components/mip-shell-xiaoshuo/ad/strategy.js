@@ -16,6 +16,7 @@ export default class Strategy {
     this.fromSearch = 0
     this.novelData = {}
     this.shellReady = false
+    this.silentFollow = 0
   }
   /**
    * 根据当前的页面状态获取相关的广告策略
@@ -23,15 +24,20 @@ export default class Strategy {
   strategyStatic () {
     // 修改出广告的策略
     let currentWindow = this.getCurrentWindow()
-    const {isLastPage, currentPage, chapterName, rootPageId, originalUrl} = state(currentWindow)
+    // 计数判断是否是初始化页面
+    let silentFollow = !(this.silentFollow > 1)
+    const {isLastPage, currentPage, chapterName, rootPageId, originalUrl, officeId} = state(currentWindow)
     let novelData = {
       isLastPage,
       chapter: currentPage.chapter,
       page: currentPage.page,
       chapterName,
-      originalUrl
+      originalUrl,
+      officeId,
+      silentFollow
     }
     this.changeStrategy()
+    this.silentFollow++
     // 全局的广告
     if (this.globalAd) {
       window.MIP.viewer.page.emitCustomEvent(window.parent, true, {
