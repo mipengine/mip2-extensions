@@ -177,6 +177,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 自有方法 仅root：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
   _initAllObjects () {
     let configMeta = this.currentPageMeta
+    this.novelName = configMeta.header.title
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
     this.footer.updateDom(getJsonld(window))
