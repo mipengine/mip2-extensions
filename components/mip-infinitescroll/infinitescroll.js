@@ -38,7 +38,6 @@ export default class InfiniteScroll {
   }
 
   _init () {
-    let self = this
     this.eventSpace = '.InfiniteScroll'
     // 标识状态 start-执行 pause-暂停
     this.state = 'start'
@@ -63,9 +62,9 @@ export default class InfiniteScroll {
     this.options.$loading.innerHTML = this.options.loadingHtml
     // 如果firstResult存在,同步加载第0页内容
     if (this.options.firstResult.length) {
-      this.scrollPageCache.content = this.scrollPageCache.content.concat(self._separatePage(self.options.firstResult))
+      this.scrollPageCache.content = this.scrollPageCache.content.concat(this._separatePage(this.options.firstResult))
       this.options.$result.innerHTML = this._wrapPageParentDom(this.scrollPageCache.content[0], 0)
-      this.scrollPageCache.topPosition.push(rect.getElementRect(self.options.$result).top)
+      this.scrollPageCache.topPosition.push(rect.getElementRect(this.options.$result).top)
     }
 
     // 初始化全局环境变量 && resize时重新获取环境变量
@@ -84,7 +83,9 @@ export default class InfiniteScroll {
     }
   }
 
-  // 重新获取环境变量
+  /**
+   * 重新获取环境变量
+   */
   refresh () {
     // 若为暂停状态,什么也不做
     if (this.state === 'pause') {
@@ -99,15 +100,13 @@ export default class InfiniteScroll {
     this.currentScrollTop = viewport.getScrollTop()
   }
 
-  // destroy方法
   destroy () {
     // 注销resize事件
     let eventSpace = this.eventSpace
     window.removeEventListener('resize' + eventSpace)
     // 注销loading上的点击事件
     this.options.$loading.removeEventListener('click' + eventSpace)
-    let scrollHaandler = this.scrollHandler
-    viewport.off('scroll', scrollHaandler)
+    viewport.off('scroll', this.scrollHandler)
     // 删除cache数据
     this.scrollPageCache = null
   }
@@ -174,7 +173,6 @@ export default class InfiniteScroll {
     let scrollHandler
     viewport.on('scroll', function scrollHandler () {
       // 若为暂停状态,什么也不做
-
       if (self.state === 'pause') {
         return
       }
@@ -223,7 +221,6 @@ export default class InfiniteScroll {
    * 当滚动条滚动到页面底部时执行
    */
   _scrollBottomFn () {
-    let self = this
     // 需要加载的页码(从0计)
     let pn = this.currentLoadPage + 1
     // 已有数据最大页码(从0计)
@@ -233,14 +230,15 @@ export default class InfiniteScroll {
     if (pn <= dn) {
       this._updateScrollElement(pn)
       // 执行回调
-      this.options.onLoadNewPage && this.options.onLoadNewPage.call(self, pn)
+      this.options.onLoadNewPage && this.options.onLoadNewPage(pn)
     }
     // 数据不够 && 数据状态为默认(!无数据 && !请求中 && !请求失败)
     if (this.dataStatus === 1 && pn + this.options.preLoadPn >= dn) {
       // 调用cb:pushResult请求新数据,由于数据请求一般为异步,使用Promise对象处理(同时也兼容同步数据返回)
-      let dataDeferred = this.options.pushResult((dn + 1) * self.options.pageResultNum, dn - pn)
+      let dataDeferred = this.options.pushResult((dn + 1) * this.options.pageResultNum, dn - pn)
       // 标记数据状态为请求中
       this.dataStatus = 2
+      let self = this
       dataDeferred.then(
         // 成功
         function (newResultArr) {
@@ -277,9 +275,8 @@ export default class InfiniteScroll {
   /**
    * 按页更新滚动元素内容
    *
-   * @param  {number} pn 页码
+   * @param {number} pn 页码
    */
-
   _updateScrollElement (pn) {
     let domNewPage = this._wrapPageParentDom(this.scrollPageCache.content[pn], pn)
     domNewPage = dom.create(domNewPage)
@@ -300,17 +297,15 @@ export default class InfiniteScroll {
    * IP:[number]当前可视区页码
    * 由于wise性能较差，需要清理掉滚动到可视区外的元素
    *
-   * @param  {number} pn 页码
+   * @param {number} pn 页码
    */
   _cycleScrollElement (pn) {
-    let self = this
-
     let recycleClass = 'infinite-recycle'
-    let startPage = Math.max(pn - Math.floor((self.options.limitShowPn - 1) / 2), 0)
+    let startPage = Math.max(pn - Math.floor((this.options.limitShowPn - 1) / 2), 0)
     // 获取所有结果列表dom
-    let domResultElement = this.options.$result.querySelector('.' + self.options.scrollPageClass)
+    let domResultElement = this.options.$result.querySelector('.' + this.options.scrollPageClass)
     // 选出当前需要被显示的dom页
-    let domShouldShowElement = domResultElement.slice(startPage, startPage + self.options.limitShowPn)
+    let domShouldShowElement = domResultElement.slice(startPage, startPage + this.options.limitShowPn)
 
     // todo:这里应该还有优化空间
     if (domResultElement.length) {
@@ -320,18 +315,17 @@ export default class InfiniteScroll {
           this.innerHTML = this.scrollPageCache.content[this.getAttribute('data-page')]
           this.classList.remove(recycleClass)
         }
-      })
+      }, this)
       // 清理:选出所有不应该被显示的dom,并排除已有回收标记标签的元素,执行清理操作
       let recycleClassElement = document.querySelectorAll('.' + recycleClass)
       domResultElement.removeChild(domShouldShowElement)
       domResultElement.removeChild(recycleClassElement)
       domResultElement.forEach(function () {
-        let me = this
-        rect.getElementRect(me).height = 0
+        rect.getElementRect(this).height = 0
         this.classList.add(recycleClass)
-      })
+      }, this)
       // 这里有可能导致整体高度变化,需要重新更新高度
-      self.scrollerHeight = this._getScrollerHeight()
+      this.scrollerHeight = this._getScrollerHeight()
     }
   }
 
@@ -340,8 +334,8 @@ export default class InfiniteScroll {
    * IP:[arr]结果列表html代码片段
    * OP:[arr]按页分割的html代码片段
    *
-   * @param  {Array} listArr 结果
-   * @returns {Array}   html array
+   * @param {Array} listArr 结果
+   * @returns {Array} html array
    */
   _separatePage (listArr) {
     if (!listArr.length || listArr === 'NULL') {
@@ -363,18 +357,12 @@ export default class InfiniteScroll {
    * IP:html-[string]一页的html代码片段;pn-[number]当前页码
    * OP:[string]按页包裹完每页父容器的html代码
    *
-   * @param  {string} html html
-   * @param  {number} pn 页码
-   * @returns {string}   拼接好的html
+   * @param {string} html html
+   * @param {number} pn 页码
+   * @returns {string} 拼接好的html
    */
   _wrapPageParentDom (html, pn) {
-    return (
-      [
-        '<ul class="' + this.options.scrollPageClass + '" data-page="' + pn + '">',
-        html,
-        '</ul>'
-      ].join('')
-    )
+    return `<ul class="${this.options.scrollPageClass}" data-page="${pn}">${html}</ul>`
   }
 
   /**

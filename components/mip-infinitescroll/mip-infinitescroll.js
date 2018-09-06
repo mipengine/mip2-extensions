@@ -14,12 +14,16 @@ export default class MipInfiniteScroll extends CustomElement {
     this.infiniteScroll = null
   }
 
-  // 提前渲染
+  /**
+   * 提前渲染
+   */
   prerenderAllowed () {
     return true
   }
 
-  // 挂载到DOM上之后，首次出现在视口内时执行
+  /**
+   * 挂载到DOM上之后，首次出现在视口内时执行
+   */
   firstInviewCallback () {
     let element = this.element
     let src = element.getAttribute('data-src') || ''
@@ -115,14 +119,10 @@ export default class MipInfiniteScroll extends CustomElement {
     })
   }
 
-  disconnectedCallback () {
-    this.infiniteScroll = null
-  }
-
   /**
    * [getUrl url 拼接函数]
    *
-   * @param  {string} src 获取的最初url
+   * @param {string} src 获取的最初url
    * @returns {string} 拼接后的url
    */
   getUrl (src) {
