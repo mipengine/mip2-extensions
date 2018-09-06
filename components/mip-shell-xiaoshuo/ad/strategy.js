@@ -24,7 +24,7 @@ export default class Strategy {
     // 修改出广告的策略
     let currentWindow = this.getCurrentWindow()
     const {isLastPage, currentPage, chapterName, rootPageId, originalUrl} = state(currentWindow)
-    let name = window.MIP.mipshellXiaoshuo.novelName
+    const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
     let novelData = {
       isLastPage,
       chapter: currentPage.chapter,
