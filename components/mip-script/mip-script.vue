@@ -10,7 +10,8 @@ import detect from 'mip-sandbox/lib/unsafe-detect'
 /* global Promise */
 /* global fetch */
 
-const SIZE_UNIT = 1024
+const SYNC_SIZE = 2
+const ASYNC_SIZE = 10
 
 function getSize (script) {
   return script.replace(/[^\x00-\xff]/g, 'aa').length // eslint-disable-line no-control-regex
@@ -65,8 +66,8 @@ export default {
               if (!data) {
                 return
               }
-              if (getSize(script) > SIZE_UNIT * 20) {
-                console.error(`WARNING: ASYNC <mip-script> is out of range. Src: ${src}. Please keep it under 20KB`)
+              if (getSize(script) > 1024 * ASYNC_SIZE) {
+                console.error(`WARNING: ASYNC <mip-script> is out of range. Src: ${src}. Please keep it under ${ASYNC_SIZE}KB`)
                 return
               }
               run(data, element)
@@ -83,8 +84,8 @@ export default {
     if (!script) {
       return
     }
-    if (getSize(script) > SIZE_UNIT * 2) {
-      console.error(`WARNING: <mip-script> is out of range.Please keep it under 2KB`)
+    if (getSize(script) > 1024 * SYNC_SIZE) {
+      console.error(`WARNING: <mip-script> is out of range.Please keep it under ${SYNC_SIZE}KB`)
       return
     }
 

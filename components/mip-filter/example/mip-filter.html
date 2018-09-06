@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+
+  </style>
+</head>
+
+<body>
+  <div>
+    <p style="text-align:left;font-size:18px;margin-top:20px;color: green">基本使用</p>
+    <p style="text-align:left;margin-bottom:10px;color:gray">
+      筛选功能，支持从 hash 定位筛选项。
+    </p>
+    <mip-filter mip-filter-filterWrap=".filter" mip-filter-itemWrap=".filter-item-wrap">
+      <sidebar class="filter">
+        <div class="filter-result"></div>
+        <ul class="filter-list">
+          <li class="filter-title">
+            <div class="filter-link" data-filtertype="all">(all)查看全部
+              <span class="filter-num">3</span>
+            </div>
+          </li>
+          <li class="filter-title">
+            <div class="filter-link" data-filtertype="widget">(widget)组件
+              <span class="filter-num">2</span>
+            </div>
+          </li>
+          <li class="filter-title">
+            <div class="filter-link" data-filtertype="layout">(layout)组件布局
+              <span class="filter-num">1</span>
+            </div>
+          </li>
+        </ul>
+      </sidebar>
+      <div class="filter-item-wrap">
+        <div class="filter-item" data-filtertype="widget">
+          <span>(widget)组件新增</span>
+        </div>
+        <div class="filter-item" data-filtertype="layout">
+          <span>(layout)广告组件 layout 升级</span>
+        </div>
+        <div class="filter-item" data-filtertype="widget">
+          <span>(widget)测试版发布</span>
+        </div>
+      </div>
+    </mip-filter>
+    <p style="text-align:left;font-size:18px;margin-top:20px;color: green">自定义筛选文字</p>
+    <p style="text-align:left;margin-bottom:10px;color:gray">下方示例中，`mip-filter-filterText="您已经选择："`。
+    </p>
+    <mip-filter mip-filter-filterWrap=".filter" mip-filter-itemWrap=".filter-item-wrap" mip-filter-enableHash="false" mip-filter-filterText="您已经选择：">
+      <sidebar class="filter">
+        <div class="filter-result"></div>
+        <ul class="filter-list">
+          <li class="filter-title">
+            <div class="filter-link" data-filtertype="all">(all)查看全部
+              <span class="filter-num">3</span>
+            </div>
+          </li>
+          <li class="filter-title">
+            <div class="filter-link" data-filtertype="widget">(widget)组件
+              <span class="filter-num">2</span>
+            </div>
+          </li>
+          <li class="filter-title">
+            <div class="filter-link" data-filtertype="layout">(layout)组件布局
+              <span class="filter-num">1</span>
+            </div>
+          </li>
+        </ul>
+      </sidebar>
+      <div class="filter-item-wrap">
+        <div class="filter-item" data-filtertype="widget">
+          <span>(widget)组件新增</span>
+        </div>
+        <div class="filter-item" data-filtertype="layout">
+          <span>(layout)广告组件 layout 升级</span>
+        </div>
+        <div class="filter-item" data-filtertype="widget">
+          <span>(widget)测试版发布</span>
+        </div>
+      </div>
+    </mip-filter>
+  </div>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-filter/mip-filter.js"></script>
+</body>
+
+</html>
