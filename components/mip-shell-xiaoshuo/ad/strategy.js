@@ -94,7 +94,6 @@ export default class Strategy {
    * 异步获取广告的展示策略.
    *
    * @todo 后期异步的获取相关的广告策略
-   * @async 异步获取相广告策略
    */
   asyncUpdataStrategy () {
     // TODO:fetch请求后端接口获取广告策略
