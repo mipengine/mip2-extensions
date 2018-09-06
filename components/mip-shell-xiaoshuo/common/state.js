@@ -16,7 +16,7 @@ export default (currentWindow) => {
       *
       * @returns {string} 熊掌号id
       */
-    officeId: officeId,
+    officeId,
     // 获取html head 中json-ld 配置
     /**
       * 返回当前页面的原始URL
