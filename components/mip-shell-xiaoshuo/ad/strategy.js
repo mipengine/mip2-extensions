@@ -23,12 +23,15 @@ export default class Strategy {
   strategyStatic () {
     // 修改出广告的策略
     let currentWindow = this.getCurrentWindow()
-    const {isLastPage, currentPage, chapterName, rootPageId} = state(currentWindow)
+    const {isLastPage, currentPage, chapterName, rootPageId, originalUrl} = state(currentWindow)
+    const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
     let novelData = {
-      isLastPage: isLastPage,
+      isLastPage,
       chapter: currentPage.chapter,
       page: currentPage.page,
-      chapterName: chapterName
+      chapterName,
+      originalUrl,
+      name
     }
     this.changeStrategy()
     // 全局的广告
