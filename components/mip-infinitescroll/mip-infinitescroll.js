@@ -45,6 +45,7 @@ export default class MipInfiniteScroll extends CustomElement {
       loadingHtml: '加载中...',
       loadFailHtml: '加载失败',
       loadOverHtml: '加载完毕!',
+      renderTplFailHtml: '渲染模板失败',
       timeout: 5000
     }
 
@@ -92,11 +93,12 @@ export default class MipInfiniteScroll extends CustomElement {
               resolve(htmls)
               self.params.pn++
               self.url = self.getUrl(src)
-            }).catch(() => {
-              console.error('模板渲染失败')
+            }, function () {
+              // 模板失败时，显示“renderTplFailHtml（渲染模板失败）”
+              reject(new Error(self.params.renderTplFailHtml))
             })
           }
-        }, function (data) {
+        }, function () {
           // 数据加载失败或超时，显示“loadFailHtml（加载超时）”
           reject(new Error(self.params.loadFailHtml))
         })
