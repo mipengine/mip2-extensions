@@ -82,6 +82,12 @@ export default class Strategy {
     return pageInfo.targetWindow
   }
 
+  /**
+   * 根据当前页面类型以及是否初次进入内容页判断是否发送静默关注请求
+   *
+   * @param {boolean} isRootPage 是否是第一次实例化的页面
+   * @returns {boolean} 后端拿到true可以发送，false则反之
+   */
   getSilentFollow (isRootPage) {
     let silentFollow = false
     if (this.rootPageType === 'page') {
