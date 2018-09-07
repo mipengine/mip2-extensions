@@ -85,15 +85,12 @@ export default class Strategy {
     if (this.rootPageType === 'page') {
       silentFollow = isRootPage
       return silentFollow
-    } else {
-      if (window.MIP.mipshellXiaoshuo.currentPageMeta.pageType === 'page') {
-        if (this.firstInPage) {
-          silentFollow = true
-          this.firstInPage = false
-        }
-      }
-      return silentFollow
     }
+    if (window.MIP.mipshellXiaoshuo.currentPageMeta.pageType === 'page' && this.firstInPage) {
+      silentFollow = true
+      this.firstInPage = false
+    }
+    return silentFollow
   }
 
   /**
