@@ -27,22 +27,22 @@ export default class Strategy {
     let currentWindow = this.getCurrentWindow()
     const {isLastPage, currentPage, chapterName, rootPageId, originalUrl, isRootPage} = state(currentWindow)
     const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
-    let officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId
-    let silentFollow = false
+    let officeId, silentFollow
+    try {
+      officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId
+      if (!officeId) {
+        throw new Error('mip-shell-xiaoshuo配置错误，请检查 application/json -> routes -> meta -> officeId')
+      }
+      if (!window.MIP.mipshellXiaoshuo.currentPageMeta.pageType) {
+        throw new Error('mip-shell-xiaoshuo配置错误，请检查 application/json -> routes -> meta -> pageType')
+      }
+    } catch (error) {
+      console.error(error)
+    }
     if (isRootPage) {
       this.rootPageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType
     }
-    if (this.rootPageType === 'page') {
-      silentFollow = isRootPage
-    } else {
-      if (window.MIP.mipshellXiaoshuo.currentPageMeta.pageType === 'page') {
-        if (this.firstInPage) {
-          silentFollow = true
-          this.firstInPage = false
-        }
-      }
-    }
-    console.log(silentFollow)
+    silentFollow = this.getSilentFollow(isRootPage)
     let novelData = {
       isLastPage,
       chapter: currentPage.chapter,
@@ -51,7 +51,7 @@ export default class Strategy {
       originalUrl,
       name,
       officeId,
-      silentFollow: silentFollow
+      silentFollow
     }
     this.changeStrategy()
     // 全局的广告
@@ -83,6 +83,22 @@ export default class Strategy {
     let pageId = window.MIP.viewer.page.currentPageId
     let pageInfo = window.MIP.viewer.page.getPageById(pageId)
     return pageInfo.targetWindow
+  }
+
+  getSilentFollow (isRootPage) {
+    let silentFollow = false
+    if (this.rootPageType === 'page') {
+      silentFollow = isRootPage
+      return silentFollow
+    } else {
+      if (window.MIP.mipshellXiaoshuo.currentPageMeta.pageType === 'page') {
+        if (this.firstInPage) {
+          silentFollow = true
+          this.firstInPage = false
+        }
+      }
+      return silentFollow
+    }
   }
 
   /**
