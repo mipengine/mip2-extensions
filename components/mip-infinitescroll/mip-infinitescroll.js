@@ -84,15 +84,17 @@ export default class MipInfiniteScroll extends CustomElement {
           // 数据加载成功，请求返回
           if (data && parseInt(data.status, 10) === 0 && data.data) {
             if (rn > self.params.rn || !data.data.items) {
+              resolve('NULL')
               return
             }
 
             templates.render(self.element, data.data.items).then(function (htmls) {
               resolve(htmls)
+              self.params.pn++
+              self.url = self.getUrl(src)
+            }).catch(() => {
+              console.error('模板渲染失败')
             })
-
-            self.params.pn++
-            self.url = self.getUrl(src)
           }
         }, function (data) {
           // 数据加载失败或超时，显示“loadFailHtml（加载超时）”
