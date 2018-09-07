@@ -7,6 +7,12 @@
 let { viewport, util } = MIP
 let { css, rect, dom } = util
 
+// 外部数据状态 0-无数据 1-默认(数据情况未知) 2-请求中 3-请求失败(网络原因)
+const STATUS_NODATA = 0
+const STATUS_DEFAULT = 1
+const STATUS_REQUESTING = 2
+const STATUS_REQUESTFAILURE = 3
+
 export default class InfiniteScroll {
   constructor (opt) {
     if (!opt.$result || !opt.$loading || !opt.pushResult) {
@@ -48,8 +54,7 @@ export default class InfiniteScroll {
       // 结果内容
       content: []
     }
-    // 外部数据状态 0-无数据 1-默认(数据情况未知) 2-请求中 3-请求失败(网络原因)
-    this.dataStatus = 1
+    this.dataStatus = STATUS_DEFAULT
     // 当前加载页码,firstResult存在0,否则-1
     this.currentLoadPage = (this.options.firstResult.length) ? 0 : -1
     // 当前用户可视区页码
@@ -163,8 +168,7 @@ export default class InfiniteScroll {
       // 当不支持orientation且返回高分屏尺寸时,这里会出bug
       verticalScreenWidth = Math.min(window.screen.width, window.screen.height)
     }
-    let result = this.options.$result
-    css(result, 'max-width', verticalScreenWidth + 'px')
+    css(this.options.$result, 'max-width', verticalScreenWidth + 'px')
   }
 
   _bindScroll () {
@@ -228,11 +232,11 @@ export default class InfiniteScroll {
       this.options.onLoadNewPage && this.options.onLoadNewPage(pn)
     }
     // 数据不够 && 数据状态为默认(!无数据 && !请求中 && !请求失败)
-    if (this.dataStatus === 1 && pn + this.options.preLoadPn >= dn) {
+    if (this.dataStatus === STATUS_DEFAULT && pn + this.options.preLoadPn >= dn) {
       // 调用cb:pushResult请求新数据,由于数据请求一般为异步,使用Promise对象处理(同时也兼容同步数据返回)
       let dataDeferred = this.options.pushResult((dn + 1) * this.options.pageResultNum, dn - pn)
       // 标记数据状态为请求中
-      this.dataStatus = 2
+      this.dataStatus = STATUS_REQUESTING
       let self = this
       dataDeferred.then(
         // 成功
@@ -240,11 +244,11 @@ export default class InfiniteScroll {
           // 处理新增数据
           if (newResultArr === false || newResultArr === 'NULL') {
             // 标记数据状态为无数据
-            self.dataStatus = 0
+            self.dataStatus = STATUS_NODATA
             self.options.$loading.innerHTML = self.options.loadOverHtml
           } else if (newResultArr.length) {
             // 标记数据状态为默认
-            self.dataStatus = 1
+            self.dataStatus = STATUS_DEFAULT
             // 将新数据合并入数据缓存中
             self.scrollPageCache.content = self.scrollPageCache.content.concat(self._separatePage(newResultArr))
             // trigger scroll事件,确保继续触发数据加载
@@ -253,11 +257,11 @@ export default class InfiniteScroll {
           // 失败
         }, function () {
           // 标记数据状态为请求失败
-          self.dataStatus = 3
+          self.dataStatus = STATUS_REQUESTFAILURE
           self.options.$loading.innerHTML = self.options.loadFailHtml
           self.once(self.options.$loading, 'click' + self.eventSpace, function () {
             // 标记数据状态为默认
-            self.dataStatus = 1
+            self.dataStatus = STATUS_DEFAULT
             self.options.$loading.innerHTML = self.options.loadingHtml
             // trigger scroll事件,重新触发数据加载
             viewport.trigger('scroll')

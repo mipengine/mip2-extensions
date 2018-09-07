@@ -73,33 +73,31 @@ export default class MipInfiniteScroll extends CustomElement {
       let defer = new Promise(function (resolve, reject) {
         if (rn > self.params.rn) {
           resolve('NULL')
-        } else {
-          window.fetchJsonp(self.url, {
-            jsonpCallback: 'callback',
-            timeout: self.params.timeout
-          }).then(function (res) {
-            return res.json()
-          }).then(function (data) {
-            // 数据加载成功，请求返回
-            if (data && parseInt(data.status, 10) === 0 && data.data) {
-              if (rn > self.params.rn || !data.data.items) {
-                resolve('NULL')
-              }
-
-              templates.render(self.element, data.data.items).then(function (htmls) {
-                resolve(htmls)
-              })
-
-              self.params.pn++
-              self.url = self.getUrl(src)
-            } else {
-              resolve('NULL')
-            }
-          }, function (data) {
-            // 数据加载失败或超时，显示“loadFailHtml（加载超时）”
-            reject(new Error(self.params.loadFailHtml))
-          })
+          return
         }
+        window.fetchJsonp(self.url, {
+          jsonpCallback: 'callback',
+          timeout: self.params.timeout
+        }).then(function (res) {
+          return res.json()
+        }).then(function (data) {
+          // 数据加载成功，请求返回
+          if (data && parseInt(data.status, 10) === 0 && data.data) {
+            if (rn > self.params.rn || !data.data.items) {
+              return
+            }
+
+            templates.render(self.element, data.data.items).then(function (htmls) {
+              resolve(htmls)
+            })
+
+            self.params.pn++
+            self.url = self.getUrl(src)
+          }
+        }, function (data) {
+          // 数据加载失败或超时，显示“loadFailHtml（加载超时）”
+          reject(new Error(self.params.loadFailHtml))
+        })
       })
       return defer
     }
@@ -117,6 +115,10 @@ export default class MipInfiniteScroll extends CustomElement {
       firstResult: [],
       pushResult: this.pushResult
     })
+  }
+
+  disconnectedCallback () {
+    this.infiniteScroll.destroy()
   }
 
   /**
