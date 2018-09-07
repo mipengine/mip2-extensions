@@ -16,6 +16,8 @@ export default class Strategy {
     this.fromSearch = 0
     this.novelData = {}
     this.shellReady = false
+    this.rootPageType = ''
+    this.firstInPage = true
   }
   /**
    * 根据当前的页面状态获取相关的广告策略
@@ -26,6 +28,21 @@ export default class Strategy {
     const {isLastPage, currentPage, chapterName, rootPageId, originalUrl, isRootPage} = state(currentWindow)
     const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
     let officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId
+    let silentFollow = false
+    if (isRootPage) {
+      this.rootPageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType
+    }
+    if (this.rootPageType === 'page') {
+      silentFollow = isRootPage
+    } else {
+      if (window.MIP.mipshellXiaoshuo.currentPageMeta.pageType === 'page') {
+        if (this.firstInPage) {
+          silentFollow = true
+          this.firstInPage = false
+        }
+      }
+    }
+    console.log(silentFollow)
     let novelData = {
       isLastPage,
       chapter: currentPage.chapter,
@@ -34,7 +51,7 @@ export default class Strategy {
       originalUrl,
       name,
       officeId,
-      silentFollow: isRootPage
+      silentFollow: silentFollow
     }
     this.changeStrategy()
     // 全局的广告
