@@ -27,14 +27,11 @@ export default class Strategy {
     let currentWindow = this.getCurrentWindow()
     const {isLastPage, currentPage, chapterName, rootPageId, originalUrl, isRootPage} = state(currentWindow)
     const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
-    let officeId, silentFollow
+    let officeId
     try {
       officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId
-      if (!officeId) {
-        throw new Error('mip-shell-xiaoshuo配置错误，请检查 application/json -> routes -> meta -> officeId')
-      }
-      if (!window.MIP.mipshellXiaoshuo.currentPageMeta.pageType) {
-        throw new Error('mip-shell-xiaoshuo配置错误，请检查 application/json -> routes -> meta -> pageType')
+      if (!officeId || !window.MIP.mipshellXiaoshuo.currentPageMeta.pageType) {
+        throw new Error('mip-shell-xiaoshuo配置错误，请检查 application/json -> routes -> meta -> officeId || pageType')
       }
     } catch (error) {
       console.error(error)
@@ -42,7 +39,7 @@ export default class Strategy {
     if (isRootPage) {
       this.rootPageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType
     }
-    silentFollow = this.getSilentFollow(isRootPage)
+    const silentFollow = this.getSilentFollow(isRootPage)
     let novelData = {
       isLastPage,
       chapter: currentPage.chapter,
