@@ -106,7 +106,6 @@ export default class InfiniteScroll {
     window.removeEventListener('resize' + eventSpace)
     // 注销loading上的点击事件
     this.options.$loading.removeEventListener('click' + eventSpace)
-    viewport.off('scroll', this.scrollHandler)
     // 删除cache数据
     this.scrollPageCache = null
   }
@@ -169,42 +168,40 @@ export default class InfiniteScroll {
   }
 
   _bindScroll () {
-    let self = this
-    let scrollHandler
-    viewport.on('scroll', function scrollHandler () {
+    viewport.on('scroll', () => {
       // 若为暂停状态,什么也不做
-      if (self.state === 'pause') {
+      if (this.state === 'pause') {
         return
       }
 
       // 获取当前滚动条位置
-      self.currentScrollTop = viewport.getScrollTop()
+      this.currentScrollTop = viewport.getScrollTop()
       // 某些浏览器(安卓QQ)滚动时会隐藏头部但不触发resize,需要反复获取
-      self.wrapperHeight = viewport.getHeight()
+      this.wrapperHeight = viewport.getHeight()
 
       // 到顶了
-      if (self.currentScrollTop <= 0) {
+      if (this.currentScrollTop <= 0) {
         // 执行回调
-        self.options.onScrollTop && self.options.onScrollTop().call(self)
+        this.options.onScrollTop && this.options.onScrollTop()
       }
 
       // 到底了
-      if (self.currentScrollTop >= self.scrollerHeight - self.wrapperHeight - self.options.bufferHeightPx) {
-        self._scrollBottomFn()
+      if (this.currentScrollTop >= this.scrollerHeight - this.wrapperHeight - this.options.bufferHeightPx) {
+        this._scrollBottomFn()
         // 执行回调
-        self.options.onScrollBottom && self.options.onScrollBottom().call(self)
+        this.options.onScrollBottom && this.options.onScrollBottom()
       }
 
       // 获取当前可视区页码
-      let currentShowPage = self.getShowPage()
+      let currentShowPage = this.getShowPage()
       // 若页码变化
-      if (self.currentShowPage !== currentShowPage) {
+      if (this.currentShowPage !== currentShowPage) {
         // 执行回调
-        self.options.onChangeShowPN && self.options.onChangeShowPN.call(self, currentShowPage, self.currentShowPage)
-        self.currentShowPage = currentShowPage
+        this.options.onChangeShowPN && this.options.onChangeShowPN(currentShowPage, this.currentShowPage)
+        this.currentShowPage = currentShowPage
         // 清理or回填dom
-        if (self.options.limitShowPn) {
-          self._cycleScrollElement(currentShowPage)
+        if (this.options.limitShowPn) {
+          this._cycleScrollElement(currentShowPage)
         }
       }
     })
@@ -213,8 +210,6 @@ export default class InfiniteScroll {
     if (this.currentScrollTop >= this.scrollerHeight - this.wrapperHeight - this.options.bufferHeightPx) {
       viewport.trigger('scroll')
     }
-
-    this.scrollHandler = scrollHandler
   }
 
   /**
