@@ -117,7 +117,7 @@ export default class Form {
     // 执行提交句柄
     this.submitHandle()
     // 校验输入内容是否合法
-    for (let item of inputs) {
+    inputs.forEach(item => {
       let type = item.getAttribute('validatetype')
       let target = item.getAttribute('validatetarget')
       let regval = item.getAttribute('validatereg')
@@ -140,7 +140,7 @@ export default class Form {
         util.css(element.querySelectorAll('div[target="' + target + '"]'), {display: (!reg ? 'block' : 'none')})
         preventSubmit = !reg ? true : preventSubmit
       }
-    }
+    })
 
     if (preventSubmit) {
       return
