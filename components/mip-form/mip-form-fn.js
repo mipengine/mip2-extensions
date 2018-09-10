@@ -3,9 +3,7 @@
  * @author duxiaonan@baidu.com (duxiaonan)
  */
 
-// let { templates, util, viewer } = MIP
 let { util, viewer } = MIP
-let { windowInIframe } = viewer
 let evt
 const REGS = {
   EMAIL: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
@@ -59,7 +57,7 @@ export default class Form {
    * @param {Object} event 事件对象
    */
   sendFormMessage (event) {
-    if (windowInIframe) {
+    if (viewer.isIframed) {
       // mip_video_jump 为写在外层的承接方法
       viewer.sendMessage('input-' + event, {})
     }
@@ -116,8 +114,7 @@ export default class Form {
     this.errorEle = element.querySelector('[submit-error]')
     // 执行提交句柄
     this.submitHandle()
-    // 校验输入内容是否合法
-    inputs.forEach(item => {
+    for (let item of inputs) {
       let type = item.getAttribute('validatetype')
       let target = item.getAttribute('validatetarget')
       let regval = item.getAttribute('validatereg')
@@ -125,7 +122,7 @@ export default class Form {
       let reg
 
       if (item.type === 'submit') {
-        return
+        break
       } else if (item.type === 'checkbox' || item.type === 'radio') {
         value = item.checked ? item.value : ''
       }
@@ -140,7 +137,7 @@ export default class Form {
         util.css(element.querySelectorAll('div[target="' + target + '"]'), {display: (!reg ? 'block' : 'none')})
         preventSubmit = !reg ? true : preventSubmit
       }
-    })
+    }
 
     if (preventSubmit) {
       return
