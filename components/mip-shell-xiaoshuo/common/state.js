@@ -15,19 +15,19 @@ export default (currentWindow) => {
     /**
       * 返回当前页面的原始URL
       *
-      * @returns {string} 当前页面的原始URL
+      * @type {string} 当前页面的原始URL
       */
     originalUrl: currentWindow.MIP.util.getOriginalUrl(),
     /**
       * 返回当前页面状态
       *
-      * @returns {Array} [1, 3] 第一章第三节
+      * @type {Array} [1, 3] 第一章第三节
       */
     isRootPage: currentWindow.MIP.viewer.page.isRootPage,
     /**
       * 返回当前页面状态
       *
-      * @returns {Array} {1, 3, id} 第一章,第三节,页面id(url)
+      * @type {Array} {1, 3, id} 第一章,第三节,页面id(url)
       */
     currentPage: {
       chapter: jsonld.currentPage.chapter,
@@ -37,7 +37,7 @@ export default (currentWindow) => {
     /**
       * 下一页状态
       *
-      * @returns {Object} {2, 1, id} 第二章,第一节,页面id(url)
+      * @type {Object} {2, 1, id} 第二章,第一节,页面id(url)
       */
     nextPage: {
       chapter: jsonld.nextPage && jsonld.nextPage.chapter,
@@ -47,7 +47,7 @@ export default (currentWindow) => {
     /**
       * 上一页状态
       *
-      * @returns {Object} {1, 2, id} 第一章,第二节,页面id(url)
+      * @type {Object} {1, 2, id} 第一章,第二节,页面id(url)
       */
     previousPage: {
       chapter: jsonld.previousPage && jsonld.previousPage.chapter,
@@ -57,26 +57,26 @@ export default (currentWindow) => {
     /**
       * 当前页是本章最后一页,
       *
-      * @returns {boolean} 是本章最后一页
+      * @type {boolean} 是本章最后一页
       */
     isLastPage: jsonld.currentPage.isLastPage,
 
     /**
       * 根页面/搜索点出 ID(Root Page ID)，通常为页面URL, 可以用于选择根页面定制化组件
       *
-      * @returns {string} 根页面ID(Root Page ID)
+      * @type {string} 根页面ID(Root Page ID)
       */
     rootPageId: currentWindow.MIP.viewer.page.pageId,
     /**
       * 当前页面的章名
       *
-      * @returns {string} 当前页面的章名
+      * @type {string} 当前页面的章名
       */
     chapterName: jsonld.currentPage.chapterName,
     /**
       * 当前页面是否是搜索结果点出
       *
-      * @returns {string} 当前页面是否是搜索结果点出
+      * @type {string} 当前页面是否是搜索结果点出
       */
     isFromSearch: currentWindow.MIP.viewer.page.pageId === currentWindow.MIP.viewer.page.currentPageId
   }
