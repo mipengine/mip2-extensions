@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    li {
+      margin:10px;
+      border: 1px solid #ccc;
+    }
+    p {
+      text-align: left;
+      font-size: 18px;
+      margin-top: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+<p>最简单用法</p>
+<mip-infinitescroll data-src="https://www.chuangyejia.vip/mip/list-new-mip?catid=0">
+  <template type="mip-mustache">
+    <li>
+      <p>{{title}}</p>
+    </li>
+  </template>
+  <div class="mip-infinitescroll-results"></div>
+  <div class="bg">
+    <div class="mip-infinitescroll-loading"></div>
+  </div>
+</mip-infinitescroll>
+
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="/mip-infinitescroll/mip-infinitescroll.js"></script>
+<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+</body>
+</html>
