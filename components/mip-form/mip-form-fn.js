@@ -146,8 +146,8 @@ export default class Form {
       return
     }
 
-    // 在iframe下使用mibm-jumplink，跳转显示手百框。 http-GET请求交给外层跳转
-    if (window.parent !== window && isHttp && isGet) {
+    // 在SF环境下使用mibm-jumplink，跳转显示原链接。 http-GET请求交给外层跳转
+    if (!MIP.standalone && isHttp && isGet) {
       let messageUrl = ''
       if (getUrl.match('\\?')) {
         // eg. getUrl == 'http://www.mipengine.org?we=123'
@@ -158,16 +158,13 @@ export default class Form {
         messageUrl = getUrl + '?' + valueJson
       }
       let message = {
-        event: 'mibm-jumplink',
-        data: {
-          url: messageUrl
-        }
+        url: messageUrl
       }
-      window.parent.postMessage(message, '*')
+      MIP.viewer.sendMessage('mibm-jumplink', message)
     } else if (hasFetch.trim()) {
       this.fetchUrl(hasFetch)
     } else {
-      // https请求 或 post请求 或 非iframe下不做处理
+      // https请求 或 post请求 或 非SF环境下不做处理
       element.getElementsByTagName('form')[0].submit()
     }
   }
