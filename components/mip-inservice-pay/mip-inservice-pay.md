@@ -16,26 +16,26 @@
 
 ```html
 <mip-data>
-    <script type="application/json">
-        {
-            "payConfig":{
-                "subject":"支付商品",
-                "fee": 300,
-                "sessionId":"c8fbd3e0-a617-4eac-84b3-1f289c5ce857",
-                "redirectUrl":"https://api.example.com/pay/verifypay",
-                "endpoint":{
-                    "baifubao":  "https://api.example.com/pay/baifubao",
-                    "alipay":  "https://api.example.com/pay/alipay",
-                    "weixin":  "https://api.example.com/pay/weixin"
-                },
-                "postData":{
-                    "orderId": 235,
-                    "token": "xxxx",
-                    "anydata":"anydata"
-                }
-            }
+  <script type="application/json">
+    {
+      "payConfig":{
+        "subject":"支付商品",
+        "fee": 300,
+        "sessionId":"c8fbd3e0-a617-4eac-84b3-1f289c5ce857",
+        "redirectUrl":"https://api.example.com/pay/verifypay",
+        "endpoint":{
+          "baifubao":  "https://api.example.com/pay/baifubao",
+          "alipay":  "https://api.example.com/pay/alipay",
+          "weixin":  "https://api.example.com/pay/weixin"
+        },
+        "postData":{
+          "orderId": 235,
+          "token": "xxxx",
+          "anydata":"anydata"
         }
-    </script>
+      }
+    }
+  </script>
 </mip-data>
 <mip-inservice-pay m-bind:pay-config="payConfig" id="payDialog"></mip-inservice-pay>
 <button on="tap:payDialog.toggle">确定支付</button>
@@ -107,18 +107,51 @@
 异常情况，`status` 非 `0` 时为失败：
 ```json
 {
-    "status": 403,
-    "msg":"支付错误信息"
+  "status": 403,
+  "msg":"支付错误信息"
 }
 ```
 
 成功：
+
+** 支付类型为 `nomal|alipay` 时**
+
 ```json
 {
-    "status": 0,
-    "data": {
-        "url": "https://付款链接"
-    }
+  "status": 0,
+  "data": {
+    "url": "https://付款链接"
+  }
+}
+```
+
+** 支付类型为 `weixin`时**
+
+- 微信外环境
+```json
+{
+  "status": 0,
+  "data": {
+    "url": "https://付款链接"
+  }
+}
+```
+
+- 微信内环境
+
+[微信内判断方法](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_5)
+```javascript
+{
+  "status": 0,
+  "data": {
+    "appId": "wx3dxxxxxxxx",
+    "timeStamp": "1527508907",
+    "nonceStr": "ASDFWSACSDCDSGA",
+    "package": "prepay_id=wx3dxxxxxxxx",
+    "signType": "MD5",
+    "paySign": "SADF98S0A9D00A9S09A0SDCASD",
+    "timestamp": "1527508907"
+  }
 }
 ```
 
@@ -126,7 +159,7 @@
 
 格式如：
 ```
-https://xiongzhang.baidu.com/opensc/payment.html?id=熊掌号ID&redirect=redirect_url=显示支付完成页面，必须是MIP页面
+https://xiongzhang.baidu.com/opensc/wps/payment?id=熊掌号ID&redirect=显示支付完成页面，必须是MIP页面
 ```
 
 

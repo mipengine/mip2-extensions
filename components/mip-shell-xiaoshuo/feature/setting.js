@@ -1,7 +1,7 @@
 // 默认配置
 let DEFAULTS = {
   theme: 'default',
-  fontSize: 3
+  fontSize: 3.5
 }
 let STORAGE_KEY = 'mip-shell-xiaoshuo-mode'
 let CustomStorage = MIP.util.customStorage
@@ -29,23 +29,25 @@ function __setConfig (config) {
 };
 
 // 更多设置：字体大小，背景颜色
-export const settingHtml = `
+export function settingHtml () {
+  return `
     <div class="mip-shell-xiaoshuo-control-fontsize">
         <ul>
-            <li class="reduce click-cursor" on="click:xiaoshuo-shell.changeFont(smaller)">A-</li>
+            <li><span class="reduce click-cursor" on="click:xiaoshuo-shell.changeFont(smaller)">A-</span></li>
             <li class="progress">
                 <input type="range" step="0.5" min="1" max="6" value="${__getConfig().fontSize}">
             </li>
-            <li class="increase click-cursor" on="click:xiaoshuo-shell.changeFont(bigger)">A+</li>
+            <li><span class="increase click-cursor" on="click:xiaoshuo-shell.changeFont(bigger)">A+</span></li>
         </ul>
     </div>
     <div class="mip-shell-xiaoshuo-control-theme">
         <ul>
             <li><span class="theme-default click-cursor" on="click:xiaoshuo-shell.changeMode(default)"></span></li>
-            <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
             <li><span class="theme-paper click-cursor" on="click:xiaoshuo-shell.changeMode(paper)"></span></li>
+            <li><span class="theme-green click-cursor" on="click:xiaoshuo-shell.changeMode(green)"></span></li>
         </ul>
     </div>`
+}
 
 // 改变背景色
 export class PageStyle {
@@ -65,22 +67,25 @@ export class PageStyle {
 
 // 改变字体大小
 export class FontSize {
-  constructor (element) {
-    this.element = element
-    this.fontInput = element.querySelector('input[type="range"]')
+  constructor () {
+    // 由于element会更新，不能直接保存  document.querySelector
+    // 为方便使用，只保存selector内容
+    this.elementSelector = '.mip-shell-footer-wrapper .mip-shell-xiaoshuo-control-fontsize'
   }
   // 获取当前滑块位置/字体大小
   _getInputValue () {
-    return parseFloat(this.fontInput.value)
+    let fontInput = document.querySelector(this.elementSelector + ' input[type="range"]')
+    return parseFloat(fontInput.value)
   }
   // 调整滑块位置和字体大小
   _setInputValue (value) {
-    this.min = parseInt(this.fontInput.getAttribute('min'))
-    this.max = parseInt(this.fontInput.getAttribute('max'))
+    let fontInput = document.querySelector(this.elementSelector + ' input[type="range"]')
+    this.min = parseInt(fontInput.getAttribute('min'))
+    this.max = parseInt(fontInput.getAttribute('max'))
     if (value > this.max || value < this.min) {
       return
     }
-    this.fontInput.value = value
+    fontInput.value = value
     // 计算字体大小后，广播告诉所有页面
     window.MIP.viewer.page.broadcastCustomEvent({
       name: 'changePageStyle', data: {fontSize: value}
@@ -98,14 +103,14 @@ export class FontSize {
   }
   // 绑定字体大小改变事件
   bindDragEvent () {
-    let me = this
+    let event = window.MIP.util.event
     // 拖动事件
-    this.element.addEventListener('touchmove', function (e) {
-      me._setInputValue(me._getInputValue())
+    event.delegate(document.documentElement, this.elementSelector + ' input[type="range"]', 'touchmove', () => {
+      this._setInputValue(this._getInputValue())
     })
     // 点击事件
-    this.element.addEventListener('click', function () {
-      me._setInputValue(me._getInputValue())
+    event.delegate(document.documentElement, this.elementSelector + ' input[type="range"]', 'click', () => {
+      this._setInputValue(this._getInputValue())
     })
   }
   // 显示小说字体设置bar

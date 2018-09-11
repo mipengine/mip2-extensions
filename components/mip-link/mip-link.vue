@@ -29,8 +29,8 @@ export default {
 
 <style scoped>
 .defaultClass {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   width: 100%;
   display: block;
   font-size: 14px;

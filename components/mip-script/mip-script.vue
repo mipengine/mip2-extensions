@@ -8,8 +8,10 @@ import generate from 'mip-sandbox/lib/generate-lite'
 import detect from 'mip-sandbox/lib/unsafe-detect'
 /* global mipDataPromises */
 /* global Promise */
+/* global fetch */
 
-const MAX_SIZE = 2048
+const SYNC_SIZE = 2
+const ASYNC_SIZE = 10
 
 function getSize (script) {
   return script.replace(/[^\x00-\xff]/g, 'aa').length // eslint-disable-line no-control-regex
@@ -36,32 +38,58 @@ function execute (ast, element) {
   element.remove()
 }
 
+function run (script, element) {
+  let ast
+  try {
+    ast = mark(script)
+  } catch (e) {
+    console.error('Fail to generate AST of script: ', e)
+    return
+  }
+  detectUnsafe(ast)
+
+  if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
+    Promise.all(mipDataPromises).finally(() => execute(ast, element))
+  } else {
+    execute(ast, element)
+  }
+}
+
 export default {
   connectedCallback (element) {
+    let src = element.getAttribute('src')
+    if (src) {
+      fetch(src)
+        .then(res => {
+          if (res.ok) {
+            res.text().then(data => {
+              if (!data) {
+                return
+              }
+              if (getSize(script) > 1024 * ASYNC_SIZE) {
+                console.error(`WARNING: ASYNC <mip-script> is out of range. Src: ${src}. Please keep it under ${ASYNC_SIZE}KB`)
+                return
+              }
+              run(data, element)
+            })
+          } else {
+            console.error(`Fetch script ${src} failed!`)
+          }
+        })
+        .catch(console.error)
+    }
+
     let script = element.textContent.trim()
 
     if (!script) {
       return
     }
-    if (getSize(script) > MAX_SIZE) {
-      console.error(`WARNING: <mip-script> is out of range.Please keep it under 2KB`)
+    if (getSize(script) > 1024 * SYNC_SIZE) {
+      console.error(`WARNING: <mip-script> is out of range.Please keep it under ${SYNC_SIZE}KB`)
       return
     }
 
-    let ast
-    try {
-      ast = mark(script)
-    } catch (e) {
-      console.error('Fail to generate AST of script: ', e)
-      return
-    }
-    detectUnsafe(ast)
-
-    if (/MIP.watch/.test(script) && mipDataPromises && mipDataPromises.length) {
-      Promise.all(mipDataPromises).finally(() => execute(ast, element))
-    } else {
-      execute(ast, element)
-    }
+    run(script, element)
   },
 
   prerenderAllowed () {

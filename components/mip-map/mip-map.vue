@@ -4,6 +4,7 @@
 <template>
   <div
     id="allmap"
+    :class="{hideMap: hideMap}"
     class="wrapper"
   />
 </template>
@@ -33,7 +34,15 @@ export default {
         return null
       }
     },
+    getPosition: {
+      type: Boolean,
+      default: false
+    },
     dataOnlyGetSdk: {
+      type: Boolean,
+      default: false
+    },
+    hideMap: {
       type: Boolean,
       default: false
     }
@@ -42,7 +51,8 @@ export default {
     return {
       map: null,
       point: {},
-      marker: null
+      marker: null,
+      currentMarker: null
     }
   },
   firstInviewCallback () {
@@ -51,7 +61,7 @@ export default {
   methods: {
     init () {
       this.getMapJDK().then(() => {
-        this.handleResult()
+        this.resolveOptions()
       })
     },
 
@@ -81,10 +91,55 @@ export default {
     },
 
     /**
-     * 初始化地图并加载控件
+     * 根据配置执行相应方法
      *
      */
-    handleResult () {
+    resolveOptions () {
+      let BMap = window.BMap
+
+      // 仅加载SDK，不初始化地图
+      if (this.dataOnlyGetSdk) {
+        return this.loadSdk()
+      }
+
+      // 初始化地图
+      this.map = new BMap.Map('allmap')
+      this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 15)
+
+      // 隐藏地图
+      this.hideMap && this.hideMapView()
+
+      // 自动定位、或者手动定位
+      this.getPosition ? this.getCurrentLocation() : this.searchLocation()
+
+      // 暴露自动定位方法
+      this.$on('getLocal', () => {
+        // 可能会在未完全初始化的时候调用
+        this.getMapJDK().then(() => {
+          this.getCurrentLocation()
+        })
+      })
+      // 配置控件
+      this.controls && this.addControls()
+    },
+
+    /**
+     * 隐藏地图
+     *
+     */
+    hideMapView () {
+      let mipMap = this.$element
+      MIP.util.css(mipMap, {
+        width: 0,
+        height: 0
+      })
+    },
+
+    /**
+     * 仅加载sdk
+     *
+     */
+    loadSdk () {
       let BMap = window.BMap
 
       // BMap注入沙盒
@@ -97,39 +152,50 @@ export default {
 
       // 派发事件
       this.$emit('loaded', {})
-
-      // 仅加载SDK，不初始化地图
-      if (this.dataOnlyGetSdk) {
-        return
-      }
-
-      // 初始化地图
-      this.map = new BMap.Map('allmap')
-      this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 15)
-
-      // 创建地址解析器实例
-      let address = this.traverseAndConcat(this.location)
-      if (address && this.location.city) {
-        this.handlePoint()
-      }
     },
 
     /**
-     * 处理定位的函数
+     * 自动定位
      *
      */
-    handlePoint () {
+    getCurrentLocation () {
+      let BMap = window.BMap
+      let geolocation = new BMap.Geolocation()
+      geolocation.getCurrentPosition((res) => {
+        // 无定位权限
+        if (!res.accuracy) {
+          return this.$emit('getPositionFailed', res)
+        } else if (geolocation.getStatus() === window.BMAP_STATUS_SUCCESS) {
+          this.currentMarker = new BMap.Marker(res.point)
+          this.map.addOverlay(this.currentMarker)
+          this.map.panTo(res.point)
+
+          // 派发事件
+          this.$emit('getPositionComplete', res)
+        }
+      }, { enableHighAccuracy: true })
+    },
+
+    /**
+     * 定位至local配置的位置
+     *
+     */
+    searchLocation () {
       let BMap = window.BMap
       let { location, map } = this
 
       // 配置地址
       let address = this.traverseAndConcat(location)
-      if (!address) {
+
+      // 没有定位信息，则使用自动定位
+      if (!address || !this.location.city) {
+        this.getCurrentLocation()
+        this.$emit('searchLocalFailed', {})
         return
       }
       let options = {
         onSearchComplete: results => {
-          if (local.getStatus() !== 0) {
+          if (local.getStatus() !== window.BMAP_STATUS_SUCCESS) {
             return
           }
           let firstResult = results.getPoi(0)
@@ -143,9 +209,7 @@ export default {
           map.centerAndZoom(point, 15)
 
           // 配置弹层
-          this.handleInfoWindow()
-          // 配置控件
-          this.handleControls()
+          this.setInfoWindow()
         }
       }
 
@@ -158,7 +222,7 @@ export default {
      * 配置弹层信息
      *
      */
-    handleInfoWindow () {
+    setInfoWindow () {
       let BMap = window.BMap
       let { info, map, marker, point } = this
       if (!info) {
@@ -174,7 +238,7 @@ export default {
      * 配置地图控件
      *
      */
-    handleControls () {
+    addControls () {
       let BMap = window.BMap
       let { controls, map } = this
       for (let key in controls) {
@@ -210,6 +274,12 @@ export default {
 #allmap {
   width: 100%;
   height: 100%;
+
+  &.hideMap {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+  }
   // mip核心css 会覆盖地图定位图片样式
   & /deep/ img {
     width: auto;

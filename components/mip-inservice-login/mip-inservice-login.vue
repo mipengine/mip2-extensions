@@ -44,7 +44,14 @@ export default {
        *
        * @type {boolean}
        */
-      isLogin: false
+      isLogin: false,
+
+      /**
+       * 是否要在页面显示的时候查询登录状态，默认需要
+       *
+       * @type {boolean}
+       */
+      doAutoQuery: true
     }
   },
   created () {
@@ -52,6 +59,9 @@ export default {
     this.checkConfig()
     // 清空登录update
     util.store.remove(this.config.endpoint + '_login_handle')
+  },
+  prerenderAllowed () {
+    return true
   },
   mounted () {
     // 熊掌号sdk
@@ -83,26 +93,60 @@ export default {
         let args = str.split(',')
         this.login(...args)
       })
+
       this.$element.customElement.addEventAction('logout', () => {
         this.logout()
       })
+
+      window.addEventListener('show-page', e => {
+        // 如果不在进行登录状态的更新中
+        if (this.doAutoQuery) {
+          // 页面返回重新触发一遍查询
+          this.getUserInfo().then(() => {
+            if (this.config.autologin && !this.isLogin) {
+              // TODO,抛出事件，让业务方自己处理
+              this.$emit('autoLoginCancel')
+            }
+          })
+        }
+      })
+
       window.addEventListener('inservice-auth-logined', e => {
+        // 标示在进行登录数据的更新
+        this.doAutoQuery = false
         // 开始进行数据更新
         this.updateLogin(e.detail[0])
       })
+
       window.addEventListener('inservice-auth-data-updated', e => {
         let res = e.detail[0]
         // 没设置过就执行
         if (this.sessionId !== res.data.sessionId) {
+          // 标示在进行登录数据的更新
+          this.doAutoQuery = false
           this.loginHandle('login', true, res.data.userInfo, res.origin)
           // 更新数据哦
           this.setData()
         }
       })
+
+      let self = this
+
+      window.cambrian.init({
+        data: { simpleInit: true },
+        success () {
+          window.cambrian.addListener('xzh-open-log', e => {
+            util.log({
+              action: e.action,
+              ext: e.ext,
+              xzhid: self.config.appid
+            })
+          })
+        }
+      })
     },
     updateLogin (data) {
       let key = this.config.endpoint + '_login_handle'
-      let self = this
 
       // 先从store里取状态，看当前是否存在已经在查询状态的实例
       let logProcess = util.store.get(key)
@@ -111,7 +155,7 @@ export default {
       // 如果没有，开启一次状态更新
       if (!logProcess) {
         util.store.set(key, 'pending')
-        return self.getUserInfo({
+        return this.getUserInfo({
           code,
           origin,
           callbackurl: callbackurl || (util.getSourceFormatUrl())
@@ -121,14 +165,16 @@ export default {
             name: 'inservice-auth-data-updated',
             data: {
               data: {
-                isLogin: self.isLogin,
-                userInfo: self.userInfo,
-                sessionId: self.sessionId
+                isLogin: this.isLogin,
+                userInfo: this.userInfo,
+                sessionId: this.sessionId
               },
               origin
             }
           })
           util.store.set(key, 'finish')
+        }).catch(err => {
+          throw err
         })
       }
     },
@@ -138,26 +184,36 @@ export default {
     checkConfig () {
       let config = this.config
       let hasError = false
+      let code = 0
 
       if (!config.clientId) {
+        code = 1
         this.error('组件必选属性 clientId 为空')
         hasError = true
       }
       if (!config.endpoint) {
+        code = 2
         this.error('组件必选属性 endpoint 为空')
         hasError = true
       } else if (!/^(https:)?\/\//.test(config.endpoint)) {
+        code = 3
         this.error('组件必选属性 endpoint 必须以 https:// 或者 // 开头')
         hasError = true
       }
 
       // 如果有 mip-bind 则必须有组件id -- 之后补充
       if (typeof MIP.setData === 'function' && !config.id) {
+        code = 4
         this.error('和 mip-bind 配合使用必须设置登录组件 id')
         hasError = true
       }
 
       if (hasError) {
+        util.log({
+          action: 'login_init_error',
+          ext: { code },
+          xzhid: this.config.appid
+        })
         throw new TypeError('[mip-inservice-login] 组件参数检查失败')
       }
     },
@@ -175,9 +231,15 @@ export default {
      * @param {string=} redirectUri 登录成功后的重定向地址
      * @param {string=} origin 发起登录操作的来源标示
      * @param {boolean=} replace 重定向的地址是否要replace当前地址，默认为false
-     * @return {undefined}
+     * @returns {undefined} 结果
      */
     login (redirectUri, origin = '', replace = false) {
+      util.log({
+        action: 'invoke_login',
+        ext: { isLogin: this.isLogin ? 1 : 0 },
+        xzhid: this.config.appid
+      })
+
       // 当前页面的url
       let url = redirectUri || this.config.redirectUri
 
@@ -224,6 +286,7 @@ export default {
         },
         success (data) {
           // 弹窗情况会进入该回调
+          self.doAutoQuery = false
           // 是返回原页面，就进行事件通知
           self.updateLogin({
             code: data.result.code,
@@ -236,10 +299,19 @@ export default {
                 { isMipLink: true, replace }
               )
             }
+          }).catch(err => {
+            throw err
           })
         },
         fail (data) {
           console.error(data.msg)
+        },
+        complete (data) {
+          // 单词拼错，待依赖的文件升级再修改
+          if (data.msg === 'oauth:cancel' && self.config.autologin) {
+            // TODO,抛出事件，让业务方自己处理
+            self.$emit('autoLoginCancel')
+          }
         }
       })
     },
@@ -249,6 +321,11 @@ export default {
      */
     logout () {
       let self = this
+
+      util.log({
+        action: 'invoke_logout',
+        xzhid: self.config.appid
+      })
 
       if (!self.isLogin) {
         return
@@ -282,9 +359,9 @@ export default {
     /**
      * 登录统一处理
      *
-     * @param  {string}  name    事件名称
-     * @param  {boolean} isLogin 是否登录
-     * @param  {Object|undefined}  data    用户数据
+     * @param {string}  name    事件名称
+     * @param {boolean} isLogin 是否登录
+     * @param {Object|undefined}  data    用户数据
      * @param {string=} origin 触发登录方法的来源标示
      */
     loginHandle (name, isLogin, data, origin) {
@@ -296,8 +373,8 @@ export default {
     /**
      * 触发事件
      *
-     * @param  {string} name  事件名称
-     * @param {string=} state 触发登录方法的来源标示
+     * @param {string} name  事件名称
+     * @param {string=} origin 触发登录方法的来源标示
      */
     trigger (name, origin = '') {
       let event = {
@@ -354,11 +431,24 @@ export default {
 
         if (data.type === 'login') {
           if (res.status === 0 && fn.isPlainObject(res.data)) {
+            util.log({
+              action: 'login_success',
+              xzhid: self.config.appid
+            })
             self.loginHandle('login', true, res.data, origin)
           } else {
+            util.log({
+              action: 'login_error',
+              ext: { code: res.status },
+              xzhid: self.config.appid
+            })
             throw new Error('登录失败', res)
           }
         } else if (res.status === 0 && res.data) {
+          util.log({
+            action: 'login_check_success',
+            xzhid: self.config.appid
+          })
           self.loginHandle('login', true, res.data, origin)
         }
 
