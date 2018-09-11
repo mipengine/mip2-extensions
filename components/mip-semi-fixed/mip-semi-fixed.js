@@ -39,7 +39,7 @@ export default class MipSemiFixed extends CustomElement {
     this.fixedClassNames = ' ' + element.getAttribute('fixedClassNames')
     this.container.setAttribute(STATUS.STATUS_SCROLL, '')
 
-    // iframe 中
+    // SF环境中
     if (!MIP.standalone && util.platform.isIos()) {
       try {
         let wrapp = fixedElement._fixedLayer.querySelector('#' + element.id)
