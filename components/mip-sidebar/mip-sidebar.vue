@@ -24,24 +24,28 @@
   display: none;
 }
 
-mip-sidebar[side="left"] .fold-enter-active {
-  -webkit-animation: sidebarLeftOpen 233ms cubic-bezier(0, 0, 0.21, 1);
-  animation: sidebarLeftOpen 233ms cubic-bezier(0, 0, 0.21, 1);
+mip-sidebar[side='left'] .fold-enter,
+mip-sidebar[side='left'] .fold-leave-to {
+  opacity: 0;
+  transform: translateX(-100%);
 }
 
-mip-sidebar[side="left"] .fold-leave-active {
-  -webkit-animation: sidebarLeftLeave 233ms cubic-bezier(0, 0, 0.21, 1);
-  animation: sidebarLeftLeave 233ms cubic-bezier(0, 0, 0.21, 1);
+mip-sidebar[side='left'] .fold-enter-active,
+mip-sidebar[side='left'] .fold-leave-active {
+  -webkit-transition: all 233ms cubic-bezier(0, 0, 0.21, 1);
+  transition: all 233ms cubic-bezier(0, 0, 0.21, 1);
 }
 
-mip-sidebar[side="right"] .fold-enter-active {
-  -webkit-animation: sidebarRightOpen 233ms cubic-bezier(0, 0, 0.21, 1);
-  animation: sidebarRightOpen 233ms cubic-bezier(0, 0, 0.21, 1);
+mip-sidebar[side='right'] .fold-enter-active,
+mip-sidebar[side='right'] .fold-leave-active {
+  -webkit-transition: all 233ms cubic-bezier(0, 0, 0.21, 1);
+  transition: all 233ms cubic-bezier(0, 0, 0.21, 1);
 }
 
-mip-sidebar[side="right"] .fold-leave-active {
-  -webkit-animation: sidebarRightLeave 233ms cubic-bezier(0, 0, 0.21, 1);
-  animation: sidebarRightLeave 233ms cubic-bezier(0, 0, 0.21, 1);
+mip-sidebar[side='right'] .fold-enter,
+mip-sidebar[side='right'] .fold-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
 }
 
 .sidebar {
@@ -60,54 +64,14 @@ mip-sidebar[side="right"] .fold-leave-active {
   overflow-y: auto !important;
   z-index: 9999 !important;
   -webkit-overflow-scrolling: touch;
-  will-change: transform;
   display: block;
 }
 
-@keyframes sidebarLeftOpen {
-  0% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@keyframes sidebarLeftLeave {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-}
-@keyframes sidebarRightOpen {
-  0% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@keyframes sidebarRightLeave {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-}
 @keyframes sidebarMaskShow {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -145,7 +109,8 @@ export default {
   data () {
     return {
       isOpen: false,
-      Runing: false
+      runing: false,
+      side: null
     }
   },
   mounted () {
@@ -154,14 +119,13 @@ export default {
   },
   methods: {
     init () {
-      let self = this
-      self.side = self.$element.getAttribute('side')
-      if (self.side !== 'left' && self.side !== 'right') {
-        self.side = 'left'
-        self.$element.setAttribute('side', self.side)
+      this.side = this.$element.getAttribute('side')
+      if (this.side !== 'left' && this.side !== 'right') {
+        this.side = 'left'
+        this.$element.setAttribute('side', this.side)
       }
-      if (!self.isOpen) {
-        self.$element.setAttribute('aria-hidden', 'true')
+      if (!this.isOpen) {
+        this.$element.setAttribute('aria-hidden', 'true')
       }
     },
     bindEvents () {
@@ -185,8 +149,9 @@ export default {
       }
       util.css(this.$element, { display: 'block' })
       this.isOpen = !this.isOpen
+
       setTimeout(() => {
-        this.Runing = !this.Runing
+        this.runing = !this.runing
       }, ANIMATION_TIMEOUT)
       this.bodyOverflow = getComputedStyle(document.body).overflow
       document.body.style.overflow = 'hidden'
@@ -195,36 +160,37 @@ export default {
     /**
      * [close 关闭 sidebar和 mask]
      *
-     * @param  {Object} e 点击事件
+     * @param {Object} e 点击事件
      */
     close (e) {
-      let self = this
-      if (!self.Runing) {
+      if (!this.runing) {
         return
       }
       setTimeout(() => {
-        self.Runing = !self.Runing
+        this.runing = !this.runing
       }, ANIMATION_TIMEOUT)
-      self.isOpen = !self.isOpen
-      self.$element.setAttribute('aria-hidden', 'true')
-      document.body.style.overflow = self.bodyOverflow
+      this.isOpen = false
+      this.$element.setAttribute('aria-hidden', 'true')
+      document.body.style.overflow = this.bodyOverflow
       let closeTimer = setTimeout(() => {
-        util.css(self.$element, { display: 'none' })
+        util.css(this.$element, { display: 'none' })
         clearTimeout(closeTimer)
       }, ANIMATION_TIMEOUT)
-      if (self.Runing) {
+      if (this.runing) {
         return
       }
-      self.Runing = !self.Runing
+      this.runing = !this.runing
     },
     closeSidebar (e) {
       this.$emit('close', e)
     },
     /**
      * [toggle 打开或关闭 sidebar 入口]
+     *
+     * @param {Object} e 事件
      */
-    toggle (event) {
-      this.isOpen ? this.close(this, event) : this.open(this)
+    toggle (e) {
+      this.isOpen ? this.close(this, e) : this.open(this)
     }
   },
   prerenderAllowed () {
