@@ -5,8 +5,8 @@
  *     1. catalog数据支持异步获取
  */
 
-let util = MIP.util
 import state from '../common/state'
+let util = MIP.util
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
@@ -37,26 +37,26 @@ class Catalog {
   getCurrentPage () {
     const currentWindow = this.getCurrentWindow()
     const {currentPage} = state(currentWindow)
-    if(!this.isCatFetch) { //纵横目前为同步获取目录，依靠crid高亮定位，所以这就是目前纵横的逻辑
+    if (!this.isCatFetch) { // 纵横目前为同步获取目录，依靠crid高亮定位，所以这就是目前纵横的逻辑
       let crid = this.getLocationQuery().crid // 获取crid和currentPage.chapter判断是否一致
-      if(crid && crid == currentPage.chapter) {
+      if (crid && +crid === +currentPage.chapter) {
         return currentPage
       } else { // 不一致或者爱奇艺没有crid就不进行高亮操作。
         return false
       }
     } else {
-      //异步获取，标准逻辑，需要匹配currentPage的chapter与categoryList里的id。成功返回索引，否则false
+      // 异步获取，标准逻辑，需要匹配currentPage的chapter与categoryList里的id。成功返回索引，否则false
       let result = 1 // 匹配失败
       this.categoryList.forEach((item, index) => {
-        if(+item.id === +currentPage.chapter) { // 匹配成功
+        if (+item.id === +currentPage.chapter) { // 匹配成功
           result = currentPage
-          result.chapter = index + 1 //重写索引
+          result.chapter = index + 1 // 重写索引
         }
       })
       return result
     }
   }
-  
+
   /**
    * 通过浏览器地址栏url获取query参数
    *
@@ -248,7 +248,7 @@ class Catalog {
         section: currentPage.chapter,
         page: currentPage.page
       }
-      if(currentPage && currentPage !== 1) {
+      if (currentPage && currentPage !== 1) {
         catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
         if (reverseName.innerHTML === ' 倒序') {
           catalog[catLocation.section - 1].querySelector('a').classList.add('active')
@@ -300,10 +300,10 @@ class Catalog {
     }
     let currentPage = this.getCurrentPage()
     document.body.classList.add('body-forbid')
-    if(!currentPage) {
+    if (!currentPage) {
       console.error(new Error('链接里没有配置crid'))
       return
-    } else if(currentPage === 1) {
+    } else if (currentPage === 1) {
       console.error(new Error('请检查模板配置的currentPage.chapter是否与异步目录章节id匹配'))
       return
     }
