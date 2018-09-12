@@ -5,7 +5,12 @@
  *     1. catalog数据支持异步获取
  */
 
+import {
+  sendLog
+} from '../common/log'
 let util = MIP.util
+let readMethods = 'loading'
+let readCatalogStatus = 'loading'
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
@@ -15,12 +20,43 @@ class Catalog {
     this.nowCatNum = this.getLocationQuery().crid
   }
 
+  // 发送 搜索点出/二跳 日志  点击目录章节绑定发送日志函数
+  sendIsRootPageMessage () {
+    sendLog('interaction', {
+      isRootPage: false,
+      twice: 'catalog'
+    })
+  }
+
+  // 目录章节绑定发送日志函数
+  _bindMessageEvent () {
+    let self = this
+    let event = window.MIP.util.event
+    event.delegate(document.documentElement, '.novel-catalog-content .catalog-page-content', 'click', () => {
+      self.sendIsRootPageMessage()
+    })
+  }
+
+  // 稳定性：目录获取失败发送日志函数
+  _catalogFailMessageEvent (catalogs) {
+    let len = catalogs.length
+    readMethods = 'local'
+    !len || !catalogs[0].name || !catalogs[len - 1].name ? readCatalogStatus = false : readCatalogStatus = true
+    sendLog('stability', {
+      readCatalogStatus: readCatalogStatus,
+      readMethods: readMethods
+    })
+  }
+
+  // 根据配置渲染目录侧边栏到  mip-sidebar组件中
+  // 支持从页面直接获取目录，异步获取目录
+
   /**
-   * 通过浏览器地址栏url获取query参数
-   *
-   * @param {string=} url 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
-   * @returns {Object} 参数对象
-   */
+     * 通过浏览器地址栏url获取query参数
+     *
+     * @param {string=} url 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
+     * @returns {Object} 参数对象
+     */
   getLocationQuery (url) {
     url = url || location.href
     let query = url.split('?')[1] || ''
@@ -58,12 +94,12 @@ class Catalog {
   }
 
   /**
-   * 根据配置渲染目录侧边栏到  mip-sidebar组件中，支持从页面直接获取目录，异步获取目录
-   *
-   * @param {Array} catalogs constructor构造传入的变量config
-   * @param {Object} book 书本信息
-   * @returns {HTMLElement} $catalogSidebar 目录dom
-   */
+     * 根据配置渲染目录侧边栏到  mip-sidebar组件中，支持从页面直接获取目录，异步获取目录
+     *
+     * @param {Array} catalogs constructor构造传入的变量config
+     * @param {Object} book 书本信息
+     * @returns {HTMLElement} $catalogSidebar 目录dom
+     */
   _renderCatalog (catalogs, book) {
     let renderCatalog
     let isCatFetch = true
@@ -100,12 +136,14 @@ class Catalog {
           </div>
           </div>
         </div>
-        <!--<div class="scroll">-->
-        <!--</div>-->
       </div>
     `
     if (!catalogs) {
       // 目录配置为空
+
+    } else if (typeof catalogs === 'string') {
+      // 目录配置的是字符串，远程地址。需要异步获取
+      readMethods = 'async'
       isCatFetch = false
       MIP.sandbox.fetchJsonp('https://yq01-psdy-diaoyan1016.yq01.baidu.com:8001/novel/api/mipinfo?originUrl=http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1', {
         jsonpCallback: 'callback'
@@ -117,6 +155,9 @@ class Catalog {
     } else if (catalogs.length === 0) {
       // 目录的长度为0
     } else {
+      this.catalog = catalogs
+      this._catalogFailMessageEvent(catalogs)
+
       // 目录为数组，本地目录, 直接读取渲染
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
@@ -165,6 +206,8 @@ class Catalog {
       $catalogSidebar.removeChild($catalogSidebar.querySelector('.mip-shell-catalog'))
       $catalogSidebar.appendChild($catalog)
     }
+
+    this._bindMessageEvent()
     return $catalogSidebar
   }
 
