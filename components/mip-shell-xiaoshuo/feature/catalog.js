@@ -6,6 +6,7 @@
  */
 
 import state from '../common/state'
+import {getCurrentWindow} from '../common/util'
 let util = MIP.util
 class Catalog {
   constructor (config, book) {
@@ -19,23 +20,12 @@ class Catalog {
   }
 
   /**
-   * 获取当前页面的iframe
-   *
-   * @returns {window} 当前iframe的window
-   */
-  getCurrentWindow () {
-    let pageId = window.MIP.viewer.page.currentPageId
-    let pageInfo = window.MIP.viewer.page.getPageById(pageId)
-    return pageInfo.targetWindow
-  }
-
-  /**
    * 获取当前章节信息
    *
    * @returns {Object} 当前章节的信息
    */
   getCurrentPage () {
-    const currentWindow = this.getCurrentWindow()
+    const currentWindow = getCurrentWindow()
     const {currentPage} = state(currentWindow)
     if (!this.isCatFetch) { // 纵横目前为同步获取目录，依靠crid高亮定位，所以这就是目前纵横的逻辑
       let crid = this.getLocationQuery().crid // 获取crid和currentPage.chapter判断是否一致
@@ -138,6 +128,7 @@ class Catalog {
       </div>
       <div class="mip-shell-catalog mip-border mip-border-right">
         <div class="novel-catalog-content-wrapper">
+          <div class="net-err-info">因网络原因暂时无法获取目录</div>
           <div class="novel-catalog-content">
           </div>
           </div>
@@ -149,12 +140,17 @@ class Catalog {
     if (!catalogs) {
       // 目录配置为空
       this.isCatFetch = true
-      MIP.sandbox.fetchJsonp('http://yq01-psdy-diaoyan1016.yq01.baidu.com:8848/novel/api/mipinfo?originUrl=http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1', {
+      const originUrl = 'http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1'
+      // let originUrl = encodeURI(window.location.href) // 后期上线使用
+      MIP.sandbox.fetchJsonp('http://yq01-psdy-diaoyan1016.yq01.baidu.com:8848/novel/api/mipinfo?originUrl=' + originUrl, {
         jsonpCallback: 'callback'
       }).then(res => {
         return res.json()
       }).then(data => {
         this.renderCatalogCallBack(data, catalogs)
+      }).catch(err => {
+        console.log(err)
+        this.categoryList = false
       })
     } else if (catalogs.length === 0) {
       // 目录的长度为0
@@ -243,6 +239,13 @@ class Catalog {
       reverseName.innerHTML = reverseName.innerHTML === ' 正序' ? ' 倒序' : ' 正序'
       let catalog = $catalogContent.querySelectorAll('div')
       let $catWrapper = document.querySelector('.novel-catalog-content-wrapper')
+      if (!this.categoryList) {
+        util.css(document.querySelector('.net-err-info'), {
+          display: 'block'
+        })
+        console.log('netError')
+        return
+      }
       let currentPage = this.getCurrentPage()
       let catLocation = {
         section: currentPage.chapter,
@@ -297,6 +300,13 @@ class Catalog {
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     for (let i = 0; i < catalog.length; i++) {
       catalog[i].innerHTML = catalog[i].innerHTML
+    }
+    if (!this.categoryList) {
+      util.css(document.querySelector('.net-err-info'), {
+        display: 'block'
+      })
+      console.log('netError')
+      return
     }
     let currentPage = this.getCurrentPage()
     document.body.classList.add('body-forbid')
