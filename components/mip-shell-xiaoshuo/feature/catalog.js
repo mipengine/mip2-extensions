@@ -16,7 +16,7 @@ class Catalog {
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
-    this.nowCatNum = ''
+    this.nowCatNum = 1
   }
 
   /**
@@ -322,14 +322,14 @@ class Catalog {
       page: currentPage.page
     }
     if (reverseName.innerHTML === ' 正序') {
-      this.nowCatNum = catLocation.section
       catalog[catalog.length - this.nowCatNum].querySelector('a').classList.remove('active')
       catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
+      this.nowCatNum = catLocation.section
       $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop
     } else {
-      this.nowCatNum = catLocation.section
       catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
       catalog[catLocation.section - 1].querySelector('a').classList.add('active')
+      this.nowCatNum = catLocation.section
       $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
     }
   }
