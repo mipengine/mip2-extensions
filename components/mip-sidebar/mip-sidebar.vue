@@ -129,15 +129,14 @@ export default {
       }
     },
     bindEvents () {
-      let self = this
-      self.$on('toggle', function (event) {
-        self.toggle(self, event)
+      this.$on('toggle', e => {
+        this.toggle(this, e)
       })
-      self.$on('open', function () {
-        self.open(self)
+      this.$on('open', () => {
+        this.open(this)
       })
-      self.$on('close', function (event) {
-        self.close(self, event)
+      this.$on('close', e => {
+        this.close(this, e)
       })
     },
     /**
