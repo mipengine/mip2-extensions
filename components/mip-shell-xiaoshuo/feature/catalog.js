@@ -22,7 +22,7 @@ class Catalog {
   /**
    * 获取当前章节信息
    *
-   * @returns {Object} 当前章节的信息
+   * @returns {Object|undefined|string} 期望返回正确的章节信息，'matchErr'为站点chapter与目录匹配失败，undefined为没有配置crid（兼容纵横）
    */
   getCurrentPage () {
     const currentWindow = getCurrentWindow()
@@ -31,20 +31,18 @@ class Catalog {
       let crid = this.getLocationQuery().crid // 获取crid和currentPage.chapter判断是否一致
       if (crid && +crid === +currentPage.chapter) {
         return currentPage
-      } else { // 不一致或者爱奇艺没有crid就不进行高亮操作。
-        return false
       }
-    } else {
-      // 异步获取，标准逻辑，需要匹配currentPage的chapter与categoryList里的id。成功返回索引，否则false
-      let result = 1 // 匹配失败
-      this.categoryList.forEach((item, index) => {
-        if (+item.id === +currentPage.chapter) { // 匹配成功
-          result = currentPage
-          result.chapter = index + 1 // 重写索引
-        }
-      })
-      return result
+      return
     }
+    // 异步获取，标准逻辑，需要匹配currentPage的chapter与categoryList里的id。成功返回索引，否则false
+    let result = 'matchErr' // 匹配失败
+    this.categoryList.forEach((item, index) => {
+      if (+item.id === +currentPage.chapter) { // 匹配成功
+        result = currentPage
+        result.chapter = index + 1 // 重写索引
+      }
+    })
+    return result
   }
 
   /**
@@ -141,19 +139,16 @@ class Catalog {
       // 目录配置为空
       this.isCatFetch = true
       const originUrl = 'http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1'
-      // let originUrl = encodeURI(window.location.href) // 后期上线使用
+      // const originUrl = encodeURIComponent(window.location.href) // 后期上线使用
       MIP.sandbox.fetchJsonp('http://yq01-psdy-diaoyan1016.yq01.baidu.com:8848/novel/api/mipinfo?originUrl=' + originUrl, {
         jsonpCallback: 'callback'
-      }).then(res => {
-        return res.json()
-      }).then(data => {
-        this.renderCatalogCallBack(data, catalogs)
-      }).catch(err => {
-        console.log(err)
-        this.categoryList = false
-      })
-    } else if (catalogs.length === 0) {
-      // 目录的长度为0
+      }).then(res => res.json())
+        .then(data => {
+          this.renderCatalogCallBack(data, catalogs)
+        }).catch(err => {
+          console.error(new Error('网络异常'), err)
+          this.categoryList = false
+        })
     } else {
       // 目录为数组，本地目录, 直接读取渲染
       this.categoryList = catalogs
@@ -313,7 +308,7 @@ class Catalog {
     if (!currentPage) {
       console.error(new Error('链接里没有配置crid'))
       return
-    } else if (currentPage === 1) {
+    } else if (currentPage === 'matchErr') {
       console.error(new Error('请检查模板配置的currentPage.chapter是否与异步目录章节id匹配'))
       return
     }
