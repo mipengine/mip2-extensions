@@ -5,14 +5,44 @@
  *     1. catalog数据支持异步获取
  */
 
+import state from '../common/state'
+import {getCurrentWindow} from '../common/util'
 let util = MIP.util
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
+    this.categoryList = ''
+    this.isCatFetch = false
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
-    this.nowCatNum = this.getLocationQuery().crid
+    this.nowCatNum = 1
+  }
+
+  /**
+   * 获取当前章节信息
+   *
+   * @returns {Object|undefined|string} 期望返回正确的章节信息，'matchErr'为站点chapter与目录匹配失败，undefined为没有配置crid（兼容纵横）
+   */
+  getCurrentPage () {
+    const currentWindow = getCurrentWindow()
+    const {currentPage} = state(currentWindow)
+    if (!this.isCatFetch) { // 纵横目前为同步获取目录，依靠crid高亮定位，所以这就是目前纵横的逻辑
+      let crid = this.getLocationQuery().crid // 获取crid和currentPage.chapter判断是否一致
+      if (crid && +crid === +currentPage.chapter) {
+        return currentPage
+      }
+      return
+    }
+    // 异步获取，标准逻辑，需要匹配currentPage的chapter与categoryList里的id。成功返回索引，否则false
+    let result = 'matchErr' // 匹配失败
+    this.categoryList.forEach((item, index) => {
+      if (+item.id === +currentPage.chapter) { // 匹配成功
+        result = currentPage
+        result.chapter = index + 1 // 重写索引
+      }
+    })
+    return result
   }
 
   /**
@@ -46,6 +76,7 @@ class Catalog {
     let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
     let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
     catalogs = data.data.catalog.chapters
+    this.categoryList = data.data.catalog.chapters
     let renderCatalog = catalogs => catalogs.map(catalog => `
       <div class="catalog-page">
         <a class="mip-catalog-btn catalog-page-content"
@@ -66,7 +97,6 @@ class Catalog {
    */
   _renderCatalog (catalogs, book) {
     let renderCatalog
-    let isCatFetch = true
     let title = ''
     let chapterStatus = ''
     let chapterNumber = ''
@@ -96,6 +126,7 @@ class Catalog {
       </div>
       <div class="mip-shell-catalog mip-border mip-border-right">
         <div class="novel-catalog-content-wrapper">
+          <div class="net-err-info">因网络原因暂时无法获取目录</div>
           <div class="novel-catalog-content">
           </div>
           </div>
@@ -106,18 +137,21 @@ class Catalog {
     `
     if (!catalogs) {
       // 目录配置为空
-      isCatFetch = false
-      MIP.sandbox.fetchJsonp('https://yq01-psdy-diaoyan1016.yq01.baidu.com:8001/novel/api/mipinfo?originUrl=http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1', {
+      this.isCatFetch = true
+      const originUrl = 'http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1'
+      // const originUrl = encodeURIComponent(window.location.href) // 后期上线使用
+      MIP.sandbox.fetchJsonp('http://yq01-psdy-diaoyan1016.yq01.baidu.com:8848/novel/api/mipinfo?originUrl=' + originUrl, {
         jsonpCallback: 'callback'
-      }).then(res => {
-        return res.json()
-      }).then(data => {
-        this.renderCatalogCallBack(data, catalogs)
-      })
-    } else if (catalogs.length === 0) {
-      // 目录的长度为0
+      }).then(res => res.json())
+        .then(data => {
+          this.renderCatalogCallBack(data, catalogs)
+        }).catch(err => {
+          console.error(new Error('网络异常'), err)
+          this.categoryList = false
+        })
     } else {
       // 目录为数组，本地目录, 直接读取渲染
+      this.categoryList = catalogs
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
           <a class="mip-catalog-btn catalog-page-content"
@@ -144,7 +178,7 @@ class Catalog {
     let $catalog = $catalogSidebar.querySelector('.mip-shell-catalog')
     let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
     let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
-    if (isCatFetch) {
+    if (!this.isCatFetch) {
       $catalogContent.innerHTML = renderCatalog(catalogs)
       this.reverse($contentTop, $catalogContent)
     }
@@ -200,19 +234,33 @@ class Catalog {
       reverseName.innerHTML = reverseName.innerHTML === ' 正序' ? ' 倒序' : ' 正序'
       let catalog = $catalogContent.querySelectorAll('div')
       let $catWrapper = document.querySelector('.novel-catalog-content-wrapper')
-      let catLocation = {
-        section: this.getLocationQuery().crid,
-        page: this.getLocationQuery().pg
+      if (!this.categoryList) {
+        util.css(document.querySelector('.net-err-info'), {
+          display: 'block'
+        })
+        console.log('netError')
+        return
       }
-      catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
-      if (reverseName.innerHTML === ' 倒序') {
-        catalog[catLocation.section - 1].querySelector('a').classList.add('active')
-        this.nowCatNum = catLocation.section
-        $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
+      let currentPage = this.getCurrentPage()
+      let catLocation = {
+        section: currentPage.chapter,
+        page: currentPage.page
+      }
+      if (currentPage && currentPage !== 1) {
+        catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
+        if (reverseName.innerHTML === ' 倒序') {
+          catalog[catLocation.section - 1].querySelector('a').classList.add('active')
+          this.nowCatNum = catLocation.section
+          // $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop //定位，暂时去掉直接跳转到开始
+          $catWrapper.scrollTop = 0
+        } else {
+          catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
+          this.nowCatNum = catLocation.section
+          // $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop //定位，暂时去掉直接跳转到开始
+          $catWrapper.scrollTop = 0
+        }
       } else {
-        catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
-        this.nowCatNum = catLocation.section
-        $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop
+        $catWrapper.scrollTop = 0
       }
     })
   }
@@ -248,11 +296,26 @@ class Catalog {
     for (let i = 0; i < catalog.length; i++) {
       catalog[i].innerHTML = catalog[i].innerHTML
     }
-    let catLocation = {
-      section: this.getLocationQuery().crid,
-      page: this.getLocationQuery().pg
+    if (!this.categoryList) {
+      util.css(document.querySelector('.net-err-info'), {
+        display: 'block'
+      })
+      console.log('netError')
+      return
     }
+    let currentPage = this.getCurrentPage()
     document.body.classList.add('body-forbid')
+    if (!currentPage) {
+      console.error(new Error('链接里没有配置crid'))
+      return
+    } else if (currentPage === 'matchErr') {
+      console.error(new Error('请检查模板配置的currentPage.chapter是否与异步目录章节id匹配'))
+      return
+    }
+    let catLocation = {
+      section: currentPage.chapter,
+      page: currentPage.page
+    }
     if (reverseName.innerHTML === ' 正序') {
       catalog[catalog.length - this.nowCatNum].querySelector('a').classList.remove('active')
       catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
