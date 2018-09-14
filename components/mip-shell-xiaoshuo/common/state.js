@@ -2,7 +2,7 @@
  * @file 小说中的各种状态
  * @author JennyL, LiuJing
  */
-import getJsonld from './util'
+import {getJsonld} from './util'
 
 export default (currentWindow) => {
   const jsonld = getJsonld(currentWindow)

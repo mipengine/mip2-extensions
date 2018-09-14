@@ -17,7 +17,7 @@ import {
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import getJsonld from './common/util'
+import {getJsonld} from './common/util'
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
