@@ -32,13 +32,11 @@ mip-sidebar[side='left'] .fold-leave-to {
 
 mip-sidebar[side='left'] .fold-enter-active,
 mip-sidebar[side='left'] .fold-leave-active {
-  -webkit-transition: all 233ms cubic-bezier(0, 0, 0.21, 1);
   transition: all 233ms cubic-bezier(0, 0, 0.21, 1);
 }
 
 mip-sidebar[side='right'] .fold-enter-active,
 mip-sidebar[side='right'] .fold-leave-active {
-  -webkit-transition: all 233ms cubic-bezier(0, 0, 0.21, 1);
   transition: all 233ms cubic-bezier(0, 0, 0.21, 1);
 }
 
