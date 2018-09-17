@@ -138,7 +138,7 @@ class Catalog {
     if (!catalogs) {
       // 目录配置为空
       this.isCatFetch = true
-      const originUrl = encodeURIComponent(location.href) // 后期上线使用
+      const originUrl = encodeURIComponent(location.href)
       MIP.sandbox.fetchJsonp(' https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
         jsonpCallback: 'callback'
       }).then(res => res.json())
