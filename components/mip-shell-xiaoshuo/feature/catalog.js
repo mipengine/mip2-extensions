@@ -138,9 +138,8 @@ class Catalog {
     if (!catalogs) {
       // 目录配置为空
       this.isCatFetch = true
-      const originUrl = 'http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1'
-      // const originUrl = encodeURIComponent(window.location.href) // 后期上线使用
-      MIP.sandbox.fetchJsonp('http://yq01-psdy-diaoyan1016.yq01.baidu.com:8848/novel/api/mipinfo?originUrl=' + originUrl, {
+      const originUrl = encodeURIComponent(location.href) // 后期上线使用
+      MIP.sandbox.fetchJsonp(' https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
         jsonpCallback: 'callback'
       }).then(res => res.json())
         .then(data => {
