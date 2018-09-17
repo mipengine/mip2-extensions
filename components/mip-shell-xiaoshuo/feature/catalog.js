@@ -139,7 +139,7 @@ class Catalog {
       // 目录配置为空
       this.isCatFetch = true
       const originUrl = encodeURIComponent(MIP.util.getOriginalUrl())
-      MIP.sandbox.fetchJsonp(' https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
+      MIP.sandbox.fetchJsonp('https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
         jsonpCallback: 'callback'
       }).then(res => res.json())
         .then(data => {
@@ -154,7 +154,7 @@ class Catalog {
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
           <a class="mip-catalog-btn catalog-page-content"
-          mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
+          mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
           ${catalog.name}
           </a>
         </div>`).join('\n')
@@ -237,7 +237,6 @@ class Catalog {
         util.css(document.querySelector('.net-err-info'), {
           display: 'block'
         })
-        console.log('netError')
         return
       }
       let currentPage = this.getCurrentPage()
@@ -299,7 +298,6 @@ class Catalog {
       util.css(document.querySelector('.net-err-info'), {
         display: 'block'
       })
-      console.log('netError')
       return
     }
     let currentPage = this.getCurrentPage()
