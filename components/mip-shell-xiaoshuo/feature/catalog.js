@@ -80,7 +80,7 @@ class Catalog {
     let renderCatalog = catalogs => catalogs.map(catalog => `
       <div class="catalog-page">
         <a class="mip-catalog-btn catalog-page-content"
-        mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
+        mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
         ${catalog.name}
         </a>
       </div>`).join('\n')
@@ -154,7 +154,7 @@ class Catalog {
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
           <a class="mip-catalog-btn catalog-page-content"
-          mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
+          mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
           ${catalog.name}
           </a>
         </div>`).join('\n')
