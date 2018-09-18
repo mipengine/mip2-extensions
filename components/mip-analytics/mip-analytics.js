@@ -25,7 +25,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的click
        *
-       * @param {Object} triggers
+       * @param {Object} triggers html模板中定义的配置及数据
        */
       click (triggers) {
         this.clickHandle(triggers, 'click')
@@ -34,7 +34,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的touchend
        *
-       * @param {Object} triggers
+       * @param {Object} triggers html模板中定义的配置及数据
        */
       touchend (triggers) {
         this.clickHandle(triggers, 'touchend')
@@ -43,7 +43,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的disp事件
        *
-       * @param {Object} triggers
+       * @param {Object} triggers html模板中定义的配置及数据
        */
       disp (triggers) {
         performance.on('update', data => {
@@ -66,7 +66,7 @@ export default class MipAnalytics extends CustomElement {
       /**
        * 处理组件使用时定义的timer
        *
-       * @param {Object} triggers
+       * @param {Object} triggers html模板中定义的配置及数据
        */
       timer (triggers) {
         triggers.forEach(el => {
@@ -110,18 +110,19 @@ export default class MipAnalytics extends CustomElement {
   /**
    * 点击事件处理
    *
-   * @param {Object} triggers
+   * @param {Object} triggers  html模板中定义的配置及数据
    * @param {string} eventName 事件名
    */
   clickHandle (triggers, eventName) {
     triggers.forEach(el => {
       let ancestors = el.tag ? document.querySelectorAll(el.selector) : [document]
       let eventTag = el.tag || el.selector
-
+      let This = this
       ancestors.forEach(dom => {
-        util.event.delegate(dom, eventTag, eventName, () => {
-          let paramsObj = this.element.getAttribute('data-click') || ''
-          this.send(el, paramsObj)
+        // 这块需要取到HTMLElement的上下文，才能正确获取到data-click，所以没有使用箭头函数
+        util.event.delegate(dom, eventTag, eventName, function () {
+          let paramsObj = this.getAttribute('data-click') || ''
+          This.send(el, paramsObj)
         }, false)
       })
     })
@@ -131,7 +132,7 @@ export default class MipAnalytics extends CustomElement {
    * 根据performance定义的事件和this.eventPoint 判断当前文档dom是否构建完毕
    *
    * @param {Object} data 为performance模块定义的事件
-   * @return {number || boolean}
+   * @returns {number|boolean} 期望返回number，否则返回false
    */
   isDomReady (data) {
     return data ? this.eventPoint.every(el => {
