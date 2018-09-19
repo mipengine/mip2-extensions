@@ -13,90 +13,94 @@
 每种事件可以配置多个
 
 ```html
-<div class="className1" data-click="{foo:1,boo:2}">
-  <button data-click="{button:1}"> BUTTON 1</button>
-  <button > BUTTON 2</button>
+<div class="className1">
+  <button data-click="{button: 1}"> BUTTON 1</button>
+  <button data-click="{button: 2}"> BUTTON 2</button>
 </div>
-<div class="className2"></div>
+<div class="className2">
+  <button data-click="{button: 3}">BUTTON 3</button>
+</div>
+
 <mip-analytics>
-<script type="application/json">
-  {
-    "hosts" : {
-      "className1" : "https://m.baidu.com/div1?",
-      "disp" : "https://m.baidu.com/${disp}?",
-      "className2" : "https://m.baidu.com/_${div2}.gif?"
-    },
+  <script type="application/json">
+    {
+      "hosts" : {
+        "className1" : "https://m.baidu.com/div1?",
+        "disp" : "https://m.baidu.com/${disp}?",
+        "className2" : "https://m.baidu.com/_${div2}.gif?"
+      },
 
-    "setting" : {
+      "setting" : {
+        "click" : [
+          {
+            "selector" : ".className1",
+            "tag": "button",
+            "host" : "className1",
+            "queryString" : {
+              "name" : "className1",
+              "mipstart" : "${MIPStart}",
+              "list": {
+                "age":"123"
+              }
+            }
+          },
 
-      "click" : [
-        {
-          "selector" : ".className1",
-          "tag": "button",
-          "host" : "className1",
-          "queryString" : {
-            "name" : "alan",
-            "mipstart" : "${MIPStart}",
-            "list": {
-              "age":"123"
+          {
+            "selector" : ".className2",
+            "host" : "className2",
+            "queryString" : {
+              "name" : "className2",
+              "mipstart" : "${MIPStart}",
+              "list": {
+                "age":"45"
+              }
+            }
+          },
+
+          {
+            "selector" : ".className3",
+            "host" : "className3",
+            "queryString" : {},
+            "vars" : {
+              "div2" : "divfdsf"
             }
           }
-        },
+        ],
 
-        {
-          "selector" : ".className2",
-          "host" : "className2",
-          "queryString" : {
-            "name" : "alan",
-            "mipstart" : "${MIPStart}",
-            "list": {
-              "age":"45"
+        "disp" : [
+          {
+            "host" : "disp",
+            "queryString" : {
+              "MIPStart" : "${MIPStart}",
+              "MIPPageShow" : "${MIPPageShow}",
+              "MIPDomContentLoaded" : "${MIPDomContentLoaded}",
+              "MIPFirstScreen" : "${MIPFirstScreen}"
+            },
+            "vars" : {
+              "disp" : "displog"
             }
           }
-        },
+        ],
 
-      {
-        "selector" : ".className3",
-        "host" : "className3",
-        "queryString" : {},
-        "vars" : {
-          "div2" : "divfdsf"
-        }
+        "timerxx" : [
+          {
+            "host" : "className2",
+            "queryString" : {
+              "timer" : "timer"
+            },
+            "vars" : {
+              "div2" : "div2"
+            },
+            "option" : {
+              "interval" : 2000
+            }
+          }
+        ],
+
+        "scroll" : []
       }
-      ],
-
-      "disp" : [
-        {
-          "host" : "disp",
-          "queryString" : {
-            "MIPStart" : "${MIPStart}",
-            "MIPPageShow" : "${MIPPageShow}",
-            "MIPDomContentLoaded" : "${MIPDomContentLoaded}",
-            "MIPFirstScreen" : "${MIPFirstScreen}"
-          },
-          "vars" : {
-            "disp" : "displog"
-          }
-        }
-      ],
-      "timerxx" : [
-        {
-          "host" : "className2",
-          "queryString" : {
-            "timer" : "timer"
-          },
-          "vars" : {
-            "div2" : "div2"
-          },
-          "option" : {
-            "interval" : 2000
-          }
-        }
-      ],
-      "scroll" : []
     }
-  }
-</script>
+  </script>
 </mip-analytics>
 
 ```
