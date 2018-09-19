@@ -17,8 +17,8 @@
   <button data-click="{button: 1}"> BUTTON 1</button>
   <button data-click="{button: 2}"> BUTTON 2</button>
 </div>
-<div class="className2">
-  <button data-click="{button: 3}">BUTTON 3</button>
+<div class="className2" data-click="{div: 'className2'}">
+  <button>BUTTON 3</button>
 </div>
 
 <mip-analytics>
