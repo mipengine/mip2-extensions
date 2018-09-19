@@ -3,7 +3,7 @@
  * @author JennyL
  */
 
-export default (currentWindow) => {
+const getJsonld = (currentWindow) => {
   // 获取<head>中声明的mip-shell-xiaoshuo 配置。
   // 每个页面不同，如上一页链接，当前章节名
   let jsonld = currentWindow.document.head.querySelector("script[type='application/ld+json']")
@@ -18,3 +18,16 @@ export default (currentWindow) => {
   }
   return jsonldConf
 }
+
+/**
+ * 获取当前页面的iframe
+ *
+ * @returns {window} 当前iframe的window
+ */
+const getCurrentWindow = () => {
+  let pageId = window.MIP.viewer.page.currentPageId
+  let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+  return pageInfo.targetWindow
+}
+
+export {getJsonld, getCurrentWindow}

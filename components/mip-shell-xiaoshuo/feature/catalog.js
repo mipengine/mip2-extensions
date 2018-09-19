@@ -5,22 +5,101 @@
  *     1. catalog数据支持异步获取
  */
 
+import state from '../common/state'
+import {getCurrentWindow} from '../common/util'
 let util = MIP.util
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
+    this.categoryList = ''
+    this.isCatFetch = false
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
+    this.nowCatNum = 1
   }
 
-  // 根据配置渲染目录侧边栏到  mip-sidebar组件中
-  // 支持从页面直接获取目录，异步获取目录
+  /**
+   * 获取当前章节信息
+   *
+   * @returns {Object|undefined|string} 期望返回正确的章节信息，'matchErr'为站点chapter与目录匹配失败，undefined为没有配置crid（兼容纵横）
+   */
+  getCurrentPage () {
+    const currentWindow = getCurrentWindow()
+    const {currentPage} = state(currentWindow)
+    if (!this.isCatFetch) { // 纵横目前为同步获取目录，依靠crid高亮定位，所以这就是目前纵横的逻辑
+      let crid = this.getLocationQuery().crid // 获取crid和currentPage.chapter判断是否一致
+      if (crid && +crid === +currentPage.chapter) {
+        return currentPage
+      }
+      return
+    }
+    // 异步获取，标准逻辑，需要匹配currentPage的chapter与categoryList里的id。成功返回索引，否则false
+    let result = 'matchErr' // 匹配失败
+    this.categoryList.forEach((item, index) => {
+      if (+item.id === +currentPage.chapter) { // 匹配成功
+        result = currentPage
+        result.chapter = index + 1 // 重写索引
+      }
+    })
+    return result
+  }
+
+  /**
+   * 通过浏览器地址栏url获取query参数
+   *
+   * @param {string=} url 地址栏链接或自传链接参数 http://www.example/index.html?crid=1&pg=2 第一章第二节
+   * @returns {Object} 参数对象
+   */
+  getLocationQuery (url) {
+    url = url || location.href
+    let query = url.split('?')[1] || ''
+    query = query.split('#')[0] || ''
+    if (!query) {
+      return {}
+    }
+    return query.split('&').reduce(function (obj, item) {
+      let data = item.split('=')
+      obj[data[0]] = decodeURIComponent(data[1])
+      return obj
+    }, {})
+  }
+
+  /**
+   * 函数说明：异步获取目录成功的回调渲染函数
+   *
+   * @param {Object} data 异步成功返回获取的数据
+   * @param {Array} catalogs 定义在模板里的catalogs，同样是_renderCatalog函数定义的，只需要传过去即可
+   */
+  renderCatalogCallBack (data, catalogs) {
+    let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
+    let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
+    let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
+    catalogs = data.data.catalog.chapters
+    this.categoryList = data.data.catalog.chapters
+    let renderCatalog = catalogs => catalogs.map(catalog => `
+      <div class="catalog-page">
+        <a class="mip-catalog-btn catalog-page-content"
+        mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
+        ${catalog.name}
+        </a>
+      </div>`).join('\n')
+    $catalogContent.innerHTML = renderCatalog(catalogs)
+    this.reverse($contentTop, $catalogContent)
+  }
+
+  /**
+   * 根据配置渲染目录侧边栏到  mip-sidebar组件中，支持从页面直接获取目录，异步获取目录
+   *
+   * @param {Array} catalogs constructor构造传入的变量config
+   * @param {Object} book 书本信息
+   * @returns {HTMLElement} $catalogSidebar 目录dom
+   */
   _renderCatalog (catalogs, book) {
     let renderCatalog
     let title = ''
-    let chapterNumber = ''
     let chapterStatus = ''
+    let chapterNumber = ''
     if (book) {
       title = book.title
       chapterNumber = book.chapterNumber
@@ -47,19 +126,31 @@ class Catalog {
       </div>
       <div class="mip-shell-catalog mip-border mip-border-right">
         <div class="novel-catalog-content-wrapper">
+          <div class="net-err-info">因网络原因暂时无法获取目录</div>
           <div class="novel-catalog-content">
           </div>
           </div>
         </div>
+        <!--<div class="scroll">-->
+        <!--</div>-->
       </div>
     `
     if (!catalogs) {
       // 目录配置为空
-    } else if (typeof catalogs === 'string') {
-      // 目录配置的是字符串，远程地址。需要异步获取
-
+      this.isCatFetch = true
+      const originUrl = encodeURIComponent(MIP.util.getOriginalUrl())
+      MIP.sandbox.fetchJsonp('https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
+        jsonpCallback: 'callback'
+      }).then(res => res.json())
+        .then(data => {
+          this.renderCatalogCallBack(data, catalogs)
+        }).catch(err => {
+          console.error(new Error('网络异常'), err)
+          this.categoryList = false
+        })
     } else {
       // 目录为数组，本地目录, 直接读取渲染
+      this.categoryList = catalogs
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
           <a class="mip-catalog-btn catalog-page-content"
@@ -86,7 +177,10 @@ class Catalog {
     let $catalog = $catalogSidebar.querySelector('.mip-shell-catalog')
     let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
     let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
-    $catalogContent.innerHTML = renderCatalog(catalogs)
+    if (!this.isCatFetch) {
+      $catalogContent.innerHTML = renderCatalog(catalogs)
+      this.reverse($contentTop, $catalogContent)
+    }
     let $catalogBook = $catalogSidebar.querySelector('.book-catalog-info-title')
     if (book) {
       $catalogBook.style.display = 'block'
@@ -96,8 +190,6 @@ class Catalog {
     }
 
     // 实现倒序，点击倒序，目录顺序倒序，倒序字边正序
-    this.reverse($contentTop, $catalogContent)
-
     if (!hadCatalog) {
       $catalogSidebar.appendChild($catalog)
       document.body.appendChild($catalogSidebar)
@@ -108,22 +200,25 @@ class Catalog {
     }
     return $catalogSidebar
   }
+
   /**
-   * 函数说明：解决translateY的兼容问题，多次用到，封装函数
+   * 目录消失
    *
-   * @param  {Object} $catalogScroll 滚动条
-   * @param  {Object} scrollTop 滚动多高
+   * @param {Event} e 事件对象
+   * @param {Object} shellElement 小说章节
    */
-  moveTranslateY ($catalogScroll, scrollTop) {
-    $catalogScroll.style.transform = 'translateY( ' + scrollTop + 'px)'
-    $catalogScroll.style.webkitTransform = 'translateY( ' + scrollTop + 'px)'
+  swipeHidden (e, shellElement) {
+    e.preventDefault()
+    this.hide()
+    e.stopPropagation()
+    shellElement.toggleDOM(shellElement.$buttonMask, false)
   }
 
   /**
-   * 函数说明：实现倒序，点击倒序，目录顺序倒序，倒序字边正序
+   * 目录倒序正序
    *
-   * @param  {Object} $contentTop      目录页章节滚动高度
-   * @param  {Object} $catalogContent  目录页章节高度
+   * @param {HTMLElement} $contentTop 目录头部信息栏dom
+   * @param {HTMLElement} $catalogContent 目录列表dom
    */
   reverse ($contentTop, $catalogContent) {
     let reverse = $contentTop.querySelector('.catalog-reserve')
@@ -136,25 +231,38 @@ class Catalog {
     reverse.addEventListener('click', () => {
       $catalogContent.innerHTML = temp.reverse().join('')
       reverseName.innerHTML = reverseName.innerHTML === ' 正序' ? ' 倒序' : ' 正序'
+      let catalog = $catalogContent.querySelectorAll('div')
+      let $catWrapper = document.querySelector('.novel-catalog-content-wrapper')
+      if (!this.categoryList) {
+        util.css(document.querySelector('.net-err-info'), {
+          display: 'block'
+        })
+        return
+      }
+      let currentPage = this.getCurrentPage()
+      let catLocation = {
+        section: currentPage.chapter,
+        page: currentPage.page
+      }
+      if (currentPage && currentPage !== 1) {
+        catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
+        if (reverseName.innerHTML === ' 倒序') {
+          catalog[catLocation.section - 1].querySelector('a').classList.add('active')
+          this.nowCatNum = catLocation.section
+          // $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop //定位，暂时去掉直接跳转到开始
+          $catWrapper.scrollTop = 0
+        } else {
+          catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
+          this.nowCatNum = catLocation.section
+          // $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop //定位，暂时去掉直接跳转到开始
+          $catWrapper.scrollTop = 0
+        }
+      } else {
+        $catWrapper.scrollTop = 0
+      }
     })
   }
-  /**
-   * 函数说明：目录消失函数
-   *
-   * @param  {Object} e      事件源
-   * @param  {Object} shellElement 小说章节
-   */
-  swipeHidden (e, shellElement) {
-    e.preventDefault()
-    this.hide()
-    e.stopPropagation()
-    shellElement.toggleDOM(shellElement.$buttonMask, false)
-  }
-  /**
-   * 函数说明：绑定滑动事件，左滑目录消失
-   *
-   * @param  {Object} shellElement 小说章节
-   */
+
   bindShowEvent (shellElement) {
     let catalog = document.querySelector('.mip-shell-catalog-wrapper')
     let swipeLeft = new util.Gesture(document, {
@@ -171,26 +279,59 @@ class Catalog {
       this.swipeHidden(e, shellElement)
     })
   }
+
   // 显示侧边目录
   show (shellElement) {
     this.bindShowEvent(shellElement)
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
-    // window.setTimeout(function () {
     this.$catalogSidebar.classList.add('show')
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
+    let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
+    let reverseName = this.$catalogSidebar.querySelector('.reverse-name')
     let catalog = [...$catalogContent.querySelectorAll('div')]
+    // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     for (let i = 0; i < catalog.length; i++) {
       catalog[i].innerHTML = catalog[i].innerHTML
     }
+    if (!this.categoryList) {
+      util.css(document.querySelector('.net-err-info'), {
+        display: 'block'
+      })
+      return
+    }
+    let currentPage = this.getCurrentPage()
     document.body.classList.add('body-forbid')
-    // }, 400)
+    if (!currentPage) {
+      console.error(new Error('链接里没有配置crid'))
+      return
+    } else if (currentPage === 'matchErr') {
+      console.error(new Error('请检查模板配置的currentPage.chapter是否与异步目录章节id匹配'))
+      return
+    }
+    let catLocation = {
+      section: currentPage.chapter,
+      page: currentPage.page
+    }
+    if (reverseName.innerHTML === ' 正序') {
+      catalog[catalog.length - this.nowCatNum].querySelector('a').classList.remove('active')
+      catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
+      this.nowCatNum = catLocation.section
+      $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop
+    } else {
+      catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
+      catalog[catLocation.section - 1].querySelector('a').classList.add('active')
+      this.nowCatNum = catLocation.section
+      $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
+    }
   }
+
   // 隐藏侧边目录
   hide () {
     document.body.classList.remove('body-forbid')
     this.$catalogSidebar.classList.remove('show')
   }
+
   // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
   _stopPropagation () {
     if (this.propagationStopped) {

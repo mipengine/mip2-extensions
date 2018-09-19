@@ -16,6 +16,8 @@ export default class Strategy {
     this.fromSearch = 0
     this.novelData = {}
     this.shellReady = false
+    this.rootPageType = ''
+    this.firstInPage = true
   }
   /**
    * 根据当前的页面状态获取相关的广告策略
@@ -23,12 +25,22 @@ export default class Strategy {
   strategyStatic () {
     // 修改出广告的策略
     let currentWindow = this.getCurrentWindow()
-    const {isLastPage, currentPage, chapterName, rootPageId} = state(currentWindow)
+    const {isLastPage, currentPage, chapterName, rootPageId, originalUrl, isRootPage} = state(currentWindow)
+    const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
+    const officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId || ''
+    if (isRootPage) {
+      this.rootPageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType
+    }
+    const silentFollow = this.getSilentFollow(isRootPage)
     let novelData = {
-      isLastPage: isLastPage,
+      isLastPage,
       chapter: currentPage.chapter,
       page: currentPage.page,
-      chapterName: chapterName
+      chapterName,
+      originalUrl,
+      name,
+      officeId,
+      silentFollow
     }
     this.changeStrategy()
     // 全局的广告
@@ -63,6 +75,25 @@ export default class Strategy {
   }
 
   /**
+   * 根据当前页面类型以及是否初次进入内容页判断是否发送静默关注请求
+   *
+   * @param {boolean} isRootPage 是否是第一次实例化的页面
+   * @returns {boolean} 后端拿到true可以发送，false则反之
+   */
+  getSilentFollow (isRootPage) {
+    let silentFollow = false
+    if (this.rootPageType === 'page') {
+      silentFollow = isRootPage
+      return silentFollow
+    }
+    if (window.MIP.mipshellXiaoshuo.currentPageMeta.pageType === 'page' && this.firstInPage) {
+      silentFollow = true
+      this.firstInPage = false
+    }
+    return silentFollow
+  }
+
+  /**
    * 修改出广告的策略
    *
    * @returns {Object} 修改出广告的策略
@@ -88,7 +119,6 @@ export default class Strategy {
    * 异步获取广告的展示策略.
    *
    * @todo 后期异步的获取相关的广告策略
-   * @async 异步获取相广告策略
    */
   asyncUpdataStrategy () {
     // TODO:fetch请求后端接口获取广告策略

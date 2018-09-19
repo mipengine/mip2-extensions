@@ -118,7 +118,7 @@ export default class MipAnalytics extends CustomElement {
       let ancestors = el.tag ? document.querySelectorAll(el.selector) : [document]
       let eventTag = el.tag || el.selector
       let This = this
-
+      // 需要在delegate获取调用方法的HTMLElement，所以未使用箭头函数，并定义了This变量
       ancestors.forEach(dom => {
         util.event.delegate(dom, eventTag, eventName, function () {
           let paramsObj = this.getAttribute('data-click') || ''
