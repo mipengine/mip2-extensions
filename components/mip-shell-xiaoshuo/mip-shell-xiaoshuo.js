@@ -18,9 +18,11 @@ import {
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
 import {getJsonld} from './common/util'
+import {sendWebbLog} from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
+let timerScroll
 let util = MIP.util
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
@@ -28,6 +30,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   constructor (...args) {
     super(...args)
     this.transitionContainsHeader = false
+    // 发送白屏  (页面打开白屏超过5秒，文字不可见) 日志
+    this._sendWhiteScreenLog()
     // 处理浏览器上下滚动边界，关闭弹性
     this._scrollBoundary()
   }
@@ -120,6 +124,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         }
       })
     }
+
+    // 小说最后一个时间执行完成
+    // 非白屏，清除发送，测得白屏率
+    clearTimeout(timerScroll)
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
@@ -172,6 +180,15 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     this.fontSize.hideFontBar()
     // 关闭黑色遮罩
     this.toggleDOM(this.$buttonMask, false)
+  }
+
+  // 自有方法 发送白屏日志
+  _sendWhiteScreenLog () {
+    timerScroll = setTimeout(() => {
+      sendWebbLog('stability', {
+        msg: 'whiteScreen'
+      })
+    }, 5000)
   }
 
   // 自有方法 仅root：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换

@@ -7,6 +7,8 @@
 
 import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
+import {sendWebbLog} from './../common/log' // 日志
+
 let util = MIP.util
 class Catalog {
   constructor (config, book) {
@@ -145,6 +147,7 @@ class Catalog {
         .then(data => {
           this.renderCatalogCallBack(data, catalogs)
         }).catch(err => {
+          this._catalogFailMessageEvent()
           console.error(new Error('网络异常'), err)
           this.categoryList = false
         })
@@ -200,7 +203,16 @@ class Catalog {
     }
     return $catalogSidebar
   }
-
+  /**
+   * 发送目录渲染失败日志
+   *
+   */
+  _catalogFailMessageEvent () {
+    sendWebbLog('stability', {
+      msg: 'catalogRenderFailed',
+      renderMethod: 'async'
+    })
+  }
   /**
    * 目录消失
    *
