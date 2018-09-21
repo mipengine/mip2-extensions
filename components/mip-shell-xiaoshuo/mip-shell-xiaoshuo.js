@@ -121,8 +121,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       })
     }
     // 页面加载完成，记录时间，超过5s发送白屏日志
+    // 改成2s方便测试，上线前改成5s
     window.onload = function () {
-      if (new Date() - xiaoshuoEvents.timer > 5000) {
+      if (new Date() - xiaoshuoEvents.timer > 2000) {
         sendWebbLog(sendWebbLog('stability', {
           msg: 'whiteScreen'
         }))
