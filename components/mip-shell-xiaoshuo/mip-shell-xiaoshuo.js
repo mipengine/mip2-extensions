@@ -121,17 +121,18 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       })
     }
     // 用于记录页面加载完成的时间
-    let timer
+    const startRenderTime = xiaoshuoEvents.timer
+    let endRenderTimer = null
     window.onload = function () {
-      timer = new Date()
+      endRenderTimer = new Date()
     }
     // 页面加载完成，记录时间，超过5s发送白屏日志
     // 改成2s方便测试，上线前改成5s
     setTimeout(function () {
-      if (!timer || timer - xiaoshuoEvents.timer > 2000) {
-        sendWebbLog(sendWebbLog('stability', {
+      if (!endRenderTimer || endRenderTimer - startRenderTime > 2000) {
+        sendWebbLog('stability', {
           msg: 'whiteScreen'
-        }))
+        })
       }
     }, 2000)
   }
