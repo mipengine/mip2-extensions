@@ -9,6 +9,10 @@ import state from './state'
 let event = window.MIP.util.event
 
 class XiaoshuoEvents {
+  constructor () {
+    // 初始化当前开始加载时间，用于发送性能日志
+    this.timer = new Date()
+  }
   // 每次搜索点出，同步刷新调用
   bindRoot () {
     /**
@@ -36,6 +40,8 @@ class XiaoshuoEvents {
 
   // 每次翻页/页面刷新时都会触发
   bindAll () {
+    // 翻页、页面刷新事记录当前时间，用于发送白屏日志
+    this.timer = new Date()
     let {isRootPage} = state(window)
     // 抛出“当前页ready,状态可获取”事件给阅读器
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
