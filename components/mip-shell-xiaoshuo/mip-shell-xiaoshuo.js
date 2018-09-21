@@ -120,15 +120,20 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         }
       })
     }
+    // 用于记录页面加载完成的时间
+    let timer
+    window.onload = function () {
+      timer = new Date()
+    }
     // 页面加载完成，记录时间，超过5s发送白屏日志
     // 改成2s方便测试，上线前改成5s
-    window.onload = function () {
-      if (new Date() - xiaoshuoEvents.timer > 2000) {
+    setTimeout(function () {
+      if (!timer || timer - xiaoshuoEvents.timer > 2000) {
         sendWebbLog(sendWebbLog('stability', {
           msg: 'whiteScreen'
         }))
       }
-    }
+    }, 2000)
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
