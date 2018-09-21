@@ -6,24 +6,103 @@
         :class="station"
         type="top"
       >
-        <div class="toast">
-          <img
-            v-if="show"
-            :src="infoIconSrc"
-            class="icon"
-          >
-          <p>{{ infoText }}</p>
+        <div :class="{limitWdith:hasPic}">
+          <div class="toast">
+            <img
+              v-if="show"
+              :src="infoIconSrc"
+              class="icon"
+            >
+            <p :class="{block:isBlock}"> {{ showToastText }} </p>
+          </div>
         </div>
       </mip-fixed>
     </div>
   </transtion>
 </template>
+<script>
+export default {
+  props: {
+    infoIconSrc: {
+      type: String,
+      default: ''
+    },
+    infoText: {
+      type: String,
+      default: ''
+    },
+    autoClose: {
+      type: Boolean,
+      default: true
+    },
+    closeTime: {
+      type: Number,
+      default: 2500
+    },
+    station: {
+      type: String,
+      default: ''
+    }
+  },
+  data () {
+    return {
+      show: true,
+      close: false,
+      isBlock: false,
+      hasPic: false,
+      showToastText: '',
+      showTime: 2500
+    }
+  },
+  mounted () {
+    this.$on('show', (info) => {
+      this.close = true
+      if (typeof info === 'string') {
+        this.showToastText = info
+      } else {
+        this.showToastText = this.infoText
+      }
+      this.init()
+    })
+    this.$on('hidden', () => {
+      this.close = false
+    })
+  },
+  methods: {
+    init () {
+      if (typeof this.closeTime === 'number' && !!this.closeTime) {
+        this.showTime = this.closeTime * 1000
+      }
+      if (!this.infoIconSrc) {
+        this.show = false
+      } else {
+        this.isBlock = true
+        this.hasPic = true
+      }
+      if (this.autoClose) {
+        setTimeout(() => {
+          this.close = false
+        }, this.showTime)
+      }
+    }
+  }
+}
+</script>
 <style scoped>
 .wrapper {
   z-index: 1000;
   margin: 0 auto;
   text-align: center;
   top: 33%;
+}
+
+.limitWdith {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.block {
+  display: block !important;
 }
 
 .toast {
@@ -36,7 +115,7 @@
   font-size: 14px;
   line-height: 100%;
   height: auto;
-  width: 1.4rem;
+  display: inline-block;
 }
 
 .center {
@@ -56,8 +135,9 @@
   width: 60%;
 }
 
-.toast p {
-  padding: 15px 10px;
+p {
+  display: inline-block;
+  padding: 15px 15px;
 }
 
 .fade-enter-active {
@@ -69,53 +149,3 @@
   transition: opacity linear 240ms;
 }
 </style>
-
-<script>
-export default {
-  props: {
-    infoIconSrc: {
-      type: String,
-      default: ''
-    },
-    infoText: {
-      type: String,
-      default: ''
-    },
-    autoClose: {
-      type: Boolean,
-      default: true
-    },
-    station: {
-      type: String,
-      default: ''
-    }
-  },
-  data () {
-    return {
-      show: true,
-      close: false
-    }
-  },
-  mounted () {
-    this.$on('show', (str) => {
-      this.close = true
-      this.init()
-    })
-    this.$on('hidden', (str) => {
-      this.close = false
-    })
-  },
-  methods: {
-    init () {
-      if (!this.infoIconSrc) {
-        this.show = false
-      }
-      if (this.autoClose) {
-        setTimeout(() => {
-          this.close = false
-        }, 2500)
-      }
-    }
-  }
-}
-</script>
