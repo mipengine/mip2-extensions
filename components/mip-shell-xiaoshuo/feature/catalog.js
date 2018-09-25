@@ -147,7 +147,7 @@ class Catalog {
         .then(data => {
           this.renderCatalogCallBack(data, catalogs)
         }).catch(err => {
-          this._catalogFailMessageEvent()
+          this.catalogFailMessageEvent()
           console.error(new Error('网络异常'), err)
           this.categoryList = false
         })
@@ -206,8 +206,9 @@ class Catalog {
   /**
    * 发送目录渲染失败日志
    *
+   * @private
    */
-  _catalogFailMessageEvent () {
+  catalogFailMessageEvent () {
     sendWebbLog('stability', {
       msg: 'catalogRenderFailed',
       renderMethod: 'async'
