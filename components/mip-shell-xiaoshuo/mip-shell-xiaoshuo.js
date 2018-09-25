@@ -18,7 +18,6 @@ import {
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
 import {getJsonld} from './common/util'
-import {sendWebbLog} from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
@@ -120,21 +119,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         }
       })
     }
-    // 用于记录页面加载完成的时间
-    const startRenderTime = xiaoshuoEvents.timer
-    let endRenderTimer = null
-    window.onload = function () {
-      endRenderTimer = new Date()
-    }
-    // 页面加载完成，记录时间，超过5s发送白屏日志
-    // 改成2s方便测试，上线前改成5s
-    setTimeout(function () {
-      if (!endRenderTimer || endRenderTimer - startRenderTime > 2000) {
-        sendWebbLog('stability', {
-          msg: 'whiteScreen'
-        })
-      }
-    }, 2000)
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
