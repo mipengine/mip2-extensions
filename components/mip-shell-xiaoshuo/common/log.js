@@ -5,6 +5,7 @@
 
 /**
  * 发送日志
+ *
  * @param {string} type 日志类型
  * @param {Object} info 日志信息
  */
@@ -16,4 +17,9 @@ export function sendWebbLog (type, info) {
   })
   let eventName = type + '-log'
   MIP.viewer.sendMessage(eventName, data)
+}
+
+export function sendTCLog (type, info) {
+  let eventName = type + '-log'
+  MIP.viewer.sendMessage(eventName, {info: info})
 }
