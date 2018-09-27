@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+
+    h2 {
+      margin: 50px auto;
+      text-align: center;
+    }
+
+    header {
+      text-align: center;
+      background-color: #9ca9af;
+    }
+
+    ul {
+      padding: 20px 10px;
+      color: #000;
+    }
+
+    li {
+      line-height: 40px;
+      font-size: 20px;
+      text-align: left;
+    }
+
+    li:first-child {
+      line-height: 80px;
+      font-size: 34px;
+      color: steelblue;
+    }
+
+    #logo {
+      font-size: 28px;
+      line-height: 56px;
+      color: #444;
+    }
+
+    #close {
+      background: #f5f2f2;
+      padding: 10px;
+      border: 1px solid #d8d5d5;
+      border-radius: 5px;
+    }
+
+  </style>
+</head>
+
+<body id="body">
+
+  <p style="text-align:left;font-size:18px;margin-top:20px;color: green">基本使用</p>
+
+  <header>
+    <div id="logo" on="tap:sidebar.open">Open mip-sidebar</div>
+
+  </header>
+  <mip-sidebar id="sidebar" layout="nodisplay" class="mip-hidden">
+    <ul>
+      <li>
+        <a href="https://www.mipengine.org/">MIP官网</a>
+        <button on="tap:sidebar.close"> X </button>
+      </li>
+      <li>Nav item 1</li>
+      <li>Nav item 2</li>
+      <li>Nav item 3</li>
+      <li>
+        Nav item 4 - Image
+        <mip-img src="https://www.mipengine.org/favicon.ico" width="32" height="32" alt="mipengine ico"></mip-img>
+      </li>
+      <li>Nav item 5</li>
+      <li>Nav item 6</li>
+    </ul>
+  </mip-sidebar>
+
+  <p style="text-align:left;font-size:18px;margin-top:20px;color: green">右侧侧边栏</p>
+
+  <header>
+    <div id="logo" on="tap:right-sidebar.open">Open mip-sidebar</div>
+
+  </header>
+  <mip-sidebar id="right-sidebar" layout="nodisplay" side="right" class="mip-hidden">
+    <ul>
+      <li>
+        <a href="https://www.mipengine.org/">MIP官网</a>
+        <button on="tap:right-sidebar.toggle"> X </button>
+      </li>
+      <li>Nav item 1</li>
+      <li>Nav item 2</li>
+      <li>Nav item 3</li>
+      <li>
+        Nav item 4 - Image
+        <mip-img src="https://www.mipengine.org/favicon.ico" width="32" height="32" alt="mipengine ico"></mip-img>
+      </li>
+      <li>Nav item 5</li>
+      <li>Nav item 6</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+      <li>placeholder</li>
+    </ul>
+  </mip-sidebar>
+  <mip-fastclick target="body"></mip-fastclick>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js"></script>
+  <script src="/mip-sidebar/mip-sidebar.js"></script>
+
+</body>
+
+</html>
