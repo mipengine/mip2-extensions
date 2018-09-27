@@ -7,6 +7,8 @@
 
 import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
+import {sendWebbLog} from './../common/log' // 日志
+
 let util = MIP.util
 class Catalog {
   constructor (config, book) {
@@ -80,7 +82,7 @@ class Catalog {
     let renderCatalog = catalogs => catalogs.map(catalog => `
       <div class="catalog-page">
         <a class="mip-catalog-btn catalog-page-content"
-        mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.link}" replace>
+        mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
         ${catalog.name}
         </a>
       </div>`).join('\n')
@@ -138,14 +140,14 @@ class Catalog {
     if (!catalogs) {
       // 目录配置为空
       this.isCatFetch = true
-      const originUrl = 'http%3a%2f%2fwww.xmkanshu.com%2fbook%2fmip%2fread%3fbkid%3d672340121%26crid%3d371%26fr%3dxs_aladin_free%26mip%3d1'
-      // const originUrl = encodeURIComponent(window.location.href) // 后期上线使用
-      MIP.sandbox.fetchJsonp('http://yq01-psdy-diaoyan1016.yq01.baidu.com:8848/novel/api/mipinfo?originUrl=' + originUrl, {
+      const originUrl = encodeURIComponent(MIP.util.getOriginalUrl())
+      MIP.sandbox.fetchJsonp('https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
         jsonpCallback: 'callback'
       }).then(res => res.json())
         .then(data => {
           this.renderCatalogCallBack(data, catalogs)
         }).catch(err => {
+          this.catalogFailMessageEvent()
           console.error(new Error('网络异常'), err)
           this.categoryList = false
         })
@@ -201,7 +203,17 @@ class Catalog {
     }
     return $catalogSidebar
   }
-
+  /**
+   * 发送目录渲染失败日志
+   *
+   * @private
+   */
+  catalogFailMessageEvent () {
+    sendWebbLog('stability', {
+      msg: 'catalogRenderFailed',
+      renderMethod: 'async'
+    })
+  }
   /**
    * 目录消失
    *
@@ -238,7 +250,6 @@ class Catalog {
         util.css(document.querySelector('.net-err-info'), {
           display: 'block'
         })
-        console.log('netError')
         return
       }
       let currentPage = this.getCurrentPage()
@@ -300,7 +311,6 @@ class Catalog {
       util.css(document.querySelector('.net-err-info'), {
         display: 'block'
       })
-      console.log('netError')
       return
     }
     let currentPage = this.getCurrentPage()

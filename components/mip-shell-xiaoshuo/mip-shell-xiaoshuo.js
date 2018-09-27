@@ -31,7 +31,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 处理浏览器上下滚动边界，关闭弹性
     this._scrollBoundary()
   }
-
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
   bindAllEvents () {
