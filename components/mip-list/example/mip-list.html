@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+  </style>
+</head>
+
+<body>
+  <br>
+  <br>
+  <div>基本用法</div>
+  <div>[info]JSONP 异步请求的接口需要遵循规范 `callback` 为 `'callback'`</div>
+  <mip-list src="https://xxx" preLoad>
+    <template type="mip-mustache">
+      <div>
+        <li>name: {{name}}</li>
+        <li>alias: {{alias}}</li>
+      </div>
+    </template>
+  </mip-list>
+  <br>
+  <br>
+  <div>定制模板</div>
+  <mip-list template="mip-template-id" src="https://xxx" preLoad>
+    <template type="mip-mustache" id="mip-template-id">
+      <div>
+        <li>name: {{name}}</li>
+        <li>alias: {{alias}}</li>
+      </div>
+    </template>
+  </mip-list>
+  <br>
+  <br>
+  <div>同步数据</div>
+  <mip-list synchronous-data>
+    <script type="application/json">
+      {
+        "items": [{
+          "name": "lee",
+          "alias": "xialong"
+        }, {
+          "name": "ruige",
+          "alias": "ruimm"
+        }, {
+          "name": "langbo",
+          "alias": "bobo"
+        }]
+      }
+
+    </script>
+    <template type="mip-mustache">
+      <div>
+        <li>name: {{name}}</li>
+        <li>alias: {{alias}}</li>
+      </div>
+    </template>
+  </mip-list>
+  <br>
+  <br>
+  <div>点击加载更多
+    [info]有 `has-more` 属性时，`mip-list` 标签必须要有 `id` 属性，同时需要有点击按钮的 DOM 节点，并且此节点有 `on` 属性，属性值为：`tap:对应mip-list的id.more`
+  </div>
+  <mip-list template="mip-template-id" src="http://xxx?a=a&b=b" id="mip-list" has-more pnName="pageNum" pn=2 timeout="3000"
+    preLoad>
+    <template type="mip-mustache" id="mip-template-id">
+      <div>
+        <li>{{key}}: {{value}}</li>
+      </div>
+    </template>
+  </mip-list>
+  <div class="mip-list-more" on="tap:mip-list.more"> 点击查看更多 </div>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+  <script src="/mip-list/mip-list.js"></script>
+</body>
+
+</html>
