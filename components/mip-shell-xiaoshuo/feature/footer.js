@@ -102,7 +102,6 @@ class footer {
     nextButton.classList.remove('disabled')
     if (!nextHref) nextButton.classList.add('disabled')
   }
-
   // 显示底bar
   show (shellElement) {
     let footer = this
