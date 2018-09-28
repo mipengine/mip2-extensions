@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     init () {
-      if (typeof this.closeTime === 'number' && !!this.closeTime) {
+      if (typeof this.closeTime === 'number' && !!this.closeTime && this.closeTime !== 2500) {
         this.showTime = this.closeTime * 1000
       }
       if (!this.infoIconSrc) {
@@ -120,14 +120,17 @@ export default {
 
 .center {
   top: 33%;
+  text-align: center;
 }
 
 .top {
   top: 10%;
+  text-align: center;
 }
 
 .bottom {
   top: 70%;
+  text-align: center;
 }
 
 .icon {
