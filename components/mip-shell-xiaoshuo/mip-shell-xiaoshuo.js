@@ -113,6 +113,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         this.pageStyle.update(e)
       }
       document.body.classList.add('show-xiaoshuo-container')
+      // 加载动画完成，发送白屏日志
+      sendWebbLog('whitescreen')
       // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
       let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
       if (xiaoshuoContainer) {
@@ -208,7 +210,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
   }
-
   // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
   unbindHeaderEvents () {
     super.unbindHeaderEvents()
