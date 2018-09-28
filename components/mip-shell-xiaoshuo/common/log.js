@@ -4,7 +4,7 @@
  */
 
 /**
- * 发送日志
+ * 发送webb性能日志
  *
  * @param {string} type 日志类型
  * @param {Object} info 日志信息
@@ -19,7 +19,26 @@ export function sendWebbLog (type, info) {
   MIP.viewer.sendMessage(eventName, data)
 }
 
-export function sendTCLog (type, info) {
+/**
+ * 发送tc交互日志
+ *
+ * @param {string} type 日志类型
+ * @param {Object} info 日志信息
+ * @param {Object} extra 额外信息
+ */
+export function sendTCLog (type, info, extra) {
   let eventName = type + '-log'
-  MIP.viewer.sendMessage(eventName, {info: info})
+  let data = Object.assign({
+    'clk_info': info
+  }, {
+    pd: 'novel'
+  })
+  if (extra) {
+    data = Object.assign({
+      ...data
+    }, {
+      extra
+    })
+  }
+  MIP.viewer.sendMessage(eventName, data)
 }

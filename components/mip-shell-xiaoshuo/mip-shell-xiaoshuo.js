@@ -18,7 +18,7 @@ import {
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
 import {getJsonld, getCurrentWindow} from './common/util'
-import {sendWebbLog} from './common/log' // 日志
+import {sendWebbLog, sendTCLog} from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
@@ -43,14 +43,13 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       endRenderTimer = new Date()
     }
     // 页面加载完成，记录时间，超过5s发送白屏日志
-    // 改成2s方便测试，上线前改成5s
     setTimeout(function () {
-      if (!endRenderTimer || endRenderTimer - startRenderTime > 2000) {
+      if (!endRenderTimer || endRenderTimer - startRenderTime > 5000) {
         sendWebbLog('stability', {
           msg: 'whiteScreen'
         })
       }
-    }, 3000)
+    }, 5000)
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -233,6 +232,11 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
     // 当页面左上角返回按钮点击时，关闭所有的浮层
     this.jumpHandler = event.delegate(document.documentElement, '.mip-shell-header-wrapper a', 'click', function (e) {
+      // 发送tc日志
+      sendTCLog('interaction', {
+        type: 'b',
+        action: 'backButton'
+      })
       me._closeEverything()
     })
   }

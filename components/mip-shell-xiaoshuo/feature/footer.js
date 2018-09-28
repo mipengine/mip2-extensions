@@ -4,6 +4,13 @@
  */
 
 import {settingHtml} from './setting'
+import {sendTCLog} from './../common/log'
+
+let DEFAULTS = {
+  theme: 'default',
+  fontSize: 3.5
+}
+
 // 整个底 bar 控制栏
 class footer {
   constructor (config) {
@@ -84,6 +91,18 @@ class footer {
     return footerHTML
   }
 
+  // 获取偏好设置config
+  _getConfig () {
+    let config = DEFAULTS
+    const CustomStorage = MIP.util.customStorage
+    const storage = new CustomStorage(0)
+    const extend = MIP.util.fn.extend
+    try {
+      config = extend(config, JSON.parse(storage.get('mip-shell-xiaoshuo-mode')))
+      console.log(JSON.parse(storage.get('mip-shell-xiaoshuo-mode')))
+    } catch (e) {}
+    return config
+  }
   /**
    * 修改footer 【上一页】【下一页】链接, 增加跳转链接及是否可以跳转
    *
@@ -112,9 +131,21 @@ class footer {
       shellElement.toggleDOM(shellElement.$buttonMask, true)
     }
     // }, 400)
+    // 唤出菜单，发送tc日志打点
+    sendTCLog('interaction', {
+      type: 'b',
+      action: 'showShellFooter'
+    })
   }
   // 隐藏底bar
   hide () {
+    sendTCLog('interaction', {
+      type: 'b',
+      action: 'styleSetting'
+    }, {
+      theme: this._getConfig().theme,
+      fontSize: this._getConfig().fontSize
+    })
     this.$footerWrapper.classList.remove('show')
   }
   // 禁止冒泡，防止从控制栏触发外层小说页面滚动

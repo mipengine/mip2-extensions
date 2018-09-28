@@ -7,7 +7,7 @@
 
 import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
-import {sendWebbLog} from './../common/log' // 日志
+import {sendWebbLog, sendTCLog} from './../common/log' // 日志
 
 let util = MIP.util
 class Catalog {
@@ -201,8 +201,10 @@ class Catalog {
       $catalogSidebar.removeChild($catalogSidebar.querySelector('.mip-shell-catalog'))
       $catalogSidebar.appendChild($catalog)
     }
+    this.bindMessageEvent()
     return $catalogSidebar
   }
+
   /**
    * 发送目录渲染失败日志
    *
@@ -212,6 +214,22 @@ class Catalog {
     sendWebbLog('stability', {
       msg: 'catalogRenderFailed',
       renderMethod: 'async'
+    })
+  }
+
+  /**
+   * 发送 搜索点出/二跳 日志
+   * 点击目录章节绑定发送日志函数
+   *
+   * @private
+   */
+  bindMessageEvent () {
+    let event = window.MIP.util.event
+    event.delegate(document.documentElement, '.novel-catalog-content .catalog-page-content', 'click', () => {
+      sendTCLog('interaction', {
+        type: 'b',
+        action: 'clkShellCatalog'
+      })
     })
   }
   /**
@@ -298,6 +316,11 @@ class Catalog {
     this.bindShowEvent(shellElement)
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     this.$catalogSidebar.classList.add('show')
+    // 发送tc交互日志
+    sendTCLog('interaction', {
+      type: 'b',
+      action: 'showShellCatalog'
+    })
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
