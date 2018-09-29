@@ -201,7 +201,9 @@ class Catalog {
       $catalogSidebar.removeChild($catalogSidebar.querySelector('.mip-shell-catalog'))
       $catalogSidebar.appendChild($catalog)
     }
-    this.bindMessageEvent()
+    this.bindClickCatalogMessageEvent()
+    this.bindShellCatalogMessageEvent()
+    this.bindPageCatalogMessageEvent()
     return $catalogSidebar
   }
 
@@ -223,12 +225,42 @@ class Catalog {
    *
    * @private
    */
-  bindMessageEvent () {
+  bindClickCatalogMessageEvent () {
     let event = window.MIP.util.event
     event.delegate(document.documentElement, '.novel-catalog-content .catalog-page-content', 'click', () => {
       sendTCLog('interaction', {
         type: 'b',
         action: 'clkShellCatalog'
+      })
+    })
+  }
+  /**
+   * 发送 目录展现日志
+   * 点击小说阅读器页面内部的目录 发送tc交互日志
+   *
+   * @private
+   */
+  bindPageCatalogMessageEvent () {
+    let event = window.MIP.util.event
+    event.delegate(document.documentElement, '.navigator .click-cursor', 'click', () => {
+      sendTCLog('interaction', {
+        type: 'b',
+        action: 'clkPageShowCatalog'
+      })
+    })
+  }
+  /**
+   * 发送 目录展现日志
+   * 点击小说阅读器shell的目录 发送tc交互日志
+   *
+   * @private
+   */
+  bindShellCatalogMessageEvent () {
+    let event = window.MIP.util.event
+    event.delegate(document.documentElement, '.button-wrapper div:first-child', 'click', () => {
+      sendTCLog('interaction', {
+        type: 'b',
+        action: 'clkShellShowCatalog'
       })
     })
   }
@@ -316,11 +348,6 @@ class Catalog {
     this.bindShowEvent(shellElement)
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     this.$catalogSidebar.classList.add('show')
-    // 发送tc交互日志
-    sendTCLog('interaction', {
-      type: 'b',
-      action: 'showShellCatalog'
-    })
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
