@@ -573,5 +573,4 @@ mip-novel-video {
     height: 100%;
   }
 }
-
 </style>
