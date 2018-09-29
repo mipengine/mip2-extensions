@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-cn" mip>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>最新章节_小说网</title>
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/mag-design/2.0.2/mag-design.min.css">
+    <link rel="canonical" href="https://www.mipengine.org/">
+    <style mip-custom>
+        @font-face {
+          font-family: xiaoshuo;
+
+          src: url(font/xiaoshuo.eot?t=1515560671046);
+          src: url(font/xiaoshuo.eot?t=1515560671046#iefix) format("embedded-opentype"), url(font/xiaoshuo.woff) format("woff"), url(font/xiaoshuo.ttf?t=1515560671046) format("truetype"), url(font/xiaoshuo.svg?t=1515560671046#xiaoshuo) format("svg");
+        }
+        .icon-xiaoshuo {
+          font-family: xiaoshuo !important;
+          font-size: 16px;
+          font-style: normal;
+
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        .icon-paihangbang:before {
+          content: "\e663";
+        }
+        .icon-mianfei:before {
+          content: "\e665";
+        }
+        .icon-tuijian:before {
+          content: "\e668";
+        }
+        html body {
+          line-height: unset;
+        }
+        #header {
+          padding-top: 32px;
+          padding-left: 17px;
+          padding-right: 17px;
+        }
+        #header .left,
+        #header .right {
+          position: absolute;
+          top: 0;
+          z-index: 10;
+        }
+        #header .left {
+          left: 17px;
+          text-align: left;
+        }
+        #header .right {
+          right: 17px;
+        }
+        #header a {
+          width: 22px;
+          height: 44px;
+          line-height: 44px;
+          color: #333;
+        }
+        #header h4 {
+          margin: 0;
+          padding: 0 50px;
+          text-align: center;
+          font-size: 24px;
+          font-weight: bold;
+        }
+        #footer {
+          color: #999;
+          font-size: 12px;
+          text-align: center;
+          line-height: 50px;
+        }
+        .text-box {
+          display: inline-block;
+          padding: 1px 2px;
+          margin-bottom: 2px;
+          text-decoration: none;
+          vertical-align: middle;
+          font-size: 10px;
+          line-height: 11px;
+          height: 10px;
+          font-style: normal;
+          font-weight: 400;
+          overflow: hidden;
+          box-sizing: content-box;
+          border-radius: 2px;
+        }
+        .text-box.text-box-gray {
+          color: #999;
+          border: 1px solid #e3e3e3;
+        }
+        .text-right {
+          text-align: right;
+        }
+        .text-center {
+          text-align: center;
+        }
+        ul {
+          list-style: none;
+        }
+        .btn.btn-black,
+        button.btn-black {
+          border-color: #707379;
+          color: #000;
+          text-align: center;
+          padding-left: 0;
+          padding-right: 0;
+        }
+        .color-gray {
+          color: #555;
+        }
+        a {
+          -webkit-tap-highlight-color: rgba(0,0,0,0.2);
+        }
+        mip-scrollbox [data-wrapper] [data-scroller],
+        mip-scrollbox [data-wrapper] [data-inner],
+        mip-scrollbox [data-wrapper] [data-item] {
+          position: relative;
+        }
+        .scrollbox-more .scrollbox-more-wrap {
+          position: absolute;
+          height: 100%;
+          width: 100%;
+        }
+        html,
+        body.show-xiaoshuo-container {
+          line-height: unset;
+        }
+        html p.line-clamp1.gap-top,
+        body.show-xiaoshuo-container p.line-clamp1.gap-top {
+          font-size: 16px;
+        }
+        .catalog {
+          margin: .1rem 0;
+          padding: .1rem .17rem .15rem;
+          width: auto;
+          word-break: break-word;
+          word-wrap: break-word;
+          border: 0 none;
+        }
+        .catalog-menu {
+          position: relative;
+          background-color: #fff;
+        }
+        .catalog-menu select {
+          word-break: normal;
+          word-wrap: normal;
+          position: relative;
+          -webkit-appearance: none;
+          appearance: none;
+          display: inline-block;
+          padding: 0 0.24rem 0 0.08rem;
+          width: 100%;
+          height: 0.38rem;
+          vertical-align: middle;
+          line-height: normal;
+          font-size: 0.14rem;
+          color: #000;
+          background-color: transparent;
+          border: 1px solid #eee;
+          border-radius: 0;
+          overflow: hidden;
+          outline: none;
+        }
+        .catalog-list li {
+          line-height: 30px;
+        }
+        .catalog-page .disabled {
+          color: #a0a0a0;
+          cursor: not-allowed;
+        }
+        /*目录样式  */
+        #main .gap-bottom {
+          padding-bottom: 0.1rem;
+          margin-bottom: 0;
+          padding-left: 0.17rem;
+          padding-right: 0.17rem;
+        }
+        #main .gap-top {
+          padding-top: 0.1rem;
+          margin-top: 0;
+        }
+        #main .container {
+          padding-left: 0;
+          padding-right: 0;
+        }
+        #main .row {
+          padding-right: 0.17rem;
+          padding-left: 0.17rem;
+        }
+        .mip-shell-xiaoshuo-container {
+          opacity: 0;
+        }
+    </style>
+    <script type="application/ld+json">
+      {
+        "mipShellConfig": {
+          "currentPage": {
+            "chapter": 1,
+            "page": 1,
+            "isLastPage": false,
+            "chapterName": "%E7%AC%AC%E4%B8%80%E7%AB%A0+%E5%B0%8F%E4%BA%8C%E4%B8%8A%E9%85%92"
+          },
+          "previousPage": {
+            "url": "",
+            "chapter": "",
+            "page": ""
+          },
+          "nextPage": {
+            "url": "http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=1&fr=bdgfh&mip=1&pg=2",
+            "chapter": 1,
+            "page": 2
+          }
+        }
+      }
+    </script>
+    <noscript>
+        <style mip-officialrelease>
+            body {
+                -webkit-animation: none;
+                   -moz-animation: none;
+                    -ms-animation: none;
+                        animation: none;
+            }
+        </style>
+    </noscript>
+</head>
+<body>
+   <mip-shell-xiaoshuo mip-shell id="xiaoshuo-shell">
+    <script type="application/json">
+    {
+        "routes": [{
+            "pattern": "/.*/",
+            "meta": {
+                "header": {
+                    "show": true,
+                    "title": "雪中悍刀行"
+                },
+                "pageType": "catalog",
+                "officeId": "1609571708270959",
+                "footer": {
+                    "actionGroup": [
+                        {"name": "catalog", "text": "目录"},
+                        {"name": "darkmode", "text": "夜间模式", "text2": "白天模式"},
+                        {"name": "settings", "text": "更多设置"}
+                    ],
+                    "hrefButton": {
+                        "previous": "上一页",
+                        "next": "下一页",
+                        "previous-href": "",
+                        "next-href": "http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=1&fr=bdgfh&mip=1&pg=2"
+                    }
+                },
+                "catalog": [{"name":"番外篇_番外第十章","link":"http:\/\/www.xmkanshu.com\/book\/mip\/read?bkid=189169121&crid=1008&fr=bdgfh&mip=1"}]
+        }
+        }]
+    }
+    </script>
+</mip-shell-xiaoshuo>
+<div id="mip-reader-warp">
+  <div class="click-cursor mip-shell-xiaoshuo-container">
+      <div id="header">
+          <h4 class="line-clamp1">神武天帝</h4>
+      </div>
+      <div class="catalog">
+          <div class="row catalog-title">
+              <div class="span6">
+                  <h4>目录</h4>
+              </div>
+              <div class="span6 text-right">
+                  <mip-catalog-reverse>
+                      <i class="icon icon-order"></i>倒序
+                  </mip-catalog-reverse>
+              </div>
+          </div>
+          <!-- 章节显示列表，循环 li 标签 -->
+          <div class="catalog-list">
+              <ul class="catalog-li">
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="mipx-xiaoshuo-1-1.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第1章：灵魂重生</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="mipx-xiaoshuo-1-2.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第2章：武魂提升</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="mipx-xiaoshuo-1-3.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第3章：牛刀小试</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="mipx-xiaoshuo-2-1.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第4章：笑里藏刀</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="mipx-xiaoshuo-2-2.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第5章：云月儿</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第6章：情断玉碎</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第7章：击败陈松</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第8章：催化武魂</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第9章：开脉四重</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第10章：黄级四品</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第11章：针锋相对</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第12章：暴血狼魂</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第13章：武魂妙用</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第14章：击败钟真</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第15章：旧爱成恨</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第16章：丹宗林枫</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第17章：丹房传艺</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第18章：林枫武魂</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第19章：一场好戏</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第20章：连升三级</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第21章：吊打张大力</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第22章：魂力吞噬</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第23章：先发制人</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第24章：锁心箭术</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第25章：佳人赠弓</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第26章：妖兽火蟒</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第27章：救人惹祸</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第28章：拳法奥秘</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第29章：生死之约</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第30章：旗鼓相当</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第31章：战力惊人</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第32章：生不如死</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第33章：十脉传说</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第34章：借魂融脉</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第35章：十脉相连</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第36章：内门杀机</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第37章：落日神威</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第38章：淬体三分</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第39章：强势反击</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第40章：武师相助</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第41章：是惊是悔</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第42章：寸心炼血</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第43章：淬体二重</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第44章：订立规则</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第45章：一拳打废</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第46章：十连胜</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第47章：震慑全场</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第48章：击败仇敌</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第49章：血池奖励</p>
+                      </a>
+                  </li>
+                  <li>
+                      <!--data-type="mip" 用于两个MIP页之间跳转，应保证落地页同样为MIP页-->
+                      <a data-type="mip" href="read.html" class="block">
+                          <p class="line-clamp1 gap-top gap-bottom">第50章：百川脉</p>
+                      </a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+      <footer id="footer">
+          小说网 &copy; 2018 - 冀ICP备xxxx号
+      </footer>
+  </div>
+</div>
+
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="https://c.mipcdn.com/static/v1/mip-catalog-reverse/mip-catalog-reverse.js"></script>
+<script src="/mip-shell-xiaoshuo/mip-shell-xiaoshuo.js"></script>
+</body>
+</html>

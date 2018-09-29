@@ -130,6 +130,50 @@
 
 .mip-shell-catalog-wrapper.show {
   box-shadow: 2px 0 3px 0 rgba(0, 0, 0, 0.1);
+
+  .catalog-content-center-wrapper {
+    display: flex;
+    display: -webkit-flex;
+    flex-grow: 100%;
+    padding: 1.875em 0 0.9375em;
+    font-size: 1em;
+    line-height: 1em;
+  }
+
+  .width-50 {
+    flex-grow: 1;
+    width: 50%;
+    display: inline-block;
+  }
+
+  .text-left {
+    text-align: left;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  .catalog-content-center-left {
+    flex-grow: 1;
+    font-family: PingFangSC-Regular, serif;
+    font-size: 16px;
+    color: #000;
+    line-height: 16px;
+    opacity: 0.88;
+  }
+
+  .catalog-reserve {
+    color: #555;
+    z-index: 9999;
+    font-size: 16px;
+  }
+
+  .reverse-infor {
+    font-size: 14px;
+    height: 14px;
+    line-height: 14px;
+  }
 }
 
 /* 业务样式 - 侧边栏 */
@@ -386,7 +430,7 @@ mip-fixed.mip-shell-catalog-wrapper {
 }
 
 .mip-shell-night-font-color {
-  color: #333;
+  color: #535353;
 }
 
 .mip-shell-night-bar-font-color {
@@ -648,7 +692,6 @@ html {
   }
 
   .mip-shell-xiaoshuo-container {
-    visibility: hidden;
     opacity: 0;
   }
 
@@ -661,53 +704,45 @@ html {
   @keyframes showXiaoshuoContainer {
     from {
       opacity: 0;
-      visibility: hidden;
     }
 
     to {
       opacity: 1;
-      visibility: visible;
     }
   }
 
   @-moz-keyframes showXiaoshuoContainer {
     from {
       opacity: 0;
-      visibility: hidden;
     }
 
     to {
       opacity: 1;
-      visibility: visible;
     }
   }
 
   @-webkit-keyframes showXiaoshuoContainer {
     from {
       opacity: 0;
-      visibility: hidden;
     }
 
     to {
       opacity: 1;
-      visibility: visible;
     }
   }
 
   @-o-keyframes showXiaoshuoContainer {
     from {
       opacity: 0;
-      visibility: hidden;
     }
 
     to {
       opacity: 1;
-      visibility: visible;
     }
   }
 }
 
-html[mip-shell-xiaoshuo-theme="green"] {
+html[mip-shell-xiaoshuo-theme="green"] body {
   color: #3b3f2f;
   background-color: #d7e0cb;
 }
@@ -723,6 +758,12 @@ html[mip-shell-xiaoshuo-theme="paper"] {
 }
 
 html[mip-shell-xiaoshuo-theme="night"] {
+  .catalog-list {
+    a {
+      .mip-shell-night-font-color;
+    }
+  }
+
   /* #mip-page-loading-wrapper shell加载中效果 */
   #mip-page-loading-wrapper {
     background: #191919 !important;
@@ -762,7 +803,7 @@ html[mip-shell-xiaoshuo-theme="night"] {
   body {
     .mip-shell-night-font-color;
 
-    background-color: #000;
+    background-color: #000 !important;
   }
 
   .mip-shell-catalog-wrapper,
