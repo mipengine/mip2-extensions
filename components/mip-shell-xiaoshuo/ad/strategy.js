@@ -2,10 +2,10 @@
  * 小说的广告策略模块.
  * @constructor
  * @param {string} title - 小说的广告策略模块.
- * @param {string} author - liujing.
+ * @author liujing
  */
 
-import {Constant} from '../constant-config'
+import {Constant} from '../common/constant-config'
 import state from '../common/state'
 
 export default class Strategy {
@@ -14,7 +14,6 @@ export default class Strategy {
     this.pageAd = false
     this.adCustomReady = false
     this.fromSearch = 0
-    this.novelData = {}
     this.shellReady = false
     this.rootPageType = ''
     this.firstInPage = true
@@ -24,24 +23,10 @@ export default class Strategy {
    */
   strategyStatic () {
     // 修改出广告的策略
+    // 梳理广告的novelData
+    let novelData = this.getNovelData()
     let currentWindow = this.getCurrentWindow()
-    const {isLastPage, currentPage, chapterName, rootPageId, originalUrl, isRootPage} = state(currentWindow)
-    const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
-    const officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId || ''
-    if (isRootPage) {
-      this.rootPageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType
-    }
-    const silentFollow = this.getSilentFollow(isRootPage)
-    let novelData = {
-      isLastPage,
-      chapter: currentPage.chapter,
-      page: currentPage.page,
-      chapterName,
-      originalUrl,
-      name,
-      officeId,
-      silentFollow
-    }
+    const {currentPage, rootPageId} = state(currentWindow)
     this.changeStrategy()
     // 全局的广告
     if (this.globalAd) {
@@ -68,6 +53,36 @@ export default class Strategy {
     }
   }
 
+  getNovelData () {
+    let currentWindow = this.getCurrentWindow()
+    const {isLastPage, currentPage, chapterName, originalUrl, isRootPage} = state(currentWindow)
+    const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
+    const officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId || ''
+    const silentFollow = this.getSilentFollow(isRootPage)
+    // 基础novelData数据
+    let novelData = {
+      isLastPage,
+      chapter: currentPage.chapter,
+      page: currentPage.page,
+      chapterName,
+      originalUrl,
+      name,
+      officeId,
+      silentFollow
+    }
+    // 当结果页卡片入口为断点续读时，添加entryFrom: 'from_nvl_toast'
+    const entryFrom = originalUrl.indexOf('from_nvl_toast') === -1 ? null : 'from_nvl_toast'
+    if (entryFrom !== null) {
+      Object.assign(novelData, {entryFrom})
+    }
+    // 当第二次翻页时候，需要告知后端出品专广告
+    const rootWindow = isRootPage ? window : window.parent
+    if (rootWindow.MIP.mipshellXiaoshuo.novelPageNum === 2) {
+      Object.assign(novelData, {isSecondPage: true})
+    }
+    return novelData
+  }
+
   getCurrentWindow () {
     let pageId = window.MIP.viewer.page.currentPageId
     let pageInfo = window.MIP.viewer.page.getPageById(pageId)
@@ -81,6 +96,9 @@ export default class Strategy {
    * @returns {boolean} 后端拿到true可以发送，false则反之
    */
   getSilentFollow (isRootPage) {
+    if (isRootPage) {
+      this.rootPageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType
+    }
     let silentFollow = false
     if (this.rootPageType === 'page') {
       silentFollow = isRootPage

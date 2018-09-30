@@ -386,7 +386,7 @@ mip-fixed.mip-shell-catalog-wrapper {
 }
 
 .mip-shell-night-font-color {
-  color: #333;
+  color: #535353;
 }
 
 .mip-shell-night-bar-font-color {
@@ -648,7 +648,6 @@ html {
   }
 
   .mip-shell-xiaoshuo-container {
-    visibility: hidden;
     opacity: 0;
   }
 
@@ -661,48 +660,40 @@ html {
   @keyframes showXiaoshuoContainer {
     from {
       opacity: 0;
-      visibility: hidden;
     }
 
     to {
       opacity: 1;
-      visibility: visible;
     }
   }
 
   @-moz-keyframes showXiaoshuoContainer {
     from {
       opacity: 0;
-      visibility: hidden;
     }
 
     to {
       opacity: 1;
-      visibility: visible;
     }
   }
 
   @-webkit-keyframes showXiaoshuoContainer {
     from {
       opacity: 0;
-      visibility: hidden;
     }
 
     to {
       opacity: 1;
-      visibility: visible;
     }
   }
 
   @-o-keyframes showXiaoshuoContainer {
     from {
       opacity: 0;
-      visibility: hidden;
     }
 
     to {
       opacity: 1;
-      visibility: visible;
     }
   }
 }
@@ -723,6 +714,12 @@ html[mip-shell-xiaoshuo-theme="paper"] {
 }
 
 html[mip-shell-xiaoshuo-theme="night"] {
+  .catalog-list {
+    a {
+      .mip-shell-night-font-color;
+    }
+  }
+
   /* #mip-page-loading-wrapper shell加载中效果 */
   #mip-page-loading-wrapper {
     background: #191919 !important;

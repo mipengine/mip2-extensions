@@ -1,10 +1,9 @@
 /**
  * file: 小说shell 目录边栏文件
  * author: liangjiaying <jiaojiaomao220@163.com>
- * TODO：
- *     1. catalog数据支持异步获取
+ * @author liujing
  */
-import {Constant} from '../constant-config'
+import {Constant} from './constant-config'
 import state from './state'
 let event = window.MIP.util.event
 

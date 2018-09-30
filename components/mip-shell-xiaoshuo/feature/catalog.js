@@ -1,8 +1,9 @@
 /**
  * file: 小说shell 目录边栏文件
  * author: liangjiaying <jiaojiaomao220@163.com>
+ * @author liujing
  * TODO：
- *     1. catalog数据支持异步获取
+ *     1. 梳理现有的逻辑，抽取出相关的方法，比如有些html可以抽离出来
  */
 
 import state from '../common/state'
