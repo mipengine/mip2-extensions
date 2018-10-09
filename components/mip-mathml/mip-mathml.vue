@@ -28,8 +28,6 @@
 }
 </style>
 <script>
-const MATHML = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'
-
 export default {
   props: {
     formula: {
@@ -39,10 +37,15 @@ export default {
     inline: {
       type: Boolean,
       default: false
+    },
+    mathjaxConfig: {
+      type: String,
+      default: 'TeX-MML-AM_CHTML'
     }
   },
   data () {
     return {
+      MATHJAX_CDN: `https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=${this.mathjaxConfig}`,
       iframeID: Date.now(),
       iframeBody: null,
       height: 0,
@@ -75,7 +78,7 @@ export default {
     getIframeBody () {
       /* eslint-disable no-useless-escape */
       let body = `
-      <script type="text/javascript" src="${MATHML}"><\/script>
+      <script type="text/javascript" src="${this.MATHJAX_CDN}"><\/script>
       <div>${this.formula}</div>
       <script>
       MathJax.Hub.Queue(function() {
