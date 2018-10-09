@@ -30,6 +30,39 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     scrollBoundary()
     this.pageNum = 0
   }
+  build () {
+    super.build()
+    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
+    window.addEventListener('changePageStyle', (e, data) => {
+      if (e.detail[0] && e.detail[0].theme) {
+        // 修改主题
+        this.pageStyle.update(e, {
+          theme: e.detail[0].theme
+        })
+      } else if (e.detail[0] && e.detail[0].fontSize) {
+        // 修改字号
+        this.pageStyle.update(e, {
+          fontSize: e.detail[0].fontSize
+        })
+      } else {
+        // 初始化，从缓存中获取主题和字号apply到页面
+        this.pageStyle.update(e)
+      }
+      document.body.classList.add('show-xiaoshuo-container')
+      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
+      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
+      if (xiaoshuoContainer) {
+        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
+      }
+    })
+  }
+
+  // 通过小说JS给dom添加预渲染字段
+  connectedCallback () {
+    if (this.element.getAttribute('prerender') == null) {
+      this.element.setAttribute('prerender', '')
+    }
+  }
 
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
@@ -78,29 +111,29 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.$buttonMask.onclick = this.closeEverything.bind(this)
     }
 
-    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
-    window.addEventListener('changePageStyle', (e, data) => {
-      if (e.detail[0] && e.detail[0].theme) {
-        // 修改主题
-        this.pageStyle.update(e, {
-          theme: e.detail[0].theme
-        })
-      } else if (e.detail[0] && e.detail[0].fontSize) {
-        // 修改字号
-        this.pageStyle.update(e, {
-          fontSize: e.detail[0].fontSize
-        })
-      } else {
-        // 初始化，从缓存中获取主题和字号apply到页面
-        this.pageStyle.update(e)
-      }
-      document.body.classList.add('show-xiaoshuo-container')
-      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
-      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
-      if (xiaoshuoContainer) {
-        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
-      }
-    })
+    // // 承接emit & broadcast事件：所有页面修改页主题 & 字号
+    // window.addEventListener('changePageStyle', (e, data) => {
+    //   if (e.detail[0] && e.detail[0].theme) {
+    //     // 修改主题
+    //     this.pageStyle.update(e, {
+    //       theme: e.detail[0].theme
+    //     })
+    //   } else if (e.detail[0] && e.detail[0].fontSize) {
+    //     // 修改字号
+    //     this.pageStyle.update(e, {
+    //       fontSize: e.detail[0].fontSize
+    //     })
+    //   } else {
+    //     // 初始化，从缓存中获取主题和字号apply到页面
+    //     this.pageStyle.update(e)
+    //   }
+    //   document.body.classList.add('show-xiaoshuo-container')
+    //   // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
+    //   let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
+    //   if (xiaoshuoContainer) {
+    //     xiaoshuoContainer.classList.add('show-xiaoshuo-container')
+    //   }
+    // })
 
     // 初始化页面时执行一次背景色+字号初始化
     window.MIP.viewer.page.emitCustomEvent(window, true, {
