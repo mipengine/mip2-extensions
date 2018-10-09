@@ -55,3 +55,12 @@
 单位：无   
 默认值：false  
 使用限制：无
+
+### mathjaxConfig
+
+说明: mathjax 配置参数，参考 http://docs.mathjax.org/en/latest/config-files.html#common-configurations
+必填：否
+格式：字符串     
+单位：无   
+默认值：TeX-MML-AM_CHTML （包含最全的数学公式支持）  
+使用限制：无
