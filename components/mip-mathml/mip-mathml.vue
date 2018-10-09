@@ -45,7 +45,7 @@ export default {
   },
   data () {
     return {
-      MATHJAX_CDN: `https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=${this.mathjaxConfig}`,
+      MATHJAX_CDN: `https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=${this.mathjaxConfig}`,
       iframeID: `${Date.now()}_${Math.ceil(Math.random() * 100000)}`,
       iframeBody: null,
       height: 0,
