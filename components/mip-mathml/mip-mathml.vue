@@ -46,14 +46,30 @@ export default {
   data () {
     return {
       MATHJAX_CDN: `https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=${this.mathjaxConfig}`,
-      iframeID: Date.now(),
+      iframeID: `${Date.now()}_${Math.ceil(Math.random() * 100000)}`,
       iframeBody: null,
       height: 0,
       width: 'auto'
     }
   },
   created () {
-    window.addEventListener('message', event => {
+    window.addEventListener('message', this.messageHandler, false)
+  },
+  beforeDestroy () {
+    window.removeEventListener('message', this.messageHandler, false)
+  },
+  mounted () {
+    if (this.inline) {
+      // 如果是内敛要设置父级原生为 inline-block
+      this.$el.parentNode.setAttribute('style', `
+        display: inline-block;
+        vertical-align: middle;
+      `)
+    }
+    this.iframeBody = this.getIframeBody()
+  },
+  methods: {
+    messageHandler (event) {
       if (event.origin === location.origin && event.data && this.iframeID === event.data.iframeID) {
         const {width, height} = event.data
 
@@ -63,18 +79,7 @@ export default {
           this.width = `${width}px`
         }
       }
-    }, false)
-  },
-  mounted () {
-    if (this.inline) {
-      this.$el.parentNode.setAttribute('style', `
-        display: inline-block;
-        vertical-align: middle;
-      `)
-    }
-    this.iframeBody = this.getIframeBody()
-  },
-  methods: {
+    },
     getIframeBody () {
       /* eslint-disable no-useless-escape */
       let body = `
@@ -88,7 +93,6 @@ export default {
         if (display[0]) {
           document.body.setAttribute('style','margin:0');
           display[0].setAttribute('style','margin-top:0;margin-bottom:0');
-
           window.parent.postMessage({
             iframeID: ${this.iframeID},
             width: rendered.offsetWidth,
