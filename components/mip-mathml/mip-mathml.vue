@@ -53,10 +53,10 @@ export default {
     }
   },
   created () {
-    window.addEventListener('message', this.messageHandler, false)
+    window.addEventListener('message', this.messageHandler)
   },
   beforeDestroy () {
-    window.removeEventListener('message', this.messageHandler, false)
+    window.removeEventListener('message', this.messageHandler)
   },
   mounted () {
     if (this.inline) {
