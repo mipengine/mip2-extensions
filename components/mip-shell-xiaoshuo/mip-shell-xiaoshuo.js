@@ -1,9 +1,7 @@
 /**
  * @file 极速服务 小说shell
  * @author liangjiaying@baidu.com (JennyL)
- * TODO:
- * 1. 可以把继承的方法自己的方法分开
- * 2. 用 JSDoc @private 来标识私有函数
+ * @author liujing37
  */
 
 import './mip-shell-xiaoshuo.less'
@@ -17,7 +15,7 @@ import {
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import {getJsonld, getCurrentWindow} from './common/util'
+import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
 import {sendWebbLog, sendTCLog} from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
@@ -30,26 +28,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     super(...args)
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
-    this._scrollBoundary()
-  }
-  // 基类方法，翻页之后执行的方法
-  // 记录翻页的白屏
-  afterSwitchPage (options) {
-    // 用于记录页面加载完成的时间
-    const startRenderTime = xiaoshuoEvents.timer
-    const currentWindow = getCurrentWindow()
-    let endRenderTimer = null
-    currentWindow.onload = function () {
-      endRenderTimer = new Date()
-    }
-    // 页面加载完成，记录时间，超过5s发送白屏日志
-    setTimeout(function () {
-      if (!endRenderTimer || endRenderTimer - startRenderTime > 5000) {
-        sendWebbLog('stability', {
-          msg: 'whiteScreen'
-        })
-      }
-    }, 5000)
+    scrollBoundary()
+    this.pageNum = 0
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -60,6 +40,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 创建模式切换（背景色切换）
     this.pageStyle = new PageStyle()
     const isRootPage = MIP.viewer.page.isRootPage
+    // 用来记录翻页的次数，主要用来触发品专的广告
+    let currentWindow = isRootPage ? window : window.parent
+    currentWindow.MIP.mipshellXiaoshuo.novelPageNum++
 
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
@@ -93,7 +76,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
     // 绑定弹层点击关闭事件
     if (this.$buttonMask) {
-      this.$buttonMask.onclick = this._closeEverything.bind(this)
+      this.$buttonMask.onclick = this.closeEverything.bind(this)
     }
 
     // 承接emit & broadcast事件：所有页面修改页主题 & 字号
@@ -144,6 +127,26 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     }
   }
 
+  // 基类方法，翻页之后执行的方法
+  // 记录翻页的白屏
+  afterSwitchPage (options) {
+    // 用于记录页面加载完成的时间
+    const startRenderTime = xiaoshuoEvents.timer
+    const currentWindow = getCurrentWindow()
+    let endRenderTimer = null
+    currentWindow.onload = function () {
+      endRenderTimer = new Date()
+    }
+    // 页面加载完成，记录时间，超过5s发送白屏日志
+    setTimeout(function () {
+      if (!endRenderTimer || endRenderTimer - startRenderTime > 5000) {
+        sendWebbLog('stability', {
+          msg: 'whiteScreen'
+        })
+      }
+    }, 5000)
+  }
+
   // 基类root方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
   bindRootEvents () {
@@ -160,10 +163,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         preventX: true
       })
       swipeDelete.on('swipeup', () => {
-        this._closeEverything()
+        this.closeEverything()
       })
       swipeDelete.on('swipedown', () => {
-        this._closeEverything()
+        this.closeEverything()
       })
     })
     // 承接emit事件：显示目录侧边栏
@@ -177,27 +180,19 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     xiaoshuoEvents.bindRoot()
   }
 
-  // 基类root方法：初始化。用于除头部bar之外的元素
-  renderOtherParts () {
-    super.renderOtherParts()
-    // 初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
-    this._initAllObjects()
+  /**
+   * 基类root方法：异步初始化。用于除头部bar之外的元素，次方法是同步渲染，需要渲染初始的内容
+   */
+  renderOtherPartsAsync () {
+    this.asyncInitObject()
   }
 
-  // 自有方法：关闭所有元素，包括弹层、目录、设置栏
-  _closeEverything (e) {
-    // 关闭所有可能弹出的bar
-    this.toggleDOM(this.$buttonWrapper, false)
-    this.footer.hide()
-    this.header.hide()
-    this.catalog.hide()
-    this.fontSize.hideFontBar()
-    // 关闭黑色遮罩
-    this.toggleDOM(this.$buttonMask, false)
-  }
-
-  // 自有方法 仅root：初始化所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
-  _initAllObjects () {
+  /**
+   * 异步渲染所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
+   *
+   * @private asyncInitObject：小说内部私有方法，用于异步渲染逻辑
+   */
+  asyncInitObject () {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     this.footer = new Footer(configMeta.footer)
@@ -210,6 +205,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
   }
+
   // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
   unbindHeaderEvents () {
     super.unbindHeaderEvents()
@@ -221,6 +217,22 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     }
   }
 
+  /**
+   * 关闭所有元素，包括弹层、目录、设置栏
+   * @private closeEverything：关闭所有元素，包括弹层、目录、设置栏
+   */
+
+  closeEverything (e) {
+    // 关闭所有可能弹出的bar
+    this.toggleDOM(this.$buttonWrapper, false)
+    this.footer.hide()
+    this.header.hide()
+    this.catalog.hide()
+    this.fontSize.hideFontBar()
+    // 关闭黑色遮罩
+    this.toggleDOM(this.$buttonMask, false)
+  }
+
   // 基类方法 每个页面执行：绑定头部弹层事件。
   bindHeaderEvents () {
     super.bindHeaderEvents()
@@ -229,16 +241,16 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
     // 当页面目录点击触发跳转时，关闭所有的浮层（底部控件触发不关闭浮层）
     this.jumpHandler = event.delegate(document.documentElement, '.mip-shell-catalog-wrapper [mip-link]', 'click', function (e) {
-      me._closeEverything()
+      me.closeEverything()
     })
     // 当页面左上角返回按钮点击时，关闭所有的浮层
     this.jumpHandler = event.delegate(document.documentElement, '.mip-shell-header-wrapper a', 'click', function (e) {
+      me.closeEverything()
       // 发送tc日志
       sendTCLog('interaction', {
         type: 'b',
         action: 'backButton'
       })
-      me._closeEverything()
     })
   }
 
@@ -271,6 +283,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   processShellConfig (shellConfig) {
     MIP.mipshellXiaoshuo = this
     this.shellConfig = shellConfig
+    this.novelPageNum = 0
     shellConfig.routes.forEach(routerConfig => {
       routerConfig.meta.header.bouncy = false
     })
@@ -281,93 +294,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   processShellConfigInLeaf (shellConfig, matchIndex) {
     shellConfig.routes[matchIndex].meta.header.bouncy = false
   }
-  /**
-   * 滚动边界处理
-   */
-  _scrollBoundary () {
-    let touchStartEvent
-    let {
-      rect,
-      css
-    } = MIP.util
-    // 收集body child元素 并进行包裹
-    let scrollaBoundaryTouch = document.createElement('div')
-    let offsetHeight
-    let bodyPaddingTop
-    let body = document.body
-    let touchTarget
-    let stopProFun = e => e.stopPropagation()
-
-    scrollaBoundaryTouch.setAttribute('mip-shell-scrollboundary', true);
-    [].slice.call(body.children).forEach(child => {
-      if (/^(SCRIPT|IFRAME|MIP-SHELL|MIP-DATA)/.test(child.nodeName)) {
-        return
-      }
-      scrollaBoundaryTouch.appendChild(child)
-    })
-    body.appendChild(scrollaBoundaryTouch)
-
-    // 添加事件处理
-    scrollaBoundaryTouch.addEventListener('touchstart', e => {
-      touchStartEvent = e
-      // 内滚 兼容处理
-      touchTarget = this.getClosestScrollElement(e.target)
-      if (touchTarget) {
-        touchTarget.addEventListener('touchmove', stopProFun)
-      }
-    })
-
-    scrollaBoundaryTouch.addEventListener('touchmove', e => {
-      let touchRect = e.targetTouches[0]
-      let startTouchReact = touchStartEvent.targetTouches[0]
-
-      // 兼容模式处理
-      offsetHeight = document.compatMode === 'BackCompat'
-        ? document.body.clientHeight
-        : document.documentElement.clientHeight
-
-      bodyPaddingTop = bodyPaddingTop || parseInt(css(body, 'paddingTop'), 10)
-      let scrollTop = body.scrollTop || rect.getScrollTop()
-      let scrollHeight = rect.getElementRect(scrollaBoundaryTouch).height + bodyPaddingTop
-
-      // 到达顶部时 && 是向下滚动操作
-      // 到达底部时 && 并且 向上滚动操作
-      let isprevent = (
-        touchRect.pageY >= startTouchReact.pageY &&
-        touchRect.clientY > startTouchReact.clientY &&
-        scrollTop < 5) ||
-        (
-          touchRect.pageY < startTouchReact.pageY &&
-          scrollTop + offsetHeight >= scrollHeight
-        )
-      if (isprevent) {
-        e.preventDefault()
-      }
-      e.stopPropagation()
-    })
-
-    scrollaBoundaryTouch.addEventListener('touchend', () => {
-      if (touchTarget) {
-        touchTarget.removeEventListener('touchmove', stopProFun)
-      }
-    })
-  }
 
   prerenderAllowed () {
     return true
-  }
-  /**
-   * 获取上级可scroll的元素
-   *
-   * @param {Object} element 目标元素
-   */
-  getClosestScrollElement (element) {
-    while (element && !element.getAttribute('mip-shell-scrollboundary')) {
-      if (MIP.util.css(element, 'overflow-y') === 'auto' && element.clientHeight < element.scrollHeight) {
-        return element
-      }
-      element = element.parentNode
-    }
-    return null
   }
 }

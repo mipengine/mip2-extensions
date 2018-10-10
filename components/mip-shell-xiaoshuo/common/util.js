@@ -33,6 +33,7 @@ export const getCurrentWindow = () => {
 
 /**
  * 获取上级可scroll的元素
+ *
  * @private getClosestScrollElement
  * @param {Object} element 目标元素
  */
