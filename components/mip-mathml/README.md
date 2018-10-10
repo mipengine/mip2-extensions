@@ -3,7 +3,7 @@
 标题|内容
 ----|----
 类型|
-支持布局|
+支持布局| responsive, fixed-height, fill, container, fixed
 所需脚本| [https://c.mipcdn.com/static/v2/mip-mathml/mip-mathml.js](https://c.mipcdn.com/static/v2/mip-mathml/mip-mathml.js)
 
 ## 说明
