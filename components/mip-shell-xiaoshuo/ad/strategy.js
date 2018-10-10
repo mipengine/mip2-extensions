@@ -76,8 +76,7 @@ export default class Strategy {
       Object.assign(novelData, {entryFrom})
     }
     // 当第二次翻页时候，需要告知后端出品专广告
-    const rootWindow = isRootPage ? window : window.parent
-    if (rootWindow.MIP.mipshellXiaoshuo.novelPageNum === 2) {
+    if (window.MIP.mipshellXiaoshuo.novelPageNum === 2) {
       Object.assign(novelData, {isSecondPage: true})
     }
     return novelData
