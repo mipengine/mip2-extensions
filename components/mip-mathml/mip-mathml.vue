@@ -88,13 +88,13 @@ export default {
       <script>
       MathJax.Hub.Queue(function() {
         var rendered = document.getElementById('MathJax-Element-1-Frame')
-        var display = document.getElementsByClassName('MJXc-display');
+        var display = document.getElementsByClassName('MJXc-display')
         // 移除 mathjax 和 body 的默认边距
         if (display[0]) {
-          document.body.setAttribute('style','margin:0');
-          display[0].setAttribute('style','margin-top:0;margin-bottom:0');
+          document.body.setAttribute('style','margin:0')
+          display[0].setAttribute('style','margin-top:0;margin-bottom:0')
           window.parent.postMessage({
-            iframeID: ${this.iframeID},
+            iframeID: '${this.iframeID}',
             width: rendered.offsetWidth,
             height: rendered.offsetHeight
           }, '*')
