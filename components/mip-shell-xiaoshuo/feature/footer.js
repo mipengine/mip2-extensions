@@ -99,7 +99,6 @@ class footer {
     const extend = MIP.util.fn.extend
     try {
       config = extend(config, JSON.parse(storage.get('mip-shell-xiaoshuo-mode')))
-      console.log(JSON.parse(storage.get('mip-shell-xiaoshuo-mode')))
     } catch (e) {}
     return config
   }

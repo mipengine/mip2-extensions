@@ -11,6 +11,7 @@ import {getCurrentWindow} from '../common/util'
 import {sendWebbLog, sendTCLog} from './../common/log' // 日志
 
 let util = MIP.util
+let event = util.event
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
@@ -227,7 +228,6 @@ class Catalog {
    * @private
    */
   bindClickCatalogMessageEvent () {
-    let event = window.MIP.util.event
     event.delegate(document.documentElement, '.novel-catalog-content .catalog-page-content', 'click', () => {
       sendTCLog('interaction', {
         type: 'b',
@@ -242,7 +242,6 @@ class Catalog {
    * @private
    */
   bindPageCatalogMessageEvent () {
-    let event = window.MIP.util.event
     event.delegate(document.documentElement, '.navigator .click-cursor', 'click', () => {
       sendTCLog('interaction', {
         type: 'b',
@@ -257,7 +256,6 @@ class Catalog {
    * @private
    */
   bindShellCatalogMessageEvent () {
-    let event = window.MIP.util.event
     event.delegate(document.documentElement, '.button-wrapper div:first-child', 'click', () => {
       sendTCLog('interaction', {
         type: 'b',
