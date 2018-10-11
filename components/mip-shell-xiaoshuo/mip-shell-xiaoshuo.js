@@ -15,7 +15,8 @@ import {
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import {getJsonld, scrollBoundary} from './common/util'
+import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
+import {sendWebbLog, sendTCLog} from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
@@ -112,35 +113,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.$buttonMask.onclick = this.closeEverything.bind(this)
     }
 
-    // // 承接emit & broadcast事件：所有页面修改页主题 & 字号
-    // window.addEventListener('changePageStyle', (e, data) => {
-    //   if (e.detail[0] && e.detail[0].theme) {
-    //     // 修改主题
-    //     this.pageStyle.update(e, {
-    //       theme: e.detail[0].theme
-    //     })
-    //   } else if (e.detail[0] && e.detail[0].fontSize) {
-    //     // 修改字号
-    //     this.pageStyle.update(e, {
-    //       fontSize: e.detail[0].fontSize
-    //     })
-    //   } else {
-    //     // 初始化，从缓存中获取主题和字号apply到页面
-    //     this.pageStyle.update(e)
-    //   }
-    //   document.body.classList.add('show-xiaoshuo-container')
-    //   // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
-    //   let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
-    //   if (xiaoshuoContainer) {
-    //     xiaoshuoContainer.classList.add('show-xiaoshuo-container')
-    //   }
-    // })
-
-    // // 初始化页面时执行一次背景色+字号初始化
-    // window.MIP.viewer.page.emitCustomEvent(window, true, {
-    //   name: 'changePageStyle'
-    // })
-
     // 由于需要和定制化组件通信，因此需要在定制化组件的事件监听后才广播事件
     window.onload = () => {
       strategy.eventAllPageHandler()
@@ -158,6 +130,26 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         }
       })
     }
+  }
+
+  // 基类方法，翻页之后执行的方法
+  // 记录翻页的白屏
+  afterSwitchPage (options) {
+    // 用于记录页面加载完成的时间
+    const startRenderTime = xiaoshuoEvents.timer
+    const currentWindow = getCurrentWindow()
+    let endRenderTimer = null
+    currentWindow.onload = function () {
+      endRenderTimer = new Date()
+    }
+    // 页面加载完成，记录时间，超过5s发送白屏日志
+    setTimeout(function () {
+      if (!endRenderTimer || endRenderTimer - startRenderTime > 5000) {
+        sendWebbLog('stability', {
+          msg: 'whiteScreen'
+        })
+      }
+    }, 5000)
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
@@ -204,6 +196,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   /**
    * 异步渲染所有内置对象，包括底部控制栏，侧边栏，字体调整按钮，背景颜色模式切换
+   *
    * @private asyncInitObject：小说内部私有方法，用于异步渲染逻辑
    */
   asyncInitObject () {
@@ -235,6 +228,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
    * 关闭所有元素，包括弹层、目录、设置栏
    * @private closeEverything：关闭所有元素，包括弹层、目录、设置栏
    */
+
   closeEverything (e) {
     // 关闭所有可能弹出的bar
     this.toggleDOM(this.$buttonWrapper, false)
@@ -259,6 +253,11 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 当页面左上角返回按钮点击时，关闭所有的浮层
     this.jumpHandler = event.delegate(document.documentElement, '.mip-shell-header-wrapper a', 'click', function (e) {
       me.closeEverything()
+      // 发送tc日志
+      sendTCLog('interaction', {
+        type: 'b',
+        action: 'backButton'
+      })
     })
   }
 
