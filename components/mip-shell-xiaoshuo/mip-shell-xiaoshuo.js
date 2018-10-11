@@ -30,8 +30,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     scrollBoundary()
     this.pageNum = 0
   }
-  build () {
-    super.build()
+
+  // 通过小说JS给dom添加预渲染字段
+  connectedCallback () {
+    if (this.element.getAttribute('prerender') == null) {
+      this.element.setAttribute('prerender', '')
+    }
     // 承接emit & broadcast事件：所有页面修改页主题 & 字号
     window.addEventListener('changePageStyle', (e, data) => {
       if (e.detail[0] && e.detail[0].theme) {
@@ -55,13 +59,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         xiaoshuoContainer.classList.add('show-xiaoshuo-container')
       }
     })
-  }
-
-  // 通过小说JS给dom添加预渲染字段
-  connectedCallback () {
-    if (this.element.getAttribute('prerender') == null) {
-      this.element.setAttribute('prerender', '')
-    }
+    // 初始化页面时执行一次背景色+字号初始化
+    window.MIP.viewer.page.emitCustomEvent(window, true, {
+      name: 'changePageStyle'
+    })
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -135,15 +136,17 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     //   }
     // })
 
-    // 初始化页面时执行一次背景色+字号初始化
-    window.MIP.viewer.page.emitCustomEvent(window, true, {
-      name: 'changePageStyle'
-    })
+    // // 初始化页面时执行一次背景色+字号初始化
+    // window.MIP.viewer.page.emitCustomEvent(window, true, {
+    //   name: 'changePageStyle'
+    // })
 
-    strategy.eventAllPageHandler()
-
-    // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
-    xiaoshuoEvents.bindAll()
+    // 由于需要和定制化组件通信，因此需要在定制化组件的事件监听后才广播事件
+    window.onload = () => {
+      strategy.eventAllPageHandler()
+      // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
+      xiaoshuoEvents.bindAll()
+    }
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
@@ -186,8 +189,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.header.hide()
     })
 
-    strategy.eventRootHandler()
-    xiaoshuoEvents.bindRoot()
+    // 由于需要和定制化组件通信，因此需要在定制化组件的事件监听后才广播事件
+    window.onload = () => {
+      xiaoshuoEvents.bindRoot()
+    }
   }
 
   /**
