@@ -37,6 +37,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     if (this.element.getAttribute('prerender') == null) {
       this.element.setAttribute('prerender', '')
     }
+    // 创建模式切换（背景色切换）
+    this.pageStyle = new PageStyle()
     // 承接emit & broadcast事件：所有页面修改页主题 & 字号
     window.addEventListener('changePageStyle', (e, data) => {
       if (e.detail[0] && e.detail[0].theme) {
@@ -61,7 +63,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       }
     })
     // 初始化页面时执行一次背景色+字号初始化
-    window.MIP.viewer.page.emitCustomEvent(window, true, {
+    window.MIP.viewer.page.emitCustomEvent(window, false, {
       name: 'changePageStyle'
     })
   }
@@ -71,8 +73,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   bindAllEvents () {
     super.bindAllEvents()
     // 初始化所有内置对象
-    // 创建模式切换（背景色切换）
-    this.pageStyle = new PageStyle()
+
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
