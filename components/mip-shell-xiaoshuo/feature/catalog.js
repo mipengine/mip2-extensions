@@ -8,9 +8,10 @@
 
 import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
-import {sendWebbLog} from './../common/log' // 日志
+import {sendWebbLog, sendTCLog} from './../common/log' // 日志
 
 let util = MIP.util
+let event = util.event
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
@@ -202,8 +203,12 @@ class Catalog {
       $catalogSidebar.removeChild($catalogSidebar.querySelector('.mip-shell-catalog'))
       $catalogSidebar.appendChild($catalog)
     }
+    this.bindClickCatalogMessageEvent()
+    this.bindShellCatalogMessageEvent()
+    this.bindPageCatalogMessageEvent()
     return $catalogSidebar
   }
+
   /**
    * 发送目录渲染失败日志
    *
@@ -213,6 +218,49 @@ class Catalog {
     sendWebbLog('stability', {
       msg: 'catalogRenderFailed',
       renderMethod: 'async'
+    })
+  }
+
+  /**
+   * 发送 搜索点出/二跳 日志
+   * 点击目录章节绑定发送日志函数
+   *
+   * @private
+   */
+  bindClickCatalogMessageEvent () {
+    event.delegate(document.documentElement, '.novel-catalog-content .catalog-page-content', 'click', () => {
+      sendTCLog('interaction', {
+        type: 'b',
+        action: 'clkShellCatalog'
+      })
+    })
+  }
+  /**
+   * 发送 目录展现日志
+   * 点击小说阅读器页面内部的目录 发送tc交互日志
+   *
+   * @private
+   */
+  bindPageCatalogMessageEvent () {
+    event.delegate(document.documentElement, '.navigator .click-cursor', 'click', () => {
+      sendTCLog('interaction', {
+        type: 'b',
+        action: 'clkPageShowCatalog'
+      })
+    })
+  }
+  /**
+   * 发送 目录展现日志
+   * 点击小说阅读器shell的目录 发送tc交互日志
+   *
+   * @private
+   */
+  bindShellCatalogMessageEvent () {
+    event.delegate(document.documentElement, '.button-wrapper div:first-child', 'click', () => {
+      sendTCLog('interaction', {
+        type: 'b',
+        action: 'clkShellShowCatalog'
+      })
     })
   }
   /**
