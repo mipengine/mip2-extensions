@@ -1,0 +1,169 @@
+{
+	"errno": 0,
+	"errmsg": "success",
+	"data": {
+		"common": {
+      "query": "宝宝拉绿屎",
+      "sid": "125822_125783_125945_124158_126127_123093_126256_120188_123019_125735_118882_118862_118856_118831_118792_107312_126026_126142_117331_117433_125776_125653_124619_124953_126162_125926_124940_126198_126180_125709_126092_125038_126056_126023_124799_110085_123289_115261_125875_100457",
+      "bid": "DED0CC026ED9028C0E95809B631C6869:FG=1",
+      "lid": "7490425115294697980"
+    },
+    "schema": {
+      "page_types": ["bookMall", "detail", "catalog", "bookEnd", "read", "chapterEnd", "page_3"],
+      "ad_types": ["ad_1395", "ad_1396", "ad_1397"],
+      "page_ads": {
+        "bookMall": [
+            {
+                "strategy": {"ad_1396": 1}
+            }
+        ],
+        "detail": [
+            {
+                "strategy": {"ad_1396": 1}
+            }
+        ],
+        "catalog": [
+            {
+                "strategy": {"ad_1396": 1}
+            }
+        ],
+        "bookEnd": [
+            {
+                "strategy": {"ad_1396": 1}
+            }
+        ],
+        "read": [
+            {
+                "strategy": {
+                    "ad_1395": 1,
+                    "ad_1396": 2
+                },
+                "probability": "50%"
+            },
+            {
+                "strategy": {"ad_1396": 2},
+                "probability": "100%"
+            }
+        ],
+        "chapterEnd": [
+            {
+                "strategy":{"ad_1397": 2}
+            }
+        ],
+        "page_3": [
+            {
+                "strategy":{"ad_1397": 1}
+            }
+        ]
+        }
+    },
+    "page_priority": {
+      "read": "",
+      "chapterEnd": "chapterEnd&&page_3||page_4",
+      "page_3": ""
+     },
+    "cache": 600,
+    "timestamp": 1536564062,
+    "ads": {
+      "ad_1395": [
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1395_1"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        },
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1395_2"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        },
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1395_3"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        }
+      ],
+      "ad_1396": [
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1396_1"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        },
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1396_2"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        },
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1396_3"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        }
+      ],
+      "ad_1397": [
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1397_1"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        },
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1397_2"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        },
+        {
+          "tplData": {
+            "isFullScreenAd": false,
+            "title": "相关推荐1397_3"
+          },
+          "tplName": "mip-custom-title",
+          "rid": "rec_med"
+        }
+      ]
+    },
+    "templates": {
+      "mip-custom-title": "%3Cscript%3E%28window.MIP%3Dwindow.MIP%7C%7C%5B%5D%29.push%28%7Bname%3A%22mip-custom-title%22%2Cfunc%3Afunction%28%29%7Bdefine%28%22mip-custom-title%2Fmip-custom-title%22%2C%5B%22require%22%2C%22customElement%22%5D%2Cfunction%28i%29%7Bvar%20e%3Di%28%22customElement%22%29.create%28%29%3Breturn%20e.prototype.build%3Dfunction%28%29%7B%7D%2Ce%7D%29%2Cdefine%28%22mip-custom-title%22%2C%5B%22mip-custom-title%2Fmip-custom-title%22%5D%2Cfunction%28i%29%7Breturn%20i%7D%29%2Cfunction%28%29%7Bfunction%20i%28i%2Ce%29%7Bi.registerMipElement%28%22mip-custom-title%22%2Ce%2C%22mip-custom-title%20.mip-custom-title-text%7Bfont-size%3A19px%3Bcolor%3A%23999%3Bmargin-top%3A-16px%3Bmargin-bottom%3A-9px%3Bpadding%3A13px%200%208px%200%3Bborder-bottom%3A1px%20solid%20%233c76ff%3Bwidth%3A86px%3Bheight%3A100%25%7D%22%29%7Dif%28window.MIP%29require%28%5B%22mip-custom-title%22%5D%2Cfunction%28e%29%7Bi%28window.MIP%2Ce%29%7D%29%3Belse%20require%28%5B%22mip%22%2C%22mip-custom-title%22%5D%2Ci%29%7D%28%29%7D%7D%29%3B%3C%2Fscript%3E%3Cmip-custom-title%3E%3Cdiv%20class%3D%22mip-custom-container%22%3E%3Cdiv%20class%3D%22mip-custom-title-text%22%3E%7B%7Btitle%7D%7D%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2Fmip-custom-title%3E"
+    },
+    "config": {
+      "domain": "https://mipengine.baidu.com/",
+      "paths": {
+        "js/nav": "static/js/nav",
+        "js/util": "static/js/util",
+        "js/mip-ecom/ck": "static/js/mip-ecom/ck",
+        "js/mip-ecom/phoneDail": "static/js/mip-ecom/phoneDail",
+        "js/mip-ecom/ecom_base": "static/js/mip-ecom/ecom_base",
+        "js/mip-ecom/baseck": "static/js/mip-ecom/baseck",
+        "js/mip-ecom/action/video_action": "static/js/mip-ecom/action/video_action",
+        "js/mip-video-jsmpeg/mip-video-jsmpeg": "static/js/mip-video-jsmpeg/mip-video-jsmpeg",
+        "js/mip-video-jsmpeg/video-detector": "static/js/mip-video-jsmpeg/video-detector",
+        "js/mip-video-jsmpeg/jsmpeg": "static/js/mip-video-jsmpeg/jsmpeg"
+      }
+    },
+    "responseTime": {
+      "mipServerAllTime": 557
+    }
+  }
+}

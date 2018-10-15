@@ -34,6 +34,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 通过小说JS给dom添加预渲染字段
   connectedCallback () {
+    MIP.mipshellXiaoshuo = this
+    window.MIP.viewer.page.emitCustomEvent(window, false, {
+      name: 'mipShellReady'
+    })
     if (this.element.getAttribute('prerender') == null) {
       this.element.setAttribute('prerender', '')
     }
@@ -73,7 +77,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   bindAllEvents () {
     super.bindAllEvents()
     // 初始化所有内置对象
-
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
@@ -115,11 +118,9 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     }
 
     // 由于需要和定制化组件通信，因此需要在定制化组件的事件监听后才广播事件
-    window.onload = () => {
-      strategy.eventAllPageHandler()
-      // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
-      xiaoshuoEvents.bindAll()
-    }
+    strategy.eventAllPageHandler()
+    // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
+    xiaoshuoEvents.bindAll()
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
@@ -140,7 +141,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     const startRenderTime = xiaoshuoEvents.timer
     const currentWindow = getCurrentWindow()
     let endRenderTimer = null
-    currentWindow.onload = function () {
+    currentWindow.ready = function () {
       endRenderTimer = new Date()
     }
     // 页面加载完成，记录时间，超过5s发送白屏日志
@@ -183,9 +184,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
 
     // 由于需要和定制化组件通信，因此需要在定制化组件的事件监听后才广播事件
-    window.onload = () => {
-      xiaoshuoEvents.bindRoot()
-    }
+    xiaoshuoEvents.bindRoot()
   }
 
   /**
@@ -289,7 +288,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 基类方法，设置默认的shellConfig
   processShellConfig (shellConfig) {
-    MIP.mipshellXiaoshuo = this
     this.shellConfig = shellConfig
     this.novelPageNum = 0
     shellConfig.routes.forEach(routerConfig => {
