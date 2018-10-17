@@ -2,14 +2,37 @@
 <html lang="zh-cn" mip="">
 <head>
     <meta charset="UTF-8">
-    <title>用于测试小说详情页</title>
+    <title>第1章灵魂重生_神武天帝_小说网</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
     <link rel="stylesheet" href="https://c.mipcdn.com/static/mag-design/2.0.2/mag-design.min.css">
     <link rel="canonical" href="https://www.mipengine.org/">
     <style mip-custom="">
+        html {
+            background-color: #fff !important;
+        }
+        mip-history.mip-history-default {
+             background: none!important
+        }
         
+        .catalog-back{
+            top: 30px!important;
+            display:inline-block;
+            padding:0;
+            width: 44px!important;
+            height: 44px;
+        }
+            
+        .catalog-back mip-history{
+                padding: 10px 17px;
+                margin: 0;
+        } 
+        .catalog-back svg{
+             width:14px;
+            height: 14px;
+        }
+               
     </style>
     <noscript>
         <style mip-officialrelease="">
@@ -21,9 +44,6 @@
             }
         </style>
     </noscript>
-    <!-- json-ld用于描述页面内容，熊掌号部分参考https://ziyuan.baidu.com/xzh/right/resource -->
-    <!-- json-ld用于描述页面内容，书籍部分参考 https://schema.org/Book -->
-    <!-- json-ld用于描述页面内容，小说shell部分参考 mip-shell-xiaoshuo.md文档 -->
     <script type="application/ld+json">
         {
             "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
@@ -59,66 +79,78 @@
     </script>
 </head>
 <body>
-    
-    <div class="click-cursor" on="click:xiaoshuo-shell.showShellFooter">
+    <div id="mip-reader-warp">
+        <div class="click-cursor mip-shell-xiaoshuo-container">
+            <mip-fixed type="top"  class="catalog-back">
+                <mip-history history="go, -1" class="mip-history-default">
+                    <svg t="1530857979993" class="icon" style="fill: rgb(0, 0, 0);" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173" xmlns:xlink="http://www.w3.org/1999/xlink">
+                          <path fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z" p-id="3174"></path>
+                    </svg>
+                </mip-history>
+            </mip-fixed>   
+            <mip-xsdetailheader imgsrc="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1539414185202&di=0bb3b102ec880966373fbb05083dc123&imgtype=0&src=http%3A%2F%2Feasyread.ph.126.net%2FWpR9K-B9fTZlegXs3Ok13g%3D%3D%2F8796093022761980346.jpg" title="雪中悍刀行-西北有雄风" author="烽火戏诸侯" cal="东港" status="连载中" calhref="#cal" readhref="#read" content="悠悠万古千万帝, 唯我独凌于众帝之上的神帝、仙王、仙帝、天帝被我如蝼蚁般捏死的不知几何。曾经有一个自诩无敌的神王，最后被我踩死了。悠悠万古千万帝, 唯我独凌于众帝之上的神帝、仙王、仙帝、天帝被我如蝼蚁般捏死的不知几何。曾经有一个自诩无敌的神王，最后被我踩死了。">
+            </mip-xsdetailheader>
+        </div>
     </div>
-    <mip-xsdetailheader imgsrc="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1539414185202&di=0bb3b102ec880966373fbb05083dc123&imgtype=0&src=http%3A%2F%2Feasyread.ph.126.net%2FWpR9K-B9fTZlegXs3Ok13g%3D%3D%2F8796093022761980346.jpg" title="雪中悍刀行-西北有雄风" author="烽火戏诸侯" cal="东港" status="连载中" calhref="#cal" readhref="#read" content="悠悠万古千万帝, 唯我独凌于众帝之上的神帝、仙王、仙帝、天帝被我如蝼蚁般捏死的不知几何。曾经有一个自诩无敌的神王，最后被我踩死了。悠悠万古千万帝, 唯我独凌于众帝之上的神帝、仙王、仙帝、天帝被我如蝼蚁般捏死的不知几何。曾经有一个自诩无敌的神王，最后被我踩死了。">
-    </mip-xsdetailheader>
     <mip-custom>
         <script type="application/json">
-        {
+            {
             "accid": "e2217bab684fbb898dccf04b",
-            "title": "%E9%9B%AA%E4%B8%AD%E6%82%8D%E5%88%80%E8%A1%8C"
-        }
+            "title": "%E5%AE%9A%E5%88%B6%E5%8C%96MIP%E7%A4%BA%E4%BE%8B%E9%A1%B5%E9%9D%A2"
+            }
         </script>
     </mip-custom>
     <mip-shell-xiaoshuo mip-shell="" id="xiaoshuo-shell">
         <script type="application/json">
             {
-            "routes": [{
+            "routes": [
+                {
                 "pattern": "mipx-xiaoshuo-(\\d)+-(\\d)+.html",
                 "meta": {
                     "header": {
-                        "show": true,
-                        "title": "神武天帝"
+                    "show": true,
+                    "title": "神武天帝"
                     },
-                    "pageType": "detail",
+                    "pageType": "catalog",
+                    "officeId": "1609571708270959",
                     "footer": {
-                        "actionGroup": [
-                            {"name": "catalog", "text": "目录"},
-                            {"name": "darkmode", "text": "夜间模式", "text2": "白天模式"},
-                            {"name": "settings", "text": "更多设置"}
-                        ],
-                        "hrefButton": {
-                            "previous": "上一页",
-                            "next": "下一页"
+                    "actionGroup": [
+                        {
+                        "name": "catalog",
+                        "text": "目录"
+                        },
+                        {
+                        "name": "darkmode",
+                        "text": "夜间模式",
+                        "text2": "白天模式"
+                        },
+                        {
+                        "name": "settings",
+                        "text": "更多设置"
                         }
+                    ],
+                    "hrefButton": {
+                        "previous": "上一页",
+                        "next": "下一页"
+                    }
                     },
                     "book": {
-                        "title": "将夜",
-                        "chapterNumber": "已完结&nbsp;&nbsp;共1347章"
-                    },
-                    "catalog": [
-                        {
-                            "name": "第1章 灵魂重生",
-                            "link": "mipx-xiaoshuo-1-1.html"
-                        }, 
-                        {
-                            "name": "第2章 武魂提升",
-                            "link": "mipx-xiaoshuo-2-1.html"
-                        }
-                    ]
+                    "title": "将夜",
+                    "chapterNumber": "共1347章",
+                    "chapterStatus": "已完结"
+                    }
                 }
-            }]}
+                }
+            ]
+            }
         </script>
     </mip-shell-xiaoshuo>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="https://c.mipcdn.com/extensions/platform/v2/zongheng.tfciw/mip-xsdetailheader/mip-xsdetailheader.js"></script>
-       
    <!--  <script src="https://deploy-preview-434--mip2-extensions-platform-preview.netlify.com/zongheng.tfciw/mip-xsdetailheader/mip-xsdetailheader.js"></script> -->
     <!-- <script src="http://172.24.22.32:8111/mip-xsdetailheader/mip-xsdetailheader.js?v=410600188dfc4fe71c70bee4fe300a11"></script> -->
     <script src="https://c.mipcdn.com/static/v2/mip-shell-xiaoshuo/mip-shell-xiaoshuo.js"></script>
     <script src="https://mipcache.bdstatic.com/static/v1/mip-mustache/mip-mustache.js"></script>
     <script src="https://mipcache.bdstatic.com/static/v1/mip-custom/mip-custom.js"></script>
 </body>
-</html>o
+</html>
