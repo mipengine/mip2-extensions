@@ -4,19 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <link rel="canonical" href="">
-  <title>mip-timeago</title>
+  <title>mip-date-countdown</title>
   <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
 </head>
 <body>
-
-  <mip-timeago datetime="1539477453809"></mip-timeago>
-  <mip-timeago datetime="1519628552201" locale="zhCN"></mip-timeago>
-  <mip-timeago datetime="2530831053809" locale="zhCN"></mip-timeago>
-  <mip-timeago datetime="1519628552201" locale="ja"></mip-timeago>
-  <mip-timeago datetime="1519628552201" locale="ko"></mip-timeago>
-  <mip-timeago datetime="1519628552201" locale="en" cutoff="3600">2018-2-26</mip-timeago>
+  <mip-date-countdown timestamp-seconds="1540548000">
+    <template type="mip-mustache">
+      <div>
+        {{d}} {{days}}, {{h}} {{hours}}, {{m}} {{minutes}}, {{s}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
 
   <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
-  <script src="/mip-timeago/mip-timeago.js"></script>
+  <script src="/mip-date-countdown/mip-date-countdown.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
 </body>
 </html>
