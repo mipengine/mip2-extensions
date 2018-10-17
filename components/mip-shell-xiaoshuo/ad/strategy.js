@@ -57,11 +57,13 @@ export default class Strategy {
   getNovelData () {
     const currentWindow = getCurrentWindow()
     const {isLastPage, currentPage, chapterName, originalUrl, isRootPage} = state(currentWindow)
+    const pageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType || ''
     const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
     const officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId || ''
     // 基础novelData数据
     let novelData = {
       isLastPage,
+      pageType,
       chapter: currentPage.chapter,
       page: currentPage.page,
       chapterName,
