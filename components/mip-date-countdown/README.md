@@ -1,6 +1,6 @@
 # mip-timeago 组件
 
-用于将指定时间转换为 `*** time ago` 的形式，例如，3天前，2月前，31年后，5 years ago
+用于将指定时间转换为 `*** time ago` 的形式，例如，3天前，2月前，5 years ago
 
 标题|内容
 ----|----
@@ -13,6 +13,7 @@
 ```html
   <mip-timeago datetime="1539477453809"></mip-timeago>
   <mip-timeago datetime="1519628552201" locale="zhCN"></mip-timeago>
+  <mip-timeago datetime="2530831053809" locale="zhCN"></mip-timeago>
   <mip-timeago datetime="1519628552201" locale="ja"></mip-timeago>
   <mip-timeago datetime="1519628552201" locale="ko"></mip-timeago>
   <mip-timeago datetime="1519628552201" locale="en" cutoff="3600">2018-2-26</mip-timeago>
