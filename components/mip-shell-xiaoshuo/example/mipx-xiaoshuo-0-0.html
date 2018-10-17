@@ -15,9 +15,10 @@
         mip-history.mip-history-default {
              background: none!important
         }
-        
         .catalog-back{
-            top: 30px!important;
+            position: absolute;
+            top: 20px;
+            z-index: 33333;
             display:inline-block;
             padding:0;
             width: 44px!important;
@@ -81,13 +82,13 @@
 <body>
     <div id="mip-reader-warp">
         <div class="click-cursor mip-shell-xiaoshuo-container">
-            <mip-fixed type="top"  class="catalog-back">
+            <div type="top"  class="catalog-back">
                 <mip-history history="go, -1" class="mip-history-default">
                     <svg t="1530857979993" class="icon" style="fill: rgb(0, 0, 0);" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173" xmlns:xlink="http://www.w3.org/1999/xlink">
                           <path fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z" p-id="3174"></path>
                     </svg>
                 </mip-history>
-            </mip-fixed>   
+            </div>
             <mip-xsdetailheader imgsrc="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1539414185202&di=0bb3b102ec880966373fbb05083dc123&imgtype=0&src=http%3A%2F%2Feasyread.ph.126.net%2FWpR9K-B9fTZlegXs3Ok13g%3D%3D%2F8796093022761980346.jpg" title="雪中悍刀行-西北有雄风" author="烽火戏诸侯" cal="东港" status="连载中" calhref="#cal" readhref="#read" content="悠悠万古千万帝, 唯我独凌于众帝之上的神帝、仙王、仙帝、天帝被我如蝼蚁般捏死的不知几何。曾经有一个自诩无敌的神王，最后被我踩死了。悠悠万古千万帝, 唯我独凌于众帝之上的神帝、仙王、仙帝、天帝被我如蝼蚁般捏死的不知几何。曾经有一个自诩无敌的神王，最后被我踩死了。">
             </mip-xsdetailheader>
         </div>
@@ -147,8 +148,7 @@
     </mip-shell-xiaoshuo>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="https://c.mipcdn.com/extensions/platform/v2/zongheng.tfciw/mip-xsdetailheader/mip-xsdetailheader.js"></script>
-   <!--  <script src="https://deploy-preview-434--mip2-extensions-platform-preview.netlify.com/zongheng.tfciw/mip-xsdetailheader/mip-xsdetailheader.js"></script> -->
-    <!-- <script src="http://172.24.22.32:8111/mip-xsdetailheader/mip-xsdetailheader.js?v=410600188dfc4fe71c70bee4fe300a11"></script> -->
+    <script src="https://c.mipcdn.com/static/v1/mip-history/mip-history.js"></script>
     <script src="https://c.mipcdn.com/static/v2/mip-shell-xiaoshuo/mip-shell-xiaoshuo.js"></script>
     <script src="https://mipcache.bdstatic.com/static/v1/mip-mustache/mip-mustache.js"></script>
     <script src="https://mipcache.bdstatic.com/static/v1/mip-custom/mip-custom.js"></script>
