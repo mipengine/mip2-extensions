@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-cn" mip="">
+<head>
+    <meta charset="UTF-8">
+    <title>用于测试小说详情页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/mag-design/2.0.2/mag-design.min.css">
+    <link rel="canonical" href="https://www.mipengine.org/">
+    <style mip-custom="">
+        
+    </style>
+    <noscript>
+        <style mip-officialrelease="">
+            body {
+                -webkit-animation: none;
+                   -moz-animation: none;
+                    -ms-animation: none;
+                        animation: none;
+            }
+        </style>
+    </noscript>
+    <!-- json-ld用于描述页面内容，熊掌号部分参考https://ziyuan.baidu.com/xzh/right/resource -->
+    <!-- json-ld用于描述页面内容，书籍部分参考 https://schema.org/Book -->
+    <!-- json-ld用于描述页面内容，小说shell部分参考 mip-shell-xiaoshuo.md文档 -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+            "@id": "https://www.example.com/******",
+            "appid": "1589820413983913",
+            "title": "页面标题******",
+            "images": [
+                "https://www.example.com/***/pic1.png",
+                "https://www.example.com/***/pic2.png",
+                "https://www.example.com/***/pic3.png"
+            ],
+            "pubDate": "2017-06-15T08:00:01",
+            "name": "神武天帝",
+            "mipShellConfig": {
+                "currentPage": {
+                    "chapter": 1,
+                    "page": 2,
+                    "isLastPage": false,
+                    "chapterName": "第一章第二节"
+                },
+                "previousPage": {
+                    "url": "mipx-xiaoshuo-1-1.html",
+                    "chapter": 1,
+                    "page": 1
+                },
+                "nextPage": {
+                    "url": "mipx-xiaoshuo-1-3.html",
+                    "chapter": 1,
+                    "page": 3
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    
+    <div class="click-cursor" on="click:xiaoshuo-shell.showShellFooter">
+    </div>
+    <mip-xsdetailheader imgsrc="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1539414185202&di=0bb3b102ec880966373fbb05083dc123&imgtype=0&src=http%3A%2F%2Feasyread.ph.126.net%2FWpR9K-B9fTZlegXs3Ok13g%3D%3D%2F8796093022761980346.jpg" title="雪中悍刀行-西北有雄风" author="烽火戏诸侯" cal="东港" status="连载中" calhref="#cal" readhref="#read" content="悠悠万古千万帝, 唯我独凌于众帝之上的神帝、仙王、仙帝、天帝被我如蝼蚁般捏死的不知几何。曾经有一个自诩无敌的神王，最后被我踩死了。悠悠万古千万帝, 唯我独凌于众帝之上的神帝、仙王、仙帝、天帝被我如蝼蚁般捏死的不知几何。曾经有一个自诩无敌的神王，最后被我踩死了。">
+    </mip-xsdetailheader>
+    <mip-custom>
+        <script type="application/json">
+        {
+            "accid": "e2217bab684fbb898dccf04b",
+            "title": "%E9%9B%AA%E4%B8%AD%E6%82%8D%E5%88%80%E8%A1%8C"
+        }
+        </script>
+    </mip-custom>
+    <mip-shell-xiaoshuo mip-shell="" id="xiaoshuo-shell">
+        <script type="application/json">
+            {
+            "routes": [{
+                "pattern": "mipx-xiaoshuo-(\\d)+-(\\d)+.html",
+                "meta": {
+                    "header": {
+                        "show": true,
+                        "title": "神武天帝"
+                    },
+                    "pageType": "detail",
+                    "footer": {
+                        "actionGroup": [
+                            {"name": "catalog", "text": "目录"},
+                            {"name": "darkmode", "text": "夜间模式", "text2": "白天模式"},
+                            {"name": "settings", "text": "更多设置"}
+                        ],
+                        "hrefButton": {
+                            "previous": "上一页",
+                            "next": "下一页"
+                        }
+                    },
+                    "book": {
+                        "title": "将夜",
+                        "chapterNumber": "已完结&nbsp;&nbsp;共1347章"
+                    },
+                    "catalog": [
+                        {
+                            "name": "第1章 灵魂重生",
+                            "link": "mipx-xiaoshuo-1-1.html"
+                        }, 
+                        {
+                            "name": "第2章 武魂提升",
+                            "link": "mipx-xiaoshuo-2-1.html"
+                        }
+                    ]
+                }
+            }]}
+        </script>
+    </mip-shell-xiaoshuo>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="https://c.mipcdn.com/extensions/platform/v2/zongheng.tfciw/mip-xsdetailheader/mip-xsdetailheader.js"></script>
+       
+   <!--  <script src="https://deploy-preview-434--mip2-extensions-platform-preview.netlify.com/zongheng.tfciw/mip-xsdetailheader/mip-xsdetailheader.js"></script> -->
+    <!-- <script src="http://172.24.22.32:8111/mip-xsdetailheader/mip-xsdetailheader.js?v=410600188dfc4fe71c70bee4fe300a11"></script> -->
+    <script src="https://c.mipcdn.com/static/v2/mip-shell-xiaoshuo/mip-shell-xiaoshuo.js"></script>
+    <script src="https://mipcache.bdstatic.com/static/v1/mip-mustache/mip-mustache.js"></script>
+    <script src="https://mipcache.bdstatic.com/static/v1/mip-custom/mip-custom.js"></script>
+</body>
+</html>o
