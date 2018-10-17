@@ -34,7 +34,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 通过小说JS给dom添加预渲染字段
   connectedCallback () {
-    if (this.element.getAttribute('prerender') == null) {
+    if (this.element.getAttribute('prerender') == null && MIP.viewer.page.isRootPage) {
       this.element.setAttribute('prerender', '')
     }
     // 创建模式切换（背景色切换）
