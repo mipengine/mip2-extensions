@@ -120,8 +120,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let pageInfo = window.MIP.viewer.page.getPageById(pageId)
     console.log(pageId)
     console.log(pageInfo)
-    // window.MIP.viewer.page.prerender(jsonld.nextPage.url)
-    window.MIP.viewer.page.prerender(`http://127.0.0.1:8111/components/mip-shell-xiaoshuo/example/${jsonld.nextPage.url}`)
+    window.MIP.viewer.page.prerender(jsonld.nextPage.url)
+    // window.MIP.viewer.page.prerender(`http://127.0.0.1:8111/components/mip-shell-xiaoshuo/example/${jsonld.nextPage.url}`)
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
       // let jsonld = getJsonld(window)
