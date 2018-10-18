@@ -1,6 +1,7 @@
 let {
   CustomElement,
-  templates
+  templates,
+  viewer
 } = MIP
 
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000
@@ -31,13 +32,12 @@ export default class MIPDateCountDown extends CustomElement {
   constructor (...args) {
     super(...args)
     this.endDate = this.element.getAttribute('end-date')
-    this.timeleftMs = this.element.getAttribute('timeleft-ms')
-    this.timestampMs = this.element.getAttribute('timestamp-ms')
+    this.timeleftMs = +this.element.getAttribute('timeleft-ms')
     this.timestampMs = this.element.getAttribute('timestamp-ms')
     this.timestampSeconds = this.element.getAttribute('timestamp-seconds')
     this.offsetSeconds = this.element.getAttribute('offset-seconds') || 0
     this.locale = this.element.getAttribute('locale') || 'zh-cn'
-    this.whenEnded = this.element.getAttribute('when-ended')
+    this.whenEnded = this.element.getAttribute('when-ended') || 'stop'
     this.biggestUnit = (this.element.getAttribute('biggest-unit') || 'days').toUpperCase()
     this.localeWordList = this.getLocaleWord(this.locale)
   }
@@ -81,7 +81,8 @@ export default class MIPDateCountDown extends CustomElement {
     let diff = this.getYDHMSFromMs(between) || {}
 
     if (this.whenEnded === 'stop' && between < 1000) {
-      // trigger event
+      // stop count down and trigger event
+      viewer.eventAction.execute('timeout', this.element, {})
       clearInterval(this.countDownTimer)
     }
 
@@ -98,12 +99,12 @@ export default class MIPDateCountDown extends CustomElement {
     } else if (this.timeleftMs) {
       targetTime = Number(new Date()) + this.timeleftMs
     } else if (this.timestampMs) {
-      targetTime = this.timestampMs
+      targetTime = +this.timestampMs
     } else if (this.timestampSeconds) {
       targetTime = this.timestampSeconds * 1000
     }
 
-    if (!isNaN(targetTime)) {
+    if (isNaN(targetTime)) {
       console.log('One of end-date, timeleft-ms, timestamp-ms, timestamp-seconds is required')
     }
 
