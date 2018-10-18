@@ -74,11 +74,11 @@ class footer {
     // 创建底部按钮 HTML
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
-            <a from-cache class="page-button page-previous" mip-link href="" replace>
+            <a from-cache cache-first class="page-button page-previous" mip-link href="" replace>
                 <i class="icon gap-right-small icon-left"></i>
                 ${this.config.hrefButton.previous}
             </a>
-            <a from-cache class="page-button page-next" mip-link href="" replace>
+            <a from-cache cache-first class="page-button page-next" mip-link href="" replace>
                 ${this.config.hrefButton.next}
                 <i class="icon gap-left-small icon-right"></i>
             </a>

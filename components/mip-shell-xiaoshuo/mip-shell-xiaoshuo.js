@@ -115,9 +115,16 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     xiaoshuoEvents.bindAll()
 
+    let jsonld = getJsonld(window)
+    let pageId = window.MIP.viewer.page.currentPageId
+    let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+    console.log(pageId)
+    console.log(pageInfo)
+    // window.MIP.viewer.page.prerender(jsonld.nextPage.url)
+    window.MIP.viewer.page.prerender(`http://127.0.0.1:8111/components/mip-shell-xiaoshuo/example/${jsonld.nextPage.url}`)
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
-      let jsonld = getJsonld(window)
+      // let jsonld = getJsonld(window)
       window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
         name: 'updateShellFooter',
         data: {
@@ -130,6 +137,13 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 基类方法，翻页之后执行的方法
   // 记录翻页的白屏
   afterSwitchPage (options) {
+    console.log(options)
+    window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
+      name: 'updateShellFooter',
+      data: {
+        'jsonld': getJsonld(getCurrentWindow())
+      }
+    })
     // 用于记录页面加载完成的时间
     const startRenderTime = xiaoshuoEvents.timer
     const currentWindow = getCurrentWindow()
