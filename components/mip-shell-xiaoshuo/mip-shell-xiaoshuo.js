@@ -15,7 +15,7 @@ import {
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
+import {getJsonld, scrollBoundary, getCurrentWindow, creatNovelMipData} from './common/util'
 import {sendWebbLog, sendTCLog} from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
@@ -30,6 +30,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 处理浏览器上下滚动边界，关闭弹性
     scrollBoundary()
     this.pageNum = 0
+    creatNovelMipData()
   }
 
   // 基类方法：绑定页面可被外界调用的事件。

@@ -32,6 +32,23 @@ export const getCurrentWindow = () => {
 }
 
 /**
+ * 创建MIPData便于数据驱动
+ */
+export const creatNovelMipData = () => {
+  let ele = document.querySelector('.mip-shell-xiaoshuo-container')
+  let $mipData = document.createElement('mip-Data')
+  let $script = `
+    <script type="application/json">
+      {
+        "#novelData": {}
+      }
+    </script>
+  `
+  $mipData.innerHTML = $script
+  ele.insertBefore($mipData, ele.childNodes[0])
+}
+
+/**
  * 获取上级可scroll的元素
  *
  * @private getClosestScrollElement

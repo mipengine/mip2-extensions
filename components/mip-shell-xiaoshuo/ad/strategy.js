@@ -46,9 +46,8 @@ export default class Strategy {
         Object.assign(data, {fromSearch: this.fromSearch})
       }
       Object.assign(data, {novelData})
-      window.MIP.viewer.page.broadcastCustomEvent({
-        name: 'showAdvertising',
-        data
+      MIP.setData({
+        'novelData': data
       })
     }
   }
@@ -56,10 +55,11 @@ export default class Strategy {
   getNovelData () {
     let currentWindow = this.getCurrentWindow()
     const {isLastPage, currentPage, chapterName, originalUrl, isRootPage} = state(currentWindow)
-    const pageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType || ''
-    const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
-    const officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId || ''
-    const silentFollow = this.getSilentFollow(isRootPage)
+    const rootWindow = isRootPage ? window : window.parent
+    const pageType = rootWindow.MIP.mipshellXiaoshuo.currentPageMeta.pageType || ''
+    const name = rootWindow.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
+    const officeId = rootWindow.MIP.mipshellXiaoshuo.currentPageMeta.officeId || ''
+    // const silentFollow = this.getSilentFollow(isRootPage)
     // 基础novelData数据
     let novelData = {
       isLastPage,
@@ -70,7 +70,7 @@ export default class Strategy {
       originalUrl,
       name,
       officeId,
-      silentFollow
+      silentFollow: isRootPage
     }
     // 当结果页卡片入口为断点续读时，添加entryFrom: 'from_nvl_toast'
     const entryFrom = originalUrl.indexOf('from_nvl_toast') === -1 ? null : 'from_nvl_toast'
@@ -78,7 +78,7 @@ export default class Strategy {
       Object.assign(novelData, {entryFrom})
     }
     // 当第二次翻页时候，需要告知后端出品专广告
-    if (window.MIP.mipshellXiaoshuo.novelPageNum === 2) {
+    if (rootWindow.MIP.mipshellXiaoshuo.novelPageNum === 2) {
       Object.assign(novelData, {isSecondPage: true})
     }
     return novelData
@@ -88,28 +88,6 @@ export default class Strategy {
     let pageId = window.MIP.viewer.page.currentPageId
     let pageInfo = window.MIP.viewer.page.getPageById(pageId)
     return pageInfo.targetWindow
-  }
-
-  /**
-   * 根据当前页面类型以及是否初次进入内容页判断是否发送静默关注请求
-   *
-   * @param {boolean} isRootPage 是否是第一次实例化的页面
-   * @returns {boolean} 后端拿到true可以发送，false则反之
-   */
-  getSilentFollow (isRootPage) {
-    if (isRootPage) {
-      this.rootPageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType
-    }
-    let silentFollow = false
-    if (this.rootPageType === 'page') {
-      silentFollow = isRootPage
-      return silentFollow
-    }
-    if (window.MIP.mipshellXiaoshuo.currentPageMeta.pageType === 'page' && this.firstInPage) {
-      silentFollow = true
-      this.firstInPage = false
-    }
-    return silentFollow
   }
 
   /**
@@ -178,9 +156,10 @@ export default class Strategy {
      */
     window.addEventListener(Constant.CURRENT_PAGE_READY, e => {
       this.pageAd = true
-      if (window.MIP.viewer.page.isRootPage) {
-        this.strategyStatic()
-      }
+      this.strategyStatic()
+      // if (window.MIP.viewer.page.isRootPage) {
+      //   this.strategyStatic()
+      // }
     })
   }
 
