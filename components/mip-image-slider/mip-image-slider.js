@@ -1,6 +1,6 @@
 /**
- * @file       mip-image-slider
- * @author     chenyongle(chenyongle@baidu.com)
+ * @file mip-image-slider
+ * @author chenyongle(chenyongle@baidu.com)
  * @description 图片对比组件
  */
 
@@ -10,19 +10,19 @@ let { CustomElement, util } = MIP
 /**
  * 获取所有正确的子元素，两个 mip-img 的元素是必须的，两个提示 div 可选
  *
- * @param  {HTMLElement} element element
- * @returns {Array.<HTMLElement>}         返回正确元素的数组集
+ * @param {HTMLElement} element element
+ * @returns {Array.<HTMLElement>} 返回正确元素的数组集
  */
 function getAllChildren (element) {
   let array = []
-  let imgs = [...element.querySelectorAll('mip-img')]
+  let imgs = element.querySelectorAll('mip-img')
   if (imgs.length !== 2) {
     throw new Error('mip-img 元素个数不正确，必须为2')
   }
   array = [...imgs]
   element.removeChild(imgs[0])
   element.removeChild(imgs[1])
-  let divs = [...element.querySelectorAll('div')]
+  let divs = element.querySelectorAll('div')
   for (let i = 0; i < divs.length; i++) {
     if (divs[i].hasAttribute('first')) {
       array[2] = divs[i]
@@ -37,10 +37,10 @@ function getAllChildren (element) {
 /**
  * addEventListener 包了一层，方便 removeEventListener
  *
- * @param  {HTMLElement}   element element
- * @param  {string}   type    event type
- * @param  {Function} fn      handle function
- * @returns {Function}           removeEventListener wrapper
+ * @param {HTMLElement} element element
+ * @param {string} type event type
+ * @param {Function} fn handle function
+ * @returns {Function} removeEventListener wrapper
  */
 function listen (element, type, fn) {
   element.addEventListener(type, fn, false)
@@ -65,9 +65,11 @@ export default class MIPImageSlider extends CustomElement {
     this.position = null
     this.disableHintReappear = this.element.hasAttribute('disable-hint-reappear')
     this.initialSliderPosition = this.element.hasAttribute('initial-slider-position')
-      ? (Number(this.element.getAttribute('initial-slider-position')) || 0.5) : 0.5
+      ? ((typeof +this.element.getAttribute('initial-slider-position') === 'number')
+        ? +this.element.getAttribute('initial-slider-position') : 0.5) 
+      : 0.5
     this.stepSize = this.element.hasAttribute('step-size')
-      ? (Number(this.element.getAttribute('step-size')) || 0.1) : 0.1
+      ? (+this.element.getAttribute('step-size') || 0.1) : 0.1
 
     // 移动条
     this.barWrapper = null
@@ -80,8 +82,7 @@ export default class MIPImageSlider extends CustomElement {
    *
    */
   initValue () {
-    let arrayNodes = getAllChildren(this.element)
-    let [leftImage, rightImage, leftLabel, rightLabel] = [...arrayNodes]
+    let [leftImage, rightImage, leftLabel, rightLabel] = getAllChildren(this.element)
     this.leftImage = leftImage
     this.rightImage = rightImage
     let label
@@ -154,7 +155,7 @@ export default class MIPImageSlider extends CustomElement {
     this.element.appendChild(this.container)
     this.applyFillContent(this.element, true)
 
-    let percentage = Number(this.initialSliderPosition) * 100
+    let percentage = this.initialSliderPosition * 100
     this.moveRight(percentage)
 
     listen(this.element, 'mousedown', this.onMouseDown.bind(this))
@@ -166,7 +167,7 @@ export default class MIPImageSlider extends CustomElement {
     this.uninstallTouchEnd = null
 
     this.addEventAction('seekTo', (event, percentage) => {
-      let num = Number(percentage)
+      let num = +percentage
       if (num < 0 || num > 1) {
         throw new Error('跳转的参数只能是 0-1 内的数字')
       }
