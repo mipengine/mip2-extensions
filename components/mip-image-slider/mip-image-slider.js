@@ -66,7 +66,7 @@ export default class MIPImageSlider extends CustomElement {
     this.disableHintReappear = this.element.hasAttribute('disable-hint-reappear')
     this.initialSliderPosition = this.element.hasAttribute('initial-slider-position')
       ? ((typeof +this.element.getAttribute('initial-slider-position') === 'number')
-        ? +this.element.getAttribute('initial-slider-position') : 0.5) 
+        ? +this.element.getAttribute('initial-slider-position') : 0.5)
       : 0.5
     this.stepSize = this.element.hasAttribute('step-size')
       ? (+this.element.getAttribute('step-size') || 0.1) : 0.1
