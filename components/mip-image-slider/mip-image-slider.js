@@ -64,9 +64,9 @@ export default class MIPImageSlider extends CustomElement {
 
     this.position = null
     this.disableHintReappear = this.element.hasAttribute('disable-hint-reappear')
+    let temp = +this.element.getAttribute('initial-slider-position')
     this.initialSliderPosition = this.element.hasAttribute('initial-slider-position')
-      ? ((typeof +this.element.getAttribute('initial-slider-position') === 'number')
-        ? +this.element.getAttribute('initial-slider-position') : 0.5)
+      ? ((typeof temp === 'number') ? temp : 0.5)
       : 0.5
     this.stepSize = this.element.hasAttribute('step-size')
       ? (+this.element.getAttribute('step-size') || 0.1) : 0.1
@@ -274,12 +274,12 @@ export default class MIPImageSlider extends CustomElement {
       percentage = 100
     }
     this.position = percentage
-    this.rightContainer.style.transform = `translateX(${percentage}%)`
-    this.rightImage.style.transform = `translateX(${-percentage}%)`
-    this.rightLabel && (this.rightLabel.style.transform = `translateX(${-percentage}%)`)
-    this.barWrapper.style.transform = `translateX(${percentage}%)`
-    this.leftArrow.style.transform = `translateX(${percentage - 50}%)`
-    this.rightArrow.style.transform = `translateX(${percentage - 50}%)`
+    util.css(this.rightContainer, 'transform', `translateX(${percentage}%)`)
+    util.css(this.rightImage, 'transform', `translateX(${-percentage}%)`)
+    this.rightLabel && util.css(this.rightLabel, 'transform', `translateX(${-percentage}%)`)
+    util.css(this.barWrapper, 'transform', `translateX(${percentage}%)`)
+    util.css(this.leftArrow, 'transform', `translateX(${percentage - 50}%)`)
+    util.css(this.rightArrow, 'transform', `translateX(${percentage - 50}%)`)
   }
   animationArrowHidden () {
     this.leftArrow.classList.add('mip-image-slider-arrow-hidden')
