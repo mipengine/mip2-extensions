@@ -188,18 +188,36 @@ export default class Strategy {
    * 所有root事件的处理.
    */
   eventRootHandler () {
-    /**
-     * 监听mip-custom ready状态：此情况为了兼容如果小说shell优先加载custom无法监听请求事件的问题
-     *
-     * @method
-     * @param {module:constant-config~event:customReady} e - A event.
-     * @listens module:constant-config~event:customReady
-     */
-    window.addEventListener('customReady', e => {
+    let listen = function (target, name, listener) {
+      target.addEventListener(name, listener)
+      return () => target.removeEventListener(name, listener)
+    }
+
+    let unlistener1
+    let unlistener2
+
+    let customHandler = (e) => {
       if (this.pageAd) {
         this.adCustomReady = true
         this.strategyStatic()
       }
+
+      unlistener1 && unlistener1()
+      unlistener2 && unlistener2()
+
+      Promise.all([
+        new Promise(resolve => (unlistener1 = listen(window, 'customReady', resolve))),
+        new Promise(resolve => (unlistener2 = listen(window, 'xiaoshuoShellReady', resolve)))
+      ]).then(customHandler)
+    }
+
+    // 针对 rootPage 分两种情况：
+    // 1. mip-custom 先加载完成: mip-custom 组件发出的 customReady 事件失效，主动发一个事件触发 custom 再发一次
+    // 2. xiaoshuo-shell 先加载完成: 此时已经注册了监听 customReady 事件，customReadyConfirm 事件发出无效
+    unlistener1 = listen(window, 'customReady', customHandler)
+    window.MIP.viewer.page.emitCustomEvent(window, true, {
+      name: 'customReadyConfirm',
+      data: {}
     })
   }
 }

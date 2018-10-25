@@ -125,6 +125,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         }
       })
     }
+    window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
+      name: 'xiaoshuoShellReady',
+      data: {}
+    })
   }
 
   // 基类方法，翻页之后执行的方法
