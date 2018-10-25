@@ -7,7 +7,6 @@
 
 import {Constant} from '../common/constant-config'
 import state from '../common/state'
-import {getCurrentWindow} from '../common/util'
 
 export default class Strategy {
   constructor (config) {
@@ -26,7 +25,7 @@ export default class Strategy {
     // 修改出广告的策略
     // 梳理广告的novelData
     let novelData = this.getNovelData()
-    let currentWindow = getCurrentWindow()
+    let currentWindow = this.getCurrentWindow()
     const {currentPage, rootPageId} = state(currentWindow)
     this.changeStrategy()
     // 全局的广告
@@ -55,11 +54,12 @@ export default class Strategy {
   }
 
   getNovelData () {
-    const currentWindow = getCurrentWindow()
+    let currentWindow = this.getCurrentWindow()
     const {isLastPage, currentPage, chapterName, originalUrl, isRootPage} = state(currentWindow)
     const pageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType || ''
     const name = window.MIP.mipshellXiaoshuo.currentPageMeta.header.title || ''
     const officeId = window.MIP.mipshellXiaoshuo.currentPageMeta.officeId || ''
+    const silentFollow = this.getSilentFollow(isRootPage)
     // 基础novelData数据
     let novelData = {
       isLastPage,
@@ -70,7 +70,12 @@ export default class Strategy {
       originalUrl,
       name,
       officeId,
-      silentFollow: isRootPage
+      silentFollow
+    }
+    // 当结果页卡片入口为断点续读时，添加entryFrom: 'from_nvl_toast'
+    const entryFrom = originalUrl.indexOf('from_nvl_toast') === -1 ? null : 'from_nvl_toast'
+    if (entryFrom !== null) {
+      Object.assign(novelData, {entryFrom})
     }
     // 当第二次翻页时候，需要告知后端出品专广告
     if (window.MIP.mipshellXiaoshuo.novelPageNum === 2) {
@@ -79,13 +84,41 @@ export default class Strategy {
     return novelData
   }
 
+  getCurrentWindow () {
+    let pageId = window.MIP.viewer.page.currentPageId
+    let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+    return pageInfo.targetWindow
+  }
+
+  /**
+   * 根据当前页面类型以及是否初次进入内容页判断是否发送静默关注请求
+   *
+   * @param {boolean} isRootPage 是否是第一次实例化的页面
+   * @returns {boolean} 后端拿到true可以发送，false则反之
+   */
+  getSilentFollow (isRootPage) {
+    if (isRootPage) {
+      this.rootPageType = window.MIP.mipshellXiaoshuo.currentPageMeta.pageType
+    }
+    let silentFollow = false
+    if (this.rootPageType === 'page') {
+      silentFollow = isRootPage
+      return silentFollow
+    }
+    if (window.MIP.mipshellXiaoshuo.currentPageMeta.pageType === 'page' && this.firstInPage) {
+      silentFollow = true
+      this.firstInPage = false
+    }
+    return silentFollow
+  }
+
   /**
    * 修改出广告的策略
    *
    * @returns {Object} 修改出广告的策略
    */
   changeStrategy () {
-    const currentWindow = getCurrentWindow()
+    let currentWindow = this.getCurrentWindow()
     const {isLastPage, isRootPage, nextPage} = state(currentWindow)
     if (isRootPage) {
       this.fromSearch = 1
