@@ -70,6 +70,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         this.pageStyle.update(e)
       }
       document.body.classList.add('show-xiaoshuo-container')
+      // 加载动画完成，发送白屏日志
+      sendWebbLog('whitescreen')
       // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
       let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
       if (xiaoshuoContainer) {
