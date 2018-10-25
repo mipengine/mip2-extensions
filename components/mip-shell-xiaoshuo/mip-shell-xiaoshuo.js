@@ -34,9 +34,23 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 通过小说JS给dom添加预渲染字段
   connectedCallback () {
+    // 从结果页进入小说阅读页加上预渲染的标识prerender，但是内部的每页不能加，会影响翻页内的预渲染
+    if (this.element.getAttribute('prerender') !== null) {
+      this.element.removeAttribute('prerender')
+    }
     if (this.element.getAttribute('prerender') == null && MIP.viewer.page.isRootPage) {
       this.element.setAttribute('prerender', '')
     }
+    // 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
+    this.initPageLayout()
+  }
+
+  /**
+   * 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
+   *
+   * @private initPageLayout
+   */
+  initPageLayout () {
     // 创建模式切换（背景色切换）
     this.pageStyle = new PageStyle()
     // 承接emit & broadcast事件：所有页面修改页主题 & 字号
