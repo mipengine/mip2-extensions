@@ -135,6 +135,15 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     xiaoshuoEvents.bindAll()
 
+    // common 5s 请求失败，发送common 异常日志
+    setTimeout(() => {
+      if (window.MIP.setedCommenFetch !== true) {
+        sendWebbLog('stability', {
+          msg: 'commonAbnormal'
+        })
+        console.warn('common 异常!')
+      }
+    }, 5000)
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
       let jsonld = getJsonld(window)
