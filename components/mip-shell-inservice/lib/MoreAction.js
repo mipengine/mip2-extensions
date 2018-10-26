@@ -118,6 +118,6 @@ export default class {
       return `${key}=${encodeURIComponent(urlQuerysObj[key])}`
     })
     new Image().src = `//rqs.baidu.com/service/api/rqs?${urlQuerys.join('&')}`
-    new Image().src = `//sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/servicehub.pae.baidu.com/servicehub/oplog/urlclk?click_token=${encodeURIComponent(clickToken)}&url=${encodeURIComponent(location.href)}&is_mip=1`
+    new Image().src = `https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/servicehub.pae.baidu.com/servicehub/oplog/urlclk?click_token=${encodeURIComponent(clickToken)}&url=${encodeURIComponent(location.href)}&is_mip=1`
   }
 }
