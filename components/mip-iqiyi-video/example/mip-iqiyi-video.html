@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+      body {
+        padding-bottom: 30px;
+      }
+      h1 {
+        text-align: center;
+        margin: 20px 0;
+      }
+      h2 {
+        margin: 20px 10px;
+      }
+      .code {
+        margin: 20px 10px;
+        padding: 2px 10px;
+        color: #657b83;
+        border: 1px solid #ccc;
+        overflow-x: auto;
+        border-radius: 3px 3px 3px 3px;
+        font-size: 13px;
+        line-height: 19px;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,.05), 0 1px 4px 0 rgba(0,0,0,.08), 0 3px 1px -2px rgba(0,0,0,.2);
+      }
+      .desc {
+        margin: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>基本使用</h2>
+    <pre class="code">
+      &lt;mip-iqiyi-video
+        layout="fixed"
+        width="600"
+        height="400"  
+        src="https://open.iqiyi.com/developer/player_js/coopPlayerIndex.html?vid=6fd208b91bff953cab5218f1c8db68c4&tvId=10110320309&accessToken=2.f22860a2479ad60d8da7697274de9346&appKey=3955c3425820435e86d0f4cdfe56f5e7&appId=1368&height=100%&width=100%"&gt;
+      &lt;/mip-iqiyi-video&gt;
+    </pre>
+    <mip-iqiyi-video
+      layout="fixed"
+      width="600"
+      height="400"  
+      src="https://open.iqiyi.com/developer/player_js/coopPlayerIndex.html?vid=6fd208b91bff953cab5218f1c8db68c4&tvId=10110320309&accessToken=2.f22860a2479ad60d8da7697274de9346&appKey=3955c3425820435e86d0f4cdfe56f5e7&appId=1368&height=100%&width=100%">
+    </mip-iqiyi-video>
+    <h2>使用 data-param-* 参数</h2>
+    <pre class="code">
+    &lt;mip-iqiyi-video
+      layout="responsive"
+      width="600" 
+      height="400"  
+      data-vid="6fd208b91bff953cab5218f1c8db68c4"
+      data-tvId="10110320309"
+      data-param-accessToken="2.f22860a2479ad60d8da7697274de9346"
+      data-param-appKey="3955c3425820435e86d0f4cdfe56f5e7"
+      data-param-appId="1368"
+      data-param-height="100%&"
+      data-param-width="100%"&gt;
+    &lt;/mip-iqiyi-video&gt;
+    </pre>
+    <mip-iqiyi-video
+      layout="responsive"
+      width="600" 
+      height="400"  
+      data-vid="6fd208b91bff953cab5218f1c8db68c4"
+      data-tvId="10110320309"
+      data-param-accessToken="2.f22860a2479ad60d8da7697274de9346"
+      data-param-appKey="3955c3425820435e86d0f4cdfe56f5e7"
+      data-param-appId="1368"
+      data-param-height="100%"
+      data-param-height="100"
+      data-param-width="100%">
+    </mip-iqiyi-video>
+
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-iqiyi-video/mip-iqiyi-video.js"></script>
+  </body>
+</html>
