@@ -75,7 +75,7 @@ export default class MIPIqiyiVideo extends CustomElement {
     if (!this.videoVid || !this.videoTvid) {
       throw new Error('参数 Vid 和 tvId 不能为空')
     }
-    let src = 'http://open.iqiyi.com/developer/player_js/coopPlayerIndex.html' +
+    let src = 'https://open.iqiyi.com/developer/player_js/coopPlayerIndex.html' +
       '?vid=' + this.videoVid + '&tvId=' + this.videoTvid
     const params = getDataParams(this.element)
     this.iframeSrc = src = addParamsToUrl(src, params)
