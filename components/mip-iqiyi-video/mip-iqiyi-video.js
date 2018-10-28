@@ -2,7 +2,7 @@
  * @file mip-iqiyi-video.js 视频组件
  * @author chenyongle
  */
-let { CustomElement } = MIP
+const { CustomElement } = MIP
 /**
  * 获取 element 中所有 data-param-* 的键值对
  *
@@ -12,14 +12,14 @@ let { CustomElement } = MIP
  */
 function getDataParams (element, optComputeParamNameFunc,
   optParamPattern) {
-  const computeParamNameFunc = optComputeParamNameFunc || (key => key)
-  const {dataset} = element
-  const params = {}
-  const paramPattern = optParamPattern || /^param(.+)/
-  for (const key in dataset) {
-    const matches = key.match(paramPattern)
+  let computeParamNameFunc = optComputeParamNameFunc || (key => key)
+  let {dataset} = element
+  let params = {}
+  let paramPattern = optParamPattern || /^param(.+)/
+  for (let key in dataset) {
+    let matches = key.match(paramPattern)
     if (matches) {
-      const param = matches[1][0].toLowerCase() + matches[1].substr(1)
+      let param = matches[1][0].toLowerCase() + matches[1].substr(1)
       params[computeParamNameFunc(param)] = dataset[key]
     }
   }
@@ -29,19 +29,17 @@ function addParamsToUrl (src, params) {
   return src + `&${serializeQS(params)}`
 }
 function serializeQS (params) {
-  const serialize = []
-  for (const key in params) {
-    const value = params[key]
+  let serialize = []
+  for (let key in params) {
+    let value = params[key]
     if (value == null) {
       continue
     } else if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
-        const sValue = (value[i])
-        serialize.push(`${encodeURIComponent(key)}=${encodeURIComponent(sValue)}`)
+        serialize.push(`${encodeURIComponent(key)}=${encodeURIComponent(value[i])}`)
       }
     } else {
-      const sValue = (value)
-      serialize.push(`${encodeURIComponent(key)}=${encodeURIComponent(sValue)}`)
+      serialize.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     }
   }
   return serialize.join('&')
