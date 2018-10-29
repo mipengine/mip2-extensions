@@ -8,7 +8,6 @@ import './mip-shell-xiaoshuo.less'
 import Catalog from './feature/catalog' // 侧边栏目录
 import Footer from './feature/footer' // 底部控制栏
 import Header from './feature/header' // shell导航头部
-import {Constant} from './common/constant-config'
 import {
   PageStyle,
   FontSize
@@ -35,64 +34,13 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     this.pageNum = 0
   }
 
-  // 通过小说JS给dom添加预渲染字段
-  connectedCallback () {
-    // 从结果页进入小说阅读页加上预渲染的标识prerender，但是内部的每页不能加，会影响翻页内的预渲染
-    if (this.element.getAttribute('prerender') !== null) {
-      this.element.removeAttribute('prerender')
-    }
-    if (this.element.getAttribute('prerender') == null && MIP.viewer.page.isRootPage) {
-      this.element.setAttribute('prerender', '')
-    }
-    // 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
-    this.initPageLayout()
-  }
-
-  /**
-   * 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
-   *
-   * @private initPageLayout
-   */
-  initPageLayout () {
-    // 创建模式切换（背景色切换）
-    this.pageStyle = new PageStyle()
-    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
-    window.addEventListener('changePageStyle', (e, data) => {
-      if (e.detail[0] && e.detail[0].theme) {
-        // 修改主题
-        this.pageStyle.update(e, {
-          theme: e.detail[0].theme
-        })
-      } else if (e.detail[0] && e.detail[0].fontSize) {
-        // 修改字号
-        this.pageStyle.update(e, {
-          fontSize: e.detail[0].fontSize
-        })
-      } else {
-        // 初始化，从缓存中获取主题和字号apply到页面
-        this.pageStyle.update(e)
-      }
-      document.body.classList.add('show-xiaoshuo-container')
-      // 加载动画完成，发送白屏日志
-      sendWebbLog('whitescreen')
-      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
-      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
-      if (xiaoshuoContainer) {
-        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
-      }
-    })
-    // 初始化页面时执行一次背景色+字号初始化
-    window.MIP.viewer.page.emitCustomEvent(window, false, {
-      name: 'changePageStyle'
-    })
-  }
-
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
   bindAllEvents () {
     super.bindAllEvents()
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
+    this.pageStyle = new PageStyle()
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
@@ -133,6 +81,37 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.$buttonMask.onclick = this.closeEverything.bind(this)
     }
 
+    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
+    window.addEventListener('changePageStyle', (e, data) => {
+      if (e.detail[0] && e.detail[0].theme) {
+        // 修改主题
+        this.pageStyle.update(e, {
+          theme: e.detail[0].theme
+        })
+      } else if (e.detail[0] && e.detail[0].fontSize) {
+        // 修改字号
+        this.pageStyle.update(e, {
+          fontSize: e.detail[0].fontSize
+        })
+      } else {
+        // 初始化，从缓存中获取主题和字号apply到页面
+        this.pageStyle.update(e)
+      }
+      document.body.classList.add('show-xiaoshuo-container')
+      // 加载动画完成，发送白屏日志
+      sendWebbLog('whitescreen')
+      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
+      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
+      if (xiaoshuoContainer) {
+        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
+      }
+    })
+
+    // 初始化页面时执行一次背景色+字号初始化
+    window.MIP.viewer.page.emitCustomEvent(window, true, {
+      name: 'changePageStyle'
+    })
+
     strategy.eventAllPageHandler()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
@@ -140,9 +119,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 获取当前页面的数据，以及需要预渲染的链接
     let jsonld = getJsonld(getCurrentWindow())
     // 预渲染
-    this.readerPrerender(jsonld)
+    if (this.currentPageMeta.pageType === 'page') {
+      this.readerPrerender(jsonld)
+    }
   }
-
   /**
    * 小说预渲染
    *
@@ -154,6 +134,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     if (window.MIP.util.isCacheUrl(location.href)) { // 处于cache下，需要转换cacheUrl
       window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
         .then(iframes => {
+          console.log(nextPageUrl)
+          console.log(prePageUrl)
           console.log('prerender done')
           this.updateFooterDom()
         })
@@ -173,8 +155,11 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
    * @returns {string} 返回的cacheURl
    */
   getCacheUrl (url) {
-    let netUrl = url.split('/')[2].split('.').join('-')
-    return `https://${netUrl}.mipcdn.com${MIP.util.makeCacheUrl(url)}`
+    if (url) {
+      let netUrl = url.split('/')[2].split('.').join('-')
+      return `https://${netUrl}.mipcdn.com${MIP.util.makeCacheUrl(url)}`
+    }
+    return ''
   }
 
   /**
@@ -184,11 +169,14 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   updateFooterDom () {
     // 页面配置的数据
     let footerConfig = getJsonld(getCurrentWindow())
+    const isRootPage = MIP.viewer.page.isRootPage
+    // 用来记录翻页的次数，主要用来触发品专的广告
+    let currentWindow = isRootPage ? window : window.parent
     if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
       footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
       footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
     }
-    window.MIP.viewer.page.emitCustomEvent(getCurrentWindow().parent, false, {
+    window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
       name: 'updateShellFooter',
       data: {
         'jsonld': footerConfig
@@ -200,26 +188,30 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
    * 更新footer，禁用翻页
    *
    */
-  updateFooterDomDisabled () {
-    let footerConfig = getJsonld(getCurrentWindow())
-    footerConfig.nextPage.url = ''
-    footerConfig.previousPage.url = ''
-    // getCurrentWindow是为了兼容结果页，结果页的window是baidu.com，会跨域，需要获取当前window
-    window.MIP.viewer.page.emitCustomEvent(getCurrentWindow().parent, false, {
-      name: 'updateShellFooter',
-      data: {
-        'jsonld': footerConfig
-      }
-    })
-  }
+  // updateFooterDomDisabled () {
+  //   let footerConfig = getJsonld(getCurrentWindow())
+  //   const isRootPage = MIP.viewer.page.isRootPage
+  //   // 用来记录翻页的次数，主要用来触发品专的广告
+  //   let currentWindow = isRootPage ? window : window.parent
+  //   footerConfig.nextPage.url = ''
+  //   footerConfig.previousPage.url = ''
+  //   // getCurrentWindow是为了兼容结果页，结果页的window是baidu.com，会跨域，需要获取当前window
+  //   window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
+  //     name: 'updateShellFooter',
+  //     data: {
+  //       'jsonld': footerConfig
+  //     }
+  //   })
+  // }
 
   // 基类方法，翻页之后执行的方法
   // 记录翻页的白屏
   afterSwitchPage (params) {
     console.log(params)
-    // 如果不是预渲染的页面而是已经打开过的页面，手动触发更新footer
-    if (!params.isPrerender) {
-      this.updateFooterDom()
+    // 如果不是预渲染的页面而是已经打开过的页面，手动触发预渲染
+    if (!params.isPrerender && !params.newPage) {
+      let jsonld = getJsonld(getCurrentWindow())
+      this.readerPrerender(jsonld)
     }
     // 处理下容错，3s发起检测footer的链接是否为空，是则重新更新footer
     setTimeout(() => {
@@ -274,26 +266,27 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.footer.hide()
       this.header.hide()
     })
+    // // 承接下一页点击事件
+    // window.addEventListener(Constant.NEXT_PAGE_BUTTON_CLICK, e => {
+    //   let btn = this.footer.$footerWrapper.querySelector('.page-next')
+    //   let to = btn.getAttribute('href')
+    //   if(to) {
+    //     // 按钮有href，发送open请求
+    //     btn.classList.add('disabled')
+    //     window.MIP.viewer.open(to, {replace: true, cacheFirst: true})
+    //   }
+    // })
 
-    // 承接下一页点击事件
-    window.addEventListener(Constant.NEXT_PAGE_BUTTON_CLICK, e => {
-      let btn = this.footer.$footerWrapper.querySelector('.page-next')
-      if (btn.href) { // 翻页链接空白则阻止
-        setTimeout(() => {
-          this.updateFooterDomDisabled()
-        }, 16)
-      }
-    })
-
-    // 承接上一页点击事件
-    window.addEventListener(Constant.PREVIOUS_PAGE_BUTTON_CLICK, e => {
-      let btn = this.footer.$footerWrapper.querySelector('.page-previous')
-      if (btn.href) { // 翻页链接空白则阻止
-        setTimeout(() => {
-          this.updateFooterDomDisabled()
-        }, 16)
-      }
-    })
+    // // 承接上一页点击事件
+    // window.addEventListener(Constant.PREVIOUS_PAGE_BUTTON_CLICK, e => {
+    //   let btn = this.footer.$footerWrapper.querySelector('.page-previous')
+    //   let to = btn.getAttribute('href')
+    //   if(to) {
+    //     // 按钮有href，发送open请求
+    //     btn.classList.add('disabled')
+    //     window.MIP.viewer.open(to, {replace: true, cacheFirst: true})
+    //   }
+    // })
 
     strategy.eventRootHandler()
     xiaoshuoEvents.bindRoot()
@@ -316,8 +309,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 创建底部 bar
     let footerConfig = getJsonld(window)
     if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
-      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+      // footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+      // footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+      footerConfig.nextPage.url = ''
+      footerConfig.previousPage.url = ''
     }
     this.footer = new Footer(configMeta.footer)
     this.footer.updateDom(footerConfig)
