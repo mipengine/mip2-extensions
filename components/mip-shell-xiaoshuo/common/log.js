@@ -44,11 +44,11 @@ export function sendTCLog (type, info, extra) {
 }
 
 /**
- * 发送webb性能日志，common 5s 请求失败，发送common 异常日志
+ * 发送webb性能日志，common 5s 请求失败，发送common异常日志
  */
 export function sendWebbLogCommon () {
   setTimeout(() => {
-    if (window.MIP.setedCommenFetch !== true) {
+    if (window.MIP.setCommonFetch !== true) {
       sendWebbLog('stability', {
         msg: 'commonAbnormal'
       })
