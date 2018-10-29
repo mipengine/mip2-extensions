@@ -49,6 +49,18 @@ class footer {
       $footerWrapper.removeChild($footerWrapper.querySelector('.mip-shell-footer'))
       $footerWrapper.appendChild($footer)
     }
+    // 修改a标签为span，由我们去控制怎么发送open事件
+    let pageBtn = $footerWrapper.querySelectorAll('.page-button')
+    pageBtn.forEach(item => {
+      item.addEventListener('click', () => {
+        let to = item.getAttribute('href')
+        if (to) {
+          // 按钮有href，发送open请求
+          item.classList.add('disabled')
+          window.MIP.viewer.open(to, {replace: true, cacheFirst: true})
+        }
+      })
+    })
     return $footerWrapper
   }
 
@@ -74,14 +86,14 @@ class footer {
     // 创建底部按钮 HTML
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
-            <a from-cache cache-first class="page-button page-previous" mip-link href="" replace>
+            <span from-cache cache-first class="page-button page-previous" mip-link href="" replace>
                 <i class="icon gap-right-small icon-left"></i>
                 ${this.config.hrefButton.previous}
-            </a>
-            <a from-cache cache-first class="page-button page-next" mip-link href="" replace>
+            </span>
+            <span from-cache cache-first class="page-button page-next" mip-link href="" replace>
                 ${this.config.hrefButton.next}
                 <i class="icon gap-left-small icon-right"></i>
-            </a>
+            </span>
         </div>
         <div class="button-wrapper">
             ${renderFooterButtonGroup(this.config.actionGroup)}
