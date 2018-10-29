@@ -41,7 +41,15 @@ function serializeQS (params) {
   }
   return serialize.join('&')
 }
+let iqiyiVideoAttrs = [
+  'data-vid',
+  'data-tvId',
+  'src'
+]
 export default class MIPIqiyiVideo extends CustomElement {
+  static get observedAttributes () {
+    return iqiyiVideoAttrs
+  }
   constructor (element) {
     super(element)
     this.iframe = null
@@ -61,9 +69,21 @@ export default class MIPIqiyiVideo extends CustomElement {
     this.element.appendChild(this.iframe)
     this.applyFillContent(this.iframe, true)
   }
+  attributeChangedCallback (attributeName, oldValue, newValue, namespace) {
+    if (attributeName === 'src' && oldValue !== newValue) {
+      this.iframe && (this.iframe.src = newValue)
+    }
+    if (attributeName === 'data-vid' && oldValue !== newValue) {
+      this.iframe && (this.iframe.src = this.getIframeSrc())
+    }
+    if (attributeName === 'data-tvId' && oldValue !== newValue) {
+      this.iframe && (this.iframe.src = this.getIframeSrc())
+    }
+  }
   getIframeSrc () {
-    if (this.element.hasAttribute('src')) {
-      return this.element.getAttribute('src')
+    let iframeSrc = this.element.getAttribute('src')
+    if (iframeSrc) {
+      return iframeSrc
     }
     this.videoVid = this.getVideoVid()
     this.videoTvid = this.getVideoTvId()
