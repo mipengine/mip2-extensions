@@ -10,17 +10,15 @@ const { CustomElement } = MIP
  * @param {Function} optComputeParamNameFunc optComputeParamNameFunc
  * @param {RegExp} optParamPattern optParamPattern
  */
-function getDataParams (element, optComputeParamNameFunc,
-  optParamPattern) {
-  let computeParamNameFunc = optComputeParamNameFunc || (key => key)
+function getDataParams (element, optComputeParamNameFunc = key => key,
+  optParamPattern = /^param(.+)/) {
   let {dataset} = element
   let params = {}
-  let paramPattern = optParamPattern || /^param(.+)/
-  for (let key in dataset) {
-    let matches = key.match(paramPattern)
+  for (let key of Object.keys(dataset)) {
+    let matches = key.match(optParamPattern)
     if (matches) {
       let param = matches[1][0].toLowerCase() + matches[1].substr(1)
-      params[computeParamNameFunc(param)] = dataset[key]
+      params[optComputeParamNameFunc(param)] = dataset[key]
     }
   }
   return params
@@ -30,8 +28,7 @@ function addParamsToUrl (src, params) {
 }
 function serializeQS (params) {
   let serialize = []
-  for (let key in params) {
-    let value = params[key]
+  for (let [key, value] of Object.entries(params)) {
     if (value == null) {
       continue
     } else if (Array.isArray(value)) {

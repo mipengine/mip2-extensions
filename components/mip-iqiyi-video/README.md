@@ -5,7 +5,7 @@
 标题|内容
 ----|----
 类型|通用
-支持布局|fixed-height,responsive
+支持布局|fixed, fixed-height, responsive
 所需脚本|https://c.mipcdn.com/static/v2/mip-iqiyi-video/mip-iqiyi-video.js
 
 ## 示例
