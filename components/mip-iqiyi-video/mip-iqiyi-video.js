@@ -43,7 +43,7 @@ function serializeQS (params) {
 }
 let iqiyiVideoAttrs = [
   'data-vid',
-  'data-tvId',
+  'data-tvid',
   'src'
 ]
 export default class MIPIqiyiVideo extends CustomElement {
@@ -76,7 +76,7 @@ export default class MIPIqiyiVideo extends CustomElement {
     if (attributeName === 'data-vid' && oldValue !== newValue) {
       this.iframe && (this.iframe.src = this.getIframeSrc())
     }
-    if (attributeName === 'data-tvId' && oldValue !== newValue) {
+    if (attributeName === 'data-tvid' && oldValue !== newValue) {
       this.iframe && (this.iframe.src = this.getIframeSrc())
     }
   }
@@ -88,7 +88,7 @@ export default class MIPIqiyiVideo extends CustomElement {
     this.videoVid = this.getVideoVid()
     this.videoTvid = this.getVideoTvId()
     if (!this.videoVid || !this.videoTvid) {
-      throw new Error('参数 Vid 和 tvId 不能为空')
+      throw new Error('参数 Vid 和 tvid 不能为空')
     }
     let src = 'https://open.iqiyi.com/developer/player_js/coopPlayerIndex.html' +
       '?vid=' + this.videoVid + '&tvId=' + this.videoTvid
@@ -100,6 +100,6 @@ export default class MIPIqiyiVideo extends CustomElement {
     return this.element.getAttribute('data-vid')
   }
   getVideoTvId () {
-    return this.element.getAttribute('data-tvId')
+    return this.element.getAttribute('data-tvid')
   }
 }
