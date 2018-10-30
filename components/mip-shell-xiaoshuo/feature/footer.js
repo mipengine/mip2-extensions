@@ -55,9 +55,11 @@ class footer {
       item.addEventListener('click', () => {
         let to = item.getAttribute('href')
         if (to) {
-          // 按钮有href，发送open请求
-          item.setAttribute('href', '')
-          this.showCircleAnimate(item, true)
+          // 按钮有href，发送open请求，并清空按钮的href
+          for (let i = 0; i < pageBtn.length; i++) {
+            pageBtn[i].setAttribute('href', '')
+            this.showCircleAnimate(pageBtn[i], true)
+          }
           window.MIP.viewer.open(to, {replace: true, cacheFirst: true})
         }
       })

@@ -90,7 +90,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     super.bindAllEvents()
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
-    this.pageStyle = new PageStyle()
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
@@ -130,37 +129,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     if (this.$buttonMask) {
       this.$buttonMask.onclick = this.closeEverything.bind(this)
     }
-
-    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
-    window.addEventListener('changePageStyle', (e, data) => {
-      if (e.detail[0] && e.detail[0].theme) {
-        // 修改主题
-        this.pageStyle.update(e, {
-          theme: e.detail[0].theme
-        })
-      } else if (e.detail[0] && e.detail[0].fontSize) {
-        // 修改字号
-        this.pageStyle.update(e, {
-          fontSize: e.detail[0].fontSize
-        })
-      } else {
-        // 初始化，从缓存中获取主题和字号apply到页面
-        this.pageStyle.update(e)
-      }
-      document.body.classList.add('show-xiaoshuo-container')
-      // 加载动画完成，发送白屏日志
-      sendWebbLog('whitescreen')
-      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
-      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
-      if (xiaoshuoContainer) {
-        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
-      }
-    })
-
-    // 初始化页面时执行一次背景色+字号初始化
-    window.MIP.viewer.page.emitCustomEvent(window, true, {
-      name: 'changePageStyle'
-    })
 
     strategy.eventAllPageHandler()
 
