@@ -1,5 +1,5 @@
 /**
- * @file 视差滚动组件
+ * @file 镂空滚动组件
  * @author sekiyika(pengxing@baidu.com)
  */
 
@@ -11,7 +11,7 @@ export default class MIPFxFlyingCarpet extends MIP.CustomElement {
     let container = document.createElement('div')
     container.setAttribute('class', 'i-mip-fx-flying-carpet-container')
 
-    let children = Array.from(this.element.children)
+    let children = [...this.element.children]
     children.forEach(child => container.appendChild(child))
 
     let clip = document.createElement('div')
