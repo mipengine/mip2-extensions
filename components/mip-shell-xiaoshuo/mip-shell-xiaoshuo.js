@@ -90,7 +90,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     super.bindAllEvents()
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
-    this.pageStyle = new PageStyle()
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
