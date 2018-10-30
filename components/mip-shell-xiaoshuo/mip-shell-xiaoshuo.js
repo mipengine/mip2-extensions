@@ -13,37 +13,42 @@ import {
   FontSize
 } from './feature/setting' // 背景色调整，字体大小调整
 
-import XiaoshuoEvents from './common/events'
-import Strategy from './ad/strategy'
-import {getJsonld, scrollBoundary, getCurrentWindow, creatNovelMipData} from './common/util'
+import NovelEvents from './common/events'
+import Strategy from './ad/strategyControl'
+import {initAdStategyCacheData} from './ad/stragegyCompute'
+import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
 import {sendWebbLog, sendTCLog} from './common/log' // 日志
+import state from './common/state'
 
-let xiaoshuoEvents = new XiaoshuoEvents()
+let novelEvents = new NovelEvents()
 let strategy = new Strategy()
 let util = MIP.util
 
-export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
+export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
     super(...args)
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     scrollBoundary()
-    this.pageNum = 0
-    creatNovelMipData()
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
   bindAllEvents () {
     super.bindAllEvents()
+    console.log('xiaoshuo')
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     this.pageStyle = new PageStyle()
-    const isRootPage = MIP.viewer.page.isRootPage
+    const {isRootPage, novelInstance} = state(window)
     // 用来记录翻页的次数，主要用来触发品专的广告
-    let currentWindow = isRootPage ? window : window.parent
-    currentWindow.MIP.mipshellXiaoshuo.novelPageNum++
+    novelInstance.novelPageNum++
+    if (novelInstance.currentPageMeta.pageType === 'page') {
+      novelInstance.readPageNum++
+    }
+    // 初始化stategy的数据
+    initAdStategyCacheData(novelInstance)
 
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
@@ -114,7 +119,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     strategy.eventAllPageHandler()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
-    xiaoshuoEvents.bindAll()
+    novelEvents.bindAll()
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
@@ -132,7 +137,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 记录翻页的白屏
   afterSwitchPage (options) {
     // 用于记录页面加载完成的时间
-    const startRenderTime = xiaoshuoEvents.timer
+    const startRenderTime = novelEvents.timer
     const currentWindow = getCurrentWindow()
     let endRenderTimer = null
     currentWindow.onload = function () {
@@ -178,7 +183,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
 
     strategy.eventRootHandler()
-    xiaoshuoEvents.bindRoot()
+    novelEvents.bindRoot()
   }
 
   /**
@@ -282,9 +287,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 基类方法，设置默认的shellConfig
   processShellConfig (shellConfig) {
-    MIP.mipshellXiaoshuo = this
+    MIP.novelInstance = this
     this.shellConfig = shellConfig
     this.novelPageNum = 0
+    this.currentPageType = []
     shellConfig.routes.forEach(routerConfig => {
       routerConfig.meta.header.bouncy = false
     })
