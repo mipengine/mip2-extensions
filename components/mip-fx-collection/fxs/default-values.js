@@ -15,7 +15,7 @@ export function getDefaultDuration (fxType) {
     case 'fly-in-top':
     case 'fly-in-left':
     case 'fly-in-right':
-      return 400
+      return 500
   }
 
   return 1
