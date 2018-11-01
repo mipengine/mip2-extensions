@@ -1,6 +1,5 @@
 /**
  * 小说的广告策略schema计算模块.
- * @constructor
  * @author liujing
  */
 
@@ -11,8 +10,8 @@ const AD_DATA_CACHE = 600000
 /**
  * 每次需要广告请求时，需要初始化广告队列的cache数据
  *
- * @param {object} customFetch的数据
- * @param {object} novelInstance 小说shell的实例
+ * @param {Object} data customFetch的数据
+ * @param {Object} novelInstance 小说shell的实例
  */
 export const initFirstFetchCache = (data, novelInstance = {}) => {
   const ads = data.adData.ads || {}
@@ -53,7 +52,7 @@ export const initFirstFetchCache = (data, novelInstance = {}) => {
 /**
  * 当现有的广告需要从前端缓存中获取时，初始化相关的数据
  *
- * @param {object} novelInstance 小说shell的实例
+ * @param {Object} novelInstance 小说shell的实例
  */
 export const initAdByCache = (novelInstance = {}) => {
   let {adsCache = {}} = novelInstance
@@ -81,7 +80,7 @@ export const initAdByCache = (novelInstance = {}) => {
 /**
  * 根据页面类型计算当前页的广告策略
  *
- * @param {object} novelInstance 小说shell的实例
+ * @param {Object} novelInstance 小说shell的实例
  */
 export const computeAdStragegyByPageType = (novelInstance = {}) => {
   let {adsCache = {}} = novelInstance
@@ -98,7 +97,6 @@ export const computeAdStragegyByPageType = (novelInstance = {}) => {
 
   // 获取当前页属于的页面类型
   getCurrentPageType(adData.schema['page_types'], novelInstance)
-
   // 通过currentPageType去获取对应页面类型的stragegy
   adsCache.currentTypeAdStrategy = getCurrentTypeAdStrategy(novelInstance)
 
@@ -108,7 +106,7 @@ export const computeAdStragegyByPageType = (novelInstance = {}) => {
     !adsCache.isFirstFetch &&
     JSON.stringify(adsCache.currentTypeAdStrategy) === '{}') {
     for (let i in adsCache.adsCount) {
-      if (adsCache.adsCount[i].errorAbnormal >= 3 || adsCache.adsCount[i].residueCount < 0) {
+      if (adsCache.adsCount[i].errorAbnormal >= 3 || adsCache.adsCount[i].residueCount <= 0) {
         // 是否清零发请求依赖isNeedAds字段
         adsCache.isNeedAds = true
       }
@@ -119,7 +117,7 @@ export const computeAdStragegyByPageType = (novelInstance = {}) => {
 /**
  * 初始化当前页的全部内容，边界值情况的讨论
  *
- * @param {object} novelInstance 小说shell的实例
+ * @param {Object} novelInstance 小说shell的实例
  */
 const getBoundaryAdStrategy = (novelInstance = {}) => {
   let {adsCache = {}} = novelInstance
@@ -147,8 +145,8 @@ const getBoundaryAdStrategy = (novelInstance = {}) => {
 /**
  * 根据schema计算出当前页面需要出的广告策略
  *
- * @param {object} novelInstance 小说shell的实例
- * @return {object} currentTypeAdStrategy 通过schema计算出的当前页面广告策勒
+ * @param {Object} novelInstance 小说shell的实例
+ * @returns {Object} 通过schema计算出的当前页面广告策勒
  */
 const getCurrentTypeAdStrategy = (novelInstance = {}) => {
   let {adsCache = {}} = novelInstance
@@ -179,7 +177,7 @@ const getCurrentTypeAdStrategy = (novelInstance = {}) => {
                 }
                 if (adsCount[adNum].adsInitLength === 0) {
                   adsCount[adNum].errorAbnormal++
-                } else {
+                } else if (adData.ads[adNum].length !== 0) {
                   adTypes[adNum] = adData.ads[adNum].splice(0, strategy[i].strategy[adNum])
                   adsCount[adNum].residueCount -= strategy[i].strategy[adNum]
                   endCycle = true
@@ -205,7 +203,7 @@ const getCurrentTypeAdStrategy = (novelInstance = {}) => {
  * 获取当前广告策略的数据
  *
  * @param {window} currentWindow 当前的window
- * @return {object} currentAds 当前页面广告最终需要渲染的数据
+ * @returns {Object} 当前页面广告最终需要渲染的数据
  */
 const getRenderAdData = currentWindow => {
   const {novelInstance = {}} = state(currentWindow)
@@ -232,8 +230,8 @@ const getRenderAdData = currentWindow => {
 /**
  * 判断当前页面可以属哪几种页面类型
  *
- * @param {object} pageTypes schema的页面类型的优先级
- * @param {object} novelInstance 小说shell的实例
+ * @param {Object} pageTypes schema的页面类型的优先级
+ * @param {Object} novelInstance 小说shell的实例
  */
 const getCurrentPageType = (pageTypes = [], novelInstance = {}) => {
   // 根据shell的pageType获取当前页面的页面类型，主要有整本书级别的和阅读页级别的
@@ -242,7 +240,7 @@ const getCurrentPageType = (pageTypes = [], novelInstance = {}) => {
   let currentPageType = []
   let readType = []
   if (pageType === 'page') {
-    readType.push('read')
+    readType.push('page')
     if (isLastPage) {
       readType.push('chapterEnd')
     }
@@ -268,8 +266,8 @@ const getCurrentPageType = (pageTypes = [], novelInstance = {}) => {
 /**
  * 获取当前广告策略的数据
  *
- * @param {object} allAds 当前计算得出需要渲染的广告数据
- * @param {object} adsCache 缓存的广告数据
+ * @param {Object} allAds 当前计算得出需要渲染的广告数据
+ * @param {Object} adsCache 缓存的广告数据
  */
 const getShowedAds = (allAds = {}, adsCache = {}) => {
   let showedAds = {}
@@ -283,9 +281,9 @@ const getShowedAds = (allAds = {}, adsCache = {}) => {
  * 获取当前广告策略的数据
  *
  * @param {string} prioritys 通过common返回的叠加策略
- * @param {object} adsCache 缓存的广告数据
+ * @param {Object} adsCache 缓存的广告数据
  * @param {Array} currentAdStrategyKeys 存储需要的tpl的name
- * @return {object} priorityValues 根据优先级算出的叠加的广告
+ * @returns {Object} 根据优先级算出的叠加的广告
  */
 const getOverlayAds = (prioritys, adsCache, currentAdStrategyKeys) => {
   let priorityType = prioritys.split(' ')
@@ -303,8 +301,15 @@ const getOverlayAds = (prioritys, adsCache, currentAdStrategyKeys) => {
   let priorityValues = {}
   Object.assign(priorityValues, adsCache.currentTypeAdStrategy[currentAdStrategyKeys[0]])
   priorityArr.map(value => {
+    let overlayPage = adsCache.currentTypeAdStrategy[value.pageType]
     if (value.opt === '|' || value.opt === '&') {
-      Object.assign(priorityValues, adsCache.currentTypeAdStrategy[value.pageType])
+      for (let type in priorityValues) {
+        if (overlayPage[type]) {
+          priorityValues[type] = priorityValues[type].concat(overlayPage[type])
+        } else {
+          Object.assign(priorityValues, overlayPage)
+        }
+      }
     }
   })
   return priorityValues
@@ -313,9 +318,9 @@ const getOverlayAds = (prioritys, adsCache, currentAdStrategyKeys) => {
 /**
  * format后的当前页的广告数据
  *
- * @param {object} allAds 当前计算得出需要渲染的广告数据
- * @param {object} novelInstance 小说shell的实例
- * @return {object} currentAds format后的广告数据
+ * @param {Object} allAds 当前计算得出需要渲染的广告数据
+ * @param {Object} novelInstance 小说shell的实例
+ * @returns {Object} format后的广告数据
  */
 const formatCurrentAds = (allAds, novelInstance) => {
   let {adsCache = {}} = novelInstance
@@ -342,7 +347,5 @@ const formatCurrentAds = (allAds, novelInstance) => {
   const {common = {}, config = {}, responseTime = {}} = adData
   Object.assign(currentAds || {}, {common, config, responseTime})
   Object.assign(currentAds, {template})
-  console.log('currentAds: ')
-  console.log(currentAds)
   return currentAds
 }
