@@ -15,7 +15,7 @@ import {
 
 import NovelEvents from './common/events'
 import Strategy from './ad/strategyControl'
-import {initAdStategyCacheData} from './ad/stragegyCompute'
+import {initAdByCache} from './ad/stragegyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
 import {sendWebbLog, sendTCLog} from './common/log' // 日志
 import state from './common/state'
@@ -47,8 +47,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     if (novelInstance.currentPageMeta.pageType === 'page') {
       novelInstance.readPageNum++
     }
-    // 初始化stategy的数据
-    initAdStategyCacheData(novelInstance)
+    // 如果有前端广告缓存，则走此处的逻辑
+    initAdByCache(novelInstance)
 
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用

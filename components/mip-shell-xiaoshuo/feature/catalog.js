@@ -150,7 +150,7 @@ class Catalog {
           this.renderCatalogCallBack(data, catalogs)
         }).catch(err => {
           this.catalogFailMessageEvent()
-          console.error(new Error('网络异常'), err)
+          console.warn(new Error('网络异常'), err)
           this.categoryList = false
         })
     } else {

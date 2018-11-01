@@ -9,9 +9,7 @@ import {Constant} from '../common/constant-config'
 import state from '../common/state'
 import {getCurrentWindow, getRootWindow} from '../common/util'
 import {
-  firstFetchInitCache,
-  computeAdStragegyByPageType,
-  getAdStategyCacheData
+  initFirstFetchCache
 } from './stragegyCompute'
 
 export default class strategyControl {
@@ -55,7 +53,7 @@ export default class strategyControl {
       })
     }
     // 只发请求，忽略该次的任何操作
-    if (novelData.ignoreSendLog) {
+    if (novelData.ignoreSendLog && novelData.showedAds) {
       window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
         name: 'controlCustomFetch',
         data
@@ -90,8 +88,8 @@ export default class strategyControl {
     if (novelPageNum === 2) {
       Object.assign(novelData, {isSecondPage: true})
     }
-    if (isNeedAds) {
-      novelInstance.adsCache = null
+    if (isNeedAds && novelInstance.adsCache) {
+      novelInstance.adsCache = undefined
     }
     if (novelInstance.adsCache && novelInstance.adsCache.fetchTpl && novelInstance.adsCache.fetchTpl.length !== 0) {
       Object.assign(novelData, {tpl: novelInstance.adsCache.fetchTpl})
@@ -210,12 +208,11 @@ export default class strategyControl {
       const {novelInstance = {}} = state(currentWindow)
       // 当广告是第一次请求回来，需要初始化广告的策略的缓存数据
       if (novelInstance.adsCache == null) {
-        firstFetchInitCache(adData, novelInstance)
+        // 第一次请求的时候需要初始化fetch的数据，并且计算出当前的广告数据
+        initFirstFetchCache(adData, novelInstance)
       }
-      // 根据当前页的页面类型计算出需要出的广告策略
-      computeAdStragegyByPageType(novelInstance)
+      const adStategyCacheData = novelInstance.adsCache.adStategyCacheData
       // 计算出需要出的广告数据
-      const adStategyCacheData = getAdStategyCacheData(currentWindow)
       if (novelInstance.adsCache != null && novelInstance.adsCache.isFirstFetch) {
         this.strategyStatic()
       }
