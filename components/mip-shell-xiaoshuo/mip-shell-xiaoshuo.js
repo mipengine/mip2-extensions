@@ -277,6 +277,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   /**
    * 基类方法，翻页之后执行的方法
    * 记录翻页的白屏
+   *
    * @param {Object} params 翻页的信息
    */
   afterSwitchPage (params) {
