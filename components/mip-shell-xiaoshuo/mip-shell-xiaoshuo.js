@@ -131,6 +131,9 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         }
       })
     }
+    window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
+      name: 'current-page-ready'
+    })
   }
 
   // 基类方法，翻页之后执行的方法

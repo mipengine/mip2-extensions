@@ -55,7 +55,7 @@ export default class strategyControl {
     // 只发请求，忽略该次的任何操作
     if (novelData.ignoreSendLog && novelData.showedAds) {
       window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
-        name: 'controlCustomFetch',
+        name: 'ignoreSendLogFetch',
         data
       })
     }
@@ -161,38 +161,41 @@ export default class strategyControl {
     window.addEventListener(Constant.NEXT_PAGE, e => {
       this.strategyStatic()
     })
-
-    /**
-     * 当前页ready,状态可获取'CURRENT_PAGE_READY'
-     *
-     * @method
-     * @param {module:constant-config~event:CURRENT_PAGE_READY} e - A event.
-     * @listens module:constant-config~event:CURRENT_PAGE_READY
-     */
-    window.addEventListener(Constant.CURRENT_PAGE_READY, e => {
-      this.pageAd = true
-      if (window.MIP.viewer.page.isRootPage) {
-        this.strategyStatic()
-      }
-    })
   }
 
   /**
    * novel shell需要处理的事情 —— 绑在root页上
    */
   eventRootHandler () {
-    /**
-     * 监听mip-custom ready状态：此情况为了兼容如果小说shell优先加载custom无法监听请求事件的问题
-     *
-     * @method
-     * @param {module:constant-config~event:customReady} e - A event.
-     * @listens module:constant-config~event:customReady
-     */
-    window.addEventListener('customReady', e => {
-      if (this.pageAd) {
-        this.adCustomReady = true
-        this.strategyStatic()
-      }
+    const currentWindow = getCurrentWindow()
+
+    let listen = function (target, name, handler) {
+      target.addEventListener(name, handler)
+      return () => {}
+    }
+
+    let customReadyUnlistener
+    let shellReadyUnlistener
+
+    let customHandler = e => {
+      this.pageAd = true
+      this.strategyStatic()
+      customReadyUnlistener && customReadyUnlistener()
+      shellReadyUnlistener && shellReadyUnlistener()
+
+      Promise.all([
+        new Promise(resolve => (customReadyUnlistener = listen(window, 'customReady', resolve))),
+        new Promise(resolve => (shellReadyUnlistener = listen(window, Constant.CURRENT_PAGE_READY, resolve)))
+      ]).then(customHandler)
+    }
+
+    // 针对 rootPage 分两种情况：
+    // 1. mip-custom 先加载完成: mip-custom 组件发出的 customReady 事件失效，主动发一个事件触发 custom 再发一次
+    // 2. xiaoshuo-shell 先加载完成: 此时已经注册了监听 customReady 事件，customReadyConfirm 事件发出无效
+    customReadyUnlistener = listen(window, 'customReady', customHandler)
+    window.MIP.viewer.page.emitCustomEvent(currentWindow, true, {
+      name: 'customReadyConfirm',
+      data: {}
     })
 
     /**
