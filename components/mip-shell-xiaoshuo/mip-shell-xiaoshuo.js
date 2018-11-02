@@ -15,8 +15,8 @@ import {
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
-import {sendWebbLog, sendTCLog, sendWebbLogCommon} from './common/log' // 日志
+import { getJsonld, scrollBoundary, getCurrentWindow } from './common/util'
+import { sendWebbLog, sendTCLog } from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
@@ -90,6 +90,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     super.bindAllEvents()
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
+    this.__getConfig()
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
@@ -133,10 +134,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     strategy.eventAllPageHandler()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
-
     xiaoshuoEvents.bindAll()
-    // 发送webb性能日志，common 5s 请求失败，发送common 异常日志
-    sendWebbLogCommon()
     // 获取当前页面的数据，以及需要预渲染的链接
     let jsonld = getJsonld(getCurrentWindow())
     // 预渲染
@@ -152,37 +150,37 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   readerPrerender (jsonld) {
     let nextPageUrl = jsonld.nextPage.url
     let prePageUrl = jsonld.previousPage.url
-    // if (window.MIP.util.isCacheUrl(location.href)) { // 处于cache下，需要转换cacheUrl
-    //   window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
-    //     .then(iframes => {
-    //       console.log(nextPageUrl)
-    //       console.log(prePageUrl)
-    //       console.log('prerender done')
-    //       this.updateFooterDom()
-    //     }).catch(err => {
-    //       console.error(new Error(err)) // 抛出错误
-    //       this.updateFooterDom()
-    //     })
-    // } else {
-    //   window.MIP.viewer.page.prerender([nextPageUrl, prePageUrl])
-    //     .then(iframes => {
-    //       console.log('prerender done')
-    //       this.updateFooterDom()
-    //     }).catch(err => {
-    //       console.error(new Error(err)) // 抛出错误
-    //       this.updateFooterDom()
-    //     })
-    // }
-    window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
-      .then(iframes => {
-        console.log(nextPageUrl)
-        console.log(prePageUrl)
-        console.log('prerender done')
-        this.updateFooterDom()
-      }).catch(err => {
-        console.error(new Error(err)) // 抛出错误
-        this.updateFooterDom()
-      })
+    if (window.MIP.util.isCacheUrl(location.href)) { // 处于cache下，需要转换cacheUrl
+      window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
+        .then(iframes => {
+          console.log(nextPageUrl)
+          console.log(prePageUrl)
+          console.log('prerender done')
+          this.updateFooterDom()
+        }).catch(err => {
+          console.error(new Error(err)) // 抛出错误
+          this.updateFooterDom()
+        })
+    } else {
+      window.MIP.viewer.page.prerender([nextPageUrl, prePageUrl])
+        .then(iframes => {
+          console.log('prerender done')
+          this.updateFooterDom()
+        }).catch(err => {
+          console.error(new Error(err)) // 抛出错误
+          this.updateFooterDom()
+        })
+    }
+    // window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
+    //   .then(iframes => {
+    //     console.log(nextPageUrl)
+    //     console.log(prePageUrl)
+    //     console.log('prerender done')
+    //     this.updateFooterDom()
+    //   }).catch(err => {
+    //     console.error(new Error(err)) // 抛出错误
+    //     this.updateFooterDom()
+    //   })
   }
 
   /**
@@ -191,21 +189,21 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
    * @param {string} url 需要被拼接的url
    * @returns {string} 返回的cacheURl
    */
-  // getCacheUrl (url) {
-  //   if (url) {
-  //     let netUrl = url.split('/')[2].split('.').join('-')
-  //     return `https://${netUrl}.mipcdn.com${MIP.util.makeCacheUrl(url)}`
-  //   }
-  //   return ''
-  // }
-
   getCacheUrl (url) {
     if (url) {
-      let netUrl = `http://cp01-turun-01.epc.baidu.com:8626${url.slice(6)}`
-      return netUrl
+      let netUrl = url.split('/')[2].split('.').join('-')
+      return `https://${netUrl}.mipcdn.com${MIP.util.makeCacheUrl(url)}`
     }
     return ''
   }
+
+  // getCacheUrl (url) {
+  //   if (url) {
+  //     let netUrl = `http://cp01-turun-01.epc.baidu.com:8626${url.slice(6)}`
+  //     return netUrl
+  //   }
+  //   return ''
+  // }
 
   /**
    * 更新footer链接
@@ -217,12 +215,12 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
-    // if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
-    //   footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-    //   footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-    // }
-    footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-    footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+    if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
+      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+    }
+    // footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+    // footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
     window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
       name: 'updateShellFooter',
       data: {
@@ -230,6 +228,30 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       }
     })
   }
+
+  // 获取默认配置及用户历史配置
+  __getConfig () {
+    // 默认配置
+    let DEFAULTS = {
+      theme: 'default',
+      fontSize: 3.5
+    }
+    let STORAGE_KEY = 'mip-shell-xiaoshuo-mode'
+    let CustomStorage = MIP.util.customStorage
+    let storage = new CustomStorage(0)
+    let extend = MIP.util.fn.extend
+    let config = DEFAULTS
+    try {
+      config = extend(config, JSON.parse(storage.get(STORAGE_KEY)))
+    } catch (e) { }
+    if (config.theme) {
+      document.documentElement.setAttribute('mip-shell-xiaoshuo-theme', config.theme)
+    }
+    if (config.fontSize) {
+      document.documentElement.setAttribute('mip-shell-xiaoshuo-font-size', config.fontSize)
+    }
+    console.log(config)
+  };
 
   // 基类方法，翻页之后执行的方法
   // 记录翻页的白屏
@@ -240,6 +262,15 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       let jsonld = getJsonld(getCurrentWindow())
       this.readerPrerender(jsonld)
     }
+    // 预渲染兜底机制：预渲染超过3s为返回resolve即视为异常，强制刷新底部footer，走正常加载的loading方式。
+    setTimeout(() => {
+      let currentDocument = MIP.viewer.page.isRootPage ? window.document : window.parent.document
+      let pageBtn = currentDocument.querySelectorAll('.page-button')
+      if (pageBtn[0].getAttribute('href') === '' && pageBtn[1].getAttribute('href') === '') {
+        console.warn('after 3s,prerender failed,force refresh the Footer')
+        this.updateFooterDom()
+      }
+    }, 3000)
     // 用于记录页面加载完成的时间
     const startRenderTime = xiaoshuoEvents.timer
     const currentWindow = getCurrentWindow()
@@ -306,10 +337,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 创建底部 bar
     let footerConfig = getJsonld(window)
     if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
-      // footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-      // footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-      footerConfig.nextPage.url = ''
-      footerConfig.previousPage.url = ''
+      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+      // footerConfig.nextPage.url = ''
+      // footerConfig.previousPage.url = ''
     }
     this.footer = new Footer(configMeta.footer)
     this.footer.updateDom(footerConfig)

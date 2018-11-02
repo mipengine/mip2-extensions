@@ -146,7 +146,7 @@ class footer {
 
   /**
    *
-   * @param {HTMLElement} parentDom
+   * @param {HTMLElement} parentDom 父级dom
    * @param {boolean} show 是否展示circle
    */
   showCircleAnimate (parentDom, show) {
