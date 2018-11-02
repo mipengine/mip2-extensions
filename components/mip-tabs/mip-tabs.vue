@@ -87,7 +87,7 @@ export default {
      */
     registerEvent () {
       // 外部切换标签
-      this.$on('slideTab', (index) => {
+      this.$on('slideTab', (e, index) => {
         this.changeTab(index)
       })
     },

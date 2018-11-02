@@ -6,7 +6,7 @@
 module.exports = {
   dev: {
     /**
-     * 启动mip server调试的端口号
+     * 启动 mip server 调试的端口号
      *
      * @type {number}
      */
