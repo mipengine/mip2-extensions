@@ -16,7 +16,7 @@ import {
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
 import { getJsonld, scrollBoundary, getCurrentWindow } from './common/util'
-import { sendWebbLog, sendTCLog } from './common/log' // 日志
+import { sendWebbLog, sendTCLog, sendWebbLogCommon } from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
@@ -137,6 +137,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     xiaoshuoEvents.bindAll()
+    // 发送webb性能日志，common 5s 请求失败，发送common 异常日志
+    sendWebbLogCommon()
     // 获取当前页面的数据，以及需要预渲染的链接
     let jsonld = getJsonld(getCurrentWindow())
     // 预渲染
