@@ -21,6 +21,16 @@ export const getJsonld = (currentWindow) => {
 }
 
 /**
+ * 获取root页面的window
+ *
+ * @param {window} currentWindow 当前页面的window
+ * @returns {window} root页面的window
+ */
+export const getRootWindow = currentWindow => {
+  return currentWindow.MIP.viewer.page.isRootPage ? currentWindow : currentWindow.parent
+}
+
+/**
  * 获取当前页面的iframe
  *
  * @returns {window} 当前iframe的window
@@ -29,6 +39,23 @@ export const getCurrentWindow = () => {
   let pageId = window.MIP.viewer.page.currentPageId
   let pageInfo = window.MIP.viewer.page.getPageById(pageId)
   return pageInfo.targetWindow
+}
+
+/**
+ * 创建MIPData便于数据驱动
+ */
+export const creatNovelMipData = () => {
+  let ele = document.querySelector('.mip-shell-xiaoshuo-container')
+  let $mipData = document.createElement('mip-Data')
+  let $script = `
+    <script type="application/json">
+      {
+        "#novelData": {}
+      }
+    </script>
+  `
+  $mipData.innerHTML = $script
+  ele.insertBefore($mipData, ele.childNodes[0])
 }
 
 /**
