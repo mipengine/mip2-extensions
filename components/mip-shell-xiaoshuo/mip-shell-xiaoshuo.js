@@ -101,7 +101,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
     this.addEventAction('showShellFooter', function () {
-      alert('showShellFooter - EventAction')
       window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, true, {
         name: 'showShellFooter'
       })
@@ -327,8 +326,25 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
     })
     // 承接emit事件：根页面展示底部控制栏
+    let logDom = document.createElement('div')
+    MIP.util.css(logDom, {
+      'width': '200px',
+      'height': '200px',
+      'background': '#fff',
+      'color': '#000',
+      'font-size': '12px',
+      'line-height': '12px',
+      'position': 'fixed',
+      'top': '10px',
+      'left': '10px'
+    })
+    logDom.classList.add('logDom')
+    document.body.appendChild(logDom)
     window.addEventListener('showShellFooter', (e, data) => {
-      alert('showShellFooter')
+      let footerObject = Object.getOwnPropertyNames(Object.getPrototypeOf(this.footer))
+      for (const i in footerObject) {
+        logDom.innerHTML += footerObject[i] + '</br>'
+      }
       this.footer.show(this)
       this.header.show()
       let swipeDelete = new util.Gesture(this.$buttonMask, {
