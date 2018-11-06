@@ -171,6 +171,7 @@ class footer {
 
   // 显示底bar
   show (shellElement) {
+    alert('showfooter')
     let footer = this
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     // window.setTimeout(function () {
