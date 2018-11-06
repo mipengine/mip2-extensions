@@ -101,6 +101,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
     this.addEventAction('showShellFooter', function () {
+      alert('showShellFooter - EventAction')
       window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, true, {
         name: 'showShellFooter'
       })
