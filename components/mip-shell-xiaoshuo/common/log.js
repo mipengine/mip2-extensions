@@ -42,3 +42,17 @@ export function sendTCLog (type, info, extra) {
   }
   MIP.viewer.sendMessage(eventName, data)
 }
+
+/**
+ * 发送webb性能日志，common 5s 请求失败，发送common异常日志
+ */
+export function sendWebbLogCommon () {
+  setTimeout(() => {
+    if (window.MIP.setCommonFetch !== true) {
+      sendWebbLog('stability', {
+        msg: 'commonAbnormal'
+      })
+      console.warn('common 异常!')
+    }
+  }, 5000)
+}

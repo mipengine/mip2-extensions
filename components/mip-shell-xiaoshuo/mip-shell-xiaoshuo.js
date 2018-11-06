@@ -17,8 +17,8 @@ import NovelEvents from './common/events'
 import Strategy from './ad/strategyControl'
 import {initAdByCache} from './ad/stragegyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
-import {sendWebbLog, sendTCLog} from './common/log' // 日志
 import state from './common/state'
+import {sendWebbLog, sendTCLog, sendWebbLogCommon} from './common/log' // 日志
 
 let novelEvents = new NovelEvents()
 let strategy = new Strategy()
@@ -33,6 +33,58 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     scrollBoundary()
   }
 
+  // 通过小说JS给dom添加预渲染字段
+  connectedCallback () {
+    // 从结果页进入小说阅读页加上预渲染的标识prerender，但是内部的每页不能加，会影响翻页内的预渲染
+    if (this.element.getAttribute('prerender') !== null) {
+      this.element.removeAttribute('prerender')
+    }
+    if (this.element.getAttribute('prerender') == null && MIP.viewer.page.isRootPage) {
+      this.element.setAttribute('prerender', '')
+    }
+    // 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
+    this.initPageLayout()
+  }
+
+  /**
+   * 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
+   *
+   * @private initPageLayout
+   */
+  initPageLayout () {
+    // 创建模式切换（背景色切换）
+    this.pageStyle = new PageStyle()
+    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
+    window.addEventListener('changePageStyle', (e, data) => {
+      if (e.detail[0] && e.detail[0].theme) {
+        // 修改主题
+        this.pageStyle.update(e, {
+          theme: e.detail[0].theme
+        })
+      } else if (e.detail[0] && e.detail[0].fontSize) {
+        // 修改字号
+        this.pageStyle.update(e, {
+          fontSize: e.detail[0].fontSize
+        })
+      } else {
+        // 初始化，从缓存中获取主题和字号apply到页面
+        this.pageStyle.update(e)
+      }
+      document.body.classList.add('show-xiaoshuo-container')
+      // 加载动画完成，发送白屏日志
+      sendWebbLog('whitescreen')
+      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
+      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
+      if (xiaoshuoContainer) {
+        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
+      }
+    })
+    // 初始化页面时执行一次背景色+字号初始化
+    window.MIP.viewer.page.emitCustomEvent(window, false, {
+      name: 'changePageStyle'
+    })
+  }
+
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
   bindAllEvents () {
@@ -40,7 +92,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     console.log('xiaoshuo')
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
-    this.pageStyle = new PageStyle()
     const {isRootPage, novelInstance} = state(window)
     // 用来记录翻页的次数，主要用来触发品专的广告
     novelInstance.novelPageNum++
@@ -85,41 +136,12 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       this.$buttonMask.onclick = this.closeEverything.bind(this)
     }
 
-    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
-    window.addEventListener('changePageStyle', (e, data) => {
-      if (e.detail[0] && e.detail[0].theme) {
-        // 修改主题
-        this.pageStyle.update(e, {
-          theme: e.detail[0].theme
-        })
-      } else if (e.detail[0] && e.detail[0].fontSize) {
-        // 修改字号
-        this.pageStyle.update(e, {
-          fontSize: e.detail[0].fontSize
-        })
-      } else {
-        // 初始化，从缓存中获取主题和字号apply到页面
-        this.pageStyle.update(e)
-      }
-      document.body.classList.add('show-xiaoshuo-container')
-      // 加载动画完成，发送白屏日志
-      sendWebbLog('whitescreen')
-      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
-      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
-      if (xiaoshuoContainer) {
-        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
-      }
-    })
-
-    // 初始化页面时执行一次背景色+字号初始化
-    window.MIP.viewer.page.emitCustomEvent(window, true, {
-      name: 'changePageStyle'
-    })
-
     strategy.eventAllPageHandler()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
-    novelEvents.bindAll()
+    xiaoshuoEvents.bindAll()
+    // 发送webb性能日志，common 5s 请求失败，发送common 异常日志
+    sendWebbLogCommon()
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
