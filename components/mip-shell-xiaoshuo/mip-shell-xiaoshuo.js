@@ -340,13 +340,14 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
     logDom.classList.add('logDom')
     document.body.appendChild(logDom)
-    let oscript = document.createElement('script')
-    oscript.src = 'https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js'
-    document.body.appendChild(oscript)
     window.addEventListener('showShellFooter', (e, data) => {
-      let footerObject = Object.getOwnPropertyNames(Object.getPrototypeOf(this.footer))
-      for (const i in footerObject) {
-        logDom.innerHTML += footerObject[i] + '</br>'
+      try {
+        let footerObject = Object.getOwnPropertyNames(Object.getPrototypeOf(this.footer))
+        for (const i in footerObject) {
+          logDom.innerHTML += footerObject[i] + '</br>'
+        }
+      } catch (error) {
+        logDom.innerHTML = 'this.footer is not defined'
       }
       this.footer.show(this)
       this.header.show()
