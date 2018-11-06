@@ -328,6 +328,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
+      alert('showShellFooter')
       this.footer.show(this)
       this.header.show()
       let swipeDelete = new util.Gesture(this.$buttonMask, {
