@@ -278,7 +278,7 @@ const getRenderAdData = currentWindow => {
   if (prioritys && prioritys !== '') {
     allAds = getOverlayAds(prioritys, adsCache, currentAdStrategyKeys)
   }
-  const currentAds = formatCurrentAds(allAds, novelInstance)
+  const currentAds = formatAdData(allAds, novelInstance)
   return currentAds
 }
 
@@ -327,10 +327,10 @@ const getOverlayAds = (prioritys, adsCache, currentAdStrategyKeys) => {
  * @param {Object} novelInstance 小说shell的实例
  * @returns {Object} format后的广告数据
  */
-const formatCurrentAds = (allAds, novelInstance) => {
+const formatAdData = (allAds, novelInstance) => {
   let {adsCache = {}} = novelInstance
   let {adData = {}} = adsCache.fetchedData
-  let currentAds = {}
+  let formatData = {}
   let template = []
   let fetchTpl = []
   let showedAds = {}
@@ -338,11 +338,11 @@ const formatCurrentAds = (allAds, novelInstance) => {
     let templateValue = []
     let showedAd = 0
     allAds[i].map(value => {
-      // 现在整理书广告数据格式
-      let currentAdsTplData = {}
-      Object.assign(currentAdsTplData, value)
-      Object.assign(currentAdsTplData, {tpl: adData.template[value.tplName]})
-      templateValue.push(currentAdsTplData)
+      // 整理广告的数据格式
+      let adTplData = {}
+      Object.assign(adTplData, value)
+      Object.assign(adTplData, {tpl: adData.template[value.tplName]})
+      templateValue.push(adTplData)
       if (adData.template[value.tplName] == null) {
         // 把需要请求的tpl存起来
         fetchTpl.push(value.tplName)
@@ -355,7 +355,7 @@ const formatCurrentAds = (allAds, novelInstance) => {
   adsCache.fetchTpl = fetchTpl
   adsCache.showedAds = showedAds
   const {common = {}, config = {}, responseTime = {}} = adData
-  Object.assign(currentAds || {}, {common, config, responseTime})
-  Object.assign(currentAds, {template})
-  return currentAds
+  Object.assign(formatData, {common, config, responseTime})
+  Object.assign(formatData, {template})
+  return formatData
 }
