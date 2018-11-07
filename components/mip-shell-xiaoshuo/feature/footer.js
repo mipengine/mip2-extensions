@@ -51,19 +51,19 @@ class footer {
     }
     // 修改a标签为span，由我们去控制怎么发送open事件
     let pageBtn = $footerWrapper.querySelectorAll('.page-button')
-    pageBtn.forEach(item => {
-      item.addEventListener('click', () => {
-        let to = item.getAttribute('href')
+    for (let i = 0; i < pageBtn.length; i++) {
+      pageBtn[i].addEventListener('click', () => {
+        let to = pageBtn[i].getAttribute('href')
         if (to) {
           // 按钮有href，发送open请求，并清空按钮的href
           for (let i = 0; i < pageBtn.length; i++) {
             pageBtn[i].setAttribute('href', '')
             this.showCircleAnimate(pageBtn[i], true)
           }
-          window.MIP.viewer.open(to, {replace: true, cacheFirst: true})
+          window.MIP.viewer.open(to, { replace: true, cacheFirst: true })
         }
       })
-    })
+    }
     return $footerWrapper
   }
 
@@ -88,27 +88,27 @@ class footer {
 
     // 创建底部按钮 HTML
     let footerHTML = `
-        <div class="upper mip-border mip-border-bottom">
-            <span from-cache cache-first class="page-button page-previous" mip-link href="" replace>
-                <i class="icon gap-right-small icon-left"></i>
-                <svg viewBox="25 25 50 50" class="circular">
-                  <circle cx="50" cy="50" r="20" fill="none" class="path"/>
-                </svg>
-                ${this.config.hrefButton.previous}
-            </span>
-            <span from-cache cache-first class="page-button page-next" mip-link href="" replace>
-                ${this.config.hrefButton.next}
-                <i class="icon gap-left-small icon-right"></i>
-                <svg viewBox="25 25 50 50" class="circular">
-                  <circle cx="50" cy="50" r="20" fill="none" class="path"/>
-                </svg>
-            </span>
-        </div>
-        <div class="button-wrapper">
-            ${renderFooterButtonGroup(this.config.actionGroup)}
-        </div>
-        <div class="mip-xiaoshuo-settings">${settingHtml()}</div>
-        `
+      <div class="upper mip-border mip-border-bottom">
+          <span from-cache cache-first class="page-button page-previous" mip-link href="" replace>
+              <i class="icon gap-right-small icon-left"></i>
+              <svg viewBox="25 25 50 50" class="circular">
+                <circle cx="50" cy="50" r="20" fill="none" class="path"/>
+              </svg>
+              ${this.config.hrefButton.previous}
+          </span>
+          <span from-cache cache-first class="page-button page-next" mip-link href="" replace>
+              ${this.config.hrefButton.next}
+              <i class="icon gap-left-small icon-right"></i>
+              <svg viewBox="25 25 50 50" class="circular">
+                <circle cx="50" cy="50" r="20" fill="none" class="path"/>
+              </svg>
+          </span>
+      </div>
+      <div class="button-wrapper">
+          ${renderFooterButtonGroup(this.config.actionGroup)}
+      </div>
+      <div class="mip-xiaoshuo-settings">${settingHtml()}</div>
+    `
     return footerHTML
   }
 
@@ -171,7 +171,6 @@ class footer {
 
   // 显示底bar
   show (shellElement) {
-    alert('show footer')
     let footer = this
     // XXX: setTimeout用于解决tap执行过早，click执行过晚导致的点击穿透事件
     // window.setTimeout(function () {

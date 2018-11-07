@@ -339,16 +339,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       'left': '10px'
     })
     logDom.classList.add('logDom')
-    document.body.appendChild(logDom)
+    // document.body.appendChild(logDom)
     window.addEventListener('showShellFooter', (e, data) => {
-      try {
-        let footerObject = Object.getOwnPropertyNames(Object.getPrototypeOf(this.footer))
-        for (const i in footerObject) {
-          logDom.innerHTML += footerObject[i] + '</br>'
-        }
-      } catch (error) {
-        logDom.innerHTML = 'this.footer is not defined'
-      }
       this.footer.show(this)
       this.header.show()
       let swipeDelete = new util.Gesture(this.$buttonMask, {
