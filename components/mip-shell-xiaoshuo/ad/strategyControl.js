@@ -185,7 +185,7 @@ export default class strategyControl {
 
       Promise.all([
         new Promise(resolve => (customReadyUnlistener = listen(window, 'customReady', resolve))),
-        new Promise(resolve => (shellReadyUnlistener = listen(window, Constant.CURRENT_PAGE_READY, resolve)))
+        new Promise(resolve => (shellReadyUnlistener = listen(currentWindow, Constant.CURRENT_PAGE_READY, resolve)))
       ]).then(customHandler)
     }
 

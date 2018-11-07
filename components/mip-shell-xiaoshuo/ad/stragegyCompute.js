@@ -5,7 +5,7 @@
 
 import state from '../common/state'
 
-const AD_DATA_CACHE = 600000
+const AD_DATA_CACHE = 300000
 
 /**
  * 每次需要广告请求时，需要初始化广告队列的cache数据
@@ -19,8 +19,6 @@ export const initFirstFetchCache = (data, novelInstance = {}) => {
   adsCache.fetchedData = JSON.parse(JSON.stringify(data))
   // 初始化该次广告请求的时间
   adsCache.novelInstanceTime = +new Date()
-  console.log('小说实例化的时间: ')
-  console.log(adsCache.novelInstanceTime)
 
   // 初始化默认下一次翻页获取的是cache的请求，后期根据广告请求的计算，实际判断是否获取新的广告请求
   adsCache.isNeedAds = false
@@ -33,12 +31,8 @@ export const initFirstFetchCache = (data, novelInstance = {}) => {
   novelInstance.adsCache = adsCache
   // 计算当前页的广告策略
   computeAdStragegy(novelInstance)
-  console.log('广告的剩余数量: ')
-  console.log(adsCache.adsCount)
   // 计算出需要出的广告数据
   adsCache.adStategyCacheData = getRenderAdData(window)
-  console.log('小说组件计算出的数据为: ')
-  console.log(adsCache.adStategyCacheData)
 }
 
 /**
@@ -54,8 +48,6 @@ export const initAdByCache = (novelInstance = {}) => {
     adsCache.isFirstFetch = false
     // 计算当前页的广告策略
     computeAdStragegy(novelInstance)
-    console.log('广告的剩余数量: ')
-    console.log(adsCache.adsCount)
     /**
      * 如果当前页不需要重新请求广告，则重新获取广告数据
      */
@@ -65,11 +57,9 @@ export const initAdByCache = (novelInstance = {}) => {
         adsCache.adStategyCacheData = getRenderAdData(window)
         // 当前页面广告策略已经确认，但是缺失tpl，整体的展现还是依赖于当前common的请求的模板
         adsCache.directRender = adsCache.fetchTpl.length === 0
-        console.log('小说组件计算出的数据为: ')
-        console.log(adsCache.adStategyCacheData)
       } else {
         // 当前页面几不需要重新请求又不需要渲染广告
-        adsCache.noAdsRender = false
+        adsCache.noAdsRender = true
       }
     }
   }
@@ -250,8 +240,6 @@ const getCurPageStrategy = (novelInstance = {}) => {
   } else {
     console.warn('广告策略返回于当前页面类型无一匹配')
   }
-  console.log('当前页面命中的广告类型: ')
-  console.log(curPageStrategy)
   return curPageStrategy
 }
 
