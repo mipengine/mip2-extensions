@@ -256,7 +256,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     if (config.fontSize) {
       document.documentElement.setAttribute('mip-shell-xiaoshuo-font-size', config.fontSize)
     }
-    console.log(config)
   };
 
   /**
@@ -264,7 +263,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
    */
   resetNavigatorBtn () {
     let navigatorBtn = document.querySelectorAll('.navigator .button')
-    console.log(navigatorBtn)
     let footerConfig = getJsonld(getCurrentWindow())
     if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
       footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
@@ -326,20 +324,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
     })
     // 承接emit事件：根页面展示底部控制栏
-    let logDom = document.createElement('div')
-    MIP.util.css(logDom, {
-      'width': '200px',
-      'height': '200px',
-      'background': '#fff',
-      'color': '#000',
-      'font-size': '12px',
-      'line-height': '12px',
-      'position': 'fixed',
-      'top': '10px',
-      'left': '10px'
-    })
-    logDom.classList.add('logDom')
-    // document.body.appendChild(logDom)
     window.addEventListener('showShellFooter', (e, data) => {
       this.footer.show(this)
       this.header.show()
@@ -386,7 +370,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       // footerConfig.previousPage.url = ''
     }
     this.footer = new Footer(configMeta.footer)
-    document.querySelector('.logDom').innerHTML += this.footer + '</br>初始化footer后'
     this.footer.updateDom(footerConfig)
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog, configMeta.book)
