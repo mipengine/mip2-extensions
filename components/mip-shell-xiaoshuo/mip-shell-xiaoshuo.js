@@ -385,7 +385,6 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       // footerConfig.nextPage.url = ''
       // footerConfig.previousPage.url = ''
     }
-    alert(Footer, 'asyncInitObject - log footer')
     this.footer = new Footer(configMeta.footer)
     document.querySelector('.logDom').innerHTML += this.footer + '</br>初始化footer后'
     this.footer.updateDom(footerConfig)
