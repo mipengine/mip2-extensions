@@ -21,7 +21,7 @@ const PAGE_TYPES = {
  * novelInstanceTime {float} 该次广告请求的时间
  * isFirstFetch {boole} 是否是第一次请求
  * isNeedAds {boole} 是否重新发请求，监控该数据
- * adsCount {Object} 广告的剩余数量
+ * adsCount {Object} 每个广告队列的数据
  * adStrategyCacheData {Object} 小说组件计算出的数据为
  * fetchTpl {Array} 需要请求的tpl
  * showedAds {Object} 已经展示了的广告
