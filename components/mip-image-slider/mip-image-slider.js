@@ -5,7 +5,7 @@
  */
 
 import './mip-image-slider.less'
-let { CustomElement, util } = MIP
+const { CustomElement, util } = MIP
 
 /**
  * 获取所有正确的子元素，两个 mip-img 的元素是必须的，两个提示 div 可选
@@ -183,15 +183,18 @@ export default class MIPImageSlider extends CustomElement {
     }
   }
   onTouchStart (e) {
+    e.preventDefault()
     this.moveX(e.targetTouches[0].pageX)
     this.uninstallTouchMove = listen(this.element, 'touchmove', this.onTouchMove.bind(this))
     this.uninstallTouchEnd = listen(this.element, 'touchend', this.onTouchEnd.bind(this))
     this.animationArrowHidden()
   }
   onTouchMove (e) {
+    e.preventDefault()
     this.moveX(e.targetTouches[0].pageX)
   }
   onTouchEnd (e) {
+    e.preventDefault()
     this.uninstallTouchMove()
     this.uninstallTouchEnd()
   }
