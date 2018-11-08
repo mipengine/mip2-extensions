@@ -132,8 +132,11 @@ export const computeAdStrategy = (novelInstance = {}) => {
  * @param {Object} adsCache 小说挂载root实例下的广告前端缓存
  */
 const initAdsCount = (adsCache = {}) => {
-  const ads = adsCache.fetchedData.adData.ads || {}
+  const ads = (adsCache.fetchedData &&
+    adsCache.fetchedData.adData &&
+    adsCache.fetchedData.adData.ads) || {}
   let adsCount = {}
+
   for (let i in ads) {
     let adsInitLength = ads[i].length
     let residueCount = ads[i].length
@@ -144,6 +147,7 @@ const initAdsCount = (adsCache = {}) => {
       errorAbnormal
     }
   }
+
   // 缓存当前页的广告队列的情况
   adsCache.adsCount = adsCount
 }
@@ -157,6 +161,7 @@ const initBoundary = (novelInstance = {}) => {
   let {adsCache = {}} = novelInstance
   let {fetchedData = {}} = adsCache
   let {adData = {}} = fetchedData
+
   // 当fetchedData是没有数据时，本页不展现广告，翻页后展现广告；
   if (fetchedData == null || JSON.stringify(fetchedData) === '{}') {
     adsCache.isNeedAds = true
@@ -184,10 +189,12 @@ const initBoundary = (novelInstance = {}) => {
  */
 const initCurPageType = (pageTypes = [], novelInstance = {}) => {
   // 根据shell的pageType获取当前页面的页面类型，主要有整本书级别的和阅读页级别的
-  const pageType = novelInstance.currentPageMeta.pageType || ''
+  const pageType = (novelInstance.currentPageMeta && novelInstance.currentPageMeta.pageType) || ''
   const {isLastPage} = state(window)
   let curPageType = []
   let readType = []
+
+  // 添加当前页面的页面类型到readType中
   if (pageType === PAGE_TYPES.PAGE) {
     readType.push(PAGE_TYPES.PAGE)
     if (isLastPage) {
@@ -196,6 +203,7 @@ const initCurPageType = (pageTypes = [], novelInstance = {}) => {
   } else {
     readType.push(pageType)
   }
+
   // 判断当是阅读页级别的书，查看次页属于翻了几页；
   const readPageNum = novelInstance.currentPageMeta.readPageNum || 0
   const turnPageType = 'page_' + (readPageNum === 0 ? 0 : readPageNum - 1)
