@@ -233,49 +233,77 @@ const getCurPageStrategy = (novelInstance = {}) => {
   let curPageStrategy = {}
 
   if (curPageType.length !== 0) {
-    curPageType.forEach(value => {
-      let strategy = adData.schema['page_ads'][value]
-      let endCycle = false
-      // 针对schema中广告ad获取该页面的相关策略
-      for (let i in strategy) {
-        if (strategy[i].strategy && JSON.stringify(strategy[i].strategy) !== '{}') {
-          // 当该策略命中广告后，顺序取策略，只要有一个策略命中则不考虑别的策略
-          let random = Math.random()
-          if (strategy[i].probability == null ||
-            (strategy[i].probability && strategy[i].probability / 100 >= 1) ||
-            (strategy[i].probability && random >= strategy[i].probability)
-          ) {
-            let adTypes = {}
-            // 顺序取策略
-            for (let adNum in strategy[i].strategy) {
-              if (!endCycle) {
-                if (adsCount[adNum] == null) {
-                  adsCount[adNum] = {
-                    adsInitLength: 0,
-                    residueCount: 0,
-                    errorAbnormal: 0
-                  }
-                }
-                if (adsCount[adNum].adsInitLength === 0) {
-                  adsCount[adNum].errorAbnormal++
-                } else if (adData.ads[adNum].length !== 0) {
-                  adTypes[adNum] = adData.ads[adNum].splice(0, strategy[i].strategy[adNum])
-                  adsCount[adNum].residueCount -= strategy[i].strategy[adNum]
-                  endCycle = true
-                }
-              }
-            }
-            if (JSON.stringify(adTypes) !== '{}') {
-              curPageStrategy[value] = adTypes
-            }
-          }
-        }
-      }
+    curPageType.forEach(type => {
+      // 根据curPageType的类型获取广告数据
+      computeStrategy(curPageStrategy, type, adData, adsCount)
     })
   } else {
     console.warn('广告策略返回于当前页面类型无一匹配')
   }
   return curPageStrategy
+}
+
+/**
+ * 根据curPageType的类型获取广告数据
+ *
+ * @param {boolean} curPageStrategy 当前页面广告策勒
+ * @param {Object} type 当前页命中广告类型
+ * @param {Object} adData fetch返回的广告数据
+ * @param {Object} adsCount 广告队列的计数
+ */
+const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
+  let endCycle = false
+  let strategy = adData.schema['page_ads'][type]
+  for (let i in strategy) {
+    let random = Math.random()
+    if (strategy[i].strategy &&
+      JSON.stringify(strategy[i].strategy) !== '{}' &&
+      (strategy[i].probability == null ||
+        (strategy[i].probability && strategy[i].probability / 100 >= 1) ||
+        (strategy[i].probability && random >= strategy[i].probability)
+      )
+    ) {
+      // 当该策略命中广告后，顺序取策略，只要有一个策略命中则不考虑别的策略
+      let adTypes = getStrategy(endCycle, adsCount, strategy[i].strategy, adData)
+      if (JSON.stringify(adTypes) !== '{}') {
+        curPageStrategy[type] = adTypes
+      }
+    }
+  }
+}
+
+/**
+ * 获取广告策略中的广告队列，并且修改广告队列最初的计数
+ *
+ * @param {boolean} endCycle 是否结束循环
+ * @param {Object} adsCount 广告队列的计数
+ * @param {Object} strategy 每个广告类型中的广告策略
+ * @param {Object} adData fetch返回的广告数据
+ * @returns {Object} 返回通过广告策略中计算出的广告队列的数据
+ */
+const getStrategy = (endCycle, adsCount, strategy, adData) => {
+  let adTypes = {}
+
+  for (let adNum in strategy) {
+    if (!endCycle) {
+      if (adsCount[adNum] == null) {
+        adsCount[adNum] = {
+          adsInitLength: 0,
+          residueCount: 0,
+          errorAbnormal: 0
+        }
+      }
+      if (adsCount[adNum].adsInitLength === 0) {
+        adsCount[adNum].errorAbnormal++
+      } else if (adData.ads[adNum].length !== 0) {
+        adTypes[adNum] = adData.ads[adNum].splice(0, strategy[adNum])
+        adsCount[adNum].residueCount -= strategy[adNum]
+        endCycle = true
+      }
+    }
+  }
+
+  return adTypes
 }
 
 /**
