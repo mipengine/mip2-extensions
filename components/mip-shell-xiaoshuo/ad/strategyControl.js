@@ -171,7 +171,7 @@ export default class strategyControl {
 
     let listen = function (target, name, handler) {
       target.addEventListener(name, handler)
-      return () => target.removeEventListener(name, handler)
+      return () => {}
     }
 
     let customReadyUnlistener

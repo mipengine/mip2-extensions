@@ -5,7 +5,14 @@
 
 import state from '../common/state'
 
+// 广告数据的缓存时间
 const AD_DATA_CACHE = 300000
+
+// 页面的类型集
+const PAGE_TYPES = {
+  PAGE: 'page',
+  CHAPTEREND: 'chapterEnd'
+}
 
 /**
  * adsCache的相关state
@@ -103,8 +110,10 @@ export const computeAdStrategy = (novelInstance = {}) => {
   // 通过curPageType去获取对应页面类型的stragegy
   adsCache.curPageStrategy = getCurPageStrategy(novelInstance)
 
-  // 如果当前的广告策略计算为空，则先查看novelInstance.adsCount是否有errorAbnormal超过3次和residueCount小于0的；
-  // 如果超过三次并且本页的curPageStrategy里空本次策略则前端缓存的广告异常清零，重新发请求
+  /**
+   * 如果当前的广告策略计算为空，则先查看novelInstance.adsCount是否有errorAbnormal超过3次和residueCount小于0的；
+   * 如果超过三次并且本页的curPageStrategy里空本次策略则前端缓存的广告异常清零，重新发请求
+   */
   if (adsCache.isFirstFetch != null &&
     !adsCache.isFirstFetch &&
     JSON.stringify(adsCache.curPageStrategy) === '{}') {
@@ -179,10 +188,10 @@ const initCurPageType = (pageTypes = [], novelInstance = {}) => {
   const {isLastPage} = state(window)
   let curPageType = []
   let readType = []
-  if (pageType === 'page') {
-    readType.push('page')
+  if (pageType === PAGE_TYPES.PAGE) {
+    readType.push(PAGE_TYPES.PAGE)
     if (isLastPage) {
-      readType.push('chapterEnd')
+      readType.push(PAGE_TYPES.CHAPTEREND)
     }
   } else {
     readType.push(pageType)
@@ -214,10 +223,12 @@ const getCurPageStrategy = (novelInstance = {}) => {
   let {fetchedData = {}, adsCount = {}, curPageType = []} = adsCache
   let {adData = {}} = fetchedData
   let curPageStrategy = {}
+
   if (curPageType.length !== 0) {
     curPageType.forEach(value => {
       let strategy = adData.schema['page_ads'][value]
       let endCycle = false
+      // 针对schema中广告ad获取该页面的相关策略
       for (let i in strategy) {
         if (strategy[i].strategy && JSON.stringify(strategy[i].strategy) !== '{}') {
           // 当该策略命中广告后，顺序取策略，只要有一个策略命中则不考虑别的策略
@@ -227,6 +238,7 @@ const getCurPageStrategy = (novelInstance = {}) => {
             (strategy[i].probability && random >= strategy[i].probability)
           ) {
             let adTypes = {}
+            // 顺序取策略
             for (let adNum in strategy[i].strategy) {
               if (!endCycle) {
                 if (adsCount[adNum] == null) {
@@ -268,18 +280,20 @@ const getRenderAdData = currentWindow => {
   const {novelInstance = {}} = state(currentWindow)
   let {adsCache = {}} = novelInstance
   let {adData = {}} = adsCache.fetchedData
-  // ------ 通过curPageType去获取对应页面类型的stragegy ------
-  let currentAdStrategyKeys = Object.keys(adsCache.curPageStrategy)
+  // 存储所有的广告策略
   let allAds = {}
 
+  // 通过curPageType去获取对应页面类型的stragegy
+  let curAdStrategyKeys = Object.keys(adsCache.curPageStrategy)
+
   // 当前的页面类型只命中一种广告；
-  if (currentAdStrategyKeys.length === 1) {
-    allAds = adsCache.curPageStrategy[currentAdStrategyKeys[0]]
+  if (curAdStrategyKeys.length === 1) {
+    allAds = adsCache.curPageStrategy[curAdStrategyKeys[0]]
   }
   // 当前页面会涉及到不同页面类型的广告叠加
-  let prioritys = (adData.schema['page_priority'] && adData.schema['page_priority'][currentAdStrategyKeys[0]]) || ''
+  let prioritys = (adData.schema['page_priority'] && adData.schema['page_priority'][curAdStrategyKeys[0]]) || ''
   if (prioritys && prioritys !== '') {
-    allAds = getOverlayAds(prioritys, adsCache, currentAdStrategyKeys)
+    allAds = getOverlayAds(prioritys, adsCache, curAdStrategyKeys)
   }
   const currentAds = formatAdData(allAds, novelInstance)
   return currentAds
@@ -290,13 +304,15 @@ const getRenderAdData = currentWindow => {
  *
  * @param {string} prioritys 通过common返回的叠加策略
  * @param {Object} adsCache 缓存的广告数据
- * @param {Array} currentAdStrategyKeys 存储需要的tpl的name
+ * @param {Array} curAdStrategyKeys 存储需要的tpl的name
  * @returns {Object} 根据优先级算出的叠加的广告
  */
-const getOverlayAds = (prioritys, adsCache, currentAdStrategyKeys) => {
+const getOverlayAds = (prioritys, adsCache, curAdStrategyKeys = []) => {
   let priorityType = prioritys.split(' ')
   let priorityArr = []
-  currentAdStrategyKeys.forEach((value, i) => {
+
+  // 获取该页面命中的最高优的一个页面类型的广告
+  curAdStrategyKeys.forEach((value, i) => {
     if (i !== 0 && prioritys.indexOf(value) !== -1) {
       let index = priorityType.indexOf(value)
       let arr = {
@@ -306,8 +322,12 @@ const getOverlayAds = (prioritys, adsCache, currentAdStrategyKeys) => {
       priorityArr.push(arr)
     }
   })
+
   let priorityValues = {}
-  Object.assign(priorityValues, adsCache.curPageStrategy[currentAdStrategyKeys[0]])
+
+  Object.assign(priorityValues, adsCache.curPageStrategy[curAdStrategyKeys[0]])
+
+  // 通过当前的命中的策略的类型，获取叠加的广告策勒
   priorityArr.map(value => {
     let overlayPage = adsCache.curPageStrategy[value.pageType]
     if (value.opt === '|' || value.opt === '&') {
@@ -337,11 +357,13 @@ const formatAdData = (allAds, novelInstance) => {
   let template = []
   let fetchTpl = []
   let showedAds = {}
+
+  // 整理出最后的页面
   for (let i in allAds) {
     let templateValue = []
     let showedAd = 0
     allAds[i].map(value => {
-      // 整理广告的数据格式
+      // 整理广告的数据格式，形成最终的格式
       let adTplData = {}
       Object.assign(adTplData, value)
       Object.assign(adTplData, {tpl: adData.template[value.tplName]})
