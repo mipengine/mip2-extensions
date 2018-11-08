@@ -16,7 +16,7 @@ import {
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
 import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
-import {sendWebbLog, sendTCLog} from './common/log' // 日志
+import {sendWebbLog, sendTCLog, sendWebbLogCommon} from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
@@ -133,8 +133,13 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     strategy.eventAllPageHandler()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
+
     xiaoshuoEvents.bindAll()
 
+    // 发送webb性能日志 , 请求common时 ,common 5s 请求失败，发送common异常日志
+    if (document.querySelector('mip-custom')) {
+      sendWebbLogCommon()
+    }
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
       let jsonld = getJsonld(window)
