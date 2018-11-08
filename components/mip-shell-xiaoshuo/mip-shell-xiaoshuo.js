@@ -15,7 +15,7 @@ import {
 
 import NovelEvents from './common/events'
 import Strategy from './ad/strategyControl'
-import {initAdByCache} from './ad/stragegyCompute'
+import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
 import state from './common/state'
 import {sendWebbLog, sendTCLog, sendWebbLogCommon} from './common/log' // 日志

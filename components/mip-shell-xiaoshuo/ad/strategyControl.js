@@ -10,7 +10,7 @@ import state from '../common/state'
 import {getCurrentWindow, getRootWindow} from '../common/util'
 import {
   initFirstFetchCache
-} from './stragegyCompute'
+} from './strategyCompute'
 
 export default class strategyControl {
   constructor (config) {
@@ -214,14 +214,14 @@ export default class strategyControl {
         // 第一次请求的时候需要初始化fetch的数据，并且计算出当前的广告数据
         initFirstFetchCache(adData, novelInstance)
       }
-      const adStategyCacheData = novelInstance.adsCache.adStategyCacheData
+      const adStrategyCacheData = novelInstance.adsCache.adStrategyCacheData
       // 计算出需要出的广告数据
       if (novelInstance.adsCache != null && novelInstance.adsCache.isFirstFetch) {
         this.strategyStatic()
       }
       window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
-        name: 'showAdStategyCache',
-        data: adStategyCacheData
+        name: 'showAdStrategyCache',
+        data: adStrategyCacheData
       })
     })
   }

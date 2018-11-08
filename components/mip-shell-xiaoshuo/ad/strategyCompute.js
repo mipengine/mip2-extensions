@@ -15,7 +15,7 @@ const AD_DATA_CACHE = 300000
  * isFirstFetch {boole} 是否是第一次请求
  * isNeedAds {boole} 是否重新发请求，监控该数据
  * adsCount {Object} 广告的剩余数量
- * adStategyCacheData {Object} 小说组件计算出的数据为
+ * adStrategyCacheData {Object} 小说组件计算出的数据为
  * fetchTpl {Array} 需要请求的tpl
  * showedAds {Object} 已经展示了的广告
  * directRender {boole} 当前页面广告策略已经确认，但是缺失tpl
@@ -45,9 +45,9 @@ export const initFirstFetchCache = (data, novelInstance = {}) => {
   // 所有的广告策略的数据全部挂载在adsCache的数据下
   novelInstance.adsCache = adsCache
   // 计算当前页的广告策略
-  computeAdStragegy(novelInstance)
+  computeAdStrategy(novelInstance)
   // 计算出需要出的广告数据
-  adsCache.adStategyCacheData = getRenderAdData(window)
+  adsCache.adStrategyCacheData = getRenderAdData(window)
 }
 
 /**
@@ -62,14 +62,14 @@ export const initAdByCache = (novelInstance = {}) => {
     // 首先修改是否是第一次请求的状态
     adsCache.isFirstFetch = false
     // 计算当前页的广告策略
-    computeAdStragegy(novelInstance)
+    computeAdStrategy(novelInstance)
     /**
      * 如果当前页不需要重新请求广告，则重新获取广告数据
      */
     if (!adsCache.isNeedAds) {
       if (JSON.stringify(adsCache.curPageStrategy) !== '{}') {
         // 计算出需要出的广告数据
-        adsCache.adStategyCacheData = getRenderAdData(window)
+        adsCache.adStrategyCacheData = getRenderAdData(window)
         // 当前页面广告策略已经确认，但是缺失tpl，整体的展现还是依赖于当前common的请求的模板
         adsCache.directRender = adsCache.fetchTpl.length === 0
       } else {
@@ -85,7 +85,7 @@ export const initAdByCache = (novelInstance = {}) => {
  *
  * @param {Object} novelInstance 小说shell的实例
  */
-export const computeAdStragegy = (novelInstance = {}) => {
+export const computeAdStrategy = (novelInstance = {}) => {
   let {adsCache = {}} = novelInstance
   let {fetchedData = {}} = adsCache
   let {adData = {}} = fetchedData
