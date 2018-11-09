@@ -138,8 +138,11 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     strategy.eventAllPageHandler()
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     novelEvents.bindAll()
-    // 发送webb性能日志，common 5s 请求失败，发送common 异常日志
-    sendWebbLogCommon()
+
+    // 发送webb性能日志 , 请求common时 ,common 5s 请求失败，发送common异常日志
+    if (document.querySelector('mip-custom')) {
+      sendWebbLogCommon()
+    }
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
