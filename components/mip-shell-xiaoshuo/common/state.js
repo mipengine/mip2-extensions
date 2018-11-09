@@ -2,10 +2,11 @@
  * @file 小说中的各种状态
  * @author JennyL, LiuJing
  */
-import {getJsonld} from './util'
+import {getJsonld, getRootWindow} from './util'
 
 export default (currentWindow) => {
   const jsonld = getJsonld(currentWindow)
+  const rootWindow = getRootWindow(currentWindow)
 
   if (!jsonld.currentPage) {
     throw new Error('请检查head中json-ld配置，currentPage 不存在')
@@ -78,6 +79,12 @@ export default (currentWindow) => {
       *
       * @type {string} 当前页面是否是搜索结果点出
       */
-    isFromSearch: currentWindow.MIP.viewer.page.pageId === currentWindow.MIP.viewer.page.currentPageId
+    isFromSearch: currentWindow.MIP.viewer.page.pageId === currentWindow.MIP.viewer.page.currentPageId,
+    /**
+      * 当前的小说实例
+      *
+      * @type {object} 当前的小说实例对象
+      */
+    novelInstance: rootWindow.MIP.novelInstance
   }
 }
