@@ -949,12 +949,12 @@ body.with-header {
 
   &.slide-enter-active,
   &.slide-leave-active {
-    transition: transform 0.1s ease;
+    //transition: transform 0.1s ease;
   }
 
   &.slide-enter-to,
   &.slide-leave {
-    transform: translate3d(0, 0, 0);
+    //transform: translate3d(0, 0, 0);
   }
 
   &.transition-without-header {
@@ -975,7 +975,7 @@ body.with-header {
   }
 
   &.fade-enter-active {
-    transition: opacity 0.35s ease;
+    //transition: opacity 0.35s ease;
   }
 
   &.fade-enter-to {
@@ -986,4 +986,27 @@ body.with-header {
     padding-left: 95px;
     padding-right: 0;
   }
+
+}
+
+#loadingNext{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #eee;
+  text-align: center;
+}
+
+#loadingPre{
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  background: #eee;
+  text-align: center;
+}
+
+.noScroll{
+  overflow-y: hidden !importent;
 }

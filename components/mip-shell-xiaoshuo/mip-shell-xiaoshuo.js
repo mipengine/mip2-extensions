@@ -15,12 +15,15 @@ import {
 
 import XiaoshuoEvents from './common/events'
 import Strategy from './ad/strategy'
-import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
+import Scroll from './common/scroll'
+import {getJsonld, scrollBoundary, getCurrentWindow, getCacheUrl} from './common/util'
 import {sendWebbLog, sendTCLog, sendWebbLogCommon} from './common/log' // 日志
 
 let xiaoshuoEvents = new XiaoshuoEvents()
 let strategy = new Strategy()
 let util = MIP.util
+
+let scroll = new Scroll()
 
 export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -131,6 +134,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     }
 
     strategy.eventAllPageHandler()
+    let jsonld = getJsonld(getCurrentWindow())
+    let nextUrl = getCacheUrl(jsonld.nextPage.url)
+    scroll.prerenderNext(nextUrl)
+    scroll.start()
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
 

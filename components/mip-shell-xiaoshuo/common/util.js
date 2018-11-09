@@ -118,3 +118,29 @@ export const scrollBoundary = () => {
     }
   })
 }
+/**
+ *
+ * 获取cache的url
+ */
+export const getCacheUrl = (url) => {
+  return window.MIP.util.makeCacheUrl(url, 'url', true)
+}
+
+/**
+ *
+ * 判断是否为cache url
+ */
+export const isCacheUrl = () => {
+  return window.MIP.util.isCacheUrl(url)
+}
+/**
+ *
+ * 获取下一个window
+ */
+export const getPrerenderJsonld = () => {
+  let pageId = MIP.util.getOriginalUrl(location.href)
+  console.log(pageId)
+  pageId = getCacheUrl(pageId)
+  let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+  return getJsonld(pageInfo.targetWindow)
+}
