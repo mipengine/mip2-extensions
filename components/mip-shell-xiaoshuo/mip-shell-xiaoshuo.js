@@ -13,9 +13,8 @@ import {
   FontSize
 } from './feature/setting' // 背景色调整，字体大小调整
 
-
 import Scroll from './common/scroll'
-import {getJsonld, scrollBoundary, getCurrentWindow, getCacheUrl} from './common/util'
+import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
 
 import NovelEvents from './common/events'
 import Strategy from './ad/strategyControl'
@@ -30,7 +29,6 @@ let util = MIP.util
 
 let scroll = new Scroll()
 export default class MipShellNovel extends MIP.builtinComponents.MipShell {
-
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
     super(...args)

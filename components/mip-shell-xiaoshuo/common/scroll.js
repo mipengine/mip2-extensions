@@ -1,17 +1,15 @@
-import { setTimeout, clearTimeout} from 'timers'
+import {setTimeout, clearTimeout} from 'timers'
 import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow} from './util'
 import './../mip-shell-xiaoshuo.less'
 
 let reader = document.querySelector('#mip-reader-warp')
 let warp = document.querySelector('#mip-reader-warp > .reader')
 let currentWindow = getCurrentWindow()
-let bodyscrollTop = currentWindow.document.body.scrollTop
-let timer;
+let timer
 let pageIdQuery = {
   pre: '',
   next: ''
 }
-let pointer = 0
 export default class Scroll {
   constructor () {
     let jsonld = getPrerenderJsonld()
@@ -20,30 +18,27 @@ export default class Scroll {
   }
 
   start () {
-    if (!this.isScrollToPageBottom()) {
-      clearTimeout(timer)
+    clearTimeout(timer)
+    if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
       timer = setTimeout(this.start.bind(this), 900)
-      return
-    }
-    // else if(this.isScrollToPageBottom()){
-    if (document.getElementById('loadingNext')) {
-      return
-    }
-    this.loadingNext()
-    // let url = pageIdQuery[pageIdQuery.length-1]
-    // currentWindow.MIP.viewer.page.replace(url, {skipRender: true})
+    } else if (this.isScrollToPageBottom()) {
+      if (document.getElementById('loadingNext')) {
+        return
+      }
+      this.loadingNext()
+      // let url = pageIdQuery[pageIdQuery.length-1]
+      // currentWindow.MIP.viewer.page.replace(url, {skipRender: true})
 
-    this.prerenderNext(pageIdQuery.next)
-    // }
-    // else if(this.isScrollToPageTop()){
-    //   if(document.getElementById('loadingPre')){
-    //     return
-    //   }
-    //   this.loadingPre()
-    //   // let url = pageIdQuery[0]
-    //   // currentWindow.MIP.viewer.page.replace(url, {skipRender: true})
-    //   this.prerenderPre(pageIdQuery.pre)
-    // }
+      this.prerenderNext(pageIdQuery.next)
+    } else if (this.isScrollToPageTop()) {
+      if (document.getElementById('loadingPre')) {
+        return
+      }
+      this.loadingPre()
+      // let url = pageIdQuery[0]
+      // currentWindow.MIP.viewer.page.replace(url, {skipRender: true})
+      this.prerenderPre(pageIdQuery.pre)
+    }
   }
 
   prerenderNext (url) {
@@ -55,7 +50,6 @@ export default class Scroll {
         let jsonld = getJsonld(iframe[0].contentWindow)
         pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
         currentWindow.MIP.viewer.page.children = []
-        console.log('pageIdQuery.next', pageIdQuery.next)
         iframe[0].parentNode.removeChild(iframe[0])
         this.removeNextLoading()
       }
@@ -70,32 +64,32 @@ export default class Scroll {
         this.insertDom(dom, id, height)
         let jsonld = getJsonld(iframe[0].contentWindow)
         pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
+        currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
+        this.removePreLoading()
       }
-      this.removePreLoading()
     })
   }
 
   getPageDom (iframe, pageId) {
-    iframe.style.left = 9999999
-    iframe.style.display = 'block'
+    // iframe.style.left = 9999999
+    // iframe.style.position = 'absolute'
+    // iframe.style.display = 'block'
     let nextdocument = iframe.contentWindow.document
     let readwarp = nextdocument.getElementById('mip-reader-warp').childNodes
     return {
       dom: readwarp[1],
       id: pageId,
-      height: iframe.contentDocument.querySelector('#mip-reader-warp').offsetHeight
+      height: 2713
     }
   }
 
   insertDom (dom, id, height) {
-    console.log('height', height)
-
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)
     reader.insertBefore(div, warp)
-    // currentWindow.scrollTo(0,height)
+    currentWindow.MIP.viewport.setScrollTop(height)
   }
 
   appendDom (dom, id) {
@@ -108,8 +102,10 @@ export default class Scroll {
   getViewportSize (w) {
     return {w: document.documentElement.clientWidth, h: document.documentElement.clientHeight}
   }
+
   /**
    * 判断滚动条是否在页面底部
+   *
    * @private isScrollToPageBottom：小说内部私有方法，判断滚动条是否在页面底部
    */
   isScrollToPageBottom () {
@@ -130,18 +126,13 @@ export default class Scroll {
     div.innerHTML = '正在加载后续章节'
     div.setAttribute('id', 'loadingNext')
     document.body.appendChild(div)
-    // currentWindow.document.body.style.overflowY = 'hidden'
-    bodyscrollTop = currentWindow.MIP.viewport.getScrollTop()
-    console.log(bodyscrollTop)
   }
 
   loadingPre () {
     let div = document.createElement('div')
-    div.innerHTML = '正在加载中'
+    div.innerHTML = '正在加载前面章节'
     div.setAttribute('id', 'loadingPre')
     document.body.appendChild(div)
-    // currentWindow.document.body.style.overflowY = 'hidden'
-    // bodyscrollTop = currentWindow.document.body.scrollTop
   }
 
   loadingError () {
@@ -153,16 +144,12 @@ export default class Scroll {
   removePreLoading () {
     let div = document.getElementById('loadingPre')
     div && document.body.removeChild(div)
-    // currentWindow.document.body.style.overflowY = 'auto'
-    // currentWindow.document.body.scrollTop = bodyscrollTop
     this.start()
   }
 
   removeNextLoading () {
     let div = document.getElementById('loadingNext')
     div && document.body.removeChild(div)
-    // currentWindow.document.body.style.overflowY = 'auto'
-    currentWindow.scrollTo(0,bodyscrollTop)
     this.start()
   }
 }

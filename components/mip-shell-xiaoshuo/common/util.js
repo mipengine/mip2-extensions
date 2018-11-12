@@ -129,8 +129,9 @@ export const scrollBoundary = () => {
   })
 }
 /**
- *
  * 获取cache的url
+ *
+ * @param {string} url 目标url
  */
 export const getCacheUrl = (url) => {
   return window.MIP.util.makeCacheUrl(url, 'url', true)
@@ -140,7 +141,7 @@ export const getCacheUrl = (url) => {
  *
  * 判断是否为cache url
  */
-export const isCacheUrl = () => {
+export const isCacheUrl = (url) => {
   return window.MIP.util.isCacheUrl(url)
 }
 /**
