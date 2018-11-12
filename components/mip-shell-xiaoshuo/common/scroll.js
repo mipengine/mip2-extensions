@@ -3,7 +3,6 @@ import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow} from './ut
 import './../mip-shell-xiaoshuo.less'
 
 let reader = document.querySelector('#mip-reader-warp')
-let warp = document.querySelector('#mip-reader-warp > .reader')
 let currentWindow = getCurrentWindow()
 let timer
 let pageIdQuery = {
@@ -60,35 +59,33 @@ export default class Scroll {
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
-        let {dom, height, id} = this.getPageDom(iframe[0], pageId)
-        this.insertDom(dom, id, height)
+        let {dom, id} = this.getPageDom(iframe[0], pageId)
+        this.insertDom(dom, id)
         let jsonld = getJsonld(iframe[0].contentWindow)
         pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
-        this.removePreLoading()
+        setTimeout(this.removePreLoading.bind(this), 0)
       }
     })
   }
 
   getPageDom (iframe, pageId) {
-    // iframe.style.left = 9999999
-    // iframe.style.position = 'absolute'
-    // iframe.style.display = 'block'
     let nextdocument = iframe.contentWindow.document
     let readwarp = nextdocument.getElementById('mip-reader-warp').childNodes
     return {
       dom: readwarp[1],
-      id: pageId,
-      height: 2713
+      id: pageId
     }
   }
 
-  insertDom (dom, id, height) {
+  insertDom (dom, id) {
+    let warp = document.querySelector('#mip-reader-warp > div')
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)
     reader.insertBefore(div, warp)
+    let height = div.offsetHeight
     currentWindow.MIP.viewport.setScrollTop(height)
   }
 
