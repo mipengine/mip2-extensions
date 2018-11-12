@@ -6,6 +6,7 @@ let reader = document.querySelector('#mip-reader-warp')
 let warp = document.querySelector('#mip-reader-warp > .reader')
 let currentWindow = getCurrentWindow()
 let bodyscrollTop = currentWindow.document.body.scrollTop
+let timer;
 let pageIdQuery = {
   pre: '',
   next: ''
@@ -15,11 +16,13 @@ export default class Scroll {
   constructor () {
     let jsonld = getPrerenderJsonld()
     pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
+    pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
   }
 
   start () {
     if (!this.isScrollToPageBottom()) {
-      setTimeout(this.start.bind(this), 900)
+      clearTimeout(timer)
+      timer = setTimeout(this.start.bind(this), 900)
       return
     }
     // else if(this.isScrollToPageBottom()){
@@ -29,7 +32,6 @@ export default class Scroll {
     this.loadingNext()
     // let url = pageIdQuery[pageIdQuery.length-1]
     // currentWindow.MIP.viewer.page.replace(url, {skipRender: true})
-    let jsonld = getPrerenderJsonld()
 
     this.prerenderNext(pageIdQuery.next)
     // }
@@ -52,9 +54,11 @@ export default class Scroll {
         this.appendDom(dom, id)
         let jsonld = getJsonld(iframe[0].contentWindow)
         pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
+        currentWindow.MIP.viewer.page.children = []
+        console.log('pageIdQuery.next', pageIdQuery.next)
         iframe[0].parentNode.removeChild(iframe[0])
+        this.removeNextLoading()
       }
-      this.removeNextLoading()
     })
   }
 
@@ -63,7 +67,6 @@ export default class Scroll {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let {dom, height, id} = this.getPageDom(iframe[0], pageId)
-        console.log('preheight', height)
         this.insertDom(dom, id, height)
         let jsonld = getJsonld(iframe[0].contentWindow)
         pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
@@ -108,16 +111,6 @@ export default class Scroll {
   /**
    * 判断滚动条是否在页面底部
    * @private isScrollToPageBottom：小说内部私有方法，判断滚动条是否在页面底部
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
    */
   isScrollToPageBottom () {
     // 文档高度
@@ -138,7 +131,8 @@ export default class Scroll {
     div.setAttribute('id', 'loadingNext')
     document.body.appendChild(div)
     // currentWindow.document.body.style.overflowY = 'hidden'
-    bodyscrollTop = currentWindow.document.body.scrollTop
+    bodyscrollTop = currentWindow.MIP.viewport.getScrollTop()
+    console.log(bodyscrollTop)
   }
 
   loadingPre () {
@@ -168,7 +162,7 @@ export default class Scroll {
     let div = document.getElementById('loadingNext')
     div && document.body.removeChild(div)
     // currentWindow.document.body.style.overflowY = 'auto'
-    currentWindow.document.body.scrollTop = bodyscrollTop
+    currentWindow.scrollTo(0,bodyscrollTop)
     this.start()
   }
 }
