@@ -91,7 +91,27 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     super.bindAllEvents()
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
-    const {isRootPage, novelInstance} = state(window)
+    const {isRootPage, novelInstance, originalUrl} = state(window)
+    let zonghengPattern = /www.xmkanshu.com/g
+    let iqiyiPattern = /wenxue.m.iqiyi.com/g
+    let site
+    let isZongheng = zonghengPattern.test(originalUrl)
+    let isIqiyi = iqiyiPattern.test(originalUrl)
+    if (isZongheng) {
+      site = 'zongheng'
+    }
+    if (isIqiyi) {
+      site = 'iqiyi'
+    }
+    sendTCLog('interaction', {
+      type: 'b',
+      action: 'pageShow'
+    }, {
+      show: 'pageShow',
+      isRootPage: isRootPage,
+      site: site
+    })
+
     // 用来记录翻页的次数，主要用来触发品专的广告
     novelInstance.novelPageNum++
     if (novelInstance.currentPageMeta.pageType === 'page') {
@@ -157,6 +177,39 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
       name: 'current-page-ready'
     })
+
+    // 观察者模式监听广告渲染是否成功字段 window.MIP.ad
+    setTimeout(() => {
+      let name
+      window.MIP.ad = {}
+      function observer (oldVal, newVal) {
+        if (newVal === true) {
+          sendTCLog('interaction', {
+            type: 'b',
+            action: 'adShow'
+          }, {
+            show: 'adShow',
+            hasAd: true,
+            site: site
+          })
+          // 观察者模式改变时监听，show值改变，下次广告请求成功后边true
+          window.MIP.ad.show = false
+        }
+      }
+      // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
+      Object.defineProperty(window.MIP.ad, 'show', {
+        enumerable: true,
+        configurable: true,
+        get: function () {
+          return name
+        },
+        set: function (val) {
+          // 调用处理函数
+          observer(name, val)
+          name = val
+        }
+      })
+    }, 0)
   }
 
   // 基类方法，翻页之后执行的方法

@@ -27,6 +27,9 @@ export function sendWebbLog (type, info) {
  * @param {Object} extra 额外信息
  */
 export function sendTCLog (type, info, extra) {
+  // TC日志添加referer参数 , url需要encode,否则打点时会被特殊字符&等解析
+  let referer = encodeURIComponent(window.document.referrer)
+  extra = Object.assign({referer}, extra)
   let eventName = type + '-log'
   let data = Object.assign({
     'clk_info': info
