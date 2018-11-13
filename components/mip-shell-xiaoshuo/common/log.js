@@ -59,3 +59,15 @@ export function sendWebbLogCommon () {
     }
   }, 5000)
 }
+
+/**
+ * 发送webb日志，监控页面底部下一页上一页按钮跳转是否异常，异常发送异常日志
+ */
+export function sendWebbLogLink (PageButton, button) {
+  if (PageButton && !(PageButton.hasAttribute('data-type') && PageButton.getAttribute('data-type') === 'mip') && !(PageButton.hasAttribute('mip-link'))) {
+    sendWebbLog('stability', {
+      msg: 'linkError',
+      button: button
+    })
+  }
+}
