@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>3D gltf实例</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/v1/assets/mip/projects/mip.css">
+    <style mip-custom>
+    /* 自定义样式 */
+    h2 {
+      margin: 40px 0 20px 0;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>glTF格式3D模型展示</h1>
+
+    <h2>1、通过src远程获取模型</h2>
+    <mip-3d-gltf
+      layout="responsive"
+      width="250"
+      height="450"
+      src="https://ampbyexample.com/glTF/DamagedHelmet.glb">
+    </mip-3d-gltf>
+
+    <h2>2、可以指定自由空间透明、抗锯齿、背景颜色、设备像素比、缩放和自动旋转</h2>
+    <mip-3d-gltf
+      layout="responsive"
+      width="250"
+      height="450"
+      alpha="true"
+      maxPixelRatio="0.5"
+      clear-color="#FFFFFF"
+      antialiasing="true"
+      enable-zoom="false"
+      auto-rotate="true"
+      src="https://ampbyexample.com/glTF/DamagedHelmet.glb">
+    </mip-3d-gltf>
+
+    <script src="https://bos.nj.bpc.baidu.com/v1/assets/mip/projects/mip.js"></script>
+    <script src="/mip-3d-gltf/mip-3d-gltf.js"></script>
+  </body>
+</html>
