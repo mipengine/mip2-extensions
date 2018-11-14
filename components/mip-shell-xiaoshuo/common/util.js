@@ -21,6 +21,16 @@ export const getJsonld = (currentWindow) => {
 }
 
 /**
+ * 获取root页面的window
+ *
+ * @param {window} currentWindow 当前页面的window
+ * @returns {window} root页面的window
+ */
+export const getRootWindow = currentWindow => {
+  return currentWindow.MIP.viewer.page.isRootPage ? currentWindow : currentWindow.parent
+}
+
+/**
  * 获取当前页面的iframe
  *
  * @returns {window} 当前iframe的window

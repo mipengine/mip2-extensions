@@ -86,6 +86,9 @@ class footer {
       }
     }).join('')
 
+    const previous = this && this.config && this.config.hrefButton && this.config.hrefButton.previous ? this.config.hrefButton.previous : ''
+    const next = this && this.config && this.config.hrefButton && this.config.hrefButton.next ? this.config.hrefButton.next : ''
+
     // 创建底部按钮 HTML
     let footerHTML = `
       <div class="upper mip-border mip-border-bottom">
