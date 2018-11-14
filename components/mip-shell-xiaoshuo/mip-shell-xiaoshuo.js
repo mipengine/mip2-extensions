@@ -30,6 +30,8 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 处理浏览器上下滚动边界，关闭弹性
     scrollBoundary()
     this.pageNum = 0
+    // 阅读器内部预渲染开关
+    this.isReaderPrerender = false
   }
 
   // 通过小说JS给dom添加预渲染字段
@@ -91,8 +93,13 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     // 基于预渲染特性，预渲染会以修改前的模式渲染，修改设置后需要让新设置应用于页面
-    this.__getConfig()
-    this.resetNavigatorBtn()
+    if (this.currentPageMeta.header.title === '雪中悍刀行') {
+      this.isReaderPrerender = true
+    }
+    if (this.isReaderPrerender) {
+      this.__getConfig()
+      this.resetNavigatorBtn()
+    }
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
@@ -143,7 +150,19 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     let jsonld = getJsonld(getCurrentWindow())
     // 预渲染
     if (this.currentPageMeta.pageType === 'page') {
-      this.readerPrerender(jsonld)
+      if (this.isReaderPrerender) {
+        this.readerPrerender(jsonld)
+      } else {
+        // 非root页才会去重新更新底部url
+        if (!isRootPage) {
+          window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
+            name: 'updateShellFooter',
+            data: {
+              'jsonld': jsonld
+            }
+          })
+        }
+      }
     }
   }
   /**
@@ -288,14 +307,16 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.readerPrerender(jsonld)
     }
     // 预渲染兜底机制：预渲染超过3s为返回resolve即视为异常，强制刷新底部footer，走正常加载的loading方式。
-    setTimeout(() => {
-      let currentDocument = MIP.viewer.page.isRootPage ? window.document : window.parent.document
-      let pageBtn = currentDocument.querySelectorAll('.page-button')
-      if (pageBtn[0].getAttribute('href') === '' && pageBtn[1].getAttribute('href') === '') {
-        console.warn('after 3s,prerender failed,force refresh the Footer')
-        this.updateFooterDom()
-      }
-    }, 3000)
+    if (this.isReaderPrerender) {
+      setTimeout(() => {
+        let currentDocument = MIP.viewer.page.isRootPage ? window.document : window.parent.document
+        let pageBtn = currentDocument.querySelectorAll('.page-button')
+        if (pageBtn[0].getAttribute('href') === '' && pageBtn[1].getAttribute('href') === '') {
+          console.warn('after 3s,prerender failed,force refresh the Footer')
+          this.updateFooterDom()
+        }
+      }, 3000)
+    }
     // 用于记录页面加载完成的时间
     const startRenderTime = xiaoshuoEvents.timer
     const currentWindow = getCurrentWindow()
