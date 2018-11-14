@@ -31,7 +31,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     scrollBoundary()
-    this.pageNum = 0
     // 阅读器内部预渲染开关
     this.isReaderPrerender = false
   }
