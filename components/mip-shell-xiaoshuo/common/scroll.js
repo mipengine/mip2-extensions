@@ -94,6 +94,10 @@ export default class Scroll {
   getPageDom (iframe, pageId) {
     let nextdocument = iframe.contentWindow.document
     let readwarp = nextdocument.getElementById('mip-reader-warp').childNodes
+    let downloadNode = readwarp[1].querySelector('.zhdown-inner') || readwarp[1].querySelector('.top-download') || ''
+    if (downloadNode) {
+      downloadNode.style.display = 'none'
+    }
     return {
       dom: readwarp[1],
       id: pageId
@@ -131,7 +135,7 @@ export default class Scroll {
     let documentHeight = reader.offsetHeight
     let viewPortHeight = currentWindow.MIP.viewport.getRect().height
     let scrollHeight = currentWindow.MIP.viewport.getScrollTop()
-    return documentHeight - viewPortHeight - scrollHeight < 1000
+    return documentHeight - viewPortHeight - scrollHeight < 10
   }
 
   isScrollToPageTop () {

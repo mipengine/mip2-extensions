@@ -142,11 +142,11 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     strategy.eventAllPageHandler()
 
     // 需要添加判断，，小流量下走无限下拉逻辑
-    if (MIP.viewer.page.isRootPage) {
-      scroll.start()
-      let page = document.querySelector('.navigator')
-      page.style.display = 'none'
-    }
+    // if (MIP.viewer.page.isRootPage) {
+    scroll.start()
+    let page = document.querySelector('.navigator')
+    page.style.display = 'none'
+    // }
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     novelEvents.bindAll()
