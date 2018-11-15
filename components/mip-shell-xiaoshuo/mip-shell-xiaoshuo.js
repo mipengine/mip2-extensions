@@ -98,8 +98,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       this.isReaderPrerender = true
     }
     if (this.isReaderPrerender) {
-      this.__getConfig()
-      this.resetNavigatorBtn()
+      if (this.currentPageMeta.pageType === 'page') {
+        this.__getConfig()
+        this.resetNavigatorBtn()
+      }
     }
     const {isRootPage, novelInstance} = state(window)
     // 用来记录翻页的次数，主要用来触发品专的广告
@@ -318,14 +320,16 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
     // 预渲染兜底机制：预渲染超过3s为返回resolve即视为异常，强制刷新底部footer，走正常加载的loading方式。
     if (this.isReaderPrerender) {
-      setTimeout(() => {
-        let currentDocument = MIP.viewer.page.isRootPage ? window.document : window.parent.document
-        let pageBtn = currentDocument.querySelectorAll('.page-button')
-        if (pageBtn[0].getAttribute('href') === '' && pageBtn[1].getAttribute('href') === '') {
-          console.warn('after 3s,prerender failed,force refresh the Footer')
-          this.updateFooterDom()
-        }
-      }, 3000)
+      if (this.currentPageMeta.pageType === 'page') {
+        setTimeout(() => {
+          let currentDocument = MIP.viewer.page.isRootPage ? window.document : window.parent.document
+          let pageBtn = currentDocument.querySelectorAll('.page-button')
+          if (pageBtn[0].getAttribute('href') === '' && pageBtn[1].getAttribute('href') === '') {
+            console.warn('after 3s,prerender failed,force refresh the Footer')
+            this.updateFooterDom()
+          }
+        }, 3000)
+      }
     }
     // 用于记录页面加载完成的时间
     const startRenderTime = novelEvents.timer
