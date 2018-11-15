@@ -140,7 +140,13 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
 
     strategy.eventAllPageHandler()
-    scroll.start()
+
+    // 需要添加判断，，小流量下走无限下拉逻辑
+    if (MIP.viewer.page.isRootPage) {
+      scroll.start()
+      let page = document.querySelector('.navigator')
+      page.style.display = 'none'
+    }
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     novelEvents.bindAll()
@@ -242,6 +248,9 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.fontSize = new FontSize()
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
+    // 应该加个判断 小流量下干掉 上一页下一页
+    let shellpage = document.querySelector('.upper')
+    shellpage.style.display = 'none'
   }
 
   // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定

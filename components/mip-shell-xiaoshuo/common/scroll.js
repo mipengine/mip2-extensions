@@ -14,6 +14,10 @@ export default class Scroll {
     let jsonld = getPrerenderJsonld()
     pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
     pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
+    this.flag = {
+      pre: true,
+      next: true
+    }
   }
 
   start () {
@@ -21,21 +25,38 @@ export default class Scroll {
     if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
       timer = setTimeout(this.start.bind(this), 900)
     } else if (this.isScrollToPageBottom()) {
-      if (document.getElementById('loadingNext')) {
+      if (document.getElementById('loading')) {
         return
       }
-      this.loadingNext()
-      // let url = pageIdQuery[pageIdQuery.length-1]
-      // currentWindow.MIP.viewer.page.replace(url, {skipRender: true})
-
+      if (!pageIdQuery.next) {
+        if (this.flag.next) {
+          this.loading('已经到达最后一页')
+          this.flag.next = false
+          setTimeout(this.removeLoading.bind(this), 1000)
+        } else {
+          clearTimeout(timer)
+          timer = setTimeout(this.start.bind(this), 900)
+        }
+        return
+      }
+      this.loading('正在加载中...')
       this.prerenderNext(pageIdQuery.next)
     } else if (this.isScrollToPageTop()) {
-      if (document.getElementById('loadingPre')) {
+      if (document.getElementById('loading')) {
         return
       }
-      this.loadingPre()
-      // let url = pageIdQuery[0]
-      // currentWindow.MIP.viewer.page.replace(url, {skipRender: true})
+      if (!pageIdQuery.pre) {
+        if (this.flag.pre) {
+          this.loading('已经到达第一页')
+          this.flag.pre = false
+          setTimeout(this.removeLoading.bind(this), 1000)
+        } else {
+          clearTimeout(timer)
+          timer = setTimeout(this.start.bind(this), 900)
+        }
+        return
+      }
+      this.loading('正在加载中...')
       this.prerenderPre(pageIdQuery.pre)
     }
   }
@@ -50,7 +71,7 @@ export default class Scroll {
         pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
-        this.removeNextLoading()
+        this.removeLoading()
       }
     })
   }
@@ -65,7 +86,7 @@ export default class Scroll {
         pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
-        setTimeout(this.removePreLoading.bind(this), 0)
+        setTimeout(this.removeLoading.bind(this), 0)
       }
     })
   }
@@ -118,17 +139,10 @@ export default class Scroll {
     return scrollHeight < 2
   }
 
-  loadingNext () {
+  loading (str) {
     let div = document.createElement('div')
-    div.innerHTML = '正在加载后续章节'
-    div.setAttribute('id', 'loadingNext')
-    document.body.appendChild(div)
-  }
-
-  loadingPre () {
-    let div = document.createElement('div')
-    div.innerHTML = '正在加载前面章节'
-    div.setAttribute('id', 'loadingPre')
+    div.innerHTML = str
+    div.setAttribute('id', 'loading')
     document.body.appendChild(div)
   }
 
@@ -138,14 +152,8 @@ export default class Scroll {
       div.innerHTML = '加载失败'
     }
   }
-  removePreLoading () {
-    let div = document.getElementById('loadingPre')
-    div && document.body.removeChild(div)
-    this.start()
-  }
-
-  removeNextLoading () {
-    let div = document.getElementById('loadingNext')
+  removeLoading () {
+    let div = document.getElementById('loading')
     div && document.body.removeChild(div)
     this.start()
   }
