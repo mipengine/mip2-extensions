@@ -18,7 +18,7 @@ import Strategy from './ad/strategyControl'
 import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
 import state from './common/state'
-import {sendWebbLog, sendTCLog, sendWebbLogCommon} from './common/log' // 日志
+import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './common/log' // 日志
 
 let novelEvents = new NovelEvents()
 let strategy = new Strategy()
@@ -103,7 +103,33 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         this.resetNavigatorBtn()
       }
     }
-    const {isRootPage, novelInstance} = state(window)
+    const {isRootPage, novelInstance, originalUrl} = state(window)
+    const pageType = novelInstance.currentPageMeta.pageType || ''
+    let zonghengPattern = /www.xmkanshu.com/g
+    let iqiyiPattern = /wenxue.m.iqiyi.com/g
+    let isZongheng = zonghengPattern.test(originalUrl)
+    let isIqiyi = iqiyiPattern.test(originalUrl)
+    let site
+    if (isZongheng) {
+      site = 'zongheng'
+    }
+    if (isIqiyi) {
+      site = 'iqiyi'
+    }
+    sendTCLog('interaction', {
+      type: 'b',
+      action: 'pageShow'
+    }, {
+      show: 'pageShow',
+      isRootPage: isRootPage,
+      site: site
+    })
+    let prePageButton = document.querySelector('.navigator a:first-child')
+    let nextPageButton = document.querySelector('.navigator a:last-child')
+    // 监控页面底部上一页按钮跳转是否异常，异常发送异常日志
+    sendWebbLogLink(prePageButton, 'prePageButton')
+    // 监控页面底部下一页按钮跳转是否异常，异常发送异常日志
+    sendWebbLogLink(nextPageButton, 'nextPageButton')
     // 用来记录翻页的次数，主要用来触发品专的广告
     novelInstance.novelPageNum++
     if (novelInstance.currentPageMeta.pageType === 'page') {
@@ -176,6 +202,39 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
       name: 'current-page-ready'
     })
+
+    // 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.ad
+    setTimeout(() => {
+      let name
+      window.MIP.ad = {}
+      function observer (oldVal, newVal) {
+        if (newVal === true && (pageType !== 'detail')) {
+          sendTCLog('interaction', {
+            type: 'b',
+            action: 'adShow'
+          }, {
+            show: 'adShow',
+            hasAd: true,
+            site: site
+          })
+          // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
+          window.MIP.ad.show = false
+        }
+      }
+      // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
+      Object.defineProperty(window.MIP.ad, 'show', {
+        enumerable: true,
+        configurable: true,
+        get: function () {
+          return name
+        },
+        set: function (val) {
+          // 调用处理函数
+          observer(name, val)
+          name = val
+        }
+      })
+    }, 0)
   }
   /**
    * 小说预渲染
