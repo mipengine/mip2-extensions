@@ -250,7 +250,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.fontSize.bindDragEvent()
     // 应该加个判断 小流量下干掉 上一页下一页
     let shellpage = document.querySelector('.upper')
-    shellpage.style.display = 'none'
+    shellpage.style.display = '-webkit-inline-box'
   }
 
   // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
