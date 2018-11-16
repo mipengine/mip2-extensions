@@ -15,11 +15,11 @@
 ## 示例
 
 ```html
-    <div class='continer'>
-      <mip-env scope={"cache":"baidu","dp":"baidu","ua":"uc","os":"ios"} >
-          <div>只在符合scope设定的环境中才会展示此内容</div>
-      </mip-env>
-    </div>
+  <div class='continer'>
+    <mip-env scope={"cache":"baidu","dp":"baidu","ua":"uc","os":"ios"} >
+      <div>只在符合scope设定的环境中才会展示此内容</div>
+    </mip-env>
+  </div>
 ```
 
 ## 属性
@@ -32,28 +32,28 @@
 
 param:
 
-    cache
-    说明: 缓存环境
-    必选: 否
-    取值: 'baidu' , 'sm' // 百度缓存 , 神马搜索缓存
-    备注: 所有值不区分大小写。填写了cache键则必须有值才行
+  cache
+  说明: 缓存环境
+  必选: 否
+  取值: 'baidu' , 'sm' // 百度缓存 , 神马搜索缓存
+  备注: 所有值不区分大小写。填写了cache键则必须有值才行
 
-    dp
-    说明: 分发平台(Distribution platform)
-    必选: 否
-    取值: 'baidu' , 'sm' // 百度平台 , 神马搜索平台
-    备注: 所有值不区分大小写。填写了dp键则必须有值才行
+  dp
+  说明: 分发平台(Distribution platform)
+  必选: 否
+  取值: 'baidu' , 'sm' // 百度平台 , 神马搜索平台
+  备注: 所有值不区分大小写。填写了dp键则必须有值才行
 
-    ua
-    说明: userAgent
-    必选: 否
-    取值: 'baidu' , 'uc' , 'chrome' , 'safari' , 'firefox' , 'qq'
-    备注: 所有值不区分大小写。填写了ua键则必须有值才行
+  ua
+  说明: userAgent
+  必选: 否
+  取值: 'baidu' , 'uc' , 'chrome' , 'safari' , 'firefox' , 'qq'
+  备注: 所有值不区分大小写。填写了ua键则必须有值才行
 
-    os
-    说明: 系统
-    必选: 否
-    取值: 'ios' , 'android'
-    备注: 所有值不区分大小写。填写了os键则必须有值才行
+  os
+  说明: 系统
+  必选: 否
+  取值: 'ios' , 'android'
+  备注: 所有值不区分大小写。填写了os键则必须有值才行
 
 
