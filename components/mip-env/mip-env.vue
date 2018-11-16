@@ -8,37 +8,37 @@
 export default {
   props: ['scope'],
   data: function () {
-      return {
-        toggleShow : false,
-      };
+    return {
+      toggleShow: false
+    };
   },
   methods: {
     cacheOk: function (cache) {
       const allowCache = { // 所支持的cache
         sm: [
-            '.sm-tc.cn',
-            '.transcode.cn',
+          '.sm-tc.cn',
+          '.transcode.cn'
         ],
         baidu: [
-            '.bdstatic.com',
-            '.mipcdn.com',
-        ],
+          '.bdstatic.com',
+          '.mipcdn.com'
+        ]
       };
       const allowCacheArr = allowCache[cache] || [];
       return allowCacheArr.some((item) => {
-          return location.hostname.lastIndexOf(item) != -1;
+        return location.hostname.lastIndexOf(item) != -1;
       })
     },
     dpOk: function (dp) {
       const allowDp = { // 支持的分发平台
         sm: [
           '.sm-tc.cn',
-          '.transcode.cn',
+          '.transcode.cn'
         ],
         baidu: [
           '.bdstatic.com',
-          '.mipcdn.com',
-        ],
+          '.mipcdn.com'
+        ]
       };
       if (!MIP.viewer.isIframed) {
         console.log('not in iframe');
@@ -54,32 +54,32 @@ export default {
       switch(ua) {
         case 'baidu':
           if (platform.isBaidu()) {
-              return true;
+            return true;
           }
           break;
         case 'uc':
           if (platform.isUc()) {
-              return true;
+            return true;
           }
           break;
         case 'chrome':
           if (platform.isChrome()) {
-              return true;
+            return true;
           }
           break;
         case 'safari':
           if (platform.isSafari()) {
-              return true;
+            return true;
           }
           break;
         case 'qq':
           if (platform.isQQ()) {
-              return true;
+            return true;
           }
           break;
         case 'firefox':
           if (platform.isFireFox()) {
-              return true;
+            return true;
           }
           break;
         default:
@@ -90,12 +90,12 @@ export default {
       switch(os) {
         case 'ios':
           if (MIP.util.platform.isIos()) {
-              return true;
+            return true;
           }
           break;
         case 'android':
           if (MIP.util.platform.isAndroid()) {
-              return true;
+            return true;
           }
           break;
         default:
@@ -118,26 +118,26 @@ export default {
             switch (info) {
               case 'cache':
                 if (!this.cacheOk(param)) {
-                    console.log('cache error');
-                    return false;
+                  console.log('cache error');
+                  return false;
                 }
                 break;
               case 'dp':
                 if (!this.dpOk(param)) {
-                    console.log('dp error');
-                    return false;
+                  console.log('dp error');
+                  return false;
                 }
                 break;
               case 'ua':
                 if (!this.uaOk(param)) {
-                    console.log('ua error');
-                    return false;
+                  console.log('ua error');
+                  return false;
                 }
                 break;
               case 'os':
                 if (!this.osOk(param)) {
-                    console.log('os error');
-                    return false;
+                  console.log('os error');
+                  return false;
                 }
                 break;
               default:
