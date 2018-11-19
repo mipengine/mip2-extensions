@@ -1,24 +1,21 @@
-<template>
-  <div v-if="toggleShow">
-    <slot />
-  </div>
-</template>
-
-<script>
-export default {
-  props: {
-    scope: {
-      type: String,
-      default: ''
-    }
-  },
-  data: function () {
-    return {
-      toggleShow: false
-    }
-  },
-  methods: {
-    cacheOk: function (cache) {
+/**
+ * @file mip-env 组件
+ * @author html5david
+ * @time 2018.11.19
+ */
+let {
+    CustomElement,
+    util,
+    viewer,
+  } = MIP;
+const platform = util.platform;
+export default class MipEnv extends CustomElement {
+  constructor (...args) {
+    // 继承父类属性、方法
+    super(...args)
+  }
+  connectedCallback() {
+    var cacheOk = function (cache) {
       const allowCache = { // 所支持的cache
         sm: [
           '.sm-tc.cn',
@@ -33,8 +30,8 @@ export default {
       return allowCacheArr.some((item) => {
         return location.hostname.lastIndexOf(item) !== -1
       })
-    },
-    dpOk: function (dp) {
+    };
+    var dpOk = function (dp) {
       const allowDp = { // 支持的分发平台
         sm: [
           '.sm-tc.cn',
@@ -45,7 +42,7 @@ export default {
           '.mipcdn.com'
         ]
       }
-      if (!MIP.viewer.isIframed) {
+      if (!viewer.isIframed) {
         console.log('not in iframe')
         return false
       }
@@ -53,9 +50,8 @@ export default {
       return allowDpArr.some((item) => {
         return location.hostname.lastIndexOf(item) !== -1
       })
-    },
-    uaOk: function (ua) {
-      const platform = MIP.util.platform
+    };
+    var uaOk = function (ua) {
       switch (ua) {
         case 'baidu':
           if (platform.isBaidu()) {
@@ -90,57 +86,57 @@ export default {
         default:
           return false
       }
-    },
-    osOk: function (os) {
+    };
+    var osOk = function (os) {      
       switch (os) {
         case 'ios':
-          if (MIP.util.platform.isIos()) {
+          if (platform.isIos()) {
             return true
           }
           break
         case 'android':
-          if (MIP.util.platform.isAndroid()) {
+          if (platform.isAndroid()) {
             return true
           }
           break
         default:
           return false
       }
-    },
-    jsonParse: function (jsonStr) {
+    };
+    var jsonParse = function (jsonStr) {
       try {
-        return MIP.util.jsonParse(jsonStr)
+        return util.jsonParse(jsonStr)
       } catch (e) {
         return jsonStr
       }
-    },
-    scopeOk: function (scope) {
+    };
+    var scopeOk = function (scope) {
       if (scope) {
-        const scopeJson = this.jsonParse(scope)
-        if (MIP.util.fn.isPlainObject(scopeJson) && Object.keys(scopeJson).length !== 0) {
+        const scopeJson = jsonParse(scope)
+        if (util.fn.isPlainObject(scopeJson) && Object.keys(scopeJson).length !== 0) {
           for (const info in scopeJson) {
             const param = String(scopeJson[info]).toLowerCase()
             switch (info) {
               case 'cache':
-                if (!this.cacheOk(param)) {
+                if (!cacheOk(param)) {
                   console.log('cache error')
                   return false
                 }
                 break
               case 'dp':
-                if (!this.dpOk(param)) {
+                if (!dpOk(param)) {
                   console.log('dp error')
                   return false
                 }
                 break
               case 'ua':
-                if (!this.uaOk(param)) {
+                if (!uaOk(param)) {
                   console.log('ua error')
                   return false
                 }
                 break
               case 'os':
-                if (!this.osOk(param)) {
+                if (!osOk(param)) {
                   console.log('os error')
                   return false
                 }
@@ -160,13 +156,12 @@ export default {
         console.log('no scope')
         return false
       }
-    }
-  },
-  firstInviewCallback () {
-    const isOk = this.scopeOk(this.scope)
-    if (isOk) {
-      this.toggleShow = true
+    };
+    var element = this.element;
+    var scope = element.getAttribute('scope');
+    var isOk = scopeOk(scope);
+    if (!isOk) {
+      element.innerHTML = "";
     }
   }
 }
-</script>
