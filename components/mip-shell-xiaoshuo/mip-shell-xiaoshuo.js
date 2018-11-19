@@ -357,7 +357,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       let jsonld = getJsonld(getCurrentWindow())
       this.readerPrerender(jsonld)
     }
-    // 预渲染兜底机制：预渲染超过3s为返回resolve即视为异常，强制刷新底部footer，走正常加载的loading方式。
+    // 预渲染兜底机制：预渲染超过3s未返回resolve即视为异常，强制刷新底部footer。
     if (this.isReaderPrerender) {
       if (this.currentPageMeta.pageType === 'page') {
         setTimeout(() => {
