@@ -1,4 +1,5 @@
 import {setTimeout, clearTimeout} from 'timers'
+import {sendTCLog} from './log'
 import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow} from './util'
 import './../mip-shell-xiaoshuo.less'
 
@@ -19,7 +20,10 @@ export default class Scroll {
       next: true
     }
   }
-
+  /**
+   * 滚动开始函数
+   * @public
+   */
   start () {
     clearTimeout(timer)
     if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
@@ -71,8 +75,12 @@ export default class Scroll {
         pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
+        this.tcLog()
+        // window.MIP.viewer.page.replace(url, {skipRender: true})
         this.removeLoading()
       }
+    }).catch( ()=> {
+        this.getError()
     })
   }
 
@@ -86,8 +94,11 @@ export default class Scroll {
         pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
+        this.tcLog()
         setTimeout(this.removeLoading.bind(this), 0)
       }
+    }).catch( ()=> {
+        this.getError()
     })
   }
 
@@ -137,12 +148,31 @@ export default class Scroll {
     let scrollHeight = currentWindow.MIP.viewport.getScrollTop()
     return documentHeight - viewPortHeight - scrollHeight < 10
   }
-
+  /**
+   * 发送pv展现日志
+   * @private
+   */
+  tcLog () {
+    sendTCLog('interaction', {
+      type: 'o',
+      action: 'unlimitedPulldownPageShow'
+    })
+  }
+  /**
+   * 判断是否触顶
+   * @private
+   */
   isScrollToPageTop () {
     let scrollHeight = currentWindow.MIP.viewport.getScrollTop()
     return scrollHeight < 2
   }
-
+  /**
+   * 加载失败函数
+   * @private
+   */
+  getError () {
+    this.loadingError()
+  }
   loading (str) {
     let div = document.createElement('div')
     div.innerHTML = str
@@ -153,8 +183,9 @@ export default class Scroll {
   loadingError () {
     let div = document.getElementById('loading')
     if (div) {
-      div.innerHTML = '加载失败'
+      div.innerHTML = '加载失败, 点击刷新'
     }
+    div.onclick = this.removeLoading()
   }
   removeLoading () {
     let div = document.getElementById('loading')

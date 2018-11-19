@@ -14,6 +14,7 @@ import {
 } from './feature/setting' // 背景色调整，字体大小调整
 
 import Scroll from './common/scroll'
+import Flag from './common/flag'
 import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
 
 import NovelEvents from './common/events'
@@ -25,7 +26,7 @@ import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './comm
 let novelEvents = new NovelEvents()
 let strategy = new Strategy()
 let util = MIP.util
-
+let flag = new Flag()
 let scroll = new Scroll()
 export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -166,12 +167,12 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
 
     strategy.eventAllPageHandler()
 
-    // 需要添加判断，，小流量下走无限下拉逻辑
-    // if (MIP.viewer.page.isRootPage) {
-    scroll.start()
-    let page = document.querySelector('.navigator')
-    page.style.display = 'none'
-    // }
+    // 小流量下走无限下拉逻辑
+    if (flag.isUnlimitedPulldownSids()) {
+      scroll.start()
+      let page = document.querySelector('.navigator')
+      page.style.display = 'none'
+    }
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     novelEvents.bindAll()
@@ -306,12 +307,14 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.fontSize = new FontSize()
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
-    // 应该加个判断 小流量下干掉 上一页下一页
-    let shellpage = document.querySelector('.upper')
-    shellpage.style.display = 'none'
-    let buttonWrapper = document.querySelector('.button-wrapper')
-    buttonWrapper.style.height = '100%'
-    buttonWrapper.style.alignItems = 'center'
+    // 应该加个判断 小流量下走无限下拉逻辑，干掉 上一页下一页
+    if (flag.isUnlimitedPulldownSids()) {
+      let shellpage = document.querySelector('.upper')
+      shellpage.style.display = 'none'
+      let buttonWrapper = document.querySelector('.button-wrapper')
+      buttonWrapper.style.height = '100%'
+      buttonWrapper.style.alignItems = 'center'
+    }
   }
 
   // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
