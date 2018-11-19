@@ -86,6 +86,9 @@ class footer {
       }
     }).join('')
 
+    const previous = this && this.config && this.config.hrefButton && this.config.hrefButton.previous ? this.config.hrefButton.previous : ''
+    const next = this && this.config && this.config.hrefButton && this.config.hrefButton.next ? this.config.hrefButton.next : ''
+
     // 创建底部按钮 HTML
     let footerHTML = `
       <div class="upper mip-border mip-border-bottom">
@@ -94,10 +97,10 @@ class footer {
               <svg viewBox="25 25 50 50" class="circular">
                 <circle cx="50" cy="50" r="20" fill="none" class="path"/>
               </svg>
-              ${this.config.hrefButton.previous}
+              ${previous}
           </span>
           <span from-cache cache-first class="page-button page-next" mip-link href="" replace>
-              ${this.config.hrefButton.next}
+              ${next}
               <i class="icon gap-left-small icon-right"></i>
               <svg viewBox="25 25 50 50" class="circular">
                 <circle cx="50" cy="50" r="20" fill="none" class="path"/>
