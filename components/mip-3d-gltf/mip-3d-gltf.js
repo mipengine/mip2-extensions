@@ -110,11 +110,11 @@ export default class MipGLTF extends CustomElement {
   }
 
   isLoadingEnabled () {
-    return false
+    return true
   }
 
   prerenderAllowed () {
-    return false
+    return true
   }
 
   build () {
@@ -148,54 +148,42 @@ export default class MipGLTF extends CustomElement {
       ]))
       .then(() => {
         if ( this.isWebGLAvailable() === false ) {
-          this.container.appendChild(this.getWebGLErrorMessage(1))
-          // this.toggleFallback(true)
-          return Promise.resolve()
+          this.container.appendChild(this.getErrorMessage())
+          return Promise.reject('WebGL')
         }
-        this.initialize()
-        this.animate()
-        return Promise.resolve()
       })
-      .catch(err => console.error('import err:', err))
+      .then(() => this.initialize())
+      .then(() => {
+        this.container.appendChild(this.renderer.domElement)
+        this.animate()
+      })
+      .catch(err => {
+        if(err === 'WebGL') {
+          console.warn('WebGL is not available!')
+        }
+        else {
+          console.error('import err:', err)
+        }
+      })
   }
 
   isWebGLAvailable () {
     try {
-      var canvas = document.createElement( 'canvas' )
-      return !! ( window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ) )
-    } catch ( e ) {
+      let canvas = document.createElement('canvas')
+      return !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+    } catch (e) {
       return false
     }
   }
   
-  getErrorMessage (version) {
-    var names = {
-      1: 'WebGL',
-      2: 'WebGL 2'
-    }
-    var contexts = {
-      1: window.WebGLRenderingContext,
-      2: window.WebGL2RenderingContext
-    }
-    var message = 'Your $0 does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">$1</a>'
-    var element = document.createElement( 'div' )
+  getErrorMessage () {
+    let message = 'Your browser does not seem to support WebGL'
+    let element = document.createElement('div')
     element.id = 'webglmessage'
-    element.style.fontFamily = 'monospace'
-    element.style.fontSize = '13px'
-    element.style.fontWeight = 'normal'
-    element.style.textAlign = 'center'
-    element.style.background = '#fff'
-    element.style.color = '#000'
-    element.style.padding = '1.5em'
-    element.style.width = '400px'
-    element.style.margin = '5em auto 0'
+    let style = 'font-family: monospace; font-size: 13px; font-weight: normal; text-align: center;'+
+                  'background: rgb(255, 255, 255); color: rgb(0, 0, 0); padding: 1.5em'
+    element.setAttribute('style', style)
 
-    if ( contexts[ version ] ) {
-      message = message.replace( '$0', 'graphics card' )
-    } else {
-      message = message.replace( '$0', 'browser' )
-    }
-    message = message.replace( '$1', names[ version ] )
     element.innerHTML = message
     return element
   }
@@ -206,9 +194,7 @@ export default class MipGLTF extends CustomElement {
     this.setupCamera()
     this.setupControls()
     this.setupLight()
-    this.loadModel()
-    
-    // window.addEventListener( 'resize', this.onWindowResize, false )
+    return this.loadModel()
   }
 
   setupScene () {
@@ -219,7 +205,6 @@ export default class MipGLTF extends CustomElement {
 
   setupRenderer () {
     let renderer = new THREE.WebGLRenderer(this.option['renderer'])
-    this.container.appendChild(renderer.domElement)
 
     renderer.setPixelRatio(Math.min(this.option['rendererSettings']['maxPixelRatio'], window.devicePixelRatio))
     renderer.setClearColor(this.option['rendererSettings']['clearColor'], this.option['rendererSettings']['clearAlpha'])
@@ -239,7 +224,7 @@ export default class MipGLTF extends CustomElement {
 
   setupControls () {
     let controls = new THREE.OrbitControls(this.camera, this.renderer.domElement)
-    controls.target.set( 0, - 0.2, - 0.2 )
+    controls.target.set(0, - 0.2, - 0.2)
     Object.assign(controls, this.option['controls'])
 
     this.controls = controls
@@ -260,42 +245,38 @@ export default class MipGLTF extends CustomElement {
   }
 
   loadModel () {
-    let self = this
     let loader = new THREE.GLTFLoader()
-    loader.load(this.option['src'], function ( gltf ) {
-      self.scene.add( gltf.scene )
-    }, undefined, function ( e ) {
-      console.error( e )
-    } )
-  }
-
-  onWindowResize () {
-    this.camera.aspect = window.innerWidth / window.innerHeight
-    this.camera.updateProjectionMatrix()
-    this.renderer.setSize( window.innerWidth, window.innerHeight )
+    return new Promise(resolve => {
+      loader.load(this.option['src'], gltf => {
+        this.scene.add(gltf.scene)
+        resolve()
+      }, undefined, e => {
+        console.error(e)
+      })
+    })
   }
 
   animate () {
-    requestAnimationFrame( this.animate )
+    requestAnimationFrame(this.animate)
     this.controls.update()
-    this.renderer.render( this.scene, this.camera )
+    this.renderer.render(this.scene, this.camera)
   }
 
   getOption () {
     return {
-      'src': this.src,
-      'renderer': {
-        'alpha': this.alpha,
-        'antialias': this.antialiasing
+      src: this.src,
+      renderer: {
+        alpha: this.alpha,
+        antialias: this.antialiasing
       },
-      'rendererSettings': {
-        'clearColor': this.clearColor,
-        'clearAlpha': this.alpha,
-        'maxPixelRatio': this.maxPixelRatio
+      rendererSettings: {
+        clearColor: this.clearColor,
+        clearAlpha: this.alpha,
+        maxPixelRatio: this.maxPixelRatio
       },
-      'controls': {
-        'enableZoom': this.enableZoom,
-        'autoRotate': this.autoRotate
+      controls: {
+        enableZoom: this.enableZoom,
+        autoRotate: this.autoRotate
       }
     }
   }

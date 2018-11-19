@@ -36,6 +36,7 @@ gltf格式的3D模型展示组件
       auto-rotate="true"
       src="https://ampbyexample.com/glTF/DamagedHelmet.glb">
     </mip-3d-gltf>
+```
 
 ## 属性
 
