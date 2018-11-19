@@ -6,6 +6,36 @@
 /* global MIP, fetch */
 let { CustomElement } = MIP
 
+function boolFmt (attr) {
+  return attr !== 'false'
+}
+
+function numberFmt (attr) {
+  return parseFloat(attr)
+}
+
+function isWebGLAvailable () {
+  try {
+    let canvas = document.createElement('canvas')
+    return !!(window.WebGLRenderingContext 
+              && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+  } catch (e) {
+    return false
+  }
+}
+
+function getErrorMessage () {
+  let message = 'Your browser does not seem to support WebGL'
+  let element = document.createElement('div')
+  element.id = 'webglmessage'
+  let style = 'font-family: monospace; font-size: 13px; font-weight: normal; text-align: center;'
+                + 'background: rgb(255, 255, 255); color: rgb(0, 0, 0); padding: 1.5em'
+  element.setAttribute('style', style)
+
+  element.innerHTML = message
+  return element
+}
+
 export default class MipGLTF extends CustomElement {
   constructor (element) {
     super(element)
@@ -35,7 +65,7 @@ export default class MipGLTF extends CustomElement {
     this.width = window.innerWidth
 
     /**
-     * 计算后的高度
+     * 窗口高度
      * @type number
      */
     this.height = window.innerHeight
@@ -117,22 +147,19 @@ export default class MipGLTF extends CustomElement {
     return true
   }
 
+  getAttr (name, formatter, defaultValue) {
+    return this.element.hasAttribute(name) ? formatter(this.element.getAttribute(name)) : defaultValue
+  }
+
   build () {
-    const getAttr = (name, formatter, defaultValue) =>
-      this.element.hasAttribute(name) ? formatter(this.element.getAttribute(name)) : defaultValue
-
-    const boolFmt = x => x !== 'false'
-    const stringFmt = x => x
-    const numberFmt = x => parseFloat(x)
-
-    this.src = getAttr('src', stringFmt, '')
-    this.alpha = getAttr('alpha', boolFmt, false)
-    this.antialiasing = getAttr('antialiasing', boolFmt, false)
-    this.autoRotate = getAttr('auto-rotate', boolFmt, false)
-    this.clearColor = getAttr('clear-color', stringFmt, '#FFFFFF')
-    this.maxPixelRatio = getAttr('max-pixel-ratio', numberFmt, window.devicePixelRatio)
-    this.width = getAttr('width', numberFmt, window.innerWidth)
-    this.height = getAttr('height', numberFmt, window.innerHeight)
+    this.src = this.element.getAttribute('src') || ''
+    this.alpha = this.getAttr('alpha', boolFmt, false)
+    this.antialiasing = this.getAttr('antialiasing', boolFmt, false)
+    this.autoRotate = this.getAttr('auto-rotate', boolFmt, false)
+    this.clearColor = this.element.getAttribute('clear-color') || '#FFFFFF'
+    this.maxPixelRatio = this.getAttr('max-pixel-ratio', numberFmt, window.devicePixelRatio)
+    this.width = this.getAttr('width', numberFmt, window.innerWidth)
+    this.height = this.getAttr('height', numberFmt, window.innerHeight)
     this.option = this.getOption()
 
     this.container = this.element.ownerDocument.createElement('div')
@@ -147,45 +174,24 @@ export default class MipGLTF extends CustomElement {
         import('./OrbitControls')
       ]))
       .then(() => {
-        if ( this.isWebGLAvailable() === false ) {
-          this.container.appendChild(this.getErrorMessage())
+        if (isWebGLAvailable() === false) {
+          this.container.appendChild(getErrorMessage())
           return Promise.reject('WebGL')
         }
+        return this.initialize()
       })
-      .then(() => this.initialize())
       .then(() => {
         this.container.appendChild(this.renderer.domElement)
         this.animate()
       })
       .catch(err => {
-        if(err === 'WebGL') {
+        if (err === 'WebGL') {
           console.warn('WebGL is not available!')
         }
         else {
           console.error('import err:', err)
         }
       })
-  }
-
-  isWebGLAvailable () {
-    try {
-      let canvas = document.createElement('canvas')
-      return !! (window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
-    } catch (e) {
-      return false
-    }
-  }
-  
-  getErrorMessage () {
-    let message = 'Your browser does not seem to support WebGL'
-    let element = document.createElement('div')
-    element.id = 'webglmessage'
-    let style = 'font-family: monospace; font-size: 13px; font-weight: normal; text-align: center;'+
-                  'background: rgb(255, 255, 255); color: rgb(0, 0, 0); padding: 1.5em'
-    element.setAttribute('style', style)
-
-    element.innerHTML = message
-    return element
   }
 
   initialize () {
@@ -216,7 +222,7 @@ export default class MipGLTF extends CustomElement {
   }
 
   setupCamera () {
-    let camera = new THREE.PerspectiveCamera(45, this.width/this.height, 0.25, 20)
+    let camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.25, 20)
     camera.position.set(-1.8, 0.9, 5)
 
     this.camera = camera
