@@ -4,18 +4,14 @@
  * @time 2018.11.19
  */
 let {
-    CustomElement,
-    util,
-    viewer,
-  } = MIP;
-const platform = util.platform;
+  CustomElement,
+  util,
+  viewer
+} = MIP
+const platform = util.platform
 export default class MipEnv extends CustomElement {
-  constructor (...args) {
-    // 继承父类属性、方法
-    super(...args)
-  }
-  connectedCallback() {
-    var cacheOk = function (cache) {
+  connectedCallback () {
+    const cacheOk = function (cache) {
       const allowCache = { // 所支持的cache
         sm: [
           '.sm-tc.cn',
@@ -30,8 +26,8 @@ export default class MipEnv extends CustomElement {
       return allowCacheArr.some((item) => {
         return location.hostname.lastIndexOf(item) !== -1
       })
-    };
-    var dpOk = function (dp) {
+    }
+    const dpOk = function (dp) {
       const allowDp = { // 支持的分发平台
         sm: [
           '.sm-tc.cn',
@@ -50,8 +46,8 @@ export default class MipEnv extends CustomElement {
       return allowDpArr.some((item) => {
         return location.hostname.lastIndexOf(item) !== -1
       })
-    };
-    var uaOk = function (ua) {
+    }
+    const uaOk = function (ua) {
       switch (ua) {
         case 'baidu':
           if (platform.isBaidu()) {
@@ -86,8 +82,8 @@ export default class MipEnv extends CustomElement {
         default:
           return false
       }
-    };
-    var osOk = function (os) {      
+    }
+    const osOk = function (os) {
       switch (os) {
         case 'ios':
           if (platform.isIos()) {
@@ -102,15 +98,15 @@ export default class MipEnv extends CustomElement {
         default:
           return false
       }
-    };
-    var jsonParse = function (jsonStr) {
+    }
+    const jsonParse = function (jsonStr) {
       try {
         return util.jsonParse(jsonStr)
       } catch (e) {
         return jsonStr
       }
-    };
-    var scopeOk = function (scope) {
+    }
+    const scopeOk = function (scope) {
       if (scope) {
         const scopeJson = jsonParse(scope)
         if (util.fn.isPlainObject(scopeJson) && Object.keys(scopeJson).length !== 0) {
@@ -156,12 +152,12 @@ export default class MipEnv extends CustomElement {
         console.log('no scope')
         return false
       }
-    };
-    var element = this.element;
-    var scope = element.getAttribute('scope');
-    var isOk = scopeOk(scope);
+    }
+    const element = this.element
+    const scope = element.getAttribute('scope')
+    const isOk = scopeOk(scope)
     if (!isOk) {
-      element.innerHTML = "";
+      element.innerHTML = ''
     }
   }
 }
