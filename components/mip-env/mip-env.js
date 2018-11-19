@@ -137,7 +137,7 @@ const scopeOk = function (scope) {
       for (const info in scopeJson) {
         const param = String(scopeJson[info]).toLowerCase()
         switch (info) {
-          case 'cache': 
+          case 'cache':
             if (!cacheOk(param)) { // 检测cache是否合规
               console.log('cache error')
               return false
