@@ -244,37 +244,27 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   readerPrerender (jsonld) {
     let nextPageUrl = jsonld.nextPage.url
     let prePageUrl = jsonld.previousPage.url
-    // if (window.MIP.util.isCacheUrl(location.href)) { // 处于cache下，需要转换cacheUrl
-    //   window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
-    //     .then(iframes => {
-    //       console.log(nextPageUrl)
-    //       console.log(prePageUrl)
-    //       console.log('prerender done')
-    //       this.updateFooterDom()
-    //     }).catch(err => {
-    //       console.error(new Error(err)) // 抛出错误
-    //       this.updateFooterDom()
-    //     })
-    // } else {
-    //   window.MIP.viewer.page.prerender([nextPageUrl, prePageUrl])
-    //     .then(iframes => {
-    //       console.log('prerender done')
-    //       this.updateFooterDom()
-    //     }).catch(err => {
-    //       console.error(new Error(err)) // 抛出错误
-    //       this.updateFooterDom()
-    //     })
-    // }
-    window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
-      .then(iframes => {
-        console.log(nextPageUrl)
-        console.log(prePageUrl)
-        console.log('prerender done')
-        this.updateFooterDom()
-      }).catch(err => {
-        console.error(new Error(err)) // 抛出错误
-        this.updateFooterDom()
-      })
+    if (window.MIP.util.isCacheUrl(location.href)) { // 处于cache下，需要转换cacheUrl
+      window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
+        .then(iframes => {
+          console.log(nextPageUrl)
+          console.log(prePageUrl)
+          console.log('prerender done')
+          this.updateFooterDom()
+        }).catch(err => {
+          console.error(new Error(err)) // 抛出错误
+          this.updateFooterDom()
+        })
+    } else {
+      window.MIP.viewer.page.prerender([nextPageUrl, prePageUrl])
+        .then(iframes => {
+          console.log('prerender done')
+          this.updateFooterDom()
+        }).catch(err => {
+          console.error(new Error(err)) // 抛出错误
+          this.updateFooterDom()
+        })
+    }
   }
 
   /**
@@ -283,18 +273,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    * @param {string} url 需要被拼接的url
    * @returns {string} 返回的cacheURl
    */
-  // getCacheUrl (url) {
-  //   if (url) {
-  //     let netUrl = url.split('/')[2].split('.').join('-')
-  //     return `https://${netUrl}.mipcdn.com${MIP.util.makeCacheUrl(url)}`
-  //   }
-  //   return ''
-  // }
-
   getCacheUrl (url) {
     if (url) {
-      let netUrl = `http://cp01-turun-01.epc.baidu.com:8626${url.slice(6)}`
-      return netUrl
+      let netUrl = url.split('/')[2].split('.').join('-')
+      return `https://${netUrl}.mipcdn.com${MIP.util.makeCacheUrl(url)}`
     }
     return ''
   }
@@ -309,12 +291,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
-    // if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
-    //   footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-    //   footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-    // }
-    footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-    footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+    if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
+      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+    }
     window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
       name: 'updateShellFooter',
       data: {
