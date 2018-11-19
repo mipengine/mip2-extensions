@@ -437,11 +437,9 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
     let footerConfig = getJsonld(window)
-    if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
+    if (window.MIP.util.isCacheUrl(location.href) && this.isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
       footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
       footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-      // footerConfig.nextPage.url = ''
-      // footerConfig.previousPage.url = ''
     }
     this.footer = new Footer(configMeta.footer)
     this.footer.updateDom(footerConfig)

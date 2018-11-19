@@ -86,9 +86,6 @@ class footer {
       }
     }).join('')
 
-    // const previous = this && this.config && this.config.hrefButton && this.config.hrefButton.previous ? this.config.hrefButton.previous : ''
-    // const next = this && this.config && this.config.hrefButton && this.config.hrefButton.next ? this.config.hrefButton.next : ''
-
     // 创建底部按钮 HTML
     let footerHTML = `
       <div class="upper mip-border mip-border-bottom">
@@ -150,7 +147,7 @@ class footer {
   /**
    *
    * @param {HTMLElement} parentDom 父级dom
-   * @param {boolean} show 是否展示circle
+   * @param {boolean} show 是否展示circle，底部翻页按钮的loading动画
    */
   showCircleAnimate (parentDom, show) {
     let oIcon = parentDom.querySelector('i')
