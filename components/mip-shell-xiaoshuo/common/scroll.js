@@ -22,6 +22,7 @@ export default class Scroll {
   }
   /**
    * 滚动开始函数
+   *
    * @public
    */
   start () {
@@ -69,9 +70,9 @@ export default class Scroll {
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
-        let {dom, id} = this.getPageDom(iframe[0], pageId)
-        this.appendDom(dom, id)
         let jsonld = getJsonld(iframe[0].contentWindow)
+        let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
+        this.appendDom(dom, id)
         pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
@@ -79,8 +80,8 @@ export default class Scroll {
         // window.MIP.viewer.page.replace(url, {skipRender: true})
         this.removeLoading()
       }
-    }).catch( ()=> {
-        this.getError()
+    }).catch(() => {
+      this.getError()
     })
   }
 
@@ -88,23 +89,29 @@ export default class Scroll {
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
-        let {dom, id} = this.getPageDom(iframe[0], pageId)
-        this.insertDom(dom, id)
         let jsonld = getJsonld(iframe[0].contentWindow)
+        let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
+        this.insertDom(dom, id)
         pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
         this.tcLog()
         setTimeout(this.removeLoading.bind(this), 0)
       }
-    }).catch( ()=> {
-        this.getError()
+    }).catch(() => {
+      this.getError()
     })
   }
 
-  getPageDom (iframe, pageId) {
+  getPageDom (iframe, pageId, currentPage) {
     let nextdocument = iframe.contentWindow.document
     let readwarp = nextdocument.getElementById('mip-reader-warp').childNodes
+
+    if (currentPage.isFirstPage !== undefined && !currentPage.isFirstPage) {
+      let title = readwarp[1].querySelector('h2.title')
+      title.style.display = 'none'
+    }
+
     let downloadNode = readwarp[1].querySelector('.zhdown-inner') || readwarp[1].querySelector('.top-download') || ''
     if (downloadNode) {
       downloadNode.style.display = 'none'
@@ -150,6 +157,7 @@ export default class Scroll {
   }
   /**
    * 发送pv展现日志
+   *
    * @private
    */
   tcLog () {
@@ -160,6 +168,7 @@ export default class Scroll {
   }
   /**
    * 判断是否触顶
+   *
    * @private
    */
   isScrollToPageTop () {
@@ -168,6 +177,7 @@ export default class Scroll {
   }
   /**
    * 加载失败函数
+   *
    * @private
    */
   getError () {

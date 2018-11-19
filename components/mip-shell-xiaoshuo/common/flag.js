@@ -11,26 +11,27 @@ class Flag {
   }
   /**
    * 获取当前hash中的hash
+   *
    * @private
    */
   getHashSids () {
     const {isRootPage} = state(window)
-   
-    let sidsStr = window.MIP.hash.hashTree.sids ? (
-      isRootPage ? window.MIP.hash.hashTree.sids.value : window.parent.MIP.hash.hashTree.sids.value ) :
-      []
 
-    return sidsStr ? sidsStr.split('_') : []
+    let sidsStr = window.MIP.hash.hashTree.sids ? (
+      isRootPage ? window.MIP.hash.hashTree.sids.value : window.parent.MIP.hash.hashTree.sids.value)
+      : []
+
+    return sidsStr.length ? sidsStr.split('_') : []
   }
   /**
    * 判断是否命中无限下拉的sid
-   * @public 
+   *
+   * @public
    */
   isUnlimitedPulldownSids () {
     let sids = this.getHashSids()
-    for (let i = 0; i < this.sids; i++){
-
-      if(sids.indexOf(this.sids[i]) > -1){
+    for (let i = 0; i < this.sids; i++) {
+      if (sids.indexOf(this.sids[i]) > -1) {
         return true
       }
     }
