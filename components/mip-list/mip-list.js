@@ -48,8 +48,8 @@ export default class MipList extends CustomElement {
 
     // 有查看更多属性的情况
     if (element.hasAttribute('has-more')) {
-      this.addEventAction('more', function () {
-        this.button = arguments[0].target
+      this.addEventAction('more', function (e) {
+        this.button = e.target
         this.pushResult(this.src)
       })
     }
