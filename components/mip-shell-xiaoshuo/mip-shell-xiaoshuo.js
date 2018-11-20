@@ -248,6 +248,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         })
       }
     }, 5000)
+
+    if (flag.isUnlimitedPulldownSids()) {
+      scroll.destroy()
+    }
   }
 
   // 基类root方法：绑定页面可被外界调用的事件。
@@ -307,7 +311,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.fontSize = new FontSize()
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
-    // 应该加个判断 小流量下走无限下拉逻辑，干掉 上一页下一页
+    // 加个判断 小流量下走无限下拉逻辑，干掉 上一页下一页
     if (flag.isUnlimitedPulldownSids()) {
       let shellpage = document.querySelector('.upper')
       shellpage.style.display = 'none'

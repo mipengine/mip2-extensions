@@ -3,8 +3,8 @@ import {sendTCLog} from './log'
 import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow} from './util'
 import './../mip-shell-xiaoshuo.less'
 
-let reader = document.querySelector('#mip-reader-warp')
 let currentWindow = getCurrentWindow()
+let reader = currentWindow.document.querySelector('#mip-reader-warp')
 let timer
 let pageIdQuery = {
   pre: '',
@@ -66,6 +66,12 @@ export default class Scroll {
     }
   }
 
+  destroy () {
+    clearTimeout(timer)
+    let div = document.getElementById('loading')
+    div && document.body.removeChild(div)
+  }
+
   prerenderNext (url) {
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
@@ -77,7 +83,6 @@ export default class Scroll {
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
         this.tcLog()
-        // window.MIP.viewer.page.replace(url, {skipRender: true})
         this.removeLoading()
       }
     }).catch(() => {
@@ -123,7 +128,7 @@ export default class Scroll {
   }
 
   insertDom (dom, id) {
-    let warp = document.querySelector('#mip-reader-warp > div')
+    let warp = currentWindow.document.querySelector('#mip-reader-warp > div')
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)

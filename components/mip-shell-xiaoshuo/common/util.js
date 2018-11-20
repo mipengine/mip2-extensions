@@ -154,21 +154,3 @@ export const getPrerenderJsonld = () => {
   let pageInfo = window.MIP.viewer.page.getPageById(pageId)
   return getJsonld(pageInfo.targetWindow)
 }
-
-const getSids = () => {
-  let currentWindow = getCurrentWindow()
-  let sidsStr = currentWindow.MIP.hash.hashTree.sids.value
-  return sidsStr.split('_')
-}
-
-/**
-*
-* 判断是否命中小流量
-*/
-export const isSids = (sids) => {
-  let sidsArr = getSids()
-  if (sidsArr.indexOf(sids)) {
-    return true
-  }
-  return false
-}
