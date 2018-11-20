@@ -54,7 +54,7 @@ function cacheOk (cache) {
 function dpOk (dp) {
   const allowDpArr = ALLOW_DP[dp] || []
   if (!viewer.isIframed) {
-    console.warn('not in iframe')
+    console.warn('require in iframe')
     return false
   }
   return allowDpArr.some(item => {
@@ -112,14 +112,14 @@ function scopeOk (scope) {
   }
 
   if (!scope) {
-    console.warn('no scope')
+    console.warn('require scope param')
     return false
   }
 
   const scopeJson = util.jsonParse(scope)
   const keys = Object.keys(scopeJson)
   if (!util.fn.isPlainObject(scopeJson) || keys.length === 0) {
-    console.error('scope error')
+    console.error('require scope param is json')
     return false
   }
 
