@@ -35,7 +35,7 @@ const ALLOW_DP = {
 }
 
 /**
- * @method cacheOk 检测缓存类型是否合规
+ * @function cacheOk 检测缓存类型是否合规
  * @param {string} cache 缓存类型，sm or baidu
  * @returns {boolean}
  */
@@ -47,7 +47,7 @@ function cacheOk (cache) {
 }
 
 /**
- * @method dpOk 检测分发平台(dp)是否合规
+ * @function dpOk 检测分发平台(dp)是否合规
  * @param {string} dp 平台类型，sm/baidu
  * @returns {boolean}
  */
@@ -63,7 +63,7 @@ function dpOk (dp) {
 }
 
 /**
- * @method uaOk 检测userAgent是否合规
+ * @function uaOk 检测userAgent是否合规
  * @param {string} ua userAgent, baidu/uc/chrome/safari/qq/firefox
  * @returns {boolean}
  */
@@ -83,7 +83,7 @@ function uaOk (ua) {
 }
 
 /**
- * @method osOk 检测系统是否合规
+ * @function osOk 检测系统是否合规
  * @param {string} os 系统类型, android/ios
  * @returns {boolean}
  */
@@ -99,7 +99,7 @@ function osOk (os) {
 }
 
 /**
- * @method scopeOk 检测scope是否合规
+ * @function scopeOk 检测scope是否合规
  * @param {string} os scope json字符串
  * @returns {boolean}
  */
