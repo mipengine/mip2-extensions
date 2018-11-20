@@ -8,9 +8,10 @@ let {
   util,
   viewer
 } = MIP
-const platform = util.platform
+let platform = util.platform
+
 // 所支持的cache
-const allowCache = {
+const ALLOW_CACHE = {
   sm: [ // 神马搜索平台(sm.cn)
     '.sm-tc.cn',
     '.transcode.cn'
@@ -22,7 +23,7 @@ const allowCache = {
 }
 
 // 支持的分发平台
-const allowDp = {
+const ALLOW_DP = {
   sm: [
     '.sm-tc.cn',
     '.transcode.cn'
@@ -35,11 +36,11 @@ const allowDp = {
 
 /**
  * @method cacheOk 检测缓存类型是否合规
- * @param {String} cache 缓存类型，sm or baidu
- * @return {Boolean}
+ * @param {string} cache 缓存类型，sm or baidu
+ * @returns {boolean}
  */
-const cacheOk = function (cache) {
-  const allowCacheArr = allowCache[cache] || []
+function cacheOk (cache) {
+  const allowCacheArr = ALLOW_CACHE[cache] || []
   return allowCacheArr.some(item => {
     return location.hostname.lastIndexOf(item) !== -1
   })
@@ -47,15 +48,15 @@ const cacheOk = function (cache) {
 
 /**
  * @method dpOk 检测分发平台(dp)是否合规
- * @param {String} dp 平台类型，sm/baidu
- * @return {Boolean}
+ * @param {string} dp 平台类型，sm/baidu
+ * @returns {boolean}
  */
-const dpOk = function (dp) {
+ function dpOk (dp) {
   if (!viewer.isIframed) {
-    console.log('not in iframe')
+    console.warn('not in iframe')
     return false
   }
-  const allowDpArr = allowDp[dp] || []
+  const allowDpArr = ALLOW_DP[dp] || []
   return allowDpArr.some(item => {
     return location.hostname.lastIndexOf(item) !== -1
   })
@@ -63,119 +64,72 @@ const dpOk = function (dp) {
 
 /**
  * @method uaOk 检测userAgent是否合规
- * @param {String} ua userAgent, baidu/uc/chrome/safari/qq/firefox
- * @return {Boolean}
+ * @param {string} ua userAgent, baidu/uc/chrome/safari/qq/firefox
+ * @returns {boolean}
  */
-const uaOk = function (ua) {
-  switch (ua) {
-    case 'baidu':
-      if (platform.isBaidu()) {
-        return true
-      }
-      break
-    case 'uc':
-      if (platform.isUc()) {
-        return true
-      }
-      break
-    case 'chrome':
-      if (platform.isChrome()) {
-        return true
-      }
-      break
-    case 'safari':
-      if (platform.isSafari()) {
-        return true
-      }
-      break
-    case 'qq':
-      if (platform.isQQ()) {
-        return true
-      }
-      break
-    case 'firefox':
-      if (platform.isFireFox()) {
-        return true
-      }
-      break
-    default:
-      return false
+function uaOk (ua) {
+  const checkUaFuns = {
+    baidu: platform.isBaidu,
+    uc: platform.isUc,
+    chrome: platform.isChrome,
+    safari: platform.isSafari,
+    qq: platform.isQQ,
+    firefox: platform.isFireFox
   }
+  if (checkUaFuns[ua] && checkUaFuns[ua]()) {
+    return true
+  }
+  return false
 }
 
 /**
  * @method osOk 检测系统是否合规
- * @param {String} os 系统类型, android/ios
- * @return {Boolean}
+ * @param {string} os 系统类型, android/ios
+ * @returns {boolean}
  */
-const osOk = function (os) {
-  switch (os) {
-    case 'ios':
-      if (platform.isIOS()) {
-        return true
-      }
-      break
-    case 'android':
-      if (platform.isAndroid()) {
-        return true
-      }
-      break
-    default:
-      return false
+function osOk (os) {
+  const checkOsFuns = {
+    ios: platform.isIOS,
+    android: platform.isAndroid
   }
+  if (checkOsFuns[os] && checkOsFuns[os]()) {
+    return true
+  }
+  return false
 }
 
 /**
  * @method scopeOk 检测scope是否合规
- * @param {String} os scope json字符串
- * @return {Boolean}
+ * @param {string} os scope json字符串
+ * @returns {boolean}
  */
-const scopeOk = function (scope) {
-  if (scope) {
-    const scopeJson = util.jsonParse(scope)
-    if (util.fn.isPlainObject(scopeJson) && Object.keys(scopeJson).length !== 0) {
-      for (const info in scopeJson) {
-        const param = String(scopeJson[info]).toLowerCase()
-        switch (info) {
-          case 'cache':
-            if (!cacheOk(param)) { // 检测cache是否合规
-              console.log('cache error')
-              return false
-            }
-            break
-          case 'dp':
-            if (!dpOk(param)) { // 检测分发平台是否合规
-              console.log('dp error')
-              return false
-            }
-            break
-          case 'ua':
-            if (!uaOk(param)) { // 检测ua是否合规
-              console.log('ua error')
-              return false
-            }
-            break
-          case 'os':
-            if (!osOk(param)) { // 检测系统类型是否合规
-              console.log('os error')
-              return false
-            }
-            break
-          default:
-            console.log('params error')
-            return false
-        }
-      }
-      console.log('all right')
-      return true
-    } else {
-      console.log('scope error')
-      return false
-    }
-  } else {
-    console.log('no scope')
+function scopeOk (scope) {
+  if (!scope) {
+    console.warn('no scope')
     return false
   }
+  const checkFuns = {
+    cache: cacheOk,
+    dp: dpOk,
+    ua: uaOk,
+    os: osOk
+  }
+  const scopeJson = util.jsonParse(scope)
+  const keys = Object.keys(scopeJson)
+  if (!util.fn.isPlainObject(scopeJson) || keys.length === 0) {
+    console.error('scope error')
+    return false
+  }
+
+  for (const key of keys) {
+    const param = (scopeJson[key]).toString().toLowerCase()
+    if (!checkFuns[key] || !checkFuns[key](param)) {
+      console.warn(key + ' error')
+      return false
+    }
+  }
+  console.log('all right')
+  return true
 }
 
 export default class MipEnv extends CustomElement {
