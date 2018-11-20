@@ -48,7 +48,8 @@ export default class MipList extends CustomElement {
 
     // 有查看更多属性的情况
     if (element.hasAttribute('has-more')) {
-      this.addEventAction('more', function () {
+      this.addEventAction('more', function (e) {
+        this.button = e.target
         this.pushResult(this.src)
       })
     }
@@ -92,7 +93,6 @@ export default class MipList extends CustomElement {
     if (this.isEnd) {
       return
     }
-    this.button = document.querySelector('.mip-list-more')
     this.button.innerHTML = '加载中...'
     let url = getUrl(src, this.pnName, this.pn++)
     fetchJsonp(url, {
