@@ -51,7 +51,7 @@ function cacheOk (cache) {
  * @param {string} dp 平台类型，sm/baidu
  * @returns {boolean}
  */
- function dpOk (dp) {
+function dpOk (dp) {
   if (!viewer.isIframed) {
     console.warn('not in iframe')
     return false
