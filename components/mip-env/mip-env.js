@@ -8,7 +8,7 @@ let {
   util,
   viewer
 } = MIP
-let platform = util.platform
+let { platform } = util
 
 // 所支持的cache
 const ALLOW_CACHE = {
@@ -52,11 +52,11 @@ function cacheOk (cache) {
  * @returns {boolean} true/false
  */
 function dpOk (dp) {
+  const allowDpArr = ALLOW_DP[dp] || []
   if (!viewer.isIframed) {
     console.warn('not in iframe')
     return false
   }
-  const allowDpArr = ALLOW_DP[dp] || []
   return allowDpArr.some(item => {
     return location.hostname.lastIndexOf(item) !== -1
   })
@@ -104,16 +104,18 @@ function osOk (os) {
  * @returns {boolean} true/false
  */
 function scopeOk (scope) {
-  if (!scope) {
-    console.warn('no scope')
-    return false
-  }
   const checkFuns = {
     cache: cacheOk,
     dp: dpOk,
     ua: uaOk,
     os: osOk
   }
+
+  if (!scope) {
+    console.warn('no scope')
+    return false
+  }
+
   const scopeJson = util.jsonParse(scope)
   const keys = Object.keys(scopeJson)
   if (!util.fn.isPlainObject(scopeJson) || keys.length === 0) {
