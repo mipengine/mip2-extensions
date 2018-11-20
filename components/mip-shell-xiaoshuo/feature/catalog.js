@@ -8,7 +8,7 @@
 
 import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
-import {sendWebbLog, sendTCLog} from './../common/log' // 日志
+import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 
 let util = MIP.util
 let event = util.event
