@@ -44,7 +44,7 @@
 </head>
 
 <body>
-    <mip-tabs initial-tab="0">
+    <mip-tabs initial-tab="0" id="tabs">
       <mip-tabs-item label="MIP 2">
         <h2>什么是 MIP</h2>
         <p>MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP-HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。
@@ -63,6 +63,7 @@
           <li>任意嵌套</li>
           <li>自定义tab内容结构</li>
         </ol>
+        <button on="tap:tabs.slideTab(2)">点击跳转 tab</button>
       </mip-tabs-item>
       <mip-tabs-item label="嵌套">
         这里嵌套了另一个tab标签
