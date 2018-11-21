@@ -17,9 +17,13 @@ class Flag {
   getHashSids () {
     const {isRootPage} = state(window)
 
-    let sidsStr = window.MIP.hash.hashTree.sids ? (
-      isRootPage ? window.MIP.hash.hashTree.sids.value : window.parent.MIP.hash.hashTree.sids.value)
-      : []
+    let sidsStr
+
+    if (isRootPage) {
+      sidsStr = window.MIP.hash.hashTree.sids ? window.MIP.hash.hashTree.sids.value : []
+    } else {
+      sidsStr = window.parent.MIP.hash.hashTree.sids ? window.parent.MIP.hash.hashTree.sids.value : []
+    }
 
     return sidsStr.length ? sidsStr.split('_') : []
   }
