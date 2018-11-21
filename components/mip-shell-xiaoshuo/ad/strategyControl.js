@@ -89,7 +89,7 @@ export default class strategyControl {
       Object.assign(novelData, {isSecondPage: true})
     }
     if (isNeedAds && novelInstance.adsCache) {
-      novelInstance.adsCache = undefined
+      novelInstance.adsCache = null
     }
     if (novelInstance.adsCache && novelInstance.adsCache.fetchTpl && novelInstance.adsCache.fetchTpl.length !== 0) {
       Object.assign(novelData, {tpl: novelInstance.adsCache.fetchTpl})
@@ -140,6 +140,40 @@ export default class strategyControl {
    * 所有page事件的处理.
    */
   eventAllPageHandler () {
+    const currentWindow = getCurrentWindow()
+    const {isRootPage} = state(currentWindow)
+    const rootWindow = isRootPage ? window : window.parent
+
+    let listen = function (target, name, handler) {
+      target.addEventListener(name, handler)
+      return () => target.removeEventListener(name, handler)
+    }
+
+    let customReadyUnlistener
+    let shellReadyUnlistener
+
+    let customHandler = e => {
+      this.pageAd = true
+      this.strategyStatic()
+
+      customReadyUnlistener && customReadyUnlistener()
+      shellReadyUnlistener && shellReadyUnlistener()
+
+      Promise.all([
+        new Promise(resolve => (customReadyUnlistener = listen(rootWindow, 'customReady', resolve))),
+        new Promise(resolve => (shellReadyUnlistener = listen(rootWindow, Constant.CURRENT_PAGE_READY, resolve)))
+      ]).then(customHandler)
+    }
+
+    // 针对 rootPage 分两种情况：
+    // 1. mip-custom 先加载完成: mip-custom 组件发出的 customReady 事件失效，主动发一个事件触发 custom 再发一次
+    // 2. xiaoshuo-shell 先加载完成: 此时已经注册了监听 customReady 事件，customReadyConfirm 事件发出无效
+    customReadyUnlistener = listen(rootWindow, 'customReady', customHandler)
+    window.MIP.viewer.page.emitCustomEvent(window, true, {
+      name: 'customReadyConfirm',
+      data: {}
+    })
+
     /**
      * 监听上一页按钮被点击事件'PREVIOUS_PAGE'
      *
@@ -167,37 +201,6 @@ export default class strategyControl {
    * novel shell需要处理的事情 —— 绑在root页上
    */
   eventRootHandler () {
-    const currentWindow = getCurrentWindow()
-
-    let listen = function (target, name, handler) {
-      target.addEventListener(name, handler)
-      return () => {}
-    }
-
-    let customReadyUnlistener
-    let shellReadyUnlistener
-
-    let customHandler = e => {
-      this.pageAd = true
-      this.strategyStatic()
-      customReadyUnlistener && customReadyUnlistener()
-      shellReadyUnlistener && shellReadyUnlistener()
-
-      Promise.all([
-        new Promise(resolve => (customReadyUnlistener = listen(window, 'customReady', resolve))),
-        new Promise(resolve => (shellReadyUnlistener = listen(currentWindow, Constant.CURRENT_PAGE_READY, resolve)))
-      ]).then(customHandler)
-    }
-
-    // 针对 rootPage 分两种情况：
-    // 1. mip-custom 先加载完成: mip-custom 组件发出的 customReady 事件失效，主动发一个事件触发 custom 再发一次
-    // 2. xiaoshuo-shell 先加载完成: 此时已经注册了监听 customReady 事件，customReadyConfirm 事件发出无效
-    customReadyUnlistener = listen(window, 'customReady', customHandler)
-    window.MIP.viewer.page.emitCustomEvent(currentWindow, true, {
-      name: 'customReadyConfirm',
-      data: {}
-    })
-
     /**
      * 定制化广告的请求返回的数据，需要通过相关的schema计算出当前页需要渲染的广告数据
      *
