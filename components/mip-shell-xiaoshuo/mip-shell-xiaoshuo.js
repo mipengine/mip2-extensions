@@ -176,6 +176,14 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       let reader = document.querySelector('.reader')
       reader.style.padding = '0 .32rem'
       reader.lastElementChild.style.display = 'none'
+      let download = reader.querySelector('.zhdown-inner') || ''
+      if (download) {
+        download.style.display = 'none'
+      }
+      let title = reader.querySelector('.title') || ''
+      if (title) {
+        title.style.margin = '1.5rem 0'
+      }
     }
 
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页

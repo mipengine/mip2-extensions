@@ -117,11 +117,10 @@ export default class Scroll {
     if (currentPage.isFirstPage !== undefined && !currentPage.isFirstPage) {
       let title = readwarp[1].querySelector('h2.title')
       title.style.display = 'none'
-
     } else {
       let title = readwarp[1].querySelector('h2.title')
       title.style.margin = '1.5rem 0'
-    }    
+    }
 
     let downloadNode = readwarp[1].querySelector('.zhdown-inner') || readwarp[1].querySelector('.top-download') || ''
     if (downloadNode) {
