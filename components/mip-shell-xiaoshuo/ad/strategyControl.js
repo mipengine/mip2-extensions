@@ -89,7 +89,7 @@ export default class strategyControl {
       Object.assign(novelData, {isSecondPage: true})
     }
     if (isNeedAds && novelInstance.adsCache) {
-      novelInstance.adsCache = null
+      novelInstance.adsCache = undefined
     }
     if (novelInstance.adsCache && novelInstance.adsCache.fetchTpl && novelInstance.adsCache.fetchTpl.length !== 0) {
       Object.assign(novelData, {tpl: novelInstance.adsCache.fetchTpl})
