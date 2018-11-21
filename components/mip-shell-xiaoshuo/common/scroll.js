@@ -111,11 +111,17 @@ export default class Scroll {
   getPageDom (iframe, pageId, currentPage) {
     let nextdocument = iframe.contentWindow.document
     let readwarp = nextdocument.getElementById('mip-reader-warp').childNodes
+    readwarp[1].style.padding = '0 .32rem'
+    readwarp[1].lastElementChild.style.display = 'none'
 
     if (currentPage.isFirstPage !== undefined && !currentPage.isFirstPage) {
       let title = readwarp[1].querySelector('h2.title')
       title.style.display = 'none'
-    }
+
+    } else {
+      let title = readwarp[1].querySelector('h2.title')
+      title.style.margin = '1.5rem 0'
+    }    
 
     let downloadNode = readwarp[1].querySelector('.zhdown-inner') || readwarp[1].querySelector('.top-download') || ''
     if (downloadNode) {
