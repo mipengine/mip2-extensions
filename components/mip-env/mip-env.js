@@ -119,7 +119,6 @@ function uaOk (sourceUaArr) {
     qq: platform.isQQ,
     firefox: platform.isFireFox
   }
-
   // 有不带"!"的ua, 则以不带"!"ua作为最终判断依据, 判断符为“||”
   // sourceUaArr[0]为带"!"的ua合集
   if (sourceUaArr && sourceUaArr[0].length > 0) {

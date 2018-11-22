@@ -27,7 +27,6 @@ scope={"ua":"uc,qq"} => 当是UC浏览器或qq浏览器时会展示出指定内�
 eg:
 scope={"ua":"uc,qq,!baidu,!qq,!chrome"} 最终会被认为是 scope={"ua":"uc,qq"}
 
-
 ## 示例
 
 ```html

@@ -4,7 +4,7 @@
  * @author liujing
  */
 import {Constant} from './constant-config'
-import {sendTCLog} from './../common/log'
+import {sendTCLog} from './log'
 
 let event = window.MIP.util.event
 

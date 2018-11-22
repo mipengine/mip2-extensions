@@ -39,7 +39,7 @@ export default class MipAudio extends CustomElement {
    * Get attribute Set from attribute List
    *
    * @param {NamedNodeMap} attributes the attribute list, spec: https://dom.spec.whatwg.org/#interface-namednodemap
-   * @return {Object} the attribute set, legacy:
+   * @returns {Object} the attribute set, legacy:
    * @example
    * {
    *     "src": "http://xx.mp4",
@@ -112,7 +112,7 @@ export default class MipAudio extends CustomElement {
    * 根据用户配置，创建audio标签
    *
    * @private
-   * @return {Object} 创建的audio元素
+   * @returns {Object} 创建的audio元素
    */
   createAudioTag () {
     let audioEle = document.createElement('audio')
@@ -129,7 +129,7 @@ export default class MipAudio extends CustomElement {
    * 创建默认交互控件DOM
    *
    * @private
-   * @return {string} 创建的audio控件DOM
+   * @returns {string} 创建的audio控件DOM
    */
   createDefaultController () {
     let audioDom =
@@ -212,7 +212,7 @@ export default class MipAudio extends CustomElement {
    *
    * @private
    * @param {number} now 秒数
-   * @return {string} 格式化后的时间
+   * @returns {string} 格式化后的时间
    */
   msToDate (now) {
     if (isNaN(now)) {
