@@ -25,13 +25,13 @@ const ALLOW_DP_OR_CACHE = {
 /**
  * @function splitScopeValue 取出指定scope value中带有"!"和不带有"!"的值
  * @param {string} scopeValue 指定scope value
- * @returns {array} 0键存放非"!"值 1键存放"!"值  eg: ['baidu,uc', '!qq,!chrome']
+ * @returns {Array} 0键存放非"!"值 1键存放"!"值  eg: ['baidu,uc', '!qq,!chrome']
  */
 function splitScopeValue (scopeValue) {
-  const delDupArr = new Set(scopeValue.split(','));
-  const sourceCacheArr = Array.from(delDupArr);
+  const delDupArr = new Set(scopeValue.split(','))
+  const sourceCacheArr = Array.from(delDupArr)
   let resultArr = []
-  if ( sourceCacheArr.length === 0 ) {
+  if (sourceCacheArr.length === 0) {
     return resultArr
   }
 
@@ -49,7 +49,7 @@ function splitScopeValue (scopeValue) {
 
 /**
  * @function cacheOk 检测缓存类型是否合规
- * @param {string} cache 缓存类型，sm or baidu
+ * @param {Array} sourceCacheArr 缓存类型，sm or baidu
  * @returns {boolean} true/false
  */
 function cacheOk (sourceCacheArr) {
@@ -76,7 +76,7 @@ function cacheOk (sourceCacheArr) {
 
 /**
  * @function cacheOk 检测分发平台是否合规
- * @param {string} cache 分发平台，sm or baidu
+ * @param {Array} sourceDpArr 分发平台，sm or baidu
  * @returns {boolean} true/false
  */
 function dpOk (sourceDpArr) {
@@ -107,7 +107,7 @@ function dpOk (sourceDpArr) {
 
 /**
  * @function uaOk 检测userAgent是否合规
- * @param {string} ua userAgent, baidu/uc/chrome/safari/qq/firefox
+ * @param {Array} sourceUaArr userAgent, baidu/uc/chrome/safari/qq/firefox
  * @returns {boolean} true/false
  */
 function uaOk (sourceUaArr) {
@@ -127,7 +127,7 @@ function uaOk (sourceUaArr) {
     })
   }
 
-  // 带有"!"的dp合集，判断符为“&&”
+  // 带有"!"的ua合集，判断符为“&&”
   // sourceUaArr[1]为带"!"的ua合集
   return sourceUaArr[1].every(item => {
     return (!checkUaFuns[item.substr(1)] || !checkUaFuns[item.substr(1)]())
@@ -136,7 +136,7 @@ function uaOk (sourceUaArr) {
 
 /**
  * @function osOk 检测系统是否合规
- * @param {string} os 系统类型, android/ios
+ * @param {Array} sourceOsArr 系统类型, android/ios
  * @returns {boolean} true/false
  */
 function osOk (sourceOsArr) {
