@@ -247,8 +247,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     if (window.MIP.util.isCacheUrl(location.href)) { // 处于cache下，需要转换cacheUrl
       window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
         .then(iframes => {
-          console.log(nextPageUrl)
-          console.log(prePageUrl)
           console.log('prerender done')
           this.updateFooterDom()
         }).catch(err => {
@@ -287,20 +285,50 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    */
   updateFooterDom () {
     // 页面配置的数据
-    let footerConfig = getJsonld(getCurrentWindow())
+    let footerConfig
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
-    let currentWindow = isRootPage ? window : window.parent
-    if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
-      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-    }
-    window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
-      name: 'updateShellFooter',
-      data: {
-        'jsonld': footerConfig
+    const currentWindow = isRootPage ? window : window.parent
+    try {
+      footerConfig = getJsonld(getCurrentWindow())
+      if (!footerConfig) {
+        // 抛出错误
+        throw new Error('不能获取footerConfig')
       }
-    })
+    } catch (error) {
+      console.warn(error)
+    }
+    if (!footerConfig) {
+      setTimeout(() => {
+        footerConfig = getJsonld(getCurrentWindow())
+        if (!footerConfig) {
+          // 再次获取footerConfig失败
+          console.warn('不能获取footerConfig')
+          return
+        }
+        if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
+          footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+          footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+        }
+        window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
+          name: 'updateShellFooter',
+          data: {
+            'jsonld': footerConfig
+          }
+        })
+      }, 1000)
+    } else {
+      if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
+        footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+        footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+      }
+      window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
+        name: 'updateShellFooter',
+        data: {
+          'jsonld': footerConfig
+        }
+      })
+    }
   }
 
   /**
@@ -351,7 +379,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    * @param {Object} params 翻页的信息
    */
   afterSwitchPage (params) {
-    console.log(params)
     // 如果不是预渲染的页面而是已经打开过的页面，手动触发预渲染
     if (!params.isPrerender && !params.newPage) {
       let jsonld = getJsonld(getCurrentWindow())
@@ -394,8 +421,15 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   bindRootEvents () {
     super.bindRootEvents()
     // 承接emit事件：根页面底部控制栏内容更新
-    window.addEventListener('updateShellFooter', (e) => {
+    window.addEventListener('updateShellFooter', e => {
       this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
+    })
+    // 点击按钮关闭工具栏
+    window.addEventListener('btnClickHide', e => {
+      this.footer.hide()
+      this.header.hide()
+      // 关闭黑色遮罩
+      this.toggleDOM(this.$buttonMask, false)
     })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
