@@ -2,7 +2,7 @@
 
 标题|内容
 ----|----
-类型|
+类型|通用
 支持布局|
 所需脚本| [https://c.mipcdn.com/static/v2/mip-animation/mip-animation.js](https://c.mipcdn.com/static/v2/mip-animation/mip-animation.js)
 
