@@ -11,7 +11,8 @@ const AD_DATA_CACHE = 300000
 // 页面的类型集
 const PAGE_TYPES = {
   PAGE: 'page',
-  CHAPTEREND: 'chapterEnd'
+  CHAPTEREND: 'chapterEnd',
+  DETAIL: 'detail'
 }
 
 /**
@@ -264,7 +265,7 @@ const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
       )
     ) {
       // 当该策略命中广告后，顺序取策略，只要有一个策略命中则不考虑别的策略
-      let adTypes = getStrategy(endCycle, adsCount, strategy[i].strategy, adData)
+      let adTypes = getStrategy(endCycle, adsCount, strategy[i].strategy, adData, type)
       if (JSON.stringify(adTypes) !== '{}') {
         curPageStrategy[type] = adTypes
       }
@@ -279,13 +280,13 @@ const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
  * @param {Object} adsCount 广告队列的计数
  * @param {Object} strategy 每个广告类型中的广告策略
  * @param {Object} adData fetch返回的广告数据
+ * @param {Object} type 页面类型
  * @returns {Object} 返回通过广告策略中计算出的广告队列的数据
  */
-const getStrategy = (endCycle, adsCount, strategy, adData) => {
+const getStrategy = (endCycle, adsCount, strategy, adData, type) => {
   let adTypes = {}
-
   for (let adNum in strategy) {
-    if (!endCycle) {
+    if (!endCycle || type === PAGE_TYPES.DETAIL) {
       if (adsCount[adNum] == null) {
         adsCount[adNum] = {
           adsInitLength: 0,

@@ -88,7 +88,7 @@
     </div>
   </template>
 </mip-list>
-<div class="mip-list-more" on="tap:mip-list.more"> 点击查看更多 </div>
+<div on="tap:mip-list.more"> 点击查看更多 </div>
 ```
 
 ## 属性

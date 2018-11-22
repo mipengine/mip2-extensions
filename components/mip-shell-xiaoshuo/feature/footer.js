@@ -4,7 +4,7 @@
  */
 
 import {settingHtml} from './setting'
-import {sendTCLog} from './../common/log'
+import {sendTCLog} from '../common/log'
 
 let DEFAULTS = {
   theme: 'default',
