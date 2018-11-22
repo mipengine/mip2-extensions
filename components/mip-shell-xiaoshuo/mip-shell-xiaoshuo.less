@@ -46,6 +46,47 @@
   .button p {
     font-size: 16px;
   }
+  // 补充底部预渲染loading动画
+  .circular {
+    display: none;
+    width: 12.5px;
+    height: 13px;
+    animation: loading-rotate 2s linear infinite;
+  }
+
+  .path {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: 0;
+    stroke-width: 2;
+
+    /* stroke: #409eff; */
+    stroke: #555;
+    stroke-linecap: round;
+    animation: loading-dash 1.5s ease-in-out infinite;
+  }
+
+  @keyframes loading-rotate {
+    100% {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes loading-dash {
+    0% {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+    }
+
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -40px;
+    }
+
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -120px;
+    }
+  }
 
   .button .icon {
     font-size: 18px;
