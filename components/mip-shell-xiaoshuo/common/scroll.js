@@ -61,7 +61,6 @@ export default class Scroll {
    */
   start () {
     clearTimeout(timer)
-    console.log(this.isScrollToPageTop())
     if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
       timer = setTimeout(this.start.bind(this), 500)
     } else if (this.isScrollToPageBottom()) {
