@@ -10,8 +10,8 @@ let {
 } = MIP
 let { platform } = util
 
-// 所支持的cache
-const ALLOW_CACHE = {
+// 所支持的cache和分发平台
+const ALLOW_DP_OR_CACHE = {
   sm: [ // 神马搜索平台(sm.cn)
     '.sm-tc.cn',
     '.transcode.cn'
@@ -22,16 +22,29 @@ const ALLOW_CACHE = {
   ]
 }
 
-// 支持的分发平台
-const ALLOW_DP = {
-  sm: [
-    '.sm-tc.cn',
-    '.transcode.cn'
-  ],
-  baidu: [
-    '.bdstatic.com',
-    '.mipcdn.com'
-  ]
+/**
+ * @function splitScopeValue 取出指定scope value中带有"!"和不带有"!"的值
+ * @param {string} scopeValue 指定scope value
+ * @returns {array} 0键存放非"!"值 1键存放"!"值  eg: ['baidu,uc', '!qq,!chrome']
+ */
+function splitScopeValue (scopeValue) {
+  const delDupArr = new Set(scopeValue.split(','));
+  const sourceCacheArr = Array.from(delDupArr);
+  let resultArr = []
+  if ( sourceCacheArr.length === 0 ) {
+    return resultArr
+  }
+
+  // 不带"!"的value集合
+  resultArr[0] = sourceCacheArr.filter(item => {
+    return item[0] !== '!'
+  })
+
+  resultArr[1] = sourceCacheArr.filter(item => {
+    return item[0] === '!'
+  })
+
+  return resultArr
 }
 
 /**
@@ -39,26 +52,56 @@ const ALLOW_DP = {
  * @param {string} cache 缓存类型，sm or baidu
  * @returns {boolean} true/false
  */
-function cacheOk (cache) {
-  const allowCacheArr = ALLOW_CACHE[cache] || []
-  return allowCacheArr.some(item => {
-    return location.hostname.lastIndexOf(item) !== -1
+function cacheOk (sourceCacheArr) {
+  // 有不带"!"的cache, 则以不带"!"的cache作为最终判断依据, 判断符为“||”
+  // sourceCacheArr[0]为不带"!"的cache结合
+  if (sourceCacheArr[0] && sourceCacheArr[0].length > 0) {
+    return sourceCacheArr[0].some(item => {
+      const allowCacheArr = ALLOW_DP_OR_CACHE[item] || []
+      return allowCacheArr.some(allowCacheItem => {
+        return location.hostname.lastIndexOf(allowCacheItem) !== -1
+      })
+    })
+  }
+
+  // 带有"!"的cache合集，判断符为“&&”
+  // sourceCacheArr[1]为带"!"的cache合集
+  return sourceCacheArr[1].every(item => {
+    const allowCacheArr = ALLOW_DP_OR_CACHE[item.substr(1)] || []
+    return allowCacheArr.every(allowCacheItem => {
+      return location.hostname.lastIndexOf(allowCacheItem) === -1
+    })
   })
 }
 
 /**
- * @function dpOk 检测分发平台(dp)是否合规
- * @param {string} dp 平台类型，sm/baidu
+ * @function cacheOk 检测分发平台是否合规
+ * @param {string} cache 分发平台，sm or baidu
  * @returns {boolean} true/false
  */
-function dpOk (dp) {
-  const allowDpArr = ALLOW_DP[dp] || []
+function dpOk (sourceDpArr) {
   if (!viewer.isIframed) {
     console.warn('require in iframe')
     return false
   }
-  return allowDpArr.some(item => {
-    return location.hostname.lastIndexOf(item) !== -1
+  // 有不带"!"的cache, 则以不带"!"的dp作为最终判断依据, 判断符为“||”
+  // sourceDpArr[0]为不带"!"的cache结合
+  if (sourceDpArr[0] && sourceDpArr[0].length > 0) {
+    return sourceDpArr[0].some(item => {
+      const allowDpArr = ALLOW_DP_OR_CACHE[item] || []
+      return allowDpArr.some(allowDpItem => {
+        return location.hostname.lastIndexOf(allowDpItem) !== -1
+      })
+    })
+  }
+
+  // 带有"!"的cache合集，判断符为“&&”
+  // sourceDpArr[1]为带"!"的dp合集
+  return sourceDpArr[1].every(item => {
+    const allowDpArr = ALLOW_DP_OR_CACHE[item.substr(1)] || []
+    return allowDpArr.every(allowDpItem => {
+      return location.hostname.lastIndexOf(allowDpItem) === -1
+    })
   })
 }
 
@@ -67,7 +110,7 @@ function dpOk (dp) {
  * @param {string} ua userAgent, baidu/uc/chrome/safari/qq/firefox
  * @returns {boolean} true/false
  */
-function uaOk (ua) {
+function uaOk (sourceUaArr) {
   const checkUaFuns = {
     baidu: platform.isBaidu,
     uc: platform.isUc,
@@ -76,10 +119,20 @@ function uaOk (ua) {
     qq: platform.isQQ,
     firefox: platform.isFireFox
   }
-  if (checkUaFuns[ua] && checkUaFuns[ua]()) {
-    return true
+
+  // 有不带"!"的ua, 则以不带"!"ua作为最终判断依据, 判断符为“||”
+  // sourceUaArr[0]为带"!"的ua合集
+  if (sourceUaArr && sourceUaArr[0].length > 0) {
+    return sourceUaArr[0].some(item => {
+      return (checkUaFuns[item] && checkUaFuns[item]())
+    })
   }
-  return false
+
+  // 带有"!"的dp合集，判断符为“&&”
+  // sourceUaArr[1]为带"!"的ua合集
+  return sourceUaArr[1].every(item => {
+    return (!checkUaFuns[item.substr(1)] || !checkUaFuns[item.substr(1)]())
+  })
 }
 
 /**
@@ -87,15 +140,24 @@ function uaOk (ua) {
  * @param {string} os 系统类型, android/ios
  * @returns {boolean} true/false
  */
-function osOk (os) {
+function osOk (sourceOsArr) {
   const checkOsFuns = {
     ios: platform.isIOS,
     android: platform.isAndroid
   }
-  if (checkOsFuns[os] && checkOsFuns[os]()) {
-    return true
+  // 有不带"!"的os, 则以不带"!"os作为最终判断依据, 判断符为“||”
+  // sourceOsArr[0]为带"!"的os合集
+  if (sourceOsArr && sourceOsArr[0].length > 0) {
+    return sourceOsArr[0].some(item => {
+      return (checkOsFuns[item] && checkOsFuns[item]())
+    })
   }
-  return false
+
+  // 带有"!"的os合集，判断符为“&&”
+  // sourceOsArr[1]为带"!"的os合集
+  return sourceOsArr[1].every(item => {
+    return (!checkOsFuns[item.substr(1)] || !checkOsFuns[item.substr(1)]())
+  })
 }
 
 /**
@@ -125,7 +187,9 @@ function scopeOk (scope) {
 
   for (const key of keys) {
     const param = (scopeJson[key]).toString().toLowerCase()
-    if (!checkFuns[key] || !checkFuns[key](param)) {
+    // 将value值拆分为带有!与不带有!组
+    const value = splitScopeValue(param)
+    if (!checkFuns[key] || !checkFuns[key](value)) {
       console.warn(key + ' error')
       return false
     }
