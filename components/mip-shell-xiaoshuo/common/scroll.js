@@ -10,6 +10,17 @@ let pageIdQuery = {
   pre: '',
   next: ''
 }
+
+/**
+ * 无限下拉loading动画
+ */
+function loadingDom () {
+  return `<div class="loading-view seen-list-book-loading">
+            <span data-v-4e3483cd="" class="circle"></span>
+            <span data-v-4e3483cd="" class="loading-label">正在加载...</span>
+          </div>`
+}
+
 export default class Scroll {
   constructor () {
     let jsonld = getPrerenderJsonld()
@@ -19,6 +30,29 @@ export default class Scroll {
       pre: true,
       next: true
     }
+    this.loading = false
+  }
+  /**
+   * 初始化小说阅读器环境
+   *
+   * @public
+   */
+  init () {
+    // 添加正在加载样式
+    let div = document.createElement('div')
+    div.setAttribute('id', 'loading1')
+    let loadingHTML = loadingDom()
+    div.innerHTML = loadingHTML
+    reader.appendChild(div)
+  }
+  init2 () {
+    // 添加正在加载样式
+    let warp = currentWindow.document.querySelector('#mip-reader-warp > div')
+    let div = document.createElement('div')
+    div.setAttribute('id', 'loading2')
+    let loadingHTML = loadingDom()
+    div.innerHTML = loadingHTML
+    reader.insertBefore(div, warp)
   }
   /**
    * 滚动开始函数
@@ -27,49 +61,46 @@ export default class Scroll {
    */
   start () {
     clearTimeout(timer)
+    console.log(this.isScrollToPageTop())
     if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
-      timer = setTimeout(this.start.bind(this), 900)
+      timer = setTimeout(this.start.bind(this), 500)
     } else if (this.isScrollToPageBottom()) {
-      if (document.getElementById('loading')) {
+      if (this.loading) {
         return
       }
       if (!pageIdQuery.next) {
         if (this.flag.next) {
-          this.loading('已经到达最后一页')
           this.flag.next = false
-          setTimeout(this.removeLoading.bind(this), 1000)
-        } else {
-          clearTimeout(timer)
-          timer = setTimeout(this.start.bind(this), 900)
+          this.noChapter('loading1', '您已阅读完全部更新章节')
+          this.loading = false
         }
+        clearTimeout(timer)
+        timer = setTimeout(this.start.bind(this), 500)
         return
       }
-      this.loading('正在加载中...')
+      this.loading = true
       this.prerenderNext(pageIdQuery.next)
     } else if (this.isScrollToPageTop()) {
-      if (document.getElementById('loading')) {
+      if (this.loading) {
         return
       }
+      this.loading = true
       if (!pageIdQuery.pre) {
         if (this.flag.pre) {
-          this.loading('已经到达第一页')
           this.flag.pre = false
-          setTimeout(this.removeLoading.bind(this), 1000)
-        } else {
-          clearTimeout(timer)
-          timer = setTimeout(this.start.bind(this), 900)
+          this.noChapter('loading2', '您已阅读到第一章')
+          this.loading = false
         }
+        clearTimeout(timer)
+        timer = setTimeout(this.start.bind(this), 500)
         return
       }
-      this.loading('正在加载中...')
       this.prerenderPre(pageIdQuery.pre)
     }
   }
 
   destroy () {
     clearTimeout(timer)
-    let div = document.getElementById('loading')
-    div && document.body.removeChild(div)
   }
 
   prerenderNext (url) {
@@ -83,7 +114,8 @@ export default class Scroll {
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
         this.tcLog()
-        this.removeLoading()
+        this.loading = false
+        this.start()
       }
     }).catch(() => {
       this.getError()
@@ -101,7 +133,8 @@ export default class Scroll {
         currentWindow.MIP.viewer.page.children = []
         iframe[0].parentNode.removeChild(iframe[0])
         this.tcLog()
-        setTimeout(this.removeLoading.bind(this), 0)
+        this.loading = false
+        setTimeout(this.start.bind(this), 0)
       }
     }).catch(() => {
       this.getError()
@@ -133,24 +166,31 @@ export default class Scroll {
   }
 
   insertDom (dom, id) {
-    let warp = currentWindow.document.querySelector('#mip-reader-warp > div')
+    let warp = currentWindow.document.querySelector('#mip-reader-warp > #loading2 + div')
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)
     reader.insertBefore(div, warp)
-    let height = div.offsetHeight
+    let height = div.offsetHeight - 49
     currentWindow.MIP.viewport.setScrollTop(height)
   }
 
   appendDom (dom, id) {
+    let loading1 = document.querySelector('#loading1')
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)
-    reader.appendChild(div)
+    reader.insertBefore(div, loading1)
   }
 
   getViewportSize (w) {
     return {w: document.documentElement.clientWidth, h: document.documentElement.clientHeight}
+  }
+
+  noChapter (id, str) {
+    let div = document.getElementById(id)
+    div.querySelector('.circle').style.display = 'none'
+    div.querySelector('.loading-label').innerHTML = str
   }
 
   /**
@@ -193,23 +233,11 @@ export default class Scroll {
   getError () {
     this.loadingError()
   }
-  loading (str) {
-    let div = document.createElement('div')
-    div.innerHTML = str
-    div.setAttribute('id', 'loading')
-    document.body.appendChild(div)
-  }
 
   loadingError () {
     let div = document.getElementById('loading')
     if (div) {
       div.innerHTML = '加载失败, 点击刷新'
     }
-    div.onclick = this.removeLoading()
-  }
-  removeLoading () {
-    let div = document.getElementById('loading')
-    div && document.body.removeChild(div)
-    this.start()
   }
 }

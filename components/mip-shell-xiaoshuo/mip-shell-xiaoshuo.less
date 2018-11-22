@@ -1040,3 +1040,77 @@ body.with-header {
   color: #fff;
   background: rgba(0, 0, 0, 0.6);
 }
+
+/* 无限下拉loading动画 */
+.loading-view {
+  display: table;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0 0 19.3px 0;
+  margin: 0 auto;
+}
+
+@-webkit-keyframes circle-spin {
+  0% {
+    -webkit-transform: rotateY(0);
+    transform: rotateY(0);
+    opacity: 0.3;
+  }
+
+  50% {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+    opacity: 0.6;
+  }
+
+  to {
+    -webkit-transform: rotateY(1turn);
+    transform: rotateY(1turn);
+    opacity: 0.3;
+  }
+}
+
+@keyframes circle-spin {
+  0% {
+    -webkit-transform: rotateY(0);
+    transform: rotateY(0);
+    opacity: 0.3;
+  }
+
+  50% {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+    opacity: 0.6;
+  }
+
+  to {
+    -webkit-transform: rotateY(1turn);
+    transform: rotateY(1turn);
+    opacity: 0.3;
+  }
+}
+
+.loading-view .circle {
+  display: inline-block;
+  width: 13.3px;
+  height: 13.3px;
+  border-radius: 6.65px;
+  background-color: #2a2a31;
+  opacity: 0.3;
+  margin-right: 13px;
+  -webkit-animation: circle-spin 1s infinite linear;
+  animation: circle-spin 1s infinite linear;
+}
+
+.loading-view .loading-label {
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 18px;
+  color: #ddd;
+}
