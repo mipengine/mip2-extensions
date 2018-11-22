@@ -27,7 +27,7 @@
       <div class='continer'>
         code：
         <br />
-        &lt;mip-env scope={"cache":"baidu","dp":"baidu","ua":"uc","os":"ios"} &gt;
+        &lt;mip-env scope={"cache":"baidu","dp":"baidu,sm","ua":"uc,qq","os":"!ios"} &gt;
         <br />
         &lt;div&gt;success&lt;/div&gt;
         <br />
@@ -36,7 +36,7 @@
         <br />
         result:
         <div class='content'>
-            <mip-env scope={"cache":"baidu","dp":"baidu","ua":"uc","os":"ios"} >
+            <mip-env scope={"cache":"baidu","dp":"baidu,sm","ua":"uc,qq","os":"!ios"} >
               <div>success</div>
             </mip-env>
         </div>
@@ -45,7 +45,7 @@
       <div class='continer'>
         code
         <br />
-        &lt;mip-env scope={"os":"ios"} &gt;
+        &lt;mip-env scope={"os":"ios,android"} &gt;
         <br />
         &lt;div&gt;success&lt;/div&gt;
         <br />
@@ -54,7 +54,25 @@
         <br />
         result:
         <div class='content'>
-          <mip-env scope={"os":"ios"} >
+          <mip-env scope={"os":"ios,android"} >
+            <div>success</div>
+          </mip-env>
+        </div>
+      </div>
+
+      <div class='continer'>
+        code
+        <br />
+        &lt;mip-env scope={"ua":"!uc"} &gt;
+        <br />
+        &lt;div&gt;success&lt;/div&gt;
+        <br />
+        &lt;/mip-env&gt;
+        <br />
+        <br />
+        result:
+        <div class='content'>
+          <mip-env scope={"ua":"!uc"} >
             <div>success</div>
           </mip-env>
         </div>
