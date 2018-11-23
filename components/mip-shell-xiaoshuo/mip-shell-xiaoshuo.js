@@ -33,6 +33,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     scrollBoundary()
     // 阅读器内部预渲染开关
     this.isReaderPrerender = false
+    this.isChangeSetting = false
   }
 
   // 通过小说JS给dom添加预渲染字段
@@ -58,6 +59,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.pageStyle = new PageStyle()
     // 承接emit & broadcast事件：所有页面修改页主题 & 字号
     window.addEventListener('changePageStyle', (e, data) => {
+      this.isChangeSetting = true
       if (e.detail[0] && e.detail[0].theme) {
         // 修改主题
         this.pageStyle.update(e, {
@@ -99,7 +101,9 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
     if (this.isReaderPrerender) {
       if (this.currentPageMeta.pageType === 'page') {
-        this.__getConfig()
+        if (this.isChangeSetting) {
+          this.__getConfig()
+        }
         this.resetNavigatorBtn()
       }
     }
@@ -409,18 +413,18 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       this.readerPrerender(jsonld)
     }
     // 预渲染兜底机制：预渲染超过3s未返回resolve即视为异常，强制刷新底部footer。
-    if (this.isReaderPrerender) {
-      if (this.currentPageMeta.pageType === 'page') {
-        setTimeout(() => {
-          let currentDocument = MIP.viewer.page.isRootPage ? window.document : window.parent.document
-          let pageBtn = currentDocument.querySelectorAll('.page-button')
-          if (pageBtn[0].getAttribute('href') === '' && pageBtn[1].getAttribute('href') === '') {
-            console.warn('after 3s,prerender failed,force refresh the Footer')
-            this.updateFooterDom()
-          }
-        }, 3000)
-      }
-    }
+    // if (this.isReaderPrerender) {
+    //   if (this.currentPageMeta.pageType === 'page') {
+    //     setTimeout(() => {
+    //       let currentDocument = MIP.viewer.page.isRootPage ? window.document : window.parent.document
+    //       let pageBtn = currentDocument.querySelectorAll('.page-button')
+    //       if (pageBtn[0].getAttribute('href') === '' && pageBtn[1].getAttribute('href') === '') {
+    //         console.warn('after 3s,prerender failed,force refresh the Footer')
+    //         this.updateFooterDom()
+    //       }
+    //     }, 3000)
+    //   }
+    // }
     // 用于记录页面加载完成的时间
     const startRenderTime = novelEvents.timer
     const currentWindow = getCurrentWindow()
