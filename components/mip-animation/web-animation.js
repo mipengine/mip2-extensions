@@ -3,8 +3,6 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-/* eslint-disable */
-
 import playState from './play-state'
 
 export default class WebAnimation {
