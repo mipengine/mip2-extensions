@@ -267,10 +267,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
       .then(iframes => {
         console.log('prerender done')
-        this.updateFooterDom()
       }).catch(err => {
         console.error(new Error(err)) // 抛出错误
-        this.updateFooterDom()
       })
   }
 
@@ -403,6 +401,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    * @param {Object} params 翻页的信息
    */
   afterSwitchPage (params) {
+    this.updateFooterDom()
     // 如果不是预渲染的页面而是已经打开过的页面，手动触发预渲染
     if (!params.isPrerender && !params.newPage) {
       let jsonld = getJsonld(getCurrentWindow())
@@ -457,10 +456,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
-      // 如果是预渲染，不管是否预渲染成功，更新底部链接
-      if (this.isReaderPrerender) {
-        this.updateFooterDom()
-      }
       this.footer.show(this)
       this.header.show()
       let swipeDelete = new util.Gesture(this.$buttonMask, {
