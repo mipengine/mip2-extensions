@@ -39,12 +39,12 @@ export default class MipAnimation extends CustomElement {
     ACTION.forEach(name => this.addEventAction(name, this[`${name}Action`].bind(this)))
 
     this.triggered = this.element.getAttribute('trigger') === 'visibility'
-
+  }
+  firstInviewCallback () {
     if (this.triggered) {
       this.startAction()
     }
   }
-
   startAction () {
     this.createAnimationIfNeeded()
     this.animation.start()

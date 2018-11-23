@@ -96,8 +96,8 @@ export default class WebAnimation {
     this.pause()
 
     this.animations.forEach(animation => {
-        animation.currentTime = time
-      })
+      animation.currentTime = time
+    })
   }
 
   seekToPercent (per) {
@@ -185,9 +185,9 @@ function getDomConfigList (rootDom = document, options) {
   return list
 }
 
-function getNormalizeConfig (config) {
+// function getNormalizeConfig (config) {
 
-}
+// }
 
 function getSwitchConfig (switchList) {
   if (!Array.isArray(switchList) && !switchList.length) {
@@ -208,10 +208,10 @@ function getSwitchConfig (switchList) {
   }
 }
 
-const DOM = 0
+// const DOM = 0
 const OPTIONS = 1
 
-function mergeSubtargets(list, subtargets, doms) {
+function mergeSubtargets (list, subtargets, doms) {
   if (Array.isArray(subtargets) && subtargets.length) {
     for (let i = 0; i < subtargets.length; i++) {
       let target = subtargets[i]
@@ -238,7 +238,7 @@ function match (dom, selector) {
     dom.msMatchesSelector ||
     dom.oMatchesSelector
 
-  return matcher && matcher.call(dom, selector) || false
+  return (matcher && matcher.call(dom, selector)) || false
 }
 
 function findMatchIndex (doms, selector) {
