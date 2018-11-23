@@ -33,7 +33,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     scrollBoundary()
     // 阅读器内部预渲染开关
     this.isReaderPrerender = false
-    this.isChangeSetting = false
   }
 
   // 通过小说JS给dom添加预渲染字段
@@ -59,7 +58,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.pageStyle = new PageStyle()
     // 承接emit & broadcast事件：所有页面修改页主题 & 字号
     window.addEventListener('changePageStyle', (e, data) => {
-      this.isChangeSetting = true
       if (e.detail[0] && e.detail[0].theme) {
         // 修改主题
         this.pageStyle.update(e, {
@@ -101,9 +99,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
     if (this.isReaderPrerender) {
       if (this.currentPageMeta.pageType === 'page') {
-        if (this.isChangeSetting) {
-          this.__getConfig()
-        }
+        this.__getConfig()
         this.resetNavigatorBtn()
       }
     }
