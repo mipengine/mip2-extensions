@@ -83,7 +83,6 @@ export default class Scroll {
       if (this.loading) {
         return
       }
-      this.loading = true
       if (!pageIdQuery.pre) {
         if (this.flag.pre) {
           this.flag.pre = false
@@ -94,6 +93,7 @@ export default class Scroll {
         timer = setTimeout(this.start.bind(this), 500)
         return
       }
+      this.loading = true
       this.prerenderPre(pageIdQuery.pre)
     }
   }
