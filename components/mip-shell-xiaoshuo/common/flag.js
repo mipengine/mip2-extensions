@@ -3,43 +3,32 @@
  * @author: guoshuang
  */
 
-import state from './state'
+import {isCacheUrl} from './util'
 
 class Flag {
   constructor () {
-    this.sids = ['117788']
+    this.bkid = ['377566031']
   }
   /**
-   * 获取当前hash中的hash
-   *
-   * @private
-   */
-  getHashSids () {
-    const {isRootPage} = state(window)
-
-    let sidsStr
-
-    if (isRootPage) {
-      sidsStr = window.MIP.hash.hashTree.sids ? window.MIP.hash.hashTree.sids.value : []
-    } else {
-      sidsStr = window.parent.MIP.hash.hashTree.sids ? window.parent.MIP.hash.hashTree.sids.value : []
-    }
-
-    return sidsStr.length ? sidsStr.split('_') : []
-  }
-  /**
-   * 判断是否命中无限下拉的sid
+   * 判断是否命中无限下拉的bookid
    *
    * @public
    */
   isUnlimitedPulldownSids () {
-    let sids = this.getHashSids()
-    for (let i = 0; i < this.sids; i++) {
-      if (sids.indexOf(this.sids[i]) > -1) {
-        return true
-      }
+    let url = window.location.href
+    if (!isCacheUrl(url)) { return false }
+    let reg = /(bkid=)\S*?&/
+    let bkid = url.match(reg)
+    bkid = bkid[0].replace('bkid=', '')
+    bkid = bkid.replace('&', '')
+    if (this.bkid.indexOf(bkid) > -1) {
+      return true
     }
     return false
+  }
+
+  isNovelShell (type) {
+    return type === 'page'
   }
 }
 

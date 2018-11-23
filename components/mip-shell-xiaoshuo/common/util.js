@@ -149,7 +149,8 @@ export const isCacheUrl = (url) => {
  * 获取下一个window
  */
 export const getPrerenderJsonld = () => {
-  let pageId = MIP.util.getOriginalUrl(location.href)
+  let url = getCacheUrl(location.href)
+  let pageId = MIP.util.getOriginalUrl(url)
   pageId = getCacheUrl(pageId)
   let pageInfo = window.MIP.viewer.page.getPageById(pageId)
   return getJsonld(pageInfo.targetWindow)

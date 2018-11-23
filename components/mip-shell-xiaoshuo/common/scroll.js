@@ -170,7 +170,7 @@ export default class Scroll {
     div.setAttribute('id', id)
     div.appendChild(dom)
     reader.insertBefore(div, warp)
-    let height = div.offsetHeight - 49
+    let height = div.offsetHeight + 49
     currentWindow.MIP.viewport.setScrollTop(height)
   }
 

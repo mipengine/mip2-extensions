@@ -28,6 +28,7 @@ let strategy = new Strategy()
 let util = MIP.util
 let flag = new Flag()
 let scroll = new Scroll()
+
 export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
@@ -180,7 +181,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     strategy.eventAllPageHandler()
 
     // 小流量下走无限下拉逻辑
-    if (flag.isUnlimitedPulldownSids()) {
+    if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
       scroll.init()
       scroll.init2()
       scroll.start()
@@ -369,7 +370,26 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     navigatorBtn[2].href = footerConfig.nextPage.url
     navigatorBtn[2].setAttribute('cache-first', true)
   }
-
+  /**
+   * 基类方法，翻页之前执行的方法
+   *
+   * @param {Object} params 翻页的信息
+   */
+  beforeSwitchPage (params) {
+    let url = params.targetPageId
+    if (flag.isNovelShell(this.currentPageMeta.pageType)) {
+      let isCacheUrl = MIP.util.isCacheUrl(url)
+      if (isCacheUrl) {
+        url = MIP.util.parseCacheUrl(url)
+        url = url.replace(/(http:|https:)\/\//, '')
+        url = encodeURIComponent(url)
+        let baseUrl = document.referrer
+        let reg = /c\/\S*\?/
+        url = baseUrl.replace(reg, 'c/' + url + '?')
+        window.MIP.viewer.open(url, {isMipLink: false})
+      }
+    }
+  }
   /**
    * 基类方法，翻页之后执行的方法
    * 记录翻页的白屏
@@ -377,7 +397,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    * @param {Object} params 翻页的信息
    */
   afterSwitchPage (params) {
-    console.log(params)
     // 如果不是预渲染的页面而是已经打开过的页面，手动触发预渲染
     if (!params.isPrerender && !params.newPage) {
       let jsonld = getJsonld(getCurrentWindow())
@@ -411,10 +430,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         })
       }
     }, 5000)
-
-    if (flag.isUnlimitedPulldownSids()) {
-      scroll.destroy()
-    }
   }
 
   /**
@@ -481,7 +496,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
     // 加个判断 小流量下走无限下拉逻辑，干掉 上一页下一页
-    if (flag.isUnlimitedPulldownSids()) {
+    if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
       let shellpage = document.querySelector('.upper')
       shellpage.style.display = 'none'
       let buttonWrapper = document.querySelector('.button-wrapper')
