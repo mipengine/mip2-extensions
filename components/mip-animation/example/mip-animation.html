@@ -11,20 +11,25 @@
       background: #dcdcdc;
       height: 500px;
     }
-
+    .inner-00,
+    .inner-11,
+    .inner-22,
     .inner {
       width: 20px;
       height: 20px;
     }
 
+    .inner-00,
     .inner-0 {
       background: red;
     }
 
+    .inner-11,
     .inner-1 {
       background: yellow;
     }
 
+    .inner-22,
     .inner-2 {
       background: green;
     }
@@ -35,13 +40,97 @@
     </style>
   </head>
   <body>
+    <h2>基本用法</h2>
+    <div class="inner-00"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-00",
+          "keyframes": [
+            {
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(300px)"
+            }
+          ],
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+
+    <h2>媒体查询</h2>
+    <div class="inner-11"></div>
+    <mip-animation trigger="visibility">
+        <script type="application/json">
+          {
+            "selector": ".inner-11",
+            "keyframes": [
+              {
+                "transform": "translateX(0px)"
+              },
+              {
+                "transform": "translateX(300px)"
+              }
+            ],
+            "duration": 1000,
+            "switch": [
+              {
+                "media": "(max-width: 375px)",
+                "keyframes": [
+                  {
+                    "transform": "translateX(0px)"
+                  },
+                  {
+                    "transform": "translateX(200px)"
+                  }
+                ]
+              }
+            ]
+          }
+        </script>
+      </mip-animation>
+
+    <h2>CSS.supports</h2>
+    <div class="inner-22"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-22",
+          "keyframes": [
+            {
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(300px)"
+            }
+          ],
+          "duration": 1000,
+          "switch": [
+            {
+              "supports": "transform: translate3d(0, 0, 0)",
+              "keyframes": [
+                {
+                  "transform": "translateX(0px)"
+                },
+                {
+                  "transform": "translateX(200px)"
+                }
+              ]
+            }
+          ]
+        }
+      </script>
+    </mip-animation>
+
+    <h2>subtargets 和 on 语法</h2>
     <div class="wrapper">
       <div class="inner inner-0"></div>
       <div class="inner inner-1"></div>
       <div class="inner inner-2"></div>
       <div class="inner inner-3"></div>
     </div>
-    <mip-animation trigger-="visibility" id="anim">
+    <mip-animation id="anim">
       <script type="application/json">
         {
           "selector": ".inner",
@@ -59,11 +148,11 @@
               "subtargets": [
                 {
                   "index": 1,
-                  duration: 800
+                  "duration": 800
                 },
                 {
                   "selector": ".inner-3",
-                  duration: 600
+                  "duration": 600
                 }
               ]
             },
@@ -72,11 +161,11 @@
               "subtargets": [
                 {
                   "index": 1,
-                  duration: 10000
+                  "duration": 10000
                 },
                 {
                   "selector": ".inner-3",
-                  duration: 12000
+                  "duration": 12000
                 }
               ]
             }
@@ -85,11 +174,11 @@
           "subtargets": [
             {
               "index": 1,
-              duration: 5000
+              "duration": 5000
             },
             {
               "selector": ".inner-3",
-              duration: 6000
+              "duration": 6000
             }
           ]
         }
