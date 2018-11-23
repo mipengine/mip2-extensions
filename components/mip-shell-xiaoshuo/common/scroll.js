@@ -61,6 +61,7 @@ export default class Scroll {
    */
   start () {
     clearTimeout(timer)
+    console.log(this.isScrollToPageBottom())
     if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
       timer = setTimeout(this.start.bind(this), 500)
     } else if (this.isScrollToPageBottom()) {
@@ -70,7 +71,7 @@ export default class Scroll {
       if (!pageIdQuery.next) {
         if (this.flag.next) {
           this.flag.next = false
-          this.noChapter('loading1', '您已阅读完全部更新章节')
+          this.loadingStr('loading1', '您已阅读完全部更新章节')
           this.loading = false
         }
         clearTimeout(timer)
@@ -86,7 +87,7 @@ export default class Scroll {
       if (!pageIdQuery.pre) {
         if (this.flag.pre) {
           this.flag.pre = false
-          this.noChapter('loading2', '您已阅读到第一章')
+          this.loadingStr('loading2', '您已阅读到第一章')
           this.loading = false
         }
         clearTimeout(timer)
@@ -117,7 +118,7 @@ export default class Scroll {
         this.start()
       }
     }).catch(() => {
-      this.getError()
+      this.loadingError('loading1')
     })
   }
 
@@ -136,7 +137,7 @@ export default class Scroll {
         setTimeout(this.start.bind(this), 0)
       }
     }).catch(() => {
-      this.getError()
+      this.loadingError('loading2')
     })
   }
 
@@ -186,7 +187,7 @@ export default class Scroll {
     return {w: document.documentElement.clientWidth, h: document.documentElement.clientHeight}
   }
 
-  noChapter (id, str) {
+  loadingStr (id, str) {
     let div = document.getElementById(id)
     div.querySelector('.circle').style.display = 'none'
     div.querySelector('.loading-label').innerHTML = str
@@ -229,14 +230,15 @@ export default class Scroll {
    *
    * @private
    */
-  getError () {
-    this.loadingError()
-  }
 
-  loadingError () {
-    let div = document.getElementById('loading')
-    if (div) {
-      div.innerHTML = '加载失败, 点击刷新'
+  loadingError (id) {
+    clearTimeout(timer)
+    this.loadingStr(id, '加载失败，点击刷新')
+    this.loading = false
+    let dom = document.getElementById(id)
+    dom.onclick = () => {
+      dom.innerHTML = loadingDom()
+      this.start()
     }
   }
 }
