@@ -94,6 +94,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     // 基于预渲染特性，预渲染会以修改前的模式渲染，修改设置后需要让新设置应用于页面
+    // 小流量验证书籍为 雪中悍刀行
     if (this.currentPageMeta.header.title === '雪中悍刀行') {
       this.isReaderPrerender = true
     }
@@ -248,19 +249,15 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     //   window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
     //     .then(iframes => {
     //       console.log('prerender done')
-    //       this.updateFooterDom()
     //     }).catch(err => {
-    //       console.error(new Error(err)) // 抛出错误
-    //       this.updateFooterDom()
+    //       console.error(err) // 抛出错误
     //     })
     // } else {
     //   window.MIP.viewer.page.prerender([nextPageUrl, prePageUrl])
     //     .then(iframes => {
     //       console.log('prerender done')
-    //       this.updateFooterDom()
     //     }).catch(err => {
-    //       console.error(new Error(err)) // 抛出错误
-    //       this.updateFooterDom()
+    //       console.error(err) // 抛出错误
     //     })
     // }
     // turun env
@@ -401,25 +398,13 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    * @param {Object} params 翻页的信息
    */
   afterSwitchPage (params) {
+    // 翻页更新底部链接
     this.updateFooterDom()
     // 如果不是预渲染的页面而是已经打开过的页面，手动触发预渲染
     if (!params.isPrerender && !params.newPage) {
       let jsonld = getJsonld(getCurrentWindow())
       this.readerPrerender(jsonld)
     }
-    // 预渲染兜底机制：预渲染超过3s未返回resolve即视为异常，强制刷新底部footer。
-    // if (this.isReaderPrerender) {
-    //   if (this.currentPageMeta.pageType === 'page') {
-    //     setTimeout(() => {
-    //       let currentDocument = MIP.viewer.page.isRootPage ? window.document : window.parent.document
-    //       let pageBtn = currentDocument.querySelectorAll('.page-button')
-    //       if (pageBtn[0].getAttribute('href') === '' && pageBtn[1].getAttribute('href') === '') {
-    //         console.warn('after 3s,prerender failed,force refresh the Footer')
-    //         this.updateFooterDom()
-    //       }
-    //     }, 3000)
-    //   }
-    // }
     // 用于记录页面加载完成的时间
     const startRenderTime = novelEvents.timer
     const currentWindow = getCurrentWindow()
