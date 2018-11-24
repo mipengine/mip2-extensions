@@ -114,7 +114,7 @@ export default class Scroll {
         pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
         currentWindow.MIP.viewer.page.children = []
         if (!isRootPage) {
-          currentWindow.parent.MIP.viewer.page.children = []
+          currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
         }
         iframe[0].parentNode.removeChild(iframe[0])
         this.tcLog()
@@ -137,7 +137,7 @@ export default class Scroll {
         pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
         currentWindow.MIP.viewer.page.children = []
         if (!isRootPage) {
-          currentWindow.parent.MIP.viewer.page.children = []
+          currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
         }
         iframe[0].parentNode.removeChild(iframe[0])
         this.tcLog()
