@@ -54,9 +54,9 @@ class footer {
     for (let i = 0; i < pageBtn.length; i++) {
       pageBtn[i].addEventListener('click', () => {
         // 关闭工具栏
-        // window.MIP.viewer.page.emitCustomEvent(window, false, {
-        //   name: 'btnClickHide'
-        // })
+        window.MIP.viewer.page.emitCustomEvent(window, false, {
+          name: 'btnClickHide'
+        })
         let to = pageBtn[i].getAttribute('href')
         if (to) {
           // 按钮有href，发送open请求，并清空按钮的href

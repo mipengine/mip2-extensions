@@ -15,10 +15,10 @@ import {
 
 import NovelEvents from './common/events'
 import Strategy from './ad/strategyControl'
-import {initAdByCache} from './ad/strategyCompute'
-import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
+import { initAdByCache } from './ad/strategyCompute'
+import { getJsonld, scrollBoundary, getCurrentWindow } from './common/util'
 import state from './common/state'
-import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './common/log' // 日志
+import { sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink } from './common/log' // 日志
 
 let novelEvents = new NovelEvents()
 let strategy = new Strategy()
@@ -94,7 +94,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     // 基于预渲染特性，预渲染会以修改前的模式渲染，修改设置后需要让新设置应用于页面
-    // 小流量验证书籍为 雪中悍刀行
     if (this.currentPageMeta.header.title === '雪中悍刀行') {
       this.isReaderPrerender = true
     }
@@ -104,7 +103,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         this.resetNavigatorBtn()
       }
     }
-    const {isRootPage, novelInstance, originalUrl} = state(window)
+    const { isRootPage, novelInstance, originalUrl } = state(window)
     const pageType = novelInstance.currentPageMeta.pageType || ''
     let zonghengPattern = /www.xmkanshu.com/g
     let iqiyiPattern = /wenxue.m.iqiyi.com/g
@@ -185,8 +184,14 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 获取当前页面的数据，以及需要预渲染的链接
     let jsonld = getJsonld(getCurrentWindow())
     // 预渲染
-    if (this.currentPageMeta.pageType === 'page' && this.isReaderPrerender) {
-      this.readerPrerender(jsonld)
+    if (this.currentPageMeta.pageType === 'page') {
+      if (this.isReaderPrerender) {
+        this.readerPrerender(jsonld)
+      }
+      // 非root页才会去重新更新底部url
+      if (!isRootPage) {
+        this.updateFooterDom()
+      }
     }
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
       name: 'current-page-ready'
@@ -236,18 +241,18 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // if (window.MIP.util.isCacheUrl(location.href)) { // 处于cache下，需要转换cacheUrl
     //   window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
     //     .catch(err => {
-    //       console.warn(err) // 打印错误
+    //       console.error(new Error(err)) // 抛出错误
     //     })
     // } else {
     //   window.MIP.viewer.page.prerender([nextPageUrl, prePageUrl])
     //     .catch(err => {
-    //       console.warn(err) // 打印错误
+    //       console.error(new Error(err)) // 抛出错误
     //     })
     // }
     // turun env
     window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
       .catch(err => {
-        console.warn(new Error(err)) // 打印错误
+        console.error(new Error(err)) // 抛出错误
       })
   }
 
@@ -257,14 +262,13 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    * @param {string} url 需要被拼接的url
    * @returns {string} 返回的cacheURl
    */
-  // getCacheUrl (url) {
+  // getCacheUrl(url) {
   //   if (url) {
   //     let netUrl = url.split('/')[2].split('.').join('-')
   //     return `https://${netUrl}.mipcdn.com${MIP.util.makeCacheUrl(url)}`
   //   }
   //   return ''
   // }
-
   // turun env
   getCacheUrl (url) {
     if (url) {
@@ -280,38 +284,25 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    */
   updateFooterDom () {
     // 页面配置的数据
-    let footerConfig
+    let footerConfig = getJsonld(getCurrentWindow())
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
-    const currentWindow = isRootPage ? window : window.parent
-    try {
-      footerConfig = getJsonld(getCurrentWindow())
-      if (!footerConfig) {
-        // 抛出错误
-        throw new Error('不能获取footerConfig')
-      }
-    } catch (error) {
-      console.warn(error)
+    let currentWindow = isRootPage ? window : window.parent
+    // if (window.MIP.util.isCacheUrl(location.href) && this.isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
+    //   footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+    //   footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+    // }
+    // turun env
+    if (this.isReaderPrerender) {
+      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
     }
-    if (!footerConfig) {
-      this.updateFooterDom()
-    } else {
-      // if (window.MIP.util.isCacheUrl(location.href) && this.isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
-      //   footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-      //   footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-      // }
-      // turun env
-      if (this.isReaderPrerender) {
-        footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-        footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+    window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
+      name: 'updateShellFooter',
+      data: {
+        'jsonld': footerConfig
       }
-      window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
-        name: 'updateShellFooter',
-        data: {
-          'jsonld': footerConfig
-        }
-      })
-    }
+    })
   }
 
   /**
@@ -391,7 +382,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   bindRootEvents () {
     super.bindRootEvents()
     // 承接emit事件：根页面底部控制栏内容更新
-    window.addEventListener('updateShellFooter', e => {
+    window.addEventListener('updateShellFooter', (e) => {
       this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
     })
     // 点击按钮关闭工具栏
