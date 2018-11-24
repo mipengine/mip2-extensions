@@ -188,9 +188,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     if (this.currentPageMeta.pageType === 'page' && this.isReaderPrerender) {
       this.readerPrerender(jsonld)
     }
-    if (!isRootPage) {
-      this.updateFooterDom()
-    }
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
       name: 'current-page-ready'
     })
