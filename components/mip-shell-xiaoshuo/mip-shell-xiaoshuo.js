@@ -238,25 +238,19 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     let prePageUrl = jsonld.previousPage.url
     // if (window.MIP.util.isCacheUrl(location.href)) { // 处于cache下，需要转换cacheUrl
     //   window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
-    //     .then(iframes => {
-    //       console.log('prerender done')
-    //     }).catch(err => {
-    //       console.error(err) // 抛出错误
+    //     .catch(err => {
+    //       console.warn(err) // 打印错误
     //     })
     // } else {
     //   window.MIP.viewer.page.prerender([nextPageUrl, prePageUrl])
-    //     .then(iframes => {
-    //       console.log('prerender done')
-    //     }).catch(err => {
-    //       console.error(err) // 抛出错误
+    //     .catch(err => {
+    //       console.warn(err) // 打印错误
     //     })
     // }
     // turun env
     window.MIP.viewer.page.prerender([this.getCacheUrl(nextPageUrl), this.getCacheUrl(prePageUrl)])
-      .then(iframes => {
-        console.log('prerender done')
-      }).catch(err => {
-        console.error(new Error(err)) // 抛出错误
+      .catch(err => {
+        console.warn(new Error(err)) // 打印错误
       })
   }
 
@@ -303,29 +297,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       console.warn(error)
     }
     if (!footerConfig) {
-      setTimeout(() => {
-        footerConfig = getJsonld(getCurrentWindow())
-        if (!footerConfig) {
-          // 再次获取footerConfig失败
-          console.warn('不能获取footerConfig')
-          return
-        }
-        // if (window.MIP.util.isCacheUrl(location.href) && this.isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
-        //   footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-        //   footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-        // }
-        // turun env
-        if (this.isReaderPrerender) {
-          footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-          footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-        }
-        window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
-          name: 'updateShellFooter',
-          data: {
-            'jsonld': footerConfig
-          }
-        })
-      }, 1000)
+      this.updateFooterDom()
     } else {
       // if (window.MIP.util.isCacheUrl(location.href) && this.isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
       //   footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
@@ -427,10 +399,11 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 点击按钮关闭工具栏
     window.addEventListener('btnClickHide', e => {
-      this.footer.hide()
-      this.header.hide()
-      // 关闭黑色遮罩
-      this.toggleDOM(this.$buttonMask, false)
+      console.log('btnClickHide')
+      // this.footer.hide()
+      // this.header.hide()
+      // // 关闭黑色遮罩
+      // this.toggleDOM(this.$buttonMask, false)
     })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
