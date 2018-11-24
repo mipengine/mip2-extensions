@@ -185,20 +185,11 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 获取当前页面的数据，以及需要预渲染的链接
     let jsonld = getJsonld(getCurrentWindow())
     // 预渲染
-    if (this.currentPageMeta.pageType === 'page') {
-      if (this.isReaderPrerender) {
-        this.readerPrerender(jsonld)
-      } else {
-        // 非root页才会去重新更新底部url
-        if (!isRootPage) {
-          window.MIP.viewer.page.emitCustomEvent(window.parent, false, {
-            name: 'updateShellFooter',
-            data: {
-              'jsonld': jsonld
-            }
-          })
-        }
-      }
+    if (this.currentPageMeta.pageType === 'page' && this.isReaderPrerender) {
+      this.readerPrerender(jsonld)
+    }
+    if (!isRootPage) {
+      this.updateFooterDom()
     }
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
       name: 'current-page-ready'
@@ -319,13 +310,15 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
           console.warn('不能获取footerConfig')
           return
         }
-        // if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
+        // if (window.MIP.util.isCacheUrl(location.href) && this.isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
         //   footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
         //   footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
         // }
         // turun env
-        footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-        footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+        if (this.isReaderPrerender) {
+          footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+          footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+        }
         window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
           name: 'updateShellFooter',
           data: {
@@ -334,13 +327,15 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         })
       }, 1000)
     } else {
-      // if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
+      // if (window.MIP.util.isCacheUrl(location.href) && this.isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
       //   footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
       //   footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
       // }
       // turun env
-      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+      if (this.isReaderPrerender) {
+        footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+        footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+      }
       window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
         name: 'updateShellFooter',
         data: {
@@ -398,8 +393,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    * @param {Object} params 翻页的信息
    */
   afterSwitchPage (params) {
-    // 翻页更新底部链接
-    this.updateFooterDom()
     // 如果不是预渲染的页面而是已经打开过的页面，手动触发预渲染
     if (!params.isPrerender && !params.newPage) {
       let jsonld = getJsonld(getCurrentWindow())
