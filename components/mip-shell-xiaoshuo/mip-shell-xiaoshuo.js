@@ -399,11 +399,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 点击按钮关闭工具栏
     window.addEventListener('btnClickHide', e => {
-      console.log('btnClickHide')
-      // this.footer.hide()
-      // this.header.hide()
-      // // 关闭黑色遮罩
-      // this.toggleDOM(this.$buttonMask, false)
+      this.footer.hide()
+      this.header.hide()
+      // 关闭黑色遮罩
+      this.toggleDOM(this.$buttonMask, false)
     })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
