@@ -7,7 +7,7 @@ import {isCacheUrl} from './util'
 
 class Flag {
   constructor () {
-    this.bkid = ['377566031']
+    this.bkid = ['377566031', '228265', '32544050', '494196121', '831262', '61031200']
   }
   /**
    * 判断是否命中无限下拉的bookid
