@@ -1,6 +1,7 @@
 import {setTimeout, clearTimeout} from 'timers'
 import {sendTCLog} from './log'
 import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow} from './util'
+import state from './state'
 import './../mip-shell-xiaoshuo.less'
 
 let currentWindow = getCurrentWindow()
@@ -61,7 +62,6 @@ export default class Scroll {
    */
   start () {
     clearTimeout(timer)
-    console.log(this.isScrollToPageBottom())
     if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
       timer = setTimeout(this.start.bind(this), 500)
     } else if (this.isScrollToPageBottom()) {
@@ -104,6 +104,7 @@ export default class Scroll {
   }
 
   prerenderNext (url) {
+    const {isRootPage} = state(window)
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
@@ -112,6 +113,9 @@ export default class Scroll {
         this.appendDom(dom, id)
         pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
         currentWindow.MIP.viewer.page.children = []
+        if (!isRootPage) {
+          currentWindow.parent.MIP.viewer.page.children = []
+        }
         iframe[0].parentNode.removeChild(iframe[0])
         this.tcLog()
         this.loading = false
@@ -123,6 +127,7 @@ export default class Scroll {
   }
 
   prerenderPre (url) {
+    const {isRootPage} = state(window)
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
@@ -131,6 +136,9 @@ export default class Scroll {
         this.insertDom(dom, id)
         pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
         currentWindow.MIP.viewer.page.children = []
+        if (!isRootPage) {
+          currentWindow.parent.MIP.viewer.page.children = []
+        }
         iframe[0].parentNode.removeChild(iframe[0])
         this.tcLog()
         this.loading = false

@@ -495,14 +495,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.fontSize = new FontSize()
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
-    // 加个判断 小流量下走无限下拉逻辑，干掉 上一页下一页
-    if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
-      let shellpage = document.querySelector('.upper')
-      shellpage.style.display = 'none'
-      let buttonWrapper = document.querySelector('.button-wrapper')
-      buttonWrapper.style.height = '100%'
-      buttonWrapper.style.alignItems = 'center'
-    }
   }
 
   /**
@@ -553,6 +545,14 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         action: 'backButton'
       })
     })
+    // 加个判断 小流量下走无限下拉逻辑，干掉 上一页下一页
+    if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
+      let shellpage = document.querySelector('.upper')
+      shellpage.style.display = 'none'
+      let buttonWrapper = document.querySelector('.button-wrapper')
+      buttonWrapper.style.height = '100%'
+      buttonWrapper.style.alignItems = 'center'
+    }
   }
 
   // 基类方法: 处理头部自定义按钮点击事件，由于没有按钮，置空
