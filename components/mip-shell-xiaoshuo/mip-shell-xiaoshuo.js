@@ -377,7 +377,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    */
   beforeSwitchPage (params) {
     let url = params.targetPageId
-    if (flag.isNovelShell(this.currentPageMeta.pageType)) {
+    if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
       let isCacheUrl = MIP.util.isCacheUrl(url)
       if (isCacheUrl) {
         url = MIP.util.parseCacheUrl(url)
