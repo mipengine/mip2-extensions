@@ -355,7 +355,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    */
   afterSwitchPage (params) {
     // 如果不是预渲染的页面而是已经打开过的页面，手动触发预渲染
-    if (!params.isPrerender && !params.newPage) {
+    if (!params.isPrerender && !params.newPage && this.isReaderPrerender) {
       let jsonld = getJsonld(getCurrentWindow())
       this.readerPrerender(jsonld)
     }
