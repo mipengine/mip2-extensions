@@ -94,9 +94,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     // 基于预渲染特性，预渲染会以修改前的模式渲染，修改设置后需要让新设置应用于页面
-    if (this.currentPageMeta.header.title === '雪中悍刀行') {
-      this.isReaderPrerender = true
-    }
+    // 紧急高优上线mip-env 先关掉预渲染
+    // if (this.currentPageMeta.header.title === '雪中悍刀行') {
+    //   this.isReaderPrerender = true
+    // }
     if (this.isReaderPrerender) {
       if (this.currentPageMeta.pageType === 'page') {
         this.__getConfig()
