@@ -34,7 +34,48 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 阅读器内部预渲染开关
     this.isReaderPrerender = false
   }
-
+  /**
+   * 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.adShow
+   *
+   * @param {string} pageType 页面类型 page detail catalog ...
+   * @param {string} site 区分站点  目前只有 zongheng iqiyi
+   */
+  showAdLog (pageType, site) {
+    let old
+    /**
+     * 观察者模式监听变量变化，变量变化执行函数
+     *
+     * @param {string} oldVal 改变前的值
+     * @param {string} newVal 改变后的值
+    */
+    function observer (oldVal, newVal) {
+      if ((newVal === true) && (pageType !== 'detail')) {
+        sendTCLog('interaction', {
+          type: 'o',
+          action: 'adShow'
+        }, {
+          show: 'adShow',
+          hasAd: true,
+          site: site
+        })
+        // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
+        window.MIP.adShow = false
+      }
+    }
+    // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
+    Object.defineProperty(window.MIP, 'adShow', {
+      enumerable: true,
+      configurable: true,
+      get: function () {
+        return old
+      },
+      set: function (val) {
+        // 调用变量改变时处理函数
+        observer(old, val)
+        old = val
+      }
+    })
+  }
   // 通过小说JS给dom添加预渲染字段
   connectedCallback () {
     // 从结果页进入小说阅读页加上预渲染的标识prerender，但是内部的每页不能加，会影响翻页内的预渲染
@@ -118,7 +159,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       site = 'iqiyi'
     }
     sendTCLog('interaction', {
-      type: 'b',
+      type: 'o',
       action: 'pageShow'
     }, {
       show: 'pageShow',
@@ -197,39 +238,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
       name: 'current-page-ready'
     })
-
-    // 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.ad
-    setTimeout(() => {
-      let name
-      window.MIP.ad = {}
-      function observer (oldVal, newVal) {
-        if (newVal === true && (pageType !== 'detail')) {
-          sendTCLog('interaction', {
-            type: 'b',
-            action: 'adShow'
-          }, {
-            show: 'adShow',
-            hasAd: true,
-            site: site
-          })
-          // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
-          window.MIP.ad.show = false
-        }
-      }
-      // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
-      Object.defineProperty(window.MIP.ad, 'show', {
-        enumerable: true,
-        configurable: true,
-        get: function () {
-          return name
-        },
-        set: function (val) {
-          // 调用处理函数
-          observer(name, val)
-          name = val
-        }
-      })
-    }, 0)
+    // 观察者模式监听广告渲染是否成功字段 window.MIP.adShow
+    this.showAdLog(pageType, site)
   }
   /**
    * 小说预渲染
