@@ -49,21 +49,6 @@ class footer {
       $footerWrapper.removeChild($footerWrapper.querySelector('.mip-shell-footer'))
       $footerWrapper.appendChild($footer)
     }
-    // 修改a标签为span，由我们去控制怎么发送open事件
-    let pageBtn = $footerWrapper.querySelectorAll('.page-button')
-    for (let i = 0; i < pageBtn.length; i++) {
-      pageBtn[i].addEventListener('click', () => {
-        let to = pageBtn[i].getAttribute('href')
-        if (to) {
-          // 按钮有href，发送open请求，并清空按钮的href
-          for (let i = 0; i < pageBtn.length; i++) {
-            pageBtn[i].setAttribute('href', '')
-            this.showCircleAnimate(pageBtn[i], true)
-          }
-          window.MIP.viewer.open(to, { replace: true, cacheFirst: true })
-        }
-      })
-    }
     return $footerWrapper
   }
 
@@ -91,27 +76,21 @@ class footer {
 
     // 创建底部按钮 HTML
     let footerHTML = `
-      <div class="upper mip-border mip-border-bottom">
-          <span from-cache cache-first class="page-button page-previous" mip-link href="" replace>
-              <i class="icon gap-right-small icon-left"></i>
-              <svg viewBox="25 25 50 50" class="circular">
-                <circle cx="50" cy="50" r="20" fill="none" class="path"/>
-              </svg>
-              ${previous}
-          </span>
-          <span from-cache cache-first class="page-button page-next" mip-link href="" replace>
-              ${next}
-              <i class="icon gap-left-small icon-right"></i>
-              <svg viewBox="25 25 50 50" class="circular">
-                <circle cx="50" cy="50" r="20" fill="none" class="path"/>
-              </svg>
-          </span>
-      </div>
-      <div class="button-wrapper">
-          ${renderFooterButtonGroup(this.config.actionGroup)}
-      </div>
-      <div class="mip-xiaoshuo-settings">${settingHtml()}</div>
-    `
+        <div class="upper mip-border mip-border-bottom">
+            <a from-cache class="page-button page-previous" mip-link href="" replace>
+                <i class="icon gap-right-small icon-left"></i>
+                ${previous}
+            </a>
+            <a from-cache class="page-button page-next" mip-link href="" replace>
+                ${next}
+                <i class="icon gap-left-small icon-right"></i>
+            </a>
+        </div>
+        <div class="button-wrapper">
+            ${renderFooterButtonGroup(this.config.actionGroup)}
+        </div>
+        <div class="mip-xiaoshuo-settings">${settingHtml()}</div>
+        `
     return footerHTML
   }
 
@@ -143,35 +122,7 @@ class footer {
     nextButton.setAttribute('href', nextHref)
     nextButton.classList.remove('disabled')
     if (!nextHref) nextButton.classList.add('disabled')
-    this.showCircleAnimate(previousButton, false)
-    this.showCircleAnimate(nextButton, false)
   }
-
-  /**
-   *
-   * @param {HTMLElement} parentDom 父级dom
-   * @param {boolean} show 是否展示circle，底部翻页按钮的loading动画
-   */
-  showCircleAnimate (parentDom, show) {
-    let oIcon = parentDom.querySelector('i')
-    let oCircle = parentDom.querySelector('svg')
-    if (show) {
-      MIP.util.css(oIcon, {
-        'display': 'none'
-      })
-      MIP.util.css(oCircle, {
-        'display': 'inline-block'
-      })
-    } else {
-      MIP.util.css(oIcon, {
-        'display': 'inline-block'
-      })
-      MIP.util.css(oCircle, {
-        'display': 'none'
-      })
-    }
-  }
-
   // 显示底bar
   show (shellElement) {
     let footer = this
