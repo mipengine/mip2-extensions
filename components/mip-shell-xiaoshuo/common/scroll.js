@@ -1,5 +1,4 @@
 import {setTimeout, clearTimeout} from 'timers'
-import {sendTCLog} from './log'
 import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow} from './util'
 import state from './state'
 import './../mip-shell-xiaoshuo.less'
@@ -32,6 +31,7 @@ export default class Scroll {
       next: true
     }
     this.loading = false
+    this.loadingErrorFlag = false
   }
   /**
    * 初始化小说阅读器环境
@@ -105,7 +105,11 @@ export default class Scroll {
 
   prerenderNext (url) {
     const {isRootPage} = state(window)
+    let weakTimer = this.weakNetwork('loading1')
     window.MIP.viewer.page.prerender([url]).then(iframe => {
+      if (this.loadingErrorFlag) {
+        return
+      }
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let jsonld = getJsonld(iframe[0].contentWindow)
@@ -117,9 +121,12 @@ export default class Scroll {
           currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
         }
         iframe[0].parentNode.removeChild(iframe[0])
-        this.tcLog()
+        this.saLog(jsonld, currentWindow)
         this.loading = false
+        clearTimeout(weakTimer)
         this.start()
+      } else {
+        this.loadingError('loading1')
       }
     }).catch(() => {
       this.loadingError('loading1')
@@ -128,8 +135,10 @@ export default class Scroll {
 
   prerenderPre (url) {
     const {isRootPage} = state(window)
+    let weakTimer = this.weakNetwork('loading2')
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
+        window.sa.quick('autoTrack') // 神策展现埋点
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let jsonld = getJsonld(iframe[0].contentWindow)
         let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
@@ -140,9 +149,12 @@ export default class Scroll {
           currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
         }
         iframe[0].parentNode.removeChild(iframe[0])
-        this.tcLog()
+        this.saLog(jsonld, currentWindow)
         this.loading = false
+        clearTimeout(weakTimer)
         setTimeout(this.start.bind(this), 0)
+      } else {
+        this.loadingError('loading2')
       }
     }).catch(() => {
       this.loadingError('loading2')
@@ -194,13 +206,6 @@ export default class Scroll {
   getViewportSize (w) {
     return {w: document.documentElement.clientWidth, h: document.documentElement.clientHeight}
   }
-
-  loadingStr (id, str) {
-    let div = document.getElementById(id)
-    div.querySelector('.circle').style.display = 'none'
-    div.querySelector('.loading-label').innerHTML = str
-  }
-
   /**
    * 判断滚动条是否在页面底部
    *
@@ -218,11 +223,12 @@ export default class Scroll {
    *
    * @private
    */
-  tcLog () {
-    sendTCLog('interaction', {
-      type: 'o',
-      action: 'unlimitedPulldownPageShow'
-    })
+  saLog (jsonld, currentWindow) {
+    window.sa.track('$pageview', {
+      $title: jsonld.currentPage.chapterName,
+      $url: currentWindow.location.href,
+      $referrer: currentWindow.document.referrer
+    }) // 神策展现埋点,目前只针对纵横
   }
   /**
    * 判断是否触顶
@@ -234,19 +240,47 @@ export default class Scroll {
     return scrollHeight < 2
   }
   /**
+   *
+   *
+   */
+  loadingStr (id, str) {
+    let div = document.getElementById(id)
+    div.querySelector('.circle').style.display = 'none'
+    div.querySelector('.loading-label').innerHTML = str
+  }
+  /**
    * 加载失败函数
    *
    * @private
    */
-
   loadingError (id) {
     clearTimeout(timer)
     this.loadingStr(id, '加载失败，点击刷新')
     this.loading = false
     let dom = document.getElementById(id)
-    dom.onclick = () => {
-      dom.innerHTML = loadingDom()
-      this.start()
-    }
+    let one = 1 // 防止事件重复绑定
+    dom.addEventListener('click', () => {
+      if (one) {
+        dom.innerHTML = loadingDom()
+        this.loadingErrorFlag = false
+        this.start()
+        dom.removeEventListener('click', () => {})
+        one = 0
+      }
+    })
+  }
+  /**
+   * 弱网策略
+   *
+   * @private
+   */
+  weakNetwork (id) {
+    timer = setTimeout(() => {
+      if (this.loading) {
+        this.loadingError(id)
+        this.loadingErrorFlag = true
+      }
+    }, 5000)
+    return timer
   }
 }
