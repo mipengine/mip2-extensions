@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    </style>
+  </head>
+  <body>
+    <h2>二次公式</h2>
+    <mip-mathml layout="container" formula="\[x = {-b \pm \sqrt{b^2-4ac} \over 2a}.\]"></mip-mathml>
+    <h2>柯西积分公式</h2>
+    <mip-mathml layout="container" formula="\[f(a) = \frac{1}{2\pi i} \oint\frac{f(z)}{z-a}dz\]"></mip-mathml>
+    <h2>余弦的双角公式</h2>
+    <mip-mathml layout="container" formula="\[ \cos(θ+φ)=\cos(θ)\cos(φ)−\sin(θ)\sin(φ) \]"></mip-mathml>
+    <h2>内敛公式</h2>
+    这个例子让这个公式内敛在文本当中 <mip-mathml layout="container" inline formula="\[ \cos(θ+φ) \]"></mip-mathml> 这个需要额外的 css 去设置 
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-mathml/mip-mathml.js"></script>
+  </body>
+</html>
