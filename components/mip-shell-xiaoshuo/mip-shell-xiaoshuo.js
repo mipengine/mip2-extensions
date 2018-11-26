@@ -94,10 +94,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     // 基于预渲染特性，预渲染会以修改前的模式渲染，修改设置后需要让新设置应用于页面
-    // 紧急高优上线mip-env 先关掉预渲染
-    // if (this.currentPageMeta.header.title === '雪中悍刀行') {
-    //   this.isReaderPrerender = true
-    // }
+    console.log(this.currentPageMeta.header.title)
+    if (this.currentPageMeta.header.title.indexOf('雪中悍刀行') !== -1 && navigator.userAgent.indexOf(/iPhone OS 8/g) === -1) {
+      this.isReaderPrerender = true
+    }
     if (this.isReaderPrerender) {
       if (this.currentPageMeta.pageType === 'page') {
         this.__getConfig()
@@ -188,10 +188,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     if (this.currentPageMeta.pageType === 'page') {
       if (this.isReaderPrerender) {
         this.readerPrerender(jsonld)
-      }
-      // 非root页才会去重新更新底部url
-      if (!isRootPage) {
-        this.updateFooterDom()
       }
     }
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
@@ -284,6 +280,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    *
    */
   updateFooterDom () {
+    console.log('更新底部链接')
     // 页面配置的数据
     let footerConfig = getJsonld(getCurrentWindow())
     const isRootPage = MIP.viewer.page.isRootPage
@@ -395,6 +392,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
+      // 唤起设置栏才更新底部链接
+      this.updateFooterDom()
       this.footer.show(this)
       this.header.show()
       let swipeDelete = new util.Gesture(this.$buttonMask, {
