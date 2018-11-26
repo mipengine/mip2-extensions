@@ -53,6 +53,7 @@
     "husky": "^1.0.0-rc.8",
     "mip2": "^1.4.3",
     "stylelint": "9.6.0",
-    "stylelint-config-standard": "^18.2.0"
+    "stylelint-config-standard": "^18.2.0",
+    "web-animations-js": "^2.3.1"
   }
 }

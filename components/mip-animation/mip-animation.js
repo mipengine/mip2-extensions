@@ -7,7 +7,7 @@ import WebAnimation from './web-animation'
 import playState from './play-state'
 // TODO See https://github.com/ampproject/amphtml/issues/18612 and
 // https://github.com/web-animations/web-animations-js/issues/46
-import 'web-animation/web-animation.min.js'
+import 'web-animations-js/web-animations.min.js'
 
 const {CustomElement, util: {jsonParse}} = MIP
 
