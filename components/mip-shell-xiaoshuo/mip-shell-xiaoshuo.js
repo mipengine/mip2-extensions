@@ -397,10 +397,14 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 加个判断 小流量下走无限下拉逻辑，干掉 上一页下一页
     if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
       let shellpage = document.querySelector('.upper')
-      shellpage.style.display = 'none'
+      if (shellpage) {
+        shellpage.style.display = 'none'
+      }
       let buttonWrapper = document.querySelector('.button-wrapper')
-      buttonWrapper.style.height = '100%'
-      buttonWrapper.style.alignItems = 'center'
+      if (buttonWrapper) {
+        buttonWrapper.style.height = '100%'
+        buttonWrapper.style.alignItems = 'center'
+      }
     }
   }
 
