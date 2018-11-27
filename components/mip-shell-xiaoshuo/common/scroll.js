@@ -1,5 +1,5 @@
 import {setTimeout, clearTimeout} from 'timers'
-import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow} from './util'
+import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow, getZhBkid, getZhCrid} from './util'
 import state from './state'
 import './../mip-shell-xiaoshuo.less'
 
@@ -105,10 +105,6 @@ export default class Scroll {
     }
   }
 
-  destroy () {
-    clearTimeout(this.timer)
-  }
-
   prerenderNext (url) {
     const {isRootPage} = state(window)
     let weakTimer = this.weakNetwork('loading1')
@@ -127,9 +123,9 @@ export default class Scroll {
           currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
         }
         iframe[0].parentNode.removeChild(iframe[0])
-        this.saLog(jsonld, currentWindow)
         this.loading = false
         clearTimeout(weakTimer)
+        this.saLog(jsonld, currentWindow) // 纵横神策埋点
         this.start()
       } else {
         this.loadingError('loading1')
@@ -144,7 +140,6 @@ export default class Scroll {
     let weakTimer = this.weakNetwork('loading2')
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
-        window.sa.quick('autoTrack') // 神策展现埋点
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let jsonld = getJsonld(iframe[0].contentWindow)
         let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
@@ -158,6 +153,7 @@ export default class Scroll {
         this.saLog(jsonld, currentWindow)
         this.loading = false
         clearTimeout(weakTimer)
+        window.sa.quick('autoTrack') // 神策展现埋点
         setTimeout(this.start.bind(this), 0)
       } else {
         this.loadingError('loading2')
@@ -230,10 +226,17 @@ export default class Scroll {
    * @private
    */
   saLog (jsonld, currentWindow) {
-    window.sa.track('$pageview', {
-      $title: jsonld.currentPage.chapterName,
+    let bkid = getZhBkid()
+    let crid = getZhCrid()
+    window.sa.track('viewReadPage2', {
+      $title: decodeURI(jsonld.currentPage.chapterName),
       $url: currentWindow.location.href,
-      $referrer: currentWindow.document.referrer
+      $referrer: currentWindow.document.referrer,
+      paltform: '10000',
+      channel: 'bdgfh',
+      'page_path': '/book/mip/read',
+      'book_id': bkid,
+      'chapter_id': crid
     }) // 神策展现埋点,目前只针对纵横
   }
   /**

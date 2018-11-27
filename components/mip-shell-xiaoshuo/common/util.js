@@ -138,8 +138,9 @@ export const getCacheUrl = (url) => {
 }
 
 /**
- *
  * 判断是否为cache url
+ *
+ * @param {string} url 目标url
  */
 export const isCacheUrl = (url) => {
   return window.MIP.util.isCacheUrl(url)
@@ -154,4 +155,28 @@ export const getPrerenderJsonld = () => {
   pageId = getCacheUrl(pageId)
   let pageInfo = window.MIP.viewer.page.getPageById(pageId)
   return getJsonld(pageInfo.targetWindow)
+}
+/**
+ *
+ * 纵横页面获取bookid
+ */
+export const getZhBkid = () => {
+  let url = window.location.href
+  let reg = /(bkid=)\S*?&/
+  let bkid = url.match(reg)
+  bkid = bkid[0].replace('bkid=', '')
+  bkid = bkid.replace('&', '')
+  return bkid
+}
+/**
+ *
+ * 纵横页面获取chapter_id
+ */
+export const getZhCrid = () => {
+  let url = window.location.href
+  let reg = /(crid=)\S*?&/
+  let crid = url.match(reg)
+  crid = crid[0].replace('crid=', '')
+  crid = crid.replace('&', '')
+  return crid
 }

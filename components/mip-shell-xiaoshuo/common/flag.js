@@ -3,7 +3,7 @@
  * @author: guoshuang
  */
 
-import {isCacheUrl} from './util'
+import {isCacheUrl, getZhBkid} from './util'
 
 class Flag {
   constructor () {
@@ -17,10 +17,7 @@ class Flag {
   isUnlimitedPulldownSids () {
     let url = window.location.href
     if (!isCacheUrl(url)) { return false }
-    let reg = /(bkid=)\S*?&/
-    let bkid = url.match(reg)
-    bkid = bkid[0].replace('bkid=', '')
-    bkid = bkid.replace('&', '')
+    let bkid = getZhBkid()
     if (this.bkid.indexOf(bkid) > -1) {
       return true
     }
