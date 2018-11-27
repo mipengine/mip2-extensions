@@ -31,6 +31,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     scrollBoundary()
+    // 阅读器内部预渲染开关
+    this.isReaderPrerender = false
   }
 
   // 通过小说JS给dom添加预渲染字段
@@ -351,8 +353,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }, 5000)
   }
 
-  // 基类root方法：绑定页面可被外界调用的事件。
-  // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
+  /**
+   * 基类root方法：绑定页面可被外界调用的事件。
+   * 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
+   */
   bindRootEvents () {
     super.bindRootEvents()
     // 承接emit事件：根页面底部控制栏内容更新
@@ -388,7 +392,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       this.footer.hide()
       this.header.hide()
     })
-
     strategy.eventRootHandler()
     novelEvents.bindRoot()
   }
@@ -408,8 +411,13 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   asyncInitObject () {
     let configMeta = this.currentPageMeta
     // 创建底部 bar
+    let footerConfig = getJsonld(window)
+    if (window.MIP.util.isCacheUrl(location.href) && this.isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
+      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
+      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
+    }
     this.footer = new Footer(configMeta.footer)
-    this.footer.updateDom(getJsonld(window))
+    this.footer.updateDom(footerConfig)
     // 创建目录侧边栏
     this.catalog = new Catalog(configMeta.catalog, configMeta.book)
     this.header = new Header(this.$el)
@@ -419,7 +427,9 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.fontSize.bindDragEvent()
   }
 
-  // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
+  /**
+   * 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
+   */
   unbindHeaderEvents () {
     super.unbindHeaderEvents()
     // 在页面跳转的时候解绑之前页面的点击事件，避免事件重复绑定

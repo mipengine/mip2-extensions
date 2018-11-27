@@ -3,8 +3,8 @@
  * author: liangjiaying <jiaojiaomao220@163.com>
  */
 
-import {settingHtml} from './setting'
-import {sendTCLog} from '../common/log'
+import { settingHtml } from './setting'
+import { sendTCLog } from '../common/log'
 
 let DEFAULTS = {
   theme: 'default',
@@ -120,7 +120,7 @@ class footer {
     const extend = MIP.util.fn.extend
     try {
       config = extend(config, JSON.parse(storage.get('mip-shell-xiaoshuo-mode')))
-    } catch (e) {}
+    } catch (e) { }
     return config
   }
   /**
@@ -141,6 +141,7 @@ class footer {
     nextButton.classList.remove('disabled')
     if (!nextHref) nextButton.classList.add('disabled')
   }
+
   // 显示底bar
   show (shellElement) {
     let footer = this
