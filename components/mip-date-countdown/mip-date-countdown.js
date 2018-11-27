@@ -29,8 +29,7 @@ const LOCALE_WORD = {
 }
 
 export default class MIPDateCountDown extends CustomElement {
-  constructor (...args) {
-    super(...args)
+  build () {
     this.endDate = this.element.getAttribute('end-date')
     this.timeleftMs = +this.element.getAttribute('timeleft-ms')
     this.timestampMs = this.element.getAttribute('timestamp-ms')
@@ -40,9 +39,6 @@ export default class MIPDateCountDown extends CustomElement {
     this.whenEnded = this.element.getAttribute('when-ended') || 'stop'
     this.biggestUnit = (this.element.getAttribute('biggest-unit') || 'days').toUpperCase()
     this.localeWordList = this.getLocaleWord(this.locale)
-  }
-
-  build () {
     this.wrapper = document.createElement('div')
     this.wrapper.className = 'mip-date-countdown-wrapper'
     this.element.appendChild(this.wrapper)
@@ -67,17 +63,13 @@ export default class MIPDateCountDown extends CustomElement {
    */
   renderTemplate (data) {
     if (data) {
-      templates.render(
-        this.element, data
-      ).then(render.bind(this))
+      templates.render(this.element, data).then(render.bind(this))
     } else {
       console.error('数据不符合规范')
     }
   }
 
   tick (between) {
-    let items = {}
-
     let diff = this.getYDHMSFromMs(between) || {}
 
     if (this.whenEnded === 'stop' && between < 1000) {
@@ -86,9 +78,9 @@ export default class MIPDateCountDown extends CustomElement {
       clearInterval(this.countDownTimer)
     }
 
-    items['data'] = Object.assign(diff, this.localeWordList)
+    let data = Object.assign(diff, this.localeWordList)
 
-    this.renderTemplate(items['data'])
+    this.renderTemplate(data)
   }
 
   getTargetTime () {
@@ -163,7 +155,8 @@ export default class MIPDateCountDown extends CustomElement {
   padStart (input) {
     if (input < -9 || input > 9) {
       return String(input)
-    } else if (input >= -9 && input < 0) {
+    }
+    if (input >= -9 && input < 0) {
       return '-0' + Math.abs(input)
     }
 
