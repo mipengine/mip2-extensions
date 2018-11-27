@@ -1,14 +1,10 @@
 import {timeago} from './timeago.js'
 
 export default class MIPTimeAgo extends MIP.CustomElement {
-  constructor (...args) {
-    super(...args)
+  build () {
     this.datetime = this.element.getAttribute('datetime')
     this.locale = this.element.getAttribute('locale')
     this.cutoff = this.element.getAttribute('cutoff')
-  }
-
-  build () {
     this.title = this.element.textContent.trim()
     this.element.title = this.title
     this.element.textContent = ''
