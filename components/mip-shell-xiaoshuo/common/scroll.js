@@ -236,7 +236,8 @@ export default class Scroll {
       channel: 'bdgfh',
       'page_path': '/book/mip/read',
       'book_id': bkid,
-      'chapter_id': crid
+      'chapter_id': crid,
+      'read_type': 'waterfall'
     }) // 神策展现埋点,目前只针对纵横
   }
   /**
