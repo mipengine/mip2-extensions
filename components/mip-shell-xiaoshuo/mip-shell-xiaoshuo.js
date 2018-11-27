@@ -39,6 +39,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     scrollBoundary()
     // 阅读器内部预渲染开关
     this.isReaderPrerender = false
+    this.scroll = null
   }
 
   // 通过小说JS给dom添加预渲染字段
@@ -182,27 +183,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
 
     strategy.eventAllPageHandler()
 
-    // 小流量下走无限下拉逻辑
-    if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
-      scroll.init()
-      scroll.init2()
-      scroll.start()
-      let page = document.querySelector('.navigator')
-      page.style.display = 'none'
-      // 删除章末p标签
-      let reader = document.querySelector('.reader')
-      reader.style.padding = '0 .32rem'
-      reader.lastElementChild.style.display = 'none'
-      let download = reader.querySelector('.zhdown-inner') || ''
-      if (download) {
-        download.style.display = 'none'
-      }
-      let title = reader.querySelector('.title') || ''
-      if (title) {
-        title.style.margin = '1.5rem 0'
-      }
-    }
-
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     novelEvents.bindAll()
 
@@ -258,7 +238,29 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         }
       })
     }, 0)
+
+    // 小流量下走无限下拉逻辑
+    if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
+      scroll.init()
+      scroll.init2()
+      scroll.start()
+      let page = document.querySelector('.navigator')
+      page.style.display = 'none'
+      // 删除章末p标签
+      let reader = document.querySelector('.reader')
+      reader.style.padding = '0 .32rem'
+      reader.lastElementChild.style.display = 'none'
+      let download = reader.querySelector('.zhdown-inner') || ''
+      if (download) {
+        download.style.display = 'none'
+      }
+      let title = reader.querySelector('.title') || ''
+      if (title) {
+        title.style.margin = '1.5rem 0'
+      }
+    }
   }
+
   /**
    * 小说预渲染
    *
@@ -381,7 +383,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    */
   beforeSwitchPage (params) {
     let url = params.targetPageId
-    if (flag.isNovelShell(params.targetPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
+    if (flag.isUnlimitedPulldownSids()) {
       let isCacheUrl = MIP.util.isCacheUrl(url)
       if (isCacheUrl) {
         url = MIP.util.parseCacheUrl(url)
@@ -390,7 +392,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         let baseUrl = document.referrer
         let reg = /c\/\S*\?/
         url = baseUrl.replace(reg, 'c/' + url + '?')
-        window.MIP.viewer.open(url, {isMipLink: false})
+        window.MIP.viewer.open(url, {isMipLink: false, replace: true})
       }
     }
   }
@@ -460,6 +462,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       this.footer.hide()
       this.header.hide()
     })
+
     strategy.eventRootHandler()
     novelEvents.bindRoot()
   }

@@ -5,7 +5,8 @@ import './../mip-shell-xiaoshuo.less'
 
 let currentWindow = getCurrentWindow()
 let reader = currentWindow.document.querySelector('#mip-reader-warp')
-let timer
+// var timer
+
 let pageIdQuery = {
   pre: '',
   next: ''
@@ -32,6 +33,8 @@ export default class Scroll {
     }
     this.loading = false
     this.loadingErrorFlag = false
+    this.timer = null
+    this.id = Math.random()
   }
   /**
    * 初始化小说阅读器环境
@@ -60,11 +63,13 @@ export default class Scroll {
    *
    * @public
    */
-  start () {
-    clearTimeout(timer)
+  start (options) {
+    clearTimeout(this.timer)
     if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
-      timer = setTimeout(this.start.bind(this), 500)
+      // center
+      this.timer = setTimeout(this.start.bind(this), 500)
     } else if (this.isScrollToPageBottom()) {
+      // bottom
       if (this.loading) {
         return
       }
@@ -74,13 +79,14 @@ export default class Scroll {
           this.loadingStr('loading1', '您已阅读完全部更新章节')
           this.loading = false
         }
-        clearTimeout(timer)
-        timer = setTimeout(this.start.bind(this), 500)
+        clearTimeout(this.timer)
+        this.timer = setTimeout(this.start.bind(this), 500)
         return
       }
       this.loading = true
       this.prerenderNext(pageIdQuery.next)
     } else if (this.isScrollToPageTop()) {
+      // top
       if (this.loading) {
         return
       }
@@ -90,8 +96,8 @@ export default class Scroll {
           this.loadingStr('loading2', '您已阅读到第一章')
           this.loading = false
         }
-        clearTimeout(timer)
-        timer = setTimeout(this.start.bind(this), 500)
+        clearTimeout(this.timer)
+        this.timer = setTimeout(this.start.bind(this), 500)
         return
       }
       this.loading = true
@@ -100,7 +106,7 @@ export default class Scroll {
   }
 
   destroy () {
-    clearTimeout(timer)
+    clearTimeout(this.timer)
   }
 
   prerenderNext (url) {
@@ -254,7 +260,7 @@ export default class Scroll {
    * @private
    */
   loadingError (id) {
-    clearTimeout(timer)
+    clearTimeout(this.timer)
     this.loadingStr(id, '加载失败，点击刷新')
     this.loading = false
     let dom = document.getElementById(id)
@@ -275,7 +281,7 @@ export default class Scroll {
    * @private
    */
   weakNetwork (id) {
-    timer = setTimeout(() => {
+    let timer = setTimeout(() => {
       if (this.loading) {
         this.loadingError(id)
         this.loadingErrorFlag = true
