@@ -113,6 +113,7 @@ export default class Scroll {
         return
       }
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
+        clearTimeout(weakTimer)
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let jsonld = getJsonld(iframe[0].contentWindow)
         let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
@@ -122,10 +123,9 @@ export default class Scroll {
         if (!isRootPage) {
           currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
         }
+        this.saLog(jsonld, iframe[0].contentWindow) // 纵横神策埋点
         iframe[0].parentNode.removeChild(iframe[0])
         this.loading = false
-        clearTimeout(weakTimer)
-        this.saLog(jsonld, currentWindow) // 纵横神策埋点
         this.start()
       } else {
         this.loadingError('loading1')
@@ -139,7 +139,11 @@ export default class Scroll {
     const {isRootPage} = state(window)
     let weakTimer = this.weakNetwork('loading2')
     window.MIP.viewer.page.prerender([url]).then(iframe => {
+      if (this.loadingErrorFlag) {
+        return
+      }
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
+        clearTimeout(weakTimer)
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let jsonld = getJsonld(iframe[0].contentWindow)
         let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
@@ -149,10 +153,9 @@ export default class Scroll {
         if (!isRootPage) {
           currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
         }
+        this.saLog(jsonld, iframe[0].contentWindow)
         iframe[0].parentNode.removeChild(iframe[0])
-        this.saLog(jsonld, currentWindow)
         this.loading = false
-        clearTimeout(weakTimer)
         window.sa.quick('autoTrack') // 神策展现埋点
         setTimeout(this.start.bind(this), 0)
       } else {
@@ -227,7 +230,7 @@ export default class Scroll {
    */
   saLog (jsonld, currentWindow) {
     let bkid = getZhBkid()
-    let crid = getZhCrid()
+    let crid = getZhCrid(currentWindow.location.href)
     window.sa.track('viewReadPage2', {
       $title: decodeURI(jsonld.currentPage.chapterName),
       $url: currentWindow.location.href,

@@ -172,8 +172,7 @@ export const getZhBkid = () => {
  *
  * 纵横页面获取chapter_id
  */
-export const getZhCrid = () => {
-  let url = window.location.href
+export const getZhCrid = (url) => {
   let reg = /(crid=)\S*?&/
   let crid = url.match(reg)
   crid = crid[0].replace('crid=', '')
