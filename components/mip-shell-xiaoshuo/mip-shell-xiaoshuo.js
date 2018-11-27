@@ -13,23 +13,76 @@ import {
   FontSize
 } from './feature/setting' // 背景色调整，字体大小调整
 
-import XiaoshuoEvents from './common/events'
-import Strategy from './ad/strategy'
+import NovelEvents from './common/events'
+import Strategy from './ad/strategyControl'
+import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
-import {sendWebbLog, sendTCLog} from './common/log' // 日志
+import state from './common/state'
+import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './common/log' // 日志
 
-let xiaoshuoEvents = new XiaoshuoEvents()
+let novelEvents = new NovelEvents()
 let strategy = new Strategy()
 let util = MIP.util
 
-export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
+export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
   constructor (...args) {
     super(...args)
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     scrollBoundary()
-    this.pageNum = 0
+  }
+
+  // 通过小说JS给dom添加预渲染字段
+  connectedCallback () {
+    // 从结果页进入小说阅读页加上预渲染的标识prerender，但是内部的每页不能加，会影响翻页内的预渲染
+    if (this.element.getAttribute('prerender') !== null) {
+      this.element.removeAttribute('prerender')
+    }
+    if (this.element.getAttribute('prerender') == null && MIP.viewer.page.isRootPage) {
+      this.element.setAttribute('prerender', '')
+    }
+    // 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
+    this.initPageLayout()
+  }
+
+  /**
+   * 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
+   *
+   * @private initPageLayout
+   */
+  initPageLayout () {
+    // 创建模式切换（背景色切换）
+    this.pageStyle = new PageStyle()
+    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
+    window.addEventListener('changePageStyle', (e, data) => {
+      if (e.detail[0] && e.detail[0].theme) {
+        // 修改主题
+        this.pageStyle.update(e, {
+          theme: e.detail[0].theme
+        })
+      } else if (e.detail[0] && e.detail[0].fontSize) {
+        // 修改字号
+        this.pageStyle.update(e, {
+          fontSize: e.detail[0].fontSize
+        })
+      } else {
+        // 初始化，从缓存中获取主题和字号apply到页面
+        this.pageStyle.update(e)
+      }
+      document.body.classList.add('show-xiaoshuo-container')
+      // 加载动画完成，发送白屏日志
+      sendWebbLog('whitescreen')
+      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
+      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
+      if (xiaoshuoContainer) {
+        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
+      }
+    })
+    // 初始化页面时执行一次背景色+字号初始化
+    window.MIP.viewer.page.emitCustomEvent(window, false, {
+      name: 'changePageStyle'
+    })
   }
 
   // 基类方法：绑定页面可被外界调用的事件。
@@ -38,11 +91,40 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     super.bindAllEvents()
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
-    this.pageStyle = new PageStyle()
-    const isRootPage = MIP.viewer.page.isRootPage
+    const {isRootPage, novelInstance, originalUrl} = state(window)
+    const pageType = novelInstance.currentPageMeta.pageType || ''
+    let zonghengPattern = /www.xmkanshu.com/g
+    let iqiyiPattern = /wenxue.m.iqiyi.com/g
+    let isZongheng = zonghengPattern.test(originalUrl)
+    let isIqiyi = iqiyiPattern.test(originalUrl)
+    let site
+    if (isZongheng) {
+      site = 'zongheng'
+    }
+    if (isIqiyi) {
+      site = 'iqiyi'
+    }
+    sendTCLog('interaction', {
+      type: 'b',
+      action: 'pageShow'
+    }, {
+      show: 'pageShow',
+      isRootPage: isRootPage,
+      site: site
+    })
+    let prePageButton = document.querySelector('.navigator a:first-child')
+    let nextPageButton = document.querySelector('.navigator a:last-child')
+    // 监控页面底部上一页按钮跳转是否异常，异常发送异常日志
+    sendWebbLogLink(prePageButton, 'prePageButton')
+    // 监控页面底部下一页按钮跳转是否异常，异常发送异常日志
+    sendWebbLogLink(nextPageButton, 'nextPageButton')
     // 用来记录翻页的次数，主要用来触发品专的广告
-    let currentWindow = isRootPage ? window : window.parent
-    currentWindow.MIP.mipshellXiaoshuo.novelPageNum++
+    novelInstance.novelPageNum++
+    if (novelInstance.currentPageMeta.pageType === 'page') {
+      novelInstance.readPageNum++
+    }
+    // 如果有前端广告缓存，则走此处的逻辑
+    initAdByCache(novelInstance)
 
     // 暴露给外部html的调用方法，显示底部控制栏
     // 使用 on="tap:xiaoshuo-shell.showShellFooter"调用
@@ -79,41 +161,14 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
       this.$buttonMask.onclick = this.closeEverything.bind(this)
     }
 
-    // 承接emit & broadcast事件：所有页面修改页主题 & 字号
-    window.addEventListener('changePageStyle', (e, data) => {
-      if (e.detail[0] && e.detail[0].theme) {
-        // 修改主题
-        this.pageStyle.update(e, {
-          theme: e.detail[0].theme
-        })
-      } else if (e.detail[0] && e.detail[0].fontSize) {
-        // 修改字号
-        this.pageStyle.update(e, {
-          fontSize: e.detail[0].fontSize
-        })
-      } else {
-        // 初始化，从缓存中获取主题和字号apply到页面
-        this.pageStyle.update(e)
-      }
-      document.body.classList.add('show-xiaoshuo-container')
-      // 加载动画完成，发送白屏日志
-      sendWebbLog('whitescreen')
-      // 初始化页面结束后需要把「mip-shell-xiaoshuo-container」的内容页显示
-      let xiaoshuoContainer = document.querySelector('.mip-shell-xiaoshuo-container')
-      if (xiaoshuoContainer) {
-        xiaoshuoContainer.classList.add('show-xiaoshuo-container')
-      }
-    })
-
-    // 初始化页面时执行一次背景色+字号初始化
-    window.MIP.viewer.page.emitCustomEvent(window, true, {
-      name: 'changePageStyle'
-    })
-
     strategy.eventAllPageHandler()
-
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
-    xiaoshuoEvents.bindAll()
+    novelEvents.bindAll()
+
+    // 发送webb性能日志 , 请求common时 ,common 5s 请求失败，发送common异常日志
+    if (document.querySelector('mip-custom')) {
+      sendWebbLogCommon()
+    }
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
@@ -125,13 +180,49 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
         }
       })
     }
+    window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
+      name: 'current-page-ready'
+    })
+
+    // 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.ad
+    setTimeout(() => {
+      let name
+      window.MIP.ad = {}
+      function observer (oldVal, newVal) {
+        if (newVal === true && (pageType !== 'detail')) {
+          sendTCLog('interaction', {
+            type: 'b',
+            action: 'adShow'
+          }, {
+            show: 'adShow',
+            hasAd: true,
+            site: site
+          })
+          // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
+          window.MIP.ad.show = false
+        }
+      }
+      // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
+      Object.defineProperty(window.MIP.ad, 'show', {
+        enumerable: true,
+        configurable: true,
+        get: function () {
+          return name
+        },
+        set: function (val) {
+          // 调用处理函数
+          observer(name, val)
+          name = val
+        }
+      })
+    }, 0)
   }
 
   // 基类方法，翻页之后执行的方法
   // 记录翻页的白屏
   afterSwitchPage (options) {
     // 用于记录页面加载完成的时间
-    const startRenderTime = xiaoshuoEvents.timer
+    const startRenderTime = novelEvents.timer
     const currentWindow = getCurrentWindow()
     let endRenderTimer = null
     currentWindow.onload = function () {
@@ -177,7 +268,7 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
     })
 
     strategy.eventRootHandler()
-    xiaoshuoEvents.bindRoot()
+    novelEvents.bindRoot()
   }
 
   /**
@@ -281,9 +372,10 @@ export default class MipShellXiaoshuo extends MIP.builtinComponents.MipShell {
 
   // 基类方法，设置默认的shellConfig
   processShellConfig (shellConfig) {
-    MIP.mipshellXiaoshuo = this
+    MIP.novelInstance = this
     this.shellConfig = shellConfig
     this.novelPageNum = 0
+    this.currentPageType = []
     shellConfig.routes.forEach(routerConfig => {
       routerConfig.meta.header.bouncy = false
     })

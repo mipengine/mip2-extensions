@@ -8,7 +8,7 @@
 
 import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
-import {sendWebbLog, sendTCLog} from './../common/log' // 日志
+import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 
 let util = MIP.util
 let event = util.event
@@ -150,7 +150,7 @@ class Catalog {
           this.renderCatalogCallBack(data, catalogs)
         }).catch(err => {
           this.catalogFailMessageEvent()
-          console.error(new Error('网络异常'), err)
+          console.warn(new Error('网络异常'), err)
           this.categoryList = false
         })
     } else {
@@ -287,11 +287,19 @@ class Catalog {
     let catalog = $catalogContent.querySelectorAll('div')
     let reverseName = $contentTop.querySelector('.reverse-name')
     let temp = []
-    for (let i = 0, len = catalog.length; i < len; i++) {
+    let length = catalog.length
+    for (let i = 0; i < length; i++) {
       temp[i] = catalog[i].outerHTML
     }
     reverse.addEventListener('click', () => {
-      $catalogContent.innerHTML = temp.reverse().join('')
+      for (let left = 0; left < length / 2; left++) {
+        let right = length - 1 - left
+        let temporary = temp[left]
+        temporary = temp[left]
+        temp[left] = temp[right]
+        temp[right] = temporary
+      }
+      $catalogContent.innerHTML = temp.join('')
       reverseName.innerHTML = reverseName.innerHTML === ' 正序' ? ' 倒序' : ' 正序'
       let catalog = $catalogContent.querySelectorAll('div')
       let $catWrapper = document.querySelector('.novel-catalog-content-wrapper')

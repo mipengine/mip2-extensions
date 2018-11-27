@@ -4,7 +4,7 @@
  */
 
 import {settingHtml} from './setting'
-import {sendTCLog} from './../common/log'
+import {sendTCLog} from '../common/log'
 
 let DEFAULTS = {
   theme: 'default',
@@ -71,15 +71,18 @@ class footer {
       }
     }).join('')
 
+    const previous = this && this.config && this.config.hrefButton && this.config.hrefButton.previous ? this.config.hrefButton.previous : ''
+    const next = this && this.config && this.config.hrefButton && this.config.hrefButton.next ? this.config.hrefButton.next : ''
+
     // 创建底部按钮 HTML
     let footerHTML = `
         <div class="upper mip-border mip-border-bottom">
             <a from-cache class="page-button page-previous" mip-link href="" replace>
                 <i class="icon gap-right-small icon-left"></i>
-                ${this.config.hrefButton.previous}
+                ${previous}
             </a>
             <a from-cache class="page-button page-next" mip-link href="" replace>
-                ${this.config.hrefButton.next}
+                ${next}
                 <i class="icon gap-left-small icon-right"></i>
             </a>
         </div>

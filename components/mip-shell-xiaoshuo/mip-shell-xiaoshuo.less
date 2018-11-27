@@ -39,6 +39,10 @@
   transform: translateY(100%);
   font-size: 14px;
 
+  ul {
+    list-style: none;
+  }
+
   .button p {
     font-size: 16px;
   }
@@ -74,7 +78,7 @@
 
       i p {
         margin-top: 6px;
-        font-size: 12px;
+        font-size: 12px !important;
         margin-bottom: 20px;
       }
 
@@ -291,6 +295,9 @@ mip-fixed.mip-shell-catalog-wrapper {
   .catalog-page-content {
     line-height: 16px;
     font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .width-50 {

@@ -4,7 +4,7 @@
  * @author liujing
  */
 import {Constant} from './constant-config'
-import {sendTCLog} from './../common/log'
+import {sendTCLog} from './log'
 
 let event = window.MIP.util.event
 
@@ -46,10 +46,6 @@ export default class XiaoshuoEvents {
 
   // 每次翻页/页面刷新时都会触发
   bindAll () {
-    // 抛出“当前页ready,状态可获取”事件给阅读器
-    window.MIP.viewer.page.emitCustomEvent(window, false, {
-      name: Constant.CURRENT_PAGE_READY
-    })
     this.bindPrePageButton()
     this.bindNextPageButton()
   }
