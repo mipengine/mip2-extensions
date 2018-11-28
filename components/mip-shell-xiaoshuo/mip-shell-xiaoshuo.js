@@ -16,7 +16,7 @@ import {
 import NovelEvents from './common/events'
 import Strategy from './ad/strategyControl'
 import {initAdByCache} from './ad/strategyCompute'
-import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
+import {getJsonld, scrollBoundary, getCurrentWindow, getNovelInstanceId} from './common/util'
 import state from './common/state'
 import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './common/log' // 日志
 
@@ -241,6 +241,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 基类root方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
   bindRootEvents () {
+    this.novelInstanceId = getNovelInstanceId()
     super.bindRootEvents()
     // 承接emit事件：根页面底部控制栏内容更新
     window.addEventListener('updateShellFooter', (e) => {

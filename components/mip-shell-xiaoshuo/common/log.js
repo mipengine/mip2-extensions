@@ -3,6 +3,9 @@
  * author: JennyL <jiaojiaomao220@163.com>
  */
 
+import {getCurrentWindow} from './util'
+import state from './state'
+
 /**
  * 发送webb性能日志
  *
@@ -27,9 +30,13 @@ export function sendWebbLog (type, info) {
  * @param {Object} extra 额外信息
  */
 export function sendTCLog (type, info, extra) {
+  const {novelInstance} = state(getCurrentWindow())
   // TC日志添加referer参数 , url需要encode,否则打点时会被特殊字符&等解析
   let referer = encodeURIComponent(window.document.referrer)
-  extra = Object.assign({referer}, extra)
+  // 添加小说实例ID
+  const novelInstanceId = novelInstance.novelInstanceId
+  extra = Object.assign({referer, novelInstanceId}, extra)
+
   let eventName = type + '-log'
   let data = Object.assign({
     'clk_info': info
