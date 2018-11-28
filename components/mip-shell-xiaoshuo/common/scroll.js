@@ -49,6 +49,7 @@ export default class Scroll {
     div.innerHTML = loadingHTML
     reader.appendChild(div)
     this.init2()
+    this.prerenderPre(pageIdQuery.pre)
     this.prerenderNext(pageIdQuery.next)
   }
   init2 () {
