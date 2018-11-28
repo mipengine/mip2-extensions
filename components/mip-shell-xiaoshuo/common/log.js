@@ -62,6 +62,9 @@ export function sendWebbLogCommon () {
 
 /**
  * 发送webb日志，监控页面底部下一页上一页按钮跳转是否异常，异常发送异常日志
+ *
+ * @param {HTMLElement} PageButton 页面上一页下一页按钮
+ * @param {string} button 上一页或者下一页字段 prePageButton nextPageButton
  */
 export function sendWebbLogLink (PageButton, button) {
   if (PageButton && !(PageButton.hasAttribute('data-type') && PageButton.getAttribute('data-type') === 'mip') && !(PageButton.hasAttribute('mip-link'))) {
