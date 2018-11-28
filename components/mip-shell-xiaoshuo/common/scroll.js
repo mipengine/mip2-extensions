@@ -48,6 +48,8 @@ export default class Scroll {
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.appendChild(div)
+    this.init2()
+    this.prerenderNext(pageIdQuery.next)
   }
   init2 () {
     // 添加正在加载样式

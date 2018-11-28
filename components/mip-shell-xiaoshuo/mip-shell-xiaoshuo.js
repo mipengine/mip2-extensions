@@ -227,7 +227,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 小流量下走无限下拉逻辑
     if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
       scroll.init()
-      scroll.init2()
       scroll.start()
       let page = document.querySelector('.navigator')
       page.style.display = 'none'
