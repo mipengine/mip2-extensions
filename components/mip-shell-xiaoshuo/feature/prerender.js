@@ -41,6 +41,7 @@ class prerender {
 
   /**
    * 更新footer链接
+   * @param {boolean} isReaderPrerender 是否预渲染的布尔值
    *
    */
   updateFooterDom (isReaderPrerender) {
