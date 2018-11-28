@@ -41,6 +41,7 @@ class prerender {
 
   /**
    * 更新footer链接
+   *
    * @param {boolean} isReaderPrerender 是否预渲染的布尔值
    *
    */
@@ -61,31 +62,6 @@ class prerender {
       }
     })
   }
-
-  /**
-   * 获取默认配置及用户历史配置
-   */
-  __getConfig () {
-    // 默认配置
-    let DEFAULTS = {
-      theme: 'default',
-      fontSize: 3.5
-    }
-    let STORAGE_KEY = 'mip-shell-xiaoshuo-mode'
-    let CustomStorage = MIP.util.customStorage
-    let storage = new CustomStorage(0)
-    let extend = MIP.util.fn.extend
-    let config = DEFAULTS
-    try {
-      config = extend(config, JSON.parse(storage.get(STORAGE_KEY)))
-    } catch (e) { }
-    if (config.theme) {
-      document.documentElement.setAttribute('mip-shell-xiaoshuo-theme', config.theme)
-    }
-    if (config.fontSize) {
-      document.documentElement.setAttribute('mip-shell-xiaoshuo-font-size', config.fontSize)
-    }
-  };
 
   /**
    * 底部按钮的链接以及cache-first属性需要更新

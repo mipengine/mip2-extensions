@@ -10,7 +10,8 @@ import Footer from './feature/footer' // 底部控制栏
 import Header from './feature/header' // shell导航头部
 import {
   PageStyle,
-  FontSize
+  FontSize,
+  __setConfig
 } from './feature/setting' // 背景色调整，字体大小调整
 
 import NovelEvents from './common/events'
@@ -101,7 +102,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
     if (this.isReaderPrerender) {
       if (this.currentPageMeta.pageType === 'page') {
-        prerender.__getConfig()
+        __setConfig()
         prerender.resetNavigatorBtn()
       }
     }
