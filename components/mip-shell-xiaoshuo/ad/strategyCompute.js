@@ -260,8 +260,7 @@ const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
     if (strategy[i].strategy &&
       JSON.stringify(strategy[i].strategy) !== '{}' &&
       (strategy[i].probability == null ||
-        (strategy[i].probability && strategy[i].probability / 100 >= 1) ||
-        (strategy[i].probability && random <= (strategy[i].probability / 100))
+        (strategy[i].probability && (strategy[i].probability / 100) >= random)
       )
     ) {
       // 当该策略命中广告后，顺序取策略，只要有一个策略命中则不考虑别的策略
