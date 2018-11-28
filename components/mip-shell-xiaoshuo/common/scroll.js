@@ -156,7 +156,6 @@ export default class Scroll {
         this.saLog(jsonld, iframe[0].contentWindow)
         iframe[0].parentNode.removeChild(iframe[0])
         this.loading = false
-        window.sa.quick('autoTrack') // 神策展现埋点
         setTimeout(this.start.bind(this), 0)
       } else {
         this.loadingError('loading2')
