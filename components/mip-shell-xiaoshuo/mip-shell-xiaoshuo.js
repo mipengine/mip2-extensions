@@ -19,8 +19,10 @@ import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
 import state from './common/state'
 import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './common/log' // 日志
+import Prerender from './feature/prerender'
 
 let novelEvents = new NovelEvents()
+let prerender = new Prerender()
 let strategy = new Strategy()
 let util = MIP.util
 
@@ -31,6 +33,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     scrollBoundary()
+    // 阅读器内部预渲染开关
+    this.isReaderPrerender = false
   }
 
   // 通过小说JS给dom添加预渲染字段
@@ -91,6 +95,16 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     super.bindAllEvents()
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
+    // 判断是否支持预渲染
+    if (this.currentPageMeta.header.title.indexOf('雪中悍刀行') !== -1 && String(navigator.userAgent).indexOf('iPhone OS 8') === -1) {
+      this.isReaderPrerender = true
+    }
+    if (this.isReaderPrerender) {
+      if (this.currentPageMeta.pageType === 'page') {
+        prerender.__getConfig()
+        prerender.resetNavigatorBtn()
+      }
+    }
     const {isRootPage, novelInstance, originalUrl} = state(window)
     const pageType = novelInstance.currentPageMeta.pageType || ''
     let zonghengPattern = /www.xmkanshu.com/g
@@ -170,6 +184,15 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       sendWebbLogCommon()
     }
 
+    // 获取当前页面的数据，以及需要预渲染的链接
+    let jsonld = getJsonld(getCurrentWindow())
+    // 预渲染
+    if (this.currentPageMeta.pageType === 'page') {
+      if (this.isReaderPrerender) {
+        prerender.readerPrerender(jsonld)
+      }
+    }
+
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
       let jsonld = getJsonld(window)
@@ -246,8 +269,17 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     window.addEventListener('updateShellFooter', (e) => {
       this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
     })
+    // 点击按钮关闭工具栏
+    window.addEventListener('btnClickHide', e => {
+      this.footer.hide()
+      this.header.hide()
+      // 关闭黑色遮罩
+      this.toggleDOM(this.$buttonMask, false)
+    })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
+      // 唤起设置栏才更新底部链接
+      prerender.updateFooterDom(this.isReaderPrerender)
       this.footer.show(this)
       this.header.show()
       let swipeDelete = new util.Gesture(this.$buttonMask, {
