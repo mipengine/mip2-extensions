@@ -27,15 +27,18 @@ export default class Scroll {
     let jsonld = getPrerenderJsonld()
     pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
     pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
+    // 是否存在上一页、下一页的标记
     this.flag = {
       pre: true,
       next: true
     }
+    // 是否加载中
     this.loading = false
+    // 是否渲染失败
     this.loadingErrorFlag = false
     this.timer = null
-    this.id = Math.random()
   }
+
   /**
    * 初始化小说阅读器环境
    *
@@ -60,12 +63,13 @@ export default class Scroll {
     div.innerHTML = loadingHTML
     reader.insertBefore(div, warp)
   }
+
   /**
    * 滚动开始函数
    *
    * @public
    */
-  start (options) {
+  start () {
     clearTimeout(this.timer)
     if (!this.isScrollToPageBottom() && !this.isScrollToPageTop()) {
       // center
@@ -107,15 +111,22 @@ export default class Scroll {
     }
   }
 
+  /**
+   * 渲染下一页
+   *
+   * @param {string} url 目标url
+   * @private
+   */
   prerenderNext (url) {
     const {isRootPage} = state(window)
+    // 启动弱网判断
     let weakTimer = this.weakNetwork('loading1')
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (this.loadingErrorFlag) {
         return
       }
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
-        clearTimeout(weakTimer)
+        clearTimeout(weakTimer) // 获取成功，清除弱网机制
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let jsonld = getJsonld(iframe[0].contentWindow)
         let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
@@ -137,15 +148,22 @@ export default class Scroll {
     })
   }
 
+  /**
+   * 渲染上一页
+   *
+   * @param {string} url 目标url
+   * @private
+   */
   prerenderPre (url) {
     const {isRootPage} = state(window)
+    // 启动弱网判断
     let weakTimer = this.weakNetwork('loading2')
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (this.loadingErrorFlag) {
         return
       }
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
-        clearTimeout(weakTimer)
+        clearTimeout(weakTimer) // 获取成功，清除弱网机制
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let jsonld = getJsonld(iframe[0].contentWindow)
         let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
@@ -167,6 +185,14 @@ export default class Scroll {
     })
   }
 
+  /**
+   * 获取iframe中的文章dom
+   *
+   * @param {dom} iframe 目标iframe
+   * @param {string} pageId iframe对应的pageid
+   * @param {Object} currentPage 当前页的jsonld.currentPage
+   * @private
+   */
   getPageDom (iframe, pageId, currentPage) {
     let nextdocument = iframe.contentWindow.document
     let readwarp = nextdocument.getElementById('mip-reader-warp').childNodes
@@ -227,6 +253,8 @@ export default class Scroll {
   /**
    * 发送pv展现日志
    *
+   * @param {Object} jsonld 目标jsonld
+   * @param {Object} str 阻尼文本
    * @private
    */
   saLog (jsonld, currentWindow) {
@@ -254,8 +282,11 @@ export default class Scroll {
     return scrollHeight < 2
   }
   /**
+   * 阻尼字段
    *
-   *
+   * @param {id} id 触顶阻尼或者触底阻尼的id
+   * @param {string} str 阻尼文本
+   * @private
    */
   loadingStr (id, str) {
     let div = document.getElementById(id)
