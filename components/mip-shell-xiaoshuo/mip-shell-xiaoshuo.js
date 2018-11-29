@@ -137,24 +137,31 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
   }
 
+  // 基类方法
+  // 将无限下拉逻辑提前，解决首屏卡顿的bug
   build () {
     super.build()
+    // 这个时候this还没有挂载mip-shell-xiaoshuo里面的某一些配置参数，所以手动取一下
     let routes = JSON.parse(this.element.querySelector('script').innerText)
     let pageType = routes.routes[0].meta.pageType
     // 小流量下走无限下拉逻辑
+    // 判断当前页是阅读页走无限下拉逻辑
     if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {
       scroll.init() // 初始化阅读器样式
       scroll.start()
+      // 清除首屏阅读器内上一页、下一页和目录按钮
       let page = document.querySelector('.navigator')
       page.style.display = 'none'
       // 删除章末p标签
       let reader = document.querySelector('.reader')
       reader.style.padding = '0 .32rem'
       reader.lastElementChild.style.display = 'none'
+      // 删除首屏下载按钮样式
       let download = reader.querySelector('.zhdown-inner') || ''
       if (download) {
         download.style.display = 'none'
       }
+      // 加大title和文本之间的行间距
       let title = reader.querySelector('.title') || ''
       if (title) {
         title.style.margin = '1.5rem 0'
@@ -307,7 +314,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
    * 基类方法，翻页之后执行的方法
    * 记录翻页的白屏
    *
-   * @param {Object} params 翻页的信息
+   * @param {Object} options 翻页的信息
    */
   afterSwitchPage (options) {
     // 用于记录页面加载完成的时间
@@ -393,7 +400,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.fontSize = new FontSize()
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
-    // 加个判断 小流量下走无限下拉逻辑，干掉 上一页下一页
+
+    // 加个判断 小流量下走无限下拉逻辑，干掉 shell的上一页下一页
     if (flag.isUnlimitedPulldownSids()) {
       let shellpage = document.querySelector('.upper')
       if (shellpage) {

@@ -1,6 +1,5 @@
 import {setTimeout, clearTimeout} from 'timers'
-import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow, getZhBkid, getZhCrid} from './util'
-import state from './state'
+import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow, getParamFromString} from './util'
 import './../mip-shell-xiaoshuo.less'
 
 let currentWindow = getCurrentWindow()
@@ -25,8 +24,8 @@ function loadingDom () {
 export default class Scroll {
   constructor () {
     let jsonld = getPrerenderJsonld()
-    pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
-    pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
+    pageIdQuery.previousPage = getCacheUrl(jsonld.previousPage.url)
+    pageIdQuery.nextPage = getCacheUrl(jsonld.nextPage.url)
     // 是否存在上一页、下一页的标记
     this.flag = {
       pre: true,
@@ -47,18 +46,24 @@ export default class Scroll {
   init () {
     // 添加正在加载样式
     let div = document.createElement('div')
-    div.setAttribute('id', 'loading1')
+    div.setAttribute('id', 'loadingbottom')
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.appendChild(div)
-    this.init2()
-    pageIdQuery.next && this.prerenderNext(pageIdQuery.next)
+    this.initLoadingTop()
+    pageIdQuery.nextPage && this.prerender(pageIdQuery.nextPage, this.appendDom, 'nextPage')
   }
-  init2 () {
+
+  /**
+   * 小说阅读器顶部添加loading
+   *
+   * @private
+   */
+  initLoadingTop () {
     // 添加正在加载样式
     let warp = currentWindow.document.querySelector('#mip-reader-warp > div')
     let div = document.createElement('div')
-    div.setAttribute('id', 'loading2')
+    div.setAttribute('id', 'loadingtop')
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.insertBefore(div, warp)
@@ -79,10 +84,10 @@ export default class Scroll {
       if (this.loading) {
         return
       }
-      if (!pageIdQuery.next) {
+      if (!pageIdQuery.nextPage) {
         if (this.flag.next) {
           this.flag.next = false
-          this.loadingStr('loading1', '您已阅读完全部更新章节')
+          this.loadingStr('loadingbottom', '您已阅读完全部更新章节')
           this.loading = false
         }
         clearTimeout(this.timer)
@@ -90,16 +95,16 @@ export default class Scroll {
         return
       }
       this.loading = true
-      this.prerenderNext(pageIdQuery.next)
+      this.prerender(pageIdQuery.nextPage, this.appendDom, 'nextPage', 'loadingbottom')
     } else if (this.isScrollToPageTop()) {
       // top
       if (this.loading) {
         return
       }
-      if (!pageIdQuery.pre) {
+      if (!pageIdQuery.previousPage) {
         if (this.flag.pre) {
           this.flag.pre = false
-          this.loadingStr('loading2', '您已阅读到第一章')
+          this.loadingStr('loadingtop', '您已阅读到第一章')
           this.loading = false
         }
         clearTimeout(this.timer)
@@ -107,91 +112,63 @@ export default class Scroll {
         return
       }
       this.loading = true
-      this.prerenderPre(pageIdQuery.pre)
+      this.prerender(pageIdQuery.previousPage, this.insertDom, 'previousPage', 'loadingtop')
     }
   }
 
   /**
-   * 渲染下一页
+   * 获取iframe中的文章dom
    *
    * @param {string} url 目标url
+   * @param {Function} fn 插入iframe的方式
+   * @param {string} direction 更新上一页或者下一页的url
+   * @param {string} loadingId 触顶或触底loading的dom id
+   *
    * @private
    */
-  prerenderNext (url) {
-    const {isRootPage} = state(window)
+  prerender (url, fn, direction, loadingId) {
     // 启动弱网判断
-    let weakTimer = this.weakNetwork('loading1')
+    let weakTimer = this.weakNetwork(loadingId)
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (this.loadingErrorFlag) {
         return
       }
+      // 弱网、无网络的情况下，只返回iframe，iframe.contentWindow不会挂载mip
       if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
         clearTimeout(weakTimer) // 获取成功，清除弱网机制
         let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
         let jsonld = getJsonld(iframe[0].contentWindow)
         let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
-        this.appendDom(dom, id)
-        pageIdQuery.next = getCacheUrl(jsonld.nextPage.url)
+        fn(dom, id)
+        // 更新触顶或触底的url
+        pageIdQuery[direction] = getCacheUrl(jsonld[direction].url)
+        // 清空当前children，防止超过限制报错
         currentWindow.MIP.viewer.page.children = []
-        if (!isRootPage) {
-          currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
-        }
-        this.saLog(jsonld, iframe[0].contentWindow) // 纵横神策埋点
-        iframe[0].parentNode.removeChild(iframe[0])
-        this.loading = false
-        this.start()
-      } else {
-        this.loadingError('loading1')
-      }
-    }).catch(() => {
-      this.loadingError('loading1')
-    })
-  }
-
-  /**
-   * 渲染上一页
-   *
-   * @param {string} url 目标url
-   * @private
-   */
-  prerenderPre (url) {
-    const {isRootPage} = state(window)
-    // 启动弱网判断
-    let weakTimer = this.weakNetwork('loading2')
-    window.MIP.viewer.page.prerender([url]).then(iframe => {
-      if (this.loadingErrorFlag) {
-        return
-      }
-      if (iframe[0] && iframe[0].contentWindow && iframe[0].contentWindow.MIP) {
-        clearTimeout(weakTimer) // 获取成功，清除弱网机制
-        let pageId = getCacheUrl(iframe[0].contentWindow.MIP.viewer.page.pageId)
-        let jsonld = getJsonld(iframe[0].contentWindow)
-        let {dom, id} = this.getPageDom(iframe[0], pageId, jsonld.currentPage)
-        this.insertDom(dom, id)
-        pageIdQuery.pre = getCacheUrl(jsonld.previousPage.url)
-        currentWindow.MIP.viewer.page.children = []
-        if (!isRootPage) {
-          currentWindow.parent.MIP.viewer.page.children = [window.MIP.viewer.page]
-        }
+        // 纵横神策pv埋点
         this.saLog(jsonld, iframe[0].contentWindow)
+        // 移除页面上iframe
         iframe[0].parentNode.removeChild(iframe[0])
         this.loading = false
         setTimeout(this.start.bind(this), 0)
       } else {
-        this.loadingError('loading2')
+        this.loadingError(loadingId)
       }
     }).catch(() => {
-      this.loadingError('loading2')
+      this.loadingError(loadingId)
     })
   }
 
   /**
    * 获取iframe中的文章dom
    *
-   * @param {dom} iframe 目标iframe
+   * @param {Object} iframe 目标iframe
    * @param {string} pageId iframe对应的pageid
    * @param {Object} currentPage 当前页的jsonld.currentPage
+   *
    * @private
+   *
+   * return dom 处理后的阅读器dom元素
+   * return id  本页的pageid
    */
   getPageDom (iframe, pageId, currentPage) {
     let nextdocument = iframe.contentWindow.document
@@ -199,46 +176,89 @@ export default class Scroll {
     readwarp[1].style.padding = '0 .32rem'
     readwarp[1].lastElementChild.style.display = 'none'
 
+    // 如果不是这一章第一节，就删掉当前页的title
+    // 因为源站还是翻页的方式，只是cache下是无限下拉，所以需要手动干掉
     if (currentPage.isFirstPage !== undefined && !currentPage.isFirstPage) {
       let title = readwarp[1].querySelector('h2.title')
       title.style.display = 'none'
     } else {
+      // 是这一章第一节，增加title上下的margin
       let title = readwarp[1].querySelector('h2.title')
       title.style.margin = '1.5rem 0'
     }
 
+    // 隐藏下载按钮
     let downloadNode = readwarp[1].querySelector('.zhdown-inner') || readwarp[1].querySelector('.top-download') || ''
     if (downloadNode) {
       downloadNode.style.display = 'none'
     }
+
     return {
       dom: readwarp[1],
       id: pageId
     }
   }
 
+  /**
+   * 向上插入dom元素
+   *
+   * @param {Object} dom 目标dom元素
+   * @param {string} id 目标dom元素对应的pageid
+   *
+   * @private
+   */
   insertDom (dom, id) {
-    let warp = currentWindow.document.querySelector('#mip-reader-warp > #loading2 + div')
+    let warp = currentWindow.document.querySelector('#mip-reader-warp > #loadingtop + div')
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)
     reader.insertBefore(div, warp)
     // 获取页面滚动的高度 当前视口的高度 + 获取的div的高度 + loading的高度
     let height = currentWindow.MIP.viewport.getScrollTop() + div.offsetHeight + 49
+    // 插入元素后，滚动到当前高度
     currentWindow.MIP.viewport.setScrollTop(height)
   }
 
+  /**
+   * 向下插入dom元素
+   *
+   * @param {Object} dom 目标dom元素
+   * @param {string} id 目标dom元素对应的pageid
+   *
+   * @private
+   */
   appendDom (dom, id) {
-    let loading1 = document.querySelector('#loading1')
+    let loadingbottom = document.querySelector('#loadingbottom')
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)
-    reader.insertBefore(div, loading1)
+    reader.insertBefore(div, loadingbottom)
   }
 
-  getViewportSize (w) {
-    return {w: document.documentElement.clientWidth, h: document.documentElement.clientHeight}
+  /**
+   * 发送pv展现日志
+   *
+   * @param {Object} jsonld 目标jsonld
+   * @param {Object} currentWindow 目标window
+   * @private
+   */
+  saLog (jsonld, currentWindow) {
+    let bkid = getParamFromString(currentWindow.location.href, 'bkid')
+    let crid = getParamFromString(currentWindow.location.href, 'crid')
+    // 神策展现埋点,目前只针对纵横
+    window.sa.track('viewReadPage2', {
+      $title: decodeURI(jsonld.currentPage.chapterName),
+      $url: currentWindow.location.href,
+      $referrer: currentWindow.document.referrer,
+      paltform: '10000',
+      channel: 'bdgfh',
+      'page_path': '/book/mip/read',
+      'book_id': bkid,
+      'chapter_id': crid,
+      'read_type': 'waterfall'
+    })
   }
+
   /**
    * 判断滚动条是否在页面底部
    *
@@ -251,28 +271,7 @@ export default class Scroll {
     let scrollHeight = currentWindow.MIP.viewport.getScrollTop()
     return documentHeight - viewPortHeight - scrollHeight < 10
   }
-  /**
-   * 发送pv展现日志
-   *
-   * @param {Object} jsonld 目标jsonld
-   * @param {Object} str 阻尼文本
-   * @private
-   */
-  saLog (jsonld, currentWindow) {
-    let bkid = getZhBkid()
-    let crid = getZhCrid(currentWindow.location.href)
-    window.sa.track('viewReadPage2', {
-      $title: decodeURI(jsonld.currentPage.chapterName),
-      $url: currentWindow.location.href,
-      $referrer: currentWindow.document.referrer,
-      paltform: '10000',
-      channel: 'bdgfh',
-      'page_path': '/book/mip/read',
-      'book_id': bkid,
-      'chapter_id': crid,
-      'read_type': 'waterfall'
-    }) // 神策展现埋点,目前只针对纵横
-  }
+
   /**
    * 判断是否触顶
    *
@@ -282,10 +281,11 @@ export default class Scroll {
     let scrollHeight = currentWindow.MIP.viewport.getScrollTop()
     return scrollHeight < 2
   }
+
   /**
    * 阻尼字段
    *
-   * @param {id} id 触顶阻尼或者触底阻尼的id
+   * @param {string} id 触顶阻尼或者触底阻尼的id
    * @param {string} str 阻尼文本
    * @private
    */
@@ -294,8 +294,11 @@ export default class Scroll {
     div.querySelector('.circle').style.display = 'none'
     div.querySelector('.loading-label').innerHTML = str
   }
+
   /**
    * 加载失败函数
+   *
+   * @param {string} id 当前loading元素的id
    *
    * @private
    */
@@ -317,6 +320,8 @@ export default class Scroll {
   }
   /**
    * 弱网策略
+   *
+   * @param {string} id 当前loading元素的id
    *
    * @private
    */

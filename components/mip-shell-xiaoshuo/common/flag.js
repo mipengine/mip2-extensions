@@ -3,7 +3,7 @@
  * @author: guoshuang
  */
 
-import {isCacheUrl, getZhBkid} from './util'
+import {isCacheUrl, getParamFromString} from './util'
 
 class Flag {
   constructor () {
@@ -38,7 +38,7 @@ class Flag {
     }
     let url = window.location.href
     if (!isCacheUrl(url)) { return false }
-    let bkid = getZhBkid()
+    let bkid = getParamFromString(url, 'bkid')
     // 命中bkid，走无限下拉
     if (this.bkid.indexOf(bkid) > -1) {
       return true

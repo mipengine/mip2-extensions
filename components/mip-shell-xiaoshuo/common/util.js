@@ -23,7 +23,7 @@ export const getJsonld = (currentWindow) => {
 /**
  * [getHashData 根据 key 获取 hash 中的数据]
  *
- * @return {string}     value
+ * @returns {string}  value
  */
 export const getNovelInstanceId = () => {
   return (Math.random() * 10000000).toString(16).substr(0, 4) + '-' + (new Date()).getTime() + '-' + Math.random().toString().substr(2, 5)
@@ -33,12 +33,13 @@ export const getNovelInstanceId = () => {
  * [getHashData 根据 key 获取 hash 中的数据]
  *
  * @param  {string} key key
- * @return {string}     value
+ * @returns {string}     value
  */
 export const getHashData = key => {
   let MIP = window.MIP || {}
   return MIP && MIP.hash && MIP.hash.get ? MIP.hash.get(key) : ''
 }
+
 /**
  * 获取root页面的window
  *
@@ -147,6 +148,7 @@ export const scrollBoundary = () => {
     }
   })
 }
+
 /**
  * 获取cache的url
  *
@@ -164,6 +166,7 @@ export const getCacheUrl = (url) => {
 export const isCacheUrl = (url) => {
   return window.MIP.util.isCacheUrl(url)
 }
+
 /**
  *
  * 获取下一个window
@@ -175,26 +178,19 @@ export const getPrerenderJsonld = () => {
   let pageInfo = window.MIP.viewer.page.getPageById(pageId)
   return getJsonld(pageInfo.targetWindow)
 }
+
 /**
+ * 获取string上的参数值
  *
- * 纵横页面获取bookid
+ * @param {string} str 目标str
+ * @param {Object} param 目标参数
+ * @returns {string} string 目标参数的取值
  */
-export const getZhBkid = () => {
-  let url = window.location.href
-  let reg = /(bkid=)\S*?&/
-  let bkid = url.match(reg)
-  bkid = bkid[0].replace('bkid=', '')
-  bkid = bkid.replace('&', '')
-  return bkid
-}
-/**
- *
- * 纵横页面获取chapter_id
- */
-export const getZhCrid = (url) => {
-  let reg = /(crid=)\S*?&/
-  let crid = url.match(reg)
-  crid = crid[0].replace('crid=', '')
-  crid = crid.replace('&', '')
-  return crid
+export const getParamFromString = (str, param) => {
+  let regex = new RegExp(param + '=([^&]*)(&|$)')
+  let result = regex.exec(str)
+  if (result) {
+    return decodeURIComponent(result[1])
+  }
+  return ''
 }
