@@ -137,6 +137,31 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
   }
 
+  build () {
+    super.build()
+    let routes = JSON.parse(this.element.querySelector('script').innerText)
+    let pageType = routes.routes[0].meta.pageType
+    // 小流量下走无限下拉逻辑
+    if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {
+      scroll.init() // 初始化阅读器样式
+      scroll.start()
+      let page = document.querySelector('.navigator')
+      page.style.display = 'none'
+      // 删除章末p标签
+      let reader = document.querySelector('.reader')
+      reader.style.padding = '0 .32rem'
+      reader.lastElementChild.style.display = 'none'
+      let download = reader.querySelector('.zhdown-inner') || ''
+      if (download) {
+        download.style.display = 'none'
+      }
+      let title = reader.querySelector('.title') || ''
+      if (title) {
+        title.style.margin = '1.5rem 0'
+      }
+    }
+  }
+
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
   bindAllEvents () {
@@ -257,26 +282,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 观察者模式监听广告渲染是否成功字段 window.MIP.adShow
     this.showAdLog(pageType, site)
-
-    // 小流量下走无限下拉逻辑
-    if (flag.isNovelShell(this.currentPageMeta.pageType) && flag.isUnlimitedPulldownSids()) {
-      scroll.init() // 初始化阅读器样式
-      scroll.start()
-      let page = document.querySelector('.navigator')
-      page.style.display = 'none'
-      // 删除章末p标签
-      let reader = document.querySelector('.reader')
-      reader.style.padding = '0 .32rem'
-      reader.lastElementChild.style.display = 'none'
-      let download = reader.querySelector('.zhdown-inner') || ''
-      if (download) {
-        download.style.display = 'none'
-      }
-      let title = reader.querySelector('.title') || ''
-      if (title) {
-        title.style.margin = '1.5rem 0'
-      }
-    }
   }
   /**
    * 基类方法，翻页之前执行的方法
