@@ -21,6 +21,25 @@ export const getJsonld = (currentWindow) => {
 }
 
 /**
+ * [getHashData 根据 key 获取 hash 中的数据]
+ *
+ * @return {string}     value
+ */
+export const getNovelInstanceId = () => {
+  return (Math.random() * 10000000).toString(16).substr(0, 4) + '-' + (new Date()).getTime() + '-' + Math.random().toString().substr(2, 5)
+}
+
+/**
+ * [getHashData 根据 key 获取 hash 中的数据]
+ *
+ * @param  {string} key key
+ * @return {string}     value
+ */
+export const getHashData = key => {
+  let MIP = window.MIP || {}
+  return MIP && MIP.hash && MIP.hash.get ? MIP.hash.get(key) : ''
+}
+/**
  * 获取root页面的window
  *
  * @param {window} currentWindow 当前页面的window
