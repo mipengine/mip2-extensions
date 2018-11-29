@@ -112,7 +112,7 @@ function dpOk (sourceDpArr) {
  */
 function uaOk (sourceUaArr) {
   const checkUaFuns = {
-    baidu: platform.isBaidu,
+    baidu: platform.isBaiduApp,
     uc: platform.isUc,
     chrome: platform.isChrome,
     safari: platform.isSafari,
