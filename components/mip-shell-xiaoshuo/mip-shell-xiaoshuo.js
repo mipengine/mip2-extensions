@@ -234,12 +234,21 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         name: 'showShellFooter'
       })
     })
+
     // 暴露给外部html的调用方法, 显示目录侧边栏
     this.addEventAction('showShellCatalog', function () {
-      window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, true, {
-        name: 'showShellCatalog'
-      })
+      window.MIP.reciveClick = +new Date()
+      if (flag.isUnlimitedPulldownSids()) {
+        this.catalog.show(this)
+        this.footer.hide()
+        this.header.hide()
+      } else {
+        window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, true, {
+          name: 'showShellCatalog'
+        })
+      }
     })
+
     // 功能绑定：背景色切换 使用 on="tap:xiaoshuo-shell.changeMode"调用
     this.addEventAction('changeMode', function (e, theme) {
       window.MIP.viewer.page.broadcastCustomEvent({
@@ -375,6 +384,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
+      window.MIP.fileClick = +new Date()
+      alert(window.MIP.fileClick)
+      alert(window.MIP.reciveClick)
+      alert(window.MIP.fileClick - window.MIP.reciveClick)
       this.catalog.show(this)
       this.footer.hide()
       this.header.hide()
