@@ -16,12 +16,14 @@ class Flag {
    * @public
    */
   isAndroid4 () {
-    let reg = /Android ([0-9].[0-9](.[0-9])?)/
-    let androidVersion = navigator.userAgent.match(reg)[0].replace('Android ', '')
-    if (parseFloat(androidVersion) < 5) {
-      return true
+    let userAgent = navigator.userAgent
+    let index = userAgent.indexOf('Android')
+    if (index >= 0) {
+      let androidVersion = parseFloat(userAgent.slice(index + 8))
+      if (androidVersion < 5) {
+        return true
+      }
     }
-    return false
   }
   /**
    * 判断是否命中无限下拉的bookid
