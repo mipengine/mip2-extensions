@@ -10,17 +10,20 @@ import Footer from './feature/footer' // 底部控制栏
 import Header from './feature/header' // shell导航头部
 import {
   PageStyle,
-  FontSize
+  FontSize,
+  __setConfig
 } from './feature/setting' // 背景色调整，字体大小调整
 
 import NovelEvents from './common/events'
 import Strategy from './ad/strategyControl'
 import {initAdByCache} from './ad/strategyCompute'
-import {getJsonld, scrollBoundary, getCurrentWindow} from './common/util'
+import {getJsonld, scrollBoundary, getCurrentWindow, getNovelInstanceId} from './common/util'
 import state from './common/state'
 import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './common/log' // 日志
+import Prerender from './feature/prerender'
 
 let novelEvents = new NovelEvents()
+let prerender = new Prerender()
 let strategy = new Strategy()
 let util = MIP.util
 
@@ -31,8 +34,51 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.transitionContainsHeader = false
     // 处理浏览器上下滚动边界，关闭弹性
     scrollBoundary()
+    // 阅读器内部预渲染开关
+    this.isReaderPrerender = false
   }
-
+  /**
+   * 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.adShow
+   *
+   * @param {string} pageType 页面类型 page detail catalog ...
+   * @param {string} site 区分站点  目前只有 zongheng iqiyi
+   */
+  showAdLog (pageType, site) {
+    let old
+    /**
+     * 观察者模式监听变量变化，变量变化执行函数
+     *
+     * @param {string} oldVal 改变前的值
+     * @param {string} newVal 改变后的值
+    */
+    function observer (oldVal, newVal) {
+      if ((newVal === true) && (pageType !== 'detail')) {
+        sendTCLog('interaction', {
+          type: 'o',
+          action: 'adShow'
+        }, {
+          show: 'adShow',
+          hasAd: true,
+          site: site
+        })
+        // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
+        window.MIP.adShow = false
+      }
+    }
+    // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
+    Object.defineProperty(window.MIP, 'adShow', {
+      enumerable: true,
+      configurable: true,
+      get: function () {
+        return old
+      },
+      set: function (val) {
+        // 调用变量改变时处理函数
+        observer(old, val)
+        old = val
+      }
+    })
+  }
   // 通过小说JS给dom添加预渲染字段
   connectedCallback () {
     // 从结果页进入小说阅读页加上预渲染的标识prerender，但是内部的每页不能加，会影响翻页内的预渲染
@@ -91,6 +137,16 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     super.bindAllEvents()
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
+    // 判断是否支持预渲染
+    if (this.currentPageMeta.header.title.indexOf('雪中悍刀行') !== -1 && String(navigator.userAgent).indexOf('iPhone OS 8') === -1) {
+      this.isReaderPrerender = true
+    }
+    if (this.isReaderPrerender) {
+      if (this.currentPageMeta.pageType === 'page') {
+        __setConfig()
+        prerender.resetNavigatorBtn()
+      }
+    }
     const {isRootPage, novelInstance, originalUrl} = state(window)
     const pageType = novelInstance.currentPageMeta.pageType || ''
     let zonghengPattern = /www.xmkanshu.com/g
@@ -105,7 +161,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       site = 'iqiyi'
     }
     sendTCLog('interaction', {
-      type: 'b',
+      type: 'o',
       action: 'pageShow'
     }, {
       show: 'pageShow',
@@ -170,6 +226,15 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       sendWebbLogCommon()
     }
 
+    // 获取当前页面的数据，以及需要预渲染的链接
+    let jsonld = getJsonld(getCurrentWindow())
+    // 预渲染
+    if (this.currentPageMeta.pageType === 'page') {
+      if (this.isReaderPrerender) {
+        prerender.readerPrerender(jsonld)
+      }
+    }
+
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
     if (!isRootPage) {
       let jsonld = getJsonld(window)
@@ -183,39 +248,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, false, {
       name: 'current-page-ready'
     })
-
-    // 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.ad
-    setTimeout(() => {
-      let name
-      window.MIP.ad = {}
-      function observer (oldVal, newVal) {
-        if (newVal === true && (pageType !== 'detail')) {
-          sendTCLog('interaction', {
-            type: 'b',
-            action: 'adShow'
-          }, {
-            show: 'adShow',
-            hasAd: true,
-            site: site
-          })
-          // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
-          window.MIP.ad.show = false
-        }
-      }
-      // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
-      Object.defineProperty(window.MIP.ad, 'show', {
-        enumerable: true,
-        configurable: true,
-        get: function () {
-          return name
-        },
-        set: function (val) {
-          // 调用处理函数
-          observer(name, val)
-          name = val
-        }
-      })
-    }, 0)
+    // 观察者模式监听广告渲染是否成功字段 window.MIP.adShow
+    this.showAdLog(pageType, site)
   }
 
   // 基类方法，翻页之后执行的方法
@@ -241,13 +275,23 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 基类root方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe内部emitEvent, 调用根页面的shell bar弹出效果
   bindRootEvents () {
+    this.novelInstanceId = getNovelInstanceId()
     super.bindRootEvents()
     // 承接emit事件：根页面底部控制栏内容更新
     window.addEventListener('updateShellFooter', (e) => {
       this.footer.updateDom(e.detail[0] && e.detail[0].jsonld)
     })
+    // 点击按钮关闭工具栏
+    window.addEventListener('btnClickHide', e => {
+      this.footer.hide()
+      this.header.hide()
+      // 关闭黑色遮罩
+      this.toggleDOM(this.$buttonMask, false)
+    })
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
+      // 唤起设置栏才更新底部链接
+      prerender.updateFooterDom(this.isReaderPrerender)
       this.footer.show(this)
       this.header.show()
       let swipeDelete = new util.Gesture(this.$buttonMask, {
