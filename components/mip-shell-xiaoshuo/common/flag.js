@@ -26,7 +26,7 @@ class Flag {
           return true
         }
         // 安卓7以下手百降级
-        if (MIP.util.platform.isBaidu()) {
+        if (MIP.util.platform.isBaiduApp() || MIP.util.platform.isBaidu()) {
           return true
         }
       }
