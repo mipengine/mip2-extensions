@@ -280,7 +280,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 承接emit事件：根页面展示底部控制栏
     window.addEventListener('showShellFooter', (e, data) => {
       // 唤起设置栏才更新底部链接
-      prerender.updateFooterDom(this.isReaderPrerender)
+      prerender.updateFooterDom()
       this.footer.show(this)
       this.header.show()
       let swipeDelete = new util.Gesture(this.$buttonMask, {

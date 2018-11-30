@@ -41,20 +41,13 @@ class prerender {
 
   /**
    * 更新footer链接
-   *
-   * @param {boolean} isReaderPrerender 是否预渲染的布尔值
-   *
    */
-  updateFooterDom (isReaderPrerender) {
+  updateFooterDom () {
     // 页面配置的数据
     let footerConfig = getJsonld(getCurrentWindow())
     const isRootPage = MIP.viewer.page.isRootPage
     // 用来记录翻页的次数，主要用来触发品专的广告
     let currentWindow = isRootPage ? window : window.parent
-    if (window.MIP.util.isCacheUrl(location.href) && isReaderPrerender) { // cache页，需要改变翻页的地址为cache地址
-      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-    }
     window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
       name: 'updateShellFooter',
       data: {
@@ -64,18 +57,11 @@ class prerender {
   }
 
   /**
-   * 底部按钮的链接以及cache-first属性需要更新
+   * 预渲染环境下需要增加页面底部的翻页按钮cache-first属性
    */
   resetNavigatorBtn () {
     let navigatorBtn = document.querySelectorAll('.navigator .button')
-    let footerConfig = getJsonld(getCurrentWindow())
-    if (window.MIP.util.isCacheUrl(location.href)) { // cache页，需要改变翻页的地址为cache地址
-      footerConfig.nextPage.url = this.getCacheUrl(footerConfig.nextPage.url)
-      footerConfig.previousPage.url = this.getCacheUrl(footerConfig.previousPage.url)
-    }
-    navigatorBtn[0].href = footerConfig.previousPage.url
     navigatorBtn[0].setAttribute('cache-first', true)
-    navigatorBtn[2].href = footerConfig.nextPage.url
     navigatorBtn[2].setAttribute('cache-first', true)
   }
 }
