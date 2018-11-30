@@ -392,7 +392,7 @@ export default class MipShowMore extends CustomElement {
    *
    * @private
    * @param {number} maxLen 字数最大限制
-   * @return {string} endHtml 剩余的字符串
+   * @returns {string} endHtml 剩余的字符串
    */
   cutHtmlStr (maxLen) {
     let allChildList = this.showBox.childNodes
@@ -444,7 +444,7 @@ export default class MipShowMore extends CustomElement {
    *
    * @private
    * @param {HTMLElement} showmore dom节点
-   * @return {string} 传入dom的id
+   * @returns {string} 传入dom的id
    */
   getId (showmore) {
     if (!showmore.dataset.showmoreId) {
@@ -572,7 +572,7 @@ export default class MipShowMore extends CustomElement {
    * 获取真实高度
    *
    * @param {HTMLElement} dom dom节点
-   * @return {number} height
+   * @returns {number} height
    */
   getHeightUnfold (dom) {
     let fakeNode = document.createElement('div')
@@ -600,9 +600,9 @@ export default class MipShowMore extends CustomElement {
   /**
    * 匹配target
    *
-   * @param  {string} id
+   * @param  {string} id 事件绑定的domId
    * @param  {HTMLElement} node dom节点
-   * @return {HTMLElement} node dom节点
+   * @returns {HTMLElement} node dom节点
    */
   matchOriginTarget (id, node) {
     while (node.parentNode) {
