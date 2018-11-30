@@ -141,9 +141,16 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 将无限下拉逻辑提前，解决首屏卡顿的bug
   build () {
     super.build()
-    // 这个时候this还没有挂载mip-shell-xiaoshuo里面的某一些配置参数，所以手动取一下
-    let routes = JSON.parse(this.element.querySelector('script').innerText)
-    let pageType = routes.routes[0].meta.pageType
+    let pageType = ''
+    try {
+      // 这个时候this还没有挂载mip-shell-xiaoshuo里面的某一些配置参数，所以手动取一下
+      // 防止站长配错json
+      let routes = JSON.parse(this.element.querySelector('script').innerText)
+      pageType = routes.routes[0].meta.pageType
+    } catch (e) {
+      throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json mipShellConfig')
+    }
+
     // 小流量下走无限下拉逻辑
     // 判断当前页是阅读页走无限下拉逻辑
     if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {

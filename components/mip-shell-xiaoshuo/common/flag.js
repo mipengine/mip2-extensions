@@ -3,7 +3,7 @@
  * @author: guoshuang
  */
 
-import {isCacheUrl, getParamFromString} from './util'
+import {getParamFromString} from './util'
 
 class Flag {
   constructor () {
@@ -16,13 +16,10 @@ class Flag {
    * @public
    */
   isAndroid4 () {
-    let userAgent = navigator.userAgent
-    let index = userAgent.indexOf('Android')
-    if (index >= 0) {
-      let androidVersion = parseFloat(userAgent.slice(index + 8))
-      if (androidVersion < 5) {
-        return true
-      }
+    let reg = /Android ([0-9].[0-9](.[0-9])?)/
+    let androidVersion = navigator.userAgent.match(reg)[0].replace('Android ', '')
+    if (parseFloat(androidVersion) < 5) {
+      return true
     }
     return false
   }
@@ -37,7 +34,9 @@ class Flag {
       return false
     }
     let url = window.location.href
-    if (!isCacheUrl(url)) { return false }
+    if (!window.MIP.util.isCacheUrl(url)) {
+      return false
+    }
     let bkid = getParamFromString(url, 'bkid')
     // 命中bkid，走无限下拉
     if (this.bkid.indexOf(bkid) > -1) {

@@ -15,10 +15,7 @@ let pageIdQuery = {
  * 无限下拉loading动画
  */
 function loadingDom () {
-  return `<div class="loading-view seen-list-book-loading">
-            <span data-v-4e3483cd="" class="circle"></span>
-            <span data-v-4e3483cd="" class="loading-label">正在加载...</span>
-          </div>`
+  return '<div class="loading-view seen-list-book-loading"><span data-v-4e3483cd="" class="circle"></span><span data-v-4e3483cd="" class="loading-label">正在加载...</span></div>'
 }
 
 export default class Scroll {

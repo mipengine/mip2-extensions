@@ -159,15 +159,6 @@ export const getCacheUrl = (url) => {
 }
 
 /**
- * 判断是否为cache url
- *
- * @param {string} url 目标url
- */
-export const isCacheUrl = (url) => {
-  return window.MIP.util.isCacheUrl(url)
-}
-
-/**
  *
  * 获取下一个window
  */
