@@ -385,9 +385,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
       window.MIP.fileClick = +new Date()
-      alert(window.MIP.fileClick)
-      alert(window.MIP.reciveClick)
-      alert(window.MIP.fileClick - window.MIP.reciveClick)
       this.catalog.show(this)
       this.footer.hide()
       this.header.hide()

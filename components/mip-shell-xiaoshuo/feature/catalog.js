@@ -364,8 +364,6 @@ class Catalog {
     // for (let i = 0; i < catalog.length; i++) {
     //   catalog[i].innerHTML = catalog[i].innerHTML
     // }
-    // 强制触发更新
-    $catalogContent.clientLeft = 0
     if (!this.categoryList) {
       util.css(document.querySelector('.net-err-info'), {
         display: 'block'

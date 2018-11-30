@@ -11,19 +11,27 @@ class Flag {
     this.bkid = ['377566031', '228265', '32544050', '494196121', '831262', '61031200']
   }
   /**
-   * 判断是否为安卓4下的手机百度
+   * 安卓4及其以下的浏览器，安卓5、6的手百降级为翻页方式
    *
    * @public
    */
-  isAndroid4 () {
+  isAndroid () {
     let userAgent = navigator.userAgent
     let index = userAgent.indexOf('Android')
     if (index >= 0) {
       let androidVersion = parseFloat(userAgent.slice(index + 8))
-      if (androidVersion < 5) {
-        return true
+      if (androidVersion < 7) {
+        // 安卓4以下版本降级
+        if (androidVersion < 5) {
+          return true
+        }
+        // 安卓7以下手百降级
+        if (MIP.util.platform.isBaidu()) {
+          return true
+        }
       }
     }
+    return false
   }
   /**
    * 判断是否命中无限下拉的bookid
@@ -32,7 +40,7 @@ class Flag {
    */
   isUnlimitedPulldownSids () {
     // 安卓4降级
-    if (this.isAndroid4()) {
+    if (this.isAndroid()) {
       return false
     }
     let url = window.location.href
