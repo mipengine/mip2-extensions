@@ -171,6 +171,14 @@ export default class Scroll {
   getPageDom (iframe, pageId, currentPage) {
     let nextdocument = iframe.contentWindow.document
     let readwarp = nextdocument.getElementById('mip-reader-warp').childNodes
+    // 判断是否有添加 show-xiaoshuo-container
+    // 解决偶现获取到了dom，但是由于js阻塞引起的没有添加show-xiaoshuo-container样式类，导致文中出现一片空白的情况
+    let readwarpClass = readwarp[1].className || []
+    readwarpClass = readwarpClass.split(' ')
+    if (readwarpClass.indexOf('show-xiaoshuo-container') < 0) {
+      readwarp[1].className = readwarp[1].className + ' show-xiaoshuo-container'
+    }
+
     readwarp[1].style.padding = '0 .32rem'
     readwarp[1].lastElementChild.style.display = 'none'
 
