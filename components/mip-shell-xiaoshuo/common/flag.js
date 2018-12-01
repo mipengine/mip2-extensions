@@ -11,7 +11,7 @@ class Flag {
     this.bkid = ['377566031', '228265', '32544050', '494196121', '831262', '61031200']
   }
   /**
-   * 安卓4及其以下的浏览器，安卓5、6的手百降级为翻页方式
+   * 安卓4及其以下的浏览器
    *
    * @public
    */
@@ -20,15 +20,9 @@ class Flag {
     let index = userAgent.indexOf('Android')
     if (index >= 0) {
       let androidVersion = parseFloat(userAgent.slice(index + 8))
-      if (androidVersion < 7) {
-        // 安卓4以下版本降级
-        if (androidVersion < 5) {
-          return true
-        }
-        // 安卓7以下手百降级
-        if (MIP.util.platform.isBaiduApp() || MIP.util.platform.isBaidu()) {
-          return true
-        }
+      // 安卓4以下版本降级
+      if (androidVersion < 5) {
+        return true
       }
     }
     return false
