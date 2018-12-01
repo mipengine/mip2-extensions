@@ -190,7 +190,7 @@ export default class Scroll {
     } else {
       // 是这一章第一节，增加title上下的margin
       let title = readwarp[1].querySelector('h2.title')
-      title.style.margin = '1.5rem 0'
+      title.style.padding = '1.5rem 0'
     }
 
     // 隐藏下载按钮
@@ -219,8 +219,11 @@ export default class Scroll {
     div.setAttribute('id', id)
     div.appendChild(dom)
     reader.insertBefore(div, warp)
+    console.log(div.offsetHeight)
+    console.log(currentWindow.MIP.viewport.getScrollTop())
     // 获取页面滚动的高度 当前视口的高度 + 获取的div的高度 + loading的高度
-    let height = currentWindow.MIP.viewport.getScrollTop() + div.offsetHeight
+    let height = currentWindow.MIP.viewport.getScrollTop() + div.offsetHeight - 35
+    console.log(height)
     // 插入元素后，滚动到当前高度
     currentWindow.MIP.viewport.setScrollTop(height)
   }
@@ -275,7 +278,7 @@ export default class Scroll {
     let documentHeight = reader.offsetHeight
     let viewPortHeight = currentWindow.MIP.viewport.getRect().height
     let scrollHeight = currentWindow.MIP.viewport.getScrollTop()
-    return documentHeight - viewPortHeight - scrollHeight < 10
+    return documentHeight - viewPortHeight - scrollHeight < 5
   }
 
   /**
