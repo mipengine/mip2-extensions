@@ -23,7 +23,7 @@ export const getJsonld = (currentWindow) => {
 /**
  * [getHashData 根据 key 获取 hash 中的数据]
  *
- * @return {string}     value
+ * @returns {string}  value
  */
 export const getNovelInstanceId = () => {
   return (Math.random() * 10000000).toString(16).substr(0, 4) + '-' + (new Date()).getTime() + '-' + Math.random().toString().substr(2, 5)
@@ -33,12 +33,13 @@ export const getNovelInstanceId = () => {
  * [getHashData 根据 key 获取 hash 中的数据]
  *
  * @param  {string} key key
- * @return {string}     value
+ * @returns {string}     value
  */
 export const getHashData = key => {
   let MIP = window.MIP || {}
   return MIP && MIP.hash && MIP.hash.get ? MIP.hash.get(key) : ''
 }
+
 /**
  * 获取root页面的window
  *
@@ -146,4 +147,41 @@ export const scrollBoundary = () => {
       touchTarget.removeEventListener('touchmove', stopProFun)
     }
   })
+}
+
+/**
+ * 获取cache的url
+ *
+ * @param {string} url 目标url
+ */
+export const getCacheUrl = (url) => {
+  return window.MIP.util.makeCacheUrl(url, 'url', true)
+}
+
+/**
+ *
+ * 获取下一个window
+ */
+export const getPrerenderJsonld = () => {
+  let url = getCacheUrl(location.href)
+  let pageId = MIP.util.getOriginalUrl(url)
+  pageId = getCacheUrl(pageId)
+  let pageInfo = window.MIP.viewer.page.getPageById(pageId)
+  return getJsonld(pageInfo.targetWindow)
+}
+
+/**
+ * 获取string上的参数值
+ *
+ * @param {string} str 目标str
+ * @param {Object} param 目标参数
+ * @returns {string} string 目标参数的取值
+ */
+export const getParamFromString = (str, param) => {
+  let regex = new RegExp(param + '=([^&]*)(&|$)')
+  let result = regex.exec(str)
+  if (result) {
+    return decodeURIComponent(result[1])
+  }
+  return ''
 }
