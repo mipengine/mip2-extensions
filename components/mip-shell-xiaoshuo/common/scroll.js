@@ -220,7 +220,7 @@ export default class Scroll {
     div.appendChild(dom)
     reader.insertBefore(div, warp)
     // 获取页面滚动的高度 当前视口的高度 + 获取的div的高度 + loading的高度
-    let height = currentWindow.MIP.viewport.getScrollTop() + div.offsetHeight + 49
+    let height = currentWindow.MIP.viewport.getScrollTop() + div.offsetHeight
     // 插入元素后，滚动到当前高度
     currentWindow.MIP.viewport.setScrollTop(height)
   }
