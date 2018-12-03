@@ -15,7 +15,7 @@ class Flag {
    *
    * @public
    */
-  isAndroid () {
+  isAndroid4 () {
     let userAgent = navigator.userAgent
     let index = userAgent.indexOf('Android')
     if (index >= 0) {
@@ -34,7 +34,7 @@ class Flag {
    */
   isUnlimitedPulldownSids () {
     // 安卓4降级
-    if (this.isAndroid()) {
+    if (this.isAndroid4()) {
       return false
     }
     let url = window.location.href
