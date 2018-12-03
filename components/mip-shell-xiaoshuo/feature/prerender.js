@@ -61,8 +61,10 @@ class prerender {
    */
   resetNavigatorBtn () {
     let navigatorBtn = document.querySelectorAll('.navigator .button')
-    navigatorBtn[0].setAttribute('cache-first', true)
-    navigatorBtn[2].setAttribute('cache-first', true)
+    if (navigatorBtn) {
+      navigatorBtn[0].setAttribute('cache-first', true)
+      navigatorBtn[2].setAttribute('cache-first', true)
+    }
   }
 }
 
