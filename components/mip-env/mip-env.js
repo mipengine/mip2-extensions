@@ -143,7 +143,7 @@ export default class MipEnv extends CustomElement {
     const targetDom = id !== '' ? document.documentElement.querySelector('#' + id) : null
     if (!isOk) {
       // 检测不合规时将内容清空
-      if (element.innerHTML === '' && id == null) {
+      if (element.innerHTML === '' && targetDom !== null) {
         targetDom.remove()
       } else {
         element.innerHTML = ''
