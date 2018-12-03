@@ -31,7 +31,6 @@ let prerender = new Prerender()
 let strategy = new Strategy()
 let util = MIP.util
 let flag = new Flag()
-let scroll = new Scroll()
 
 export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -154,6 +153,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 小流量下走无限下拉逻辑
     // 判断当前页是阅读页走无限下拉逻辑
     if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {
+      let scroll = new Scroll()
       scroll.init() // 初始化阅读器样式
       scroll.start()
       // 清除首屏阅读器内上一页、下一页和目录按钮
