@@ -14,8 +14,12 @@ import {
   __setConfig
 } from './feature/setting' // 背景色调整，字体大小调整
 
+import Scroll from './common/scroll'
+import Flag from './common/flag'
+
 import NovelEvents from './common/events'
 import Strategy from './ad/strategyControl'
+
 import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow, getNovelInstanceId} from './common/util'
 import state from './common/state'
@@ -26,6 +30,7 @@ let novelEvents = new NovelEvents()
 let prerender = new Prerender()
 let strategy = new Strategy()
 let util = MIP.util
+let flag = new Flag()
 
 export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -131,6 +136,46 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
   }
 
+  // 基类方法
+  // 将无限下拉逻辑提前，解决首屏卡顿的bug
+  build () {
+    super.build()
+    let pageType = ''
+    try {
+      // 这个时候this还没有挂载mip-shell-xiaoshuo里面的某一些配置参数，所以手动取一下
+      // 防止站长配错json
+      let routes = JSON.parse(this.element.querySelector('script').innerText)
+      pageType = routes.routes[0].meta.pageType
+    } catch (e) {
+      throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json mipShellConfig')
+    }
+
+    // 小流量下走无限下拉逻辑
+    // 判断当前页是阅读页走无限下拉逻辑
+    if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {
+      let scroll = new Scroll()
+      scroll.init() // 初始化阅读器样式
+      scroll.start()
+      // 清除首屏阅读器内上一页、下一页和目录按钮
+      let page = document.querySelector('.navigator')
+      page.style.display = 'none'
+      // 删除章末p标签
+      let reader = document.querySelector('.reader')
+      reader.style.padding = '0 .32rem'
+      reader.lastElementChild.style.display = 'none'
+      // 删除首屏下载按钮样式
+      let download = reader.querySelector('.zhdown-inner') || ''
+      if (download) {
+        download.style.display = 'none'
+      }
+      // 加大title和文本之间的行间距
+      let title = reader.querySelector('.title') || ''
+      if (title) {
+        title.style.margin = '1.5rem 0'
+      }
+    }
+  }
+
   // 基类方法：绑定页面可被外界调用的事件。
   // 如从跳转后的iframe颜色设置，通知所有iframe和根页面颜色改变
   bindAllEvents () {
@@ -189,12 +234,21 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         name: 'showShellFooter'
       })
     })
+
     // 暴露给外部html的调用方法, 显示目录侧边栏
     this.addEventAction('showShellCatalog', function () {
-      window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, true, {
-        name: 'showShellCatalog'
-      })
+      window.MIP.reciveClick = +new Date()
+      if (flag.isUnlimitedPulldownSids()) {
+        this.catalog.show(this)
+        this.footer.hide()
+        this.header.hide()
+      } else {
+        window.MIP.viewer.page.emitCustomEvent(isRootPage ? window : window.parent, true, {
+          name: 'showShellCatalog'
+        })
+      }
     })
+
     // 功能绑定：背景色切换 使用 on="tap:xiaoshuo-shell.changeMode"调用
     this.addEventAction('changeMode', function (e, theme) {
       window.MIP.viewer.page.broadcastCustomEvent({
@@ -218,6 +272,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
 
     strategy.eventAllPageHandler()
+
     // 绑定小说每个页面的监听事件，如翻页，到了每章最后一页
     novelEvents.bindAll()
 
@@ -251,9 +306,32 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 观察者模式监听广告渲染是否成功字段 window.MIP.adShow
     this.showAdLog(pageType, site)
   }
-
-  // 基类方法，翻页之后执行的方法
-  // 记录翻页的白屏
+  /**
+   * 基类方法，翻页之前执行的方法
+   *
+   * @param {Object} params 翻页的信息
+   */
+  beforeSwitchPage (params) {
+    let url = params.targetPageId
+    if (flag.isUnlimitedPulldownSids()) {
+      let isCacheUrl = MIP.util.isCacheUrl(url)
+      if (isCacheUrl) {
+        url = MIP.util.parseCacheUrl(url)
+        url = url.replace(/(http:|https:)\/\//, '')
+        url = encodeURIComponent(url)
+        let baseUrl = document.referrer
+        let reg = /c\/\S*\?/
+        url = baseUrl.replace(reg, 'c/' + url + '?')
+        window.MIP.viewer.open(url, {isMipLink: false, replace: true})
+      }
+    }
+  }
+  /**
+   * 基类方法，翻页之后执行的方法
+   * 记录翻页的白屏
+   *
+   * @param {Object} options 翻页的信息
+   */
   afterSwitchPage (options) {
     // 用于记录页面加载完成的时间
     const startRenderTime = novelEvents.timer
@@ -306,11 +384,11 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
+      window.MIP.fileClick = +new Date()
       this.catalog.show(this)
       this.footer.hide()
       this.header.hide()
     })
-
     strategy.eventRootHandler()
     novelEvents.bindRoot()
   }
@@ -339,6 +417,19 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.fontSize = new FontSize()
     // 绑定 Root shell 字体bar拖动事件
     this.fontSize.bindDragEvent()
+
+    // 加个判断 小流量下走无限下拉逻辑，干掉 shell的上一页下一页
+    if (flag.isUnlimitedPulldownSids()) {
+      let shellpage = document.querySelector('.upper')
+      if (shellpage) {
+        shellpage.style.display = 'none'
+      }
+      let buttonWrapper = document.querySelector('.button-wrapper')
+      if (buttonWrapper) {
+        buttonWrapper.style.height = '100%'
+        buttonWrapper.style.alignItems = 'center'
+      }
+    }
   }
 
   // 基类方法：页面跳转时，解绑当前页事件，防止重复绑定
