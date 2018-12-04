@@ -1,4 +1,4 @@
-import {timeago} from './timeago.js'
+import {timeago} from './timeago'
 
 export default class MIPTimeAgo extends MIP.CustomElement {
   build () {
