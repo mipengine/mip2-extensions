@@ -63,17 +63,19 @@
       <div class='continer'>
         code
         <br />
-        &lt;mip-env scope={"ua":"!uc"} &gt;
+        &lt;mip-env scope={"ua":"!baidu"} &gt;
         <br />
-        &lt;div&gt;success&lt;/div&gt;
+        &lt;mip-fixed&gt;success&lt;/mip-fixed&gt;
         <br />
         &lt;/mip-env&gt;
         <br />
         <br />
         result:
         <div class='content'>
-          <mip-env scope={"ua":"!uc"} >
-            <div>success</div>
+          <mip-env scope={"ua":"!baidu"} targetId="test">
+            <mip-fixed type="bottom" id="test">
+                success
+            </mip-fixed>
           </mip-env>
         </div>
       </div>

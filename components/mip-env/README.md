@@ -27,6 +27,8 @@ scope={"ua":"uc,qq"} => 当是UC浏览器或qq浏览器时会展示出指定内�
 eg:
 scope={"ua":"uc,qq,!baidu,!qq,!chrome"} 最终会被认为是 scope={"ua":"uc,qq"}
 
+5、当需要判断的组件为`mip-fixed`的组件，需要添加targetId属性来标识`mip-fixed`组件，targetId值为`mip-fixed`的id值
+
 ## 示例
 
 ```html
@@ -79,4 +81,8 @@ param:
   1、所有值不区分大小写。填写了os键则必须有值才行
   2、所有取值均可在前面加"!",表示非xx
 
+### targetId
 
+说明: 当scope判断不符合规则的元素为`mip-fixed`的组件时，需要添加targetId属性来标识`mip-fixed`组件，targetId值为`mip-fixed`的id值；
+必选: 否
+类型: string
