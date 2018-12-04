@@ -17,7 +17,7 @@ function __getConfig () {
   return config
 };
 // 将配置应用在页面上
-function __setConfig (config) {
+export function __setConfig (config) {
   config = extend(__getConfig(), config)
   storage.set(STORAGE_KEY, JSON.stringify(config))
   if (config.theme) {
