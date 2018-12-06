@@ -55,7 +55,11 @@ export default class FontLoader {
           resolve()
         } else {
           document.fonts.load(fontString).then(() => {
+            // chrome bug
+            // https://bugs.chromium.org/p/chromium/issues/detail?id=347460
+            // 暂时保留，等后续确认 bug 修复再改
             return document.fonts.load(fontString)
+            // document.fonts.check(fontString) ? resolve() : reject(new Error('Font load failed'))
           }).then(() => {
             document.fonts.check(fontString) ? resolve() : reject(new Error('Font load failed'))
           }).catch(err => reject(err))
