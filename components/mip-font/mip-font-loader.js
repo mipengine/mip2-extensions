@@ -1,6 +1,7 @@
 
 /**
- * font-loader 字体下载检测
+ * @file mip-font-loader 字体下载检测
+ * @description 字体加载，一个是通过document.fonts的方式，一个是通过创建两个div比对的方式
  */
 
 export default class FontLoader {
@@ -89,7 +90,7 @@ export default class FontLoader {
   }
 
   /**
-   * [createComparators description]
+   * 返回对比器的列表
    *
    * @returns {Array} [description]
    */
@@ -97,7 +98,6 @@ export default class FontLoader {
     const containerElement = this.container =
         document.createElement('div')
     MIP.util.css(containerElement, {
-      // Use larger font-size to better detect font load.
       fontSize: '40px',
       fontVariant: this.fontConfig.variant,
       fontWeight: this.fontConfig.weight,

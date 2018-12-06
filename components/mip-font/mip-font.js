@@ -1,5 +1,6 @@
 /**
- * @fileOverview  mip-font.js 管理字体文件加载及类名修改
+ * @fileOverview  mip-font.js
+ * @description 根据自定义字体文件加载状态修改类名，控制样式
  */
 
 import FontLoader from './mip-font-loader'
