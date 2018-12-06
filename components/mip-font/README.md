@@ -1,6 +1,6 @@
 # mip-font 组件
 
-font 组件
+mip-font 组件
 
 标题|内容
 ----|----
@@ -23,7 +23,7 @@ font 组件
 
 ```
 
-## 说明：管理自定义字体的加载，通过字体的加载状况为`documentElement`根节点增加不同的类名，可以通过以下四个属性来设置类名 `on-error-remove-class`/`on-error-add-class`/`on-load-remove-class`/`on-load-add-class` ，具体[使用示例](##)
+## 说明：管理自定义字体的加载，通过字体的加载状况为`documentElement`根节点增加不同的类名，可以通过以下四个属性来设置类名 `on-error-remove-class`/`on-error-add-class`/`on-load-remove-class`/`on-load-add-class` 
 
 ## 属性
 
@@ -69,16 +69,13 @@ font 组件
 类型：字符串
 取值范围：无
 
-##### font-weight, font-style, font-variant
+### font-weight, font-style, font-variant
 
 说明：标准属性值
 必选项：否
 
-##### layout
+### layout
 
 必须为 `nodisplay`
 
 
-## font 使用参考
-
-[font](##)
