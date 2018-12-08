@@ -8,17 +8,24 @@
 
 ## 说明
 
-`mip-animation` 是 mip 用来定义和展示动画效果的组件，其功能依赖于 Web Animations API 。主要使用方法是定义一个 `mip-animation` 组件，并在其内部定义一段 `json` 作为对动画效果的描述。
+`mip-animation` 是 mip 用来定义和展示动画效果的组件，其功能依赖于 Web Animations API 。主要使用方法是定义一个 `mip-animation` 组件，并在其内部定义一段 `json` 作为对动画效果的描述。其中 `keyframes` 字段的值可以是定义了多个阶段动画的数组，也可以是一个动画效果的对象，最后还可以是字符串，如果是字符串，就表示 `keyframes` 的定义会从 `style` 节点中读取。
 
 ## 示例
 
 ### 基本使用
 ```html
-<div class="inner-0"></div>
+<style mip-custom>
+  .inner-00 {
+    height: 20px;
+    width: 40px;
+    background: red;
+  }
+</style>
+<div class="inner-00"></div>
 <mip-animation trigger="visibility" id="anim">
   <script type="application/json">
     {
-      "selector": ".inner-0",
+      "selector": ".inner-00",
       "keyframes": [
         {
           "transform": "translateX(0px)"
@@ -35,11 +42,18 @@
 
 ### 媒体查询
 ```html
-<div class="inner-1"></div>
+<style mip-custom>
+  .inner-11 {
+    height: 20px;
+    width: 40px;
+    background: red;
+  }
+</style>
+<div class="inner-11"></div>
 <mip-animation trigger="visibility" id="anim">
   <script type="application/json">
     {
-      "selector": ".inner-1",
+      "selector": ".inner-11",
       "keyframes": [
         {
           "transform": "translateX(0px)"
@@ -69,11 +83,18 @@
 
 ### CSS.supports
 ```html
-<div class="inner-0"></div>
+<style mip-custom>
+  .inner-01 {
+    height: 20px;
+    width: 40px;
+    background: red;
+  }
+</style>
+<div class="inner-01"></div>
 <mip-animation trigger="visibility" id="anim">
   <script type="application/json">
     {
-      "selector": ".inner-0",
+      "selector": ".inner-01",
       "keyframes": [
         {
           "transform": "translateX(0px)"
@@ -96,8 +117,63 @@
 </mip-animation>
 ```
 
+### CSS expression && CSS extension
+```html
+<style mip-custom>
+  .inner-02 {
+    height: 20px;
+    width: 40px;
+    background: red;
+  }
+</style>
+<div class="inner-02"></div>
+<mip-animation trigger="visibility" id="anim">
+  <script type="application/json">
+    {
+      "selector": ".inner-02",
+      "keyframes": [
+        {
+          "transform": "translateX(0px)"
+        },
+        {
+          "transform": "translate(calc(index() * 10px + width()+ 100%), calc(height() *rand())) rotate(45deg)"
+        }
+      ],
+      "duration": 1000
+    }
+  </script>
+</mip-animation>
+```
+
 ### subtargets 和 on 语法
 ```html
+<style mip-custom>
+  .wrapper {
+    background: #dcdcdc;
+    height: 500px;
+  }
+
+  .inner {
+    width: 20px;
+    height: 20px;
+  }
+
+  .inner-0 {
+    background: red;
+  }
+
+  .inner-1 {
+    background: yellow;
+  }
+
+  .inner-2 {
+    background: green;
+  }
+
+  .inner-3 {
+    background: black;
+  }
+</style>
 <div class="wrapper">
   <div class="inner inner-0"></div>
   <div class="inner inner-1"></div>
@@ -233,5 +309,35 @@
 取值：整数或 'Infinity'  
 默认值：1  
 
+## CSS expression && CSS extension
 
-> 后续支持：1、Keyframes from CSS；2、calc(), car(), width(), height(), num(), rand() and index()；3、Animation composition；
+### calc()
+
+说明：计算一个 CSS 属性的值，其中的表达式需要符合 calc 规范，作为运算符的加减号需要被空格包围，而乘除不强求。其内部同样支持所有的 CSS expression && CSS extension  
+参数：符合要求的表达式  
+
+### var()
+
+说明：用于 CSS 求值，可在 json 字段中定义 CSS 变量，然后在需要的时候利用 var 进行求值，变量必须以 '--' 开头  
+参数：可以有一个或两个参数，第一个参数是 CSS 定义的变量，如果找不到定义，则直接使用第二个参数作为默认值  
+
+### index()
+
+说明：这个表达式表示当前元素在动画效果中的序号，也就是说在使用 `selector` 的时候，选中的元素不止一个。第一个匹配的结果为 0，之后为 1，以此类推  
+参数：无
+
+### rand()
+
+说明：产生一个随机数。如果没有参数，这默认参数一个 0-1 之间的随机数，没有单位；如果是两个参数，那么将产生一个在两者之间的随机数，单位不是同种类型的话将报错，类似的，单位一个是秒，一个是毫秒，将会进行转化再求值  
+参数：两个相同类型的参数或者无  
+
+### num()
+
+说明：取一个数字，类似 `parseFloat` 效果，通常作用是去掉单位。  
+参数：一个字符串  
+
+### width() height()
+
+说明：选取特定元素的宽度值或高度值，如果没有参数，则是当前元素的宽高；如果是正常的样式选择器参数，则返回查找到的元素的宽高；如果是 `closest('.selector')` 的用法，就返回最近的祖先元素的宽高  
+参数：字符串或无  
+
