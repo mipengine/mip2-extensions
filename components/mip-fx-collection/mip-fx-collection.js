@@ -106,4 +106,4 @@ class MIPFxCollection {
   }
 }
 
-MIP.registerService(window, 'mip-fx-collection', MIPFxCollection)
+MIP.registerService('mip-fx-collection', MIPFxCollection)
