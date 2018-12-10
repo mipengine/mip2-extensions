@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <link rel="canonical" href="">
+  <title>mip-date-countdown</title>
+  <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
+</head>
+<body>
+  <!-- end-date -->
+  <h2>end-date</h2>
+  <mip-date-countdown end-date="2020-06-01T00:00:00+08:00">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+
+  <!-- timestamp-ms -->
+  <h2>timestamp-ms</h2>
+  <mip-date-countdown timestamp-ms="1590940800000">
+    <template type="mip-mustache">
+      <div>
+        {{d}} {{days}}, {{h}} {{hours}}, {{m}} {{minutes}}, {{s}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+
+  <!-- timestamp-seconds -->
+  <h2>timestamp-seconds</h2>
+  <mip-date-countdown timestamp-seconds="1590940800">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+
+  <!-- timeleft-ms -->
+  <h2>timeleft-ms</h2>
+  <mip-date-countdown timeleft-ms="3600000">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+
+  <!-- offset-seconds -->
+  <h2>offset-seconds</h2>
+  <mip-date-countdown timeleft-ms="3600000" offset-seconds="-60">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+
+  <!-- locale -->
+  <h2>locale</h2>
+  <mip-date-countdown end-date="2020-06-01T00:00:00+08:00" locale="en">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+  <mip-date-countdown end-date="2020-06-01T00:00:00+08:00" locale="ko">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+  <mip-date-countdown end-date="2020-06-01T00:00:00+08:00" locale="th">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+  <mip-date-countdown end-date="2020-06-01T00:00:00+08:00" locale="zh-tw">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+
+  <!-- biggest-unit -->
+  <h2>biggest-unit</h2>
+  <mip-date-countdown end-date="2020-06-01T00:00:00+08:00" biggest-unit="hours">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+
+  <!-- timeout 事件 -->
+  <h2>timeout 事件</h2>
+  <mip-data>
+      <script type="application/json">
+        {
+          "status": "倒计时进行中..."
+        }
+      </script>
+  </mip-data>
+
+  <mip-date-countdown timeleft-ms="30000" when-ended="stop" on="timeout:MIP.setData({status:'时间到了'})">
+    <template type="mip-mustache">
+      <div>
+        {{dd}} {{days}}, {{hh}} {{hours}}, {{mm}} {{minutes}}, {{ss}} {{seconds}}
+      </div>
+    </template>
+  </mip-date-countdown>
+
+  <p m-text="status"></p>
+
+  <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
+  <script src="/mip-date-countdown/mip-date-countdown.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+</body>
+</html>
