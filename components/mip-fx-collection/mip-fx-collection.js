@@ -32,9 +32,8 @@ const CONFILICT_FXS = {
   'fade-in-scroll': ['fade-in']
 }
 
-export default class MIPFxCollection extends MIP.CustomElement {
-  constructor (...args) {
-    super(...args)
+class MIPFxCollection {
+  constructor () {
     /**
      * The list stores those elments which have been seen.
      *
@@ -42,10 +41,7 @@ export default class MIPFxCollection extends MIP.CustomElement {
      * @private
      */
     this.seen_ = []
-  }
 
-  /** @override */
-  build () {
     this.scan()
   }
 
@@ -109,3 +105,5 @@ export default class MIPFxCollection extends MIP.CustomElement {
     return fxs
   }
 }
+
+MIP.registerService(window, 'mip-fx-collection', MIPFxCollection)
