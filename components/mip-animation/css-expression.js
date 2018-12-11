@@ -7,7 +7,6 @@
  */
 import {
   NumberNode,
-  OperatorNode,
   constantNode
 } from './css-expression-ast'
 
@@ -49,10 +48,16 @@ function match (dom, selector) {
 function parseCss (cssString, dom, options) {
   // the first thing is to test whether it need to be parsed
   if (!isVar(cssString) && !isOperate(cssString)) return cssString
+  // 这里的解析主要针对这种形式 `rand(1, 3)`，所以在最外层套了一层 `root()` 方便解析，然后再取出其内的内容进行计算返回
   let tree = parseToTree('root(' + cssString + ')')
   return calculate(tree[0].params[0], { dom, options })
 }
-
+/**
+ * 解析 CSS 字符串
+ *
+ * @param {string} css 需要解析的 CSS 字符串
+ * @returns {string} 解析后的字符串
+ */
 function parseToTree (css) {
   let str = ''
   let result = []
@@ -99,6 +104,9 @@ function parseToTree (css) {
         parentheseMap[parenthese] = true
       }
       continue
+    }
+    if (css[i] === '(') {
+      throw Error(`css calc() doesn't support bracket operation`)
     }
     let endMatch = str.match(/\)$/)
     if (endMatch) {
@@ -149,58 +157,67 @@ function calculate (css, obj, dim) {
         }
         strArr.push(calculate(val.params[index], obj, 'z'))
       }
-
-      css[i] = funcNode(val.name, strArr.join(','), dim, obj)
+      // 直接传一个参数数组进去
+      if (funcNode[val.name]) {
+        css[i] = funcNode[val.name](strArr, dim, obj)
+      } else {
+        // 这里是 transform 的各个属性，如 translate，rotate 等，可直接返回结果。
+        css[i] = val.name + '(' + strArr.join('') + ')'
+      }
     }
   }
-  return css.join(' ').trim()
+  return css.join('').trim()
 }
-function funcNode (name, str, dim, { dom, options }) {
-  switch (name) {
-    case 'width':
-      return dimNode(str, 'width', dom)
-    case 'height':
-      return dimNode(str, 'height', dom)
-    case 'index':
-      return indexNode({ dom, options })
-    case 'calc':
-      return calcNode(str, dim, dom)
-    case 'num':
-      return numNode(str)
-    case 'var':
-      return varNode(str, options)
-    case 'rand':
-      return randNode(str)
-    default:
-      // 这里是 transform 的各个属性，如 translate，可直接返回结果。
-      return name + '(' + str + ')'
+const funcNode = {
+  width: (strArr, dim, { dom, options }) => {
+    return dimNode(strArr.join(''), 'width', dom)
+  },
+  height: (strArr, dim, { dom, options }) => {
+    return dimNode(strArr.join(''), 'height', dom)
+  },
+  calc: (strArr, dim, { dom, options }) => {
+    return calcNode(strArr.join(''), dim, dom)
+  },
+  num: (strArr, dim, { dom, options }) => {
+    return numNode(strArr.join(''))
+  },
+  var: (strArr, dim, { dom, options }) => {
+    return varNode(strArr, options)
+  },
+  rand: (strArr, dim, { dom, options }) => {
+    return randNode(strArr)
   }
 }
-function randNode (css) {
-  if (!css) return Math.random()
-  let arr = css.split(',')
-  let min = constantNode(arr[0])
-  let max = constantNode(arr[1])
-  min = min.resolve()
-  max = max.resolve()
-  if (min.unit !== max.unit) throw new SyntaxError('two parameters should be the same kind type')
-  let min_ = Math.min(min.num, max.num)
-  let max_ = Math.max(min.num, max.num)
-  let rand = Math.random()
-  return min_ + (max_ - min_) * rand + min.unit
+
+function randNode (cssArr) {
+  // maybe [0] -> ''.slice(0, -1) == ""
+  let len = cssArr.join('').split('').length
+  if (len === 0) return Math.random()
+  if (len === 2) {
+    let min = constantNode(cssArr[0])
+    let max = constantNode(cssArr[1])
+    min = min.resolve()
+    max = max.resolve()
+    if (min.unit !== max.unit) throw new SyntaxError('two parameters should be the same kind type')
+    let min_ = Math.min(min.num, max.num)
+    let max_ = Math.max(min.num, max.num)
+    let rand = Math.random()
+    return min_ + (max_ - min_) * rand + min.unit
+  }
+  throw new Error('number of parameters is illegal!')
 }
-function varNode (css, options) {
+function varNode (cssArr, options) {
   // 按照 mdn 规范，第一个逗号后面的所有内容都是 default value
-  css = css.replace(/\s/g, '')
-  let index = css.indexOf(',')
+  let len = cssArr.length
   let key, defaultVal
-  if (index !== -1) {
-    key = css.substring(0, index)
-    defaultVal = css.substring(index + 1, css.length)
+  if (len === 0) throw new Error('invalid parameters!')
+  if (len === 1) {
+    key = cssArr[0].trim()
+    if (!startsWith(key, '--')) throw new Error('variable is illegal')
   } else {
-    key = css
+    defaultVal = cssArr.slice(1).join('')
   }
-  if (!startsWith(key, '--')) throw new Error('variable is illegal')
+
   let val = options[key]
   if (val) {
     return val
@@ -223,113 +240,87 @@ function dimNode (css, dim, dom) {
   selector = selector = css.substring(1, css.length - 2)
   return util.rect.getElementOffset(document.querySelector(selector))[dim] + 'px'
 }
-function indexNode ({ dom, options }) {
-  return [...document.querySelectorAll(options.selector)].indexOf(dom)
+function getOperator (str, operators) {
+  for (let i = 0; i < operators.length; i++) {
+    let operator = operators[i]
+    if (operator === str.slice(-operator.length)) {
+      return operator
+    }
+  }
 }
-function calcNode (css, dim, dom) {
-  return compute(strToTree(css, 0, css.length - 1), dim, dom).css()
+function calcNode (str, dim, dom) {
+  if (/^\s+/.test(str) || /\s+$/.test(str)) {
+    throw Error(`calc(${str}) arguments is invalid`)
+  }
+  // 采用后缀表达式计算结果
+  let operators = {
+    ' + ': 0,
+    ' - ': 0,
+    '/': 1,
+    '*': 1
+  }
+  let op = Object.keys(operators)
+  let oStack = []
+  let stack = []
+  let tmp = ''
+  for (let i = 0; i < str.length; i++) {
+    tmp += str[i]
+    let operator = getOperator(tmp, op)
+    if (!operator) {
+      continue
+    }
+    stack.push(constantNode(tmp.slice(0, -operator.length).trim()))
+    tmp = ''
+
+    while (oStack.length && operators[operator] <= operators[oStack[oStack.length - 1]]) {
+      let arg2 = stack.pop()
+      let arg1 = stack.pop()
+      let op = oStack.pop()
+      let result = compute(op, arg1, arg2, dim, dom)
+      stack.push(result)
+    }
+    oStack.push(operator)
+  }
+  if (tmp !== '') {
+    stack.push(constantNode(tmp.trim()))
+  }
+  for (let i = 0, max = oStack.length; i < max; i++) {
+    let arg2 = stack.pop()
+    let arg1 = stack.pop()
+    let op = oStack.pop()
+    let result = compute(op, arg1, arg2, dim, dom)
+    stack.push(result)
+  }
+  return stack[0].resolve().css()
 }
 function numNode (css) {
   return parseFloat(css)
 }
-function skipBlankspace (str, i, forward) {
-  while (str[i] && str[i] === ' ') {
-    forward ? (i++) : (i--)
+
+function compute (op, left, right, dim, dom) {
+  if (left.type !== 'CONSTANT') {
+    left = left.resolve({ dom, dim })
   }
-  return i
-}
-/**
- * 这个函数的作用是：1、如果最外层是括号，校验能否去除括号；2、最外层不是括号，返回最后的运算符位置
- *
- * @param {string} str 表达式
- * @param {number} i 起始位置
- * @param {number} j 结束位置
- * @returns {Array} 返回校验的结果，array[0] 表示 str 是否为数字，array[1] 表示括号是否可以去除，array[2] 表示最后的运算符
- */
-function checkParenthese (str, i, j) {
-  let lastPlusOrMinus = -1
-  let lastDevideOrMultiply = -1
-  let parenthese = 0
-  let isNum = true
-  for (let k = i; k <= j; k++) {
-    if (str[k] === '(') {
-      isNum = false
-      parenthese++
-      continue
-    }
-    if (str[k] === ')') {
-      isNum = false
-      parenthese--
-      continue
-    }
-    // 排除 var(--x) 的情况；由于这个特例代码也不好用 switch 来写
-    if (str[k] === '-' && (str[k - 1] === '-' || str[k + 1] === '-')) {
-      isNum = false
-      continue
-    }
-    // 查找括号外的加减 The + and - operators must be surrounded by whitespace
-    if (!parenthese && (str[k] === '+' || str[k] === '-') && str[k - 1] === ' ' && str[k + 1] === ' ') {
-      isNum = false
-      lastPlusOrMinus = k
-      continue
-    }
-    // 查找括号外的乘除
-    if (!parenthese && (str[k] === '/' || str[k] === '*')) {
-      isNum = false
-      lastDevideOrMultiply = k
-      continue
-    }
+  if (right.type !== 'CONSTANT') {
+    right = right.resolve({ dom, dim })
   }
-  if (lastPlusOrMinus === -1) lastPlusOrMinus = lastDevideOrMultiply
-  if (lastPlusOrMinus === -1) return [isNum, true]
-  return [isNum, false, lastPlusOrMinus]
-}
-function strToTree (str, i, j) {
-  if (i > j) return
-  i = skipBlankspace(str, i, true)
-  j = skipBlankspace(str, j, false)
-  let result = checkParenthese(str, i, j)
-  if (result[0]) {
-    return constantNode(str.substring(i, j + 1))
+  if (op === '/') {
+    if (right.unit) throw new SyntaxError('denominator should be a number ')
+    return new NumberNode(left.num / right.num, left.unit)
   }
-  if (result[1]) {
-    return strToTree(str, ++i, --j)
+  if (op === '*') {
+    if (!!left.unit !== !!right.unit) {
+      return new NumberNode(left.num * right.num, left.unit ? left.unit : right.unit)
+    }
+    throw new SyntaxError('one side in multiplication should be a number without any unit')
   }
-  let newNode = new OperatorNode(str[result[2]])
-  newNode.left = strToTree(str, i, result[2] - 1)
-  newNode.right = strToTree(str, result[2] + 1, j)
-  return newNode
-}
-function compute (tree, dim, dom) {
-  if (tree.type === 'CONSTANT') return tree
-  if (tree.type === 'OPERATE') {
-    let left = tree.left
-    let right = tree.right
-    if (left.type !== 'CONSTANT') {
-      left = compute(left, dim, dom)
+  if (op === ' + ' || op === ' - ') {
+    // 可以是没有单位的常数
+    if (left.unit !== right.unit) {
+      throw new SyntaxError('both sides should be the same type')
     }
-    if (right.type !== 'CONSTANT') {
-      right = compute(right, dim, dom)
-    }
-    if (tree.op === '/') {
-      if (right.unit) throw new SyntaxError('denominator should be a number ')
-      return new NumberNode(left.num / right.num, left.unit)
-    }
-    if (tree.op === '*') {
-      if (!!left.unit !== !!right.unit) {
-        return new NumberNode(left.num * right.num, left.unit ? left.unit : right.unit)
-      }
-      throw new SyntaxError('one side in multiplication should be a number without any unit')
-    }
-    if (tree.op === '+' || tree.op === '-') {
-      // 可以是没有单位的常数
-      if (left.unit !== right.unit) {
-        throw new SyntaxError('both sides should be the same type')
-      }
-      let op = tree.op === '+' ? 1 : -1
-      return new NumberNode(left.num + op * right.num, left.unit)
-    }
+    let operator = op === ' + ' ? 1 : -1
+    return new NumberNode(left.num + operator * right.num, left.unit)
   }
-  return compute(tree.resolve({ dim, dom }), dim, dom)
 }
 export default parseCss
