@@ -190,7 +190,7 @@ export default class Scroll {
     } else {
       // 是这一章第一节，增加title上下的margin
       let title = readwarp[1].querySelector('h2.title')
-      title.style.padding = '1.5rem 0'
+      title.style.padding = '88px 0 28px'
     }
 
     // 隐藏下载按钮

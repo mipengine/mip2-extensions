@@ -149,7 +149,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     } catch (e) {
       throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json mipShellConfig')
     }
-
     // 小流量下走无限下拉逻辑
     // 判断当前页是阅读页走无限下拉逻辑
     if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {
@@ -171,7 +170,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       // 加大title和文本之间的行间距
       let title = reader.querySelector('.title') || ''
       if (title) {
-        title.style.margin = '1.5rem 0'
+        title.style.margin = '88px 0 28px'
       }
     }
   }
@@ -237,7 +236,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
 
     // 暴露给外部html的调用方法, 显示目录侧边栏
     this.addEventAction('showShellCatalog', function () {
-      window.MIP.reciveClick = +new Date()
       if (flag.isUnlimitedPulldownSids()) {
         this.catalog.show(this)
         this.footer.hide()
@@ -384,7 +382,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
-      window.MIP.fileClick = +new Date()
       this.catalog.show(this)
       this.footer.hide()
       this.header.hide()
@@ -521,7 +518,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   processShellConfigInLeaf (shellConfig, matchIndex) {
     shellConfig.routes[matchIndex].meta.header.bouncy = false
   }
-
+  // 基类方法， 关闭shell header上的x
+  showHeaderCloseButton () {
+    return false
+  }
   prerenderAllowed () {
     return true
   }
