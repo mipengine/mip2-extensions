@@ -62,7 +62,7 @@ class Flag {
     }
     let bkid = getParamFromString(url, 'bkid')
     // 命中bkid和sid，走无限下拉
-    if (this.bkid.indexOf(bkid) > -1) {
+    if (this.bkid.indexOf(bkid) > -1 && this.isSids()) {
       return true
     }
     return false
