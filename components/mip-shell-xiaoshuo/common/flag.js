@@ -61,7 +61,7 @@ class Flag {
       return false
     }
     let bkid = getParamFromString(url, 'bkid')
-    // 命中bkid，走无限下拉
+    // 命中bkid和sid，走无限下拉
     if (this.bkid.indexOf(bkid) > -1) {
       return true
     }
