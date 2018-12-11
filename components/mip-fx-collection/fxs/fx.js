@@ -22,22 +22,32 @@ export default class Fx {
     this.onScroll = () => {
       this.update()
     }
+  }
 
-    /**
-     * if assert_ is false, fx shouldn't be installed on this element
-     * @type {boolean}
-     * @private
-     */
-    this.assert_ = true
+  /**
+   * shortcut for hasAttribute
+   *
+   * @param {string} name attribute name
+   * @returns {boolean} has attribute
+   */
+  hasAttr (name) {
+    return this.element.hasAttribute(name)
+  }
+
+  /**
+   * shortcut for getAttribute()
+   *
+   * @param {string} name attribute name
+   * @returns {string} attribute value
+   */
+  attr (name) {
+    return this.element.getAttribute(name)
   }
 
   /**
    * listen to the scroll event of viewport
    */
   install () {
-    if (!this.assert_) {
-      return
-    }
     MIP.viewport.on('scroll', this.onScroll)
   }
 
@@ -63,5 +73,14 @@ export default class Fx {
    */
   update () {
     throw new Error('update need to be overrided.')
+  }
+
+  /**
+   * sanitize all attributes
+   *
+   * @abstract
+   */
+  sanitize () {
+    throw new Error('sanitize need to be overrided.')
   }
 }

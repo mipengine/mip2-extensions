@@ -1,6 +1,6 @@
 
 import FlyInBottom from './fly-in-bottom'
-import { convertEasingToValue, setTransformStyle } from './utils'
+import { setTransformStyle } from './utils'
 
 const rect = MIP.util.rect
 
@@ -32,7 +32,7 @@ export default class FlyInRight extends FlyInBottom {
 
     MIP.util.css(this.element, {
       'transition-duration': this.duration + 'ms',
-      'transition-timing-function': convertEasingToValue(this.easing)
+      'transition-timing-function': this.easing
     })
     setTransformStyle(this.element, `translateX(-${this.distance}vw)`)
   }

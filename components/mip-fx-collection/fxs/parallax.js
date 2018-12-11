@@ -1,6 +1,6 @@
 
 import Fx from './fx'
-import { setTransformStyle } from './utils'
+import { assert, setTransformStyle } from './utils'
 const rect = MIP.util.rect
 
 export default class Parallax extends Fx {
@@ -9,20 +9,21 @@ export default class Parallax extends Fx {
 
     /** @override */
     this.type = 'parallax'
-
-    this.factor = parseFloat(this.element.getAttribute('data-parallax-factor'))
   }
 
   /** @override */
   assert () {
-    if (!this.factor || this.factor <= 0) {
-      console.warn(
-        this.element,
-        this.type,
-        `data-parallax-factor attribute can't be empty, it must be a number and greater than 0`
-      )
-      this.assert_ = false
-    }
+    let factor = this.attr('data-parallax-factor')
+    assert(
+      factor && parseFloat(factor) > 0,
+      this.element,
+      'data-parallax-factor attribute can\'t be empty, it must be a number and greater than 0'
+    )
+  }
+
+  /** @override */
+  sanitize () {
+    this.factor = parseFloat(this.attr('data-parallax-factor'))
   }
 
   /** @override */

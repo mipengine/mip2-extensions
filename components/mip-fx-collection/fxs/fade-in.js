@@ -1,7 +1,7 @@
 
 import Fx from './fx'
 import { getDefaultDuration, getDefaultEasing, getDefaultMargin } from './default-values'
-import { convertEasingToValue } from './utils'
+import { assert, convertEasingToValue, convertPercentageToNumber } from './utils'
 const rect = MIP.util.rect
 
 export default class FadeIn extends Fx {
@@ -11,32 +11,38 @@ export default class FadeIn extends Fx {
     /** @override */
     this.type = 'fade-in'
 
-    this.duration = this.element.getAttribute('data-duration')
-    this.easing = this.element.getAttribute('data-easing')
-    this.marginStart = this.element.getAttribute('data-margin-start')
-
     // hide the element
     MIP.util.css(this.element, 'opacity', 0)
   }
 
   /** @override */
   assert () {
-    if (!this.duration) {
-      this.duration = getDefaultDuration(this.type)
+    let marginStart = parseFloat(this.attr('data-margin-start'))
+
+    if (!marginStart) {
+      return
     }
-    if (!this.easing) {
-      this.easing = getDefaultEasing(this.type)
-    }
-    if (!this.marginStart) {
-      this.marginStart = getDefaultMargin(this.type).start
-    }
-    if (this.marginStart < 0 || this.marginStart > 1) {
-      console.warn(
-        this.element,
-        'data-margin-start must be a percentage value,' +
-        'greater than 0% and less than 100%'
-      )
-    }
+
+    assert(
+      marginStart >= 0 && marginStart <= 100,
+      this.element,
+      'data-margin-start must be a percentage value, greater than 0% and less than 100%'
+    )
+  }
+
+  /** @override */
+  sanitize () {
+    this.duration = this.hasAttr('data-duration')
+      ? this.attr('data-duration')
+      : getDefaultDuration(this.type)
+    this.easing = convertEasingToValue(
+      this.hasAttr('data-easing')
+        ? this.attr('data-easing')
+        : getDefaultEasing(this.type)
+    )
+    this.marginStart = this.hasAttr('data-margin-start')
+      ? convertPercentageToNumber(this.attr('data-margin-start'))
+      : getDefaultMargin(this.type).start
   }
 
   /** @override */
@@ -50,7 +56,7 @@ export default class FadeIn extends Fx {
     MIP.util.css(this.element, {
       'opacity': 1,
       'transition-duration': this.duration + 'ms',
-      'transition-timing-function': convertEasingToValue(this.easing)
+      'transition-timing-function': this.easing
     })
   }
 }

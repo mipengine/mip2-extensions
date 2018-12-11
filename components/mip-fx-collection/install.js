@@ -39,5 +39,6 @@ export default function installOn (element, fxType) {
 
   let fx = new FxClazz(element)
   fx.assert()
+  fx.sanitize()
   fx.install()
 }

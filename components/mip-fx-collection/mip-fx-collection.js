@@ -97,7 +97,7 @@ class MIPFxCollection {
           console.warn(
             `mip-fx: ${fxs[j]} can't be used with ${fx} as they have a confliction. ${fxs[j]} will be ignored.`
           )
-          fxs.splice(j, 1)
+          fxs.splice(j--, 1)
         }
       }
     }

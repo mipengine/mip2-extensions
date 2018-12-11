@@ -1,6 +1,7 @@
 
 import Fx from './fx'
 import { getDefaultMargin } from './default-values'
+import { assert, convertPercentageToNumber } from './utils'
 const rect = MIP.util.rect
 
 export default class FadeInScroll extends Fx {
@@ -9,11 +10,7 @@ export default class FadeInScroll extends Fx {
 
     /** @override */
     this.type = 'fade-in-scroll'
-
     this.offset = 0
-    this.marginStart = this.element.getAttribute('data-margin-start')
-    this.marginEnd = this.element.getAttribute('data-margin-end')
-    this.repeat = this.element.hasAttribute('data-repeat')
 
     // hide the element
     MIP.util.css(this.element, 'opacity', 0)
@@ -21,35 +18,41 @@ export default class FadeInScroll extends Fx {
 
   /** @override */
   assert () {
-    if (!this.marginStart) {
-      this.marginStart = getDefaultMargin(this.type).start
-    }
-    if (this.marginStart < 0 || this.marginStart > 1) {
-      console.warn(
-        this.element,
-        'data-margin-start must be a percentage value, ' +
-        'greater than 0% and less than 100%'
-      )
+    let marginStart = parseFloat(this.attr('data-margin-start'))
+    let marginEnd = parseFloat(this.attr('data-margin-end'))
+
+    if (!marginStart && !marginEnd) {
+      return
     }
 
-    if (!this.marginEnd) {
-      this.marginEnd = getDefaultMargin(this.type).end
-    }
-    if (this.marginEnd < 0 || this.marginEnd > 1) {
-      console.warn(
-        this.element,
-        'data-margin-end must be a percentage value, ' +
-        'greater than 0% and less than 100%'
-      )
-    }
-    if (this.marginStart >= this.marginEnd) {
-      console.warn(
-        this.element,
-        'data-margin-start must be greater than data-margin-end'
-      )
-      this.marginStart = getDefaultMargin(this.type).start
-      this.marginEnd = getDefaultMargin(this.type).end
-    }
+    assert(
+      marginStart >= 0 && marginStart <= 100,
+      this.element,
+      'data-margin-start must be a percentage value, greater than 0% and less than 100%'
+    )
+
+    assert(
+      marginEnd >= 0 && marginEnd <= 100,
+      this.element,
+      'data-margin-end must be a percentage value, greater than 0% and less than 100%'
+    )
+
+    assert(
+      marginEnd > marginStart,
+      this.element,
+      'data-margin-start must be greater than data-margin-end'
+    )
+  }
+
+  /** @override */
+  sanitize () {
+    this.marginStart = this.hasAttr('data-margin-start')
+      ? convertPercentageToNumber(this.attr('data-margin-start'))
+      : getDefaultMargin(this.type).start
+    this.marginEnd = this.hasAttr('data-margin-end')
+      ? convertPercentageToNumber(this.attr('data-margin-end'))
+      : getDefaultMargin(this.type).end
+    this.repeat = this.hasAttr('data-repeat')
   }
 
   /** @override */

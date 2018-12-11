@@ -1,6 +1,6 @@
 
 import FlyInBottom from './fly-in-bottom'
-import { convertEasingToValue, convertPercentageToNumber, setTransformStyle } from './utils'
+import { convertPercentageToNumber, setTransformStyle } from './utils'
 const rect = MIP.util.rect
 
 export default class FlyInTop extends FlyInBottom {
@@ -15,9 +15,8 @@ export default class FlyInTop extends FlyInBottom {
   update () {
     let top = rect.getElementRect(this.element).top - MIP.viewport.getScrollTop()
     let viewportHeight = MIP.viewport.getHeight()
-    let distance = convertPercentageToNumber(this.distance)
     if (!top ||
-      top + (viewportHeight * distance) > (1 - this.marginStart) * viewportHeight
+      top + (viewportHeight * convertPercentageToNumber(this.distance)) > (1 - this.marginStart) * viewportHeight
     ) {
       return
     }
@@ -32,7 +31,7 @@ export default class FlyInTop extends FlyInBottom {
 
     MIP.util.css(this.element, {
       'transition-duration': this.duration + 'ms',
-      'transition-timing-function': convertEasingToValue(this.easing)
+      'transition-timing-function': this.easing
     })
     setTransformStyle(this.element, `translateY(${this.distance}vh)`)
   }

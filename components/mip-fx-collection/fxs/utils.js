@@ -63,3 +63,17 @@ export function setTransformStyle (element, transition) {
 
   element.style.transform = entries.join(' ')
 }
+
+/**
+ * assert, if it's false, `assert` will throw a new error
+ *
+ * @param {boolean} condition true or false
+ * @param {HTMLElement} element element
+ * @param {string} message message thrown when it's false
+ */
+export function assert (condition, element, message) {
+  if (condition === false) {
+    console.error(element, message)
+    throw new Error(message)
+  }
+}
