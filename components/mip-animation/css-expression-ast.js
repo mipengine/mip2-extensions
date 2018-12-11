@@ -28,6 +28,9 @@ export class NumberNode extends NumericNode {
   css () {
     return `${this.num}${this.unit}`
   }
+  resolve () {
+    return this
+  }
 }
 
 export class PercentNode extends NumericNode {
@@ -156,15 +159,6 @@ export function constantNode (css) {
       }
       // maybe undefined can occur
       return new NumberNode(num, '')
-  }
-}
-
-export class OperatorNode {
-  constructor (op) {
-    this.type = 'OPERATE'
-    this.op = op
-    this.left = null
-    this.right = null
   }
 }
 
