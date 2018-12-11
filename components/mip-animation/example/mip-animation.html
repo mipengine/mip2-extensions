@@ -62,7 +62,7 @@
         {
           "selector": ".inner-00",
           "keyframes": {
-            "transform": "translateX(300px)"
+            "transform": "translateX(calc(index() * 1px + num(10px)* 2px + rand() * 20px)) rotate(45deg)"
           },
           "duration": 1000
         }
@@ -118,7 +118,7 @@
               "transform": "translateX(0px)"
             },
             {
-              "transform": "translateX(calc((index() * 1px + num(10px)* 2px) + rand() * 50vh)) rotate(var(--x,45deg))"
+              "transform": "translateX(calc(index() * 1px + num(10px)* 2px + rand() * 20px)) rotate(var(--x, 50deg))"
             }
           ],
           "duration": 1000

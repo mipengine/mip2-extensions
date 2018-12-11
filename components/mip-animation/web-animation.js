@@ -197,13 +197,41 @@ function getDomConfigList (rootDom = document, options) {
   // subtargets
   list = mergeSubtargets(list, options.subtargets, doms)
 
-  list = list.map(([dom, options]) => {
+  list = list.map(([dom, options], index) => {
+    // 这里处理 index(), 代替 css-expression 的 indexNode
+    options = changeIndex(options, index)
+    // 解析 keyframes 之外的内容，如 delay: var(--x)
+    let keys = Object.keys(options)
+    for (let key of keys) {
+      let str = options[key]
+      if (typeof str === 'string') {
+        options[key] = parseCss(str, dom, options)
+      }
+    }
     options.keyframes = createKeyframes(dom, options.keyframes, options)
     return [dom, options]
   })
   return list
 }
-
+function changeIndex (obj, index) {
+  if (typeof obj === 'string') {
+    return obj.replace(/index\(\)/g, index)
+  }
+  if (Array.isArray(obj)) {
+    for (let i = 0; i < obj.length; i++) {
+      obj[i] = changeIndex(obj[i], index)
+    }
+    return obj
+  }
+  if (Object.prototype.toString.call(obj) === '[object Object]') {
+    let keys = Object.keys(obj)
+    for (let key of keys) {
+      obj[key] = changeIndex(obj[key], index)
+    }
+    return obj
+  }
+  return obj
+}
 function createKeyframes (target, keyframes, options) {
   if (typeof keyframes === 'string') {
     keyframes = extractKeyframes(keyframes)
@@ -251,6 +279,7 @@ function createKeyframes (target, keyframes, options) {
     }
     return newKeyframes
   }
+  // 考虑到除去上述3种情况，可能还有其他，不过目前还没有
   throw new Error('keyframes not found')
 }
 function parseCssMap (obj, target, options) {
