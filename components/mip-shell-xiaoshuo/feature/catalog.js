@@ -361,9 +361,9 @@ class Catalog {
     let reverseName = this.$catalogSidebar.querySelector('.reverse-name')
     let catalog = [...$catalogContent.querySelectorAll('div')]
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
-    for (let i = 0; i < catalog.length; i++) {
-      catalog[i].innerHTML = catalog[i].innerHTML
-    }
+    // for (let i = 0; i < catalog.length; i++) {
+    //   catalog[i].innerHTML = catalog[i].innerHTML
+    // }
     if (!this.categoryList) {
       util.css(document.querySelector('.net-err-info'), {
         display: 'block'
