@@ -6,6 +6,9 @@
 import {getCurrentWindow} from './util'
 import state from './state'
 
+const {isRootPage, novelInstance, originalUrl} = state(window)
+const pageType = novelInstance ? novelInstance.currentPageMeta.pageType : ''
+
 /**
  * 发送webb性能日志
  *
@@ -54,6 +57,20 @@ export function sendTCLog (type, info, extra) {
 }
 
 /**
+ * 获取当前页面站点信息，发送首跳展现日志和广告日志用到
+ *
+ * @returns {Object} 返回站点信息
+ */
+export function getSiteInfo () {
+  let zonghengPattern = /www.xmkanshu.com/g
+  // let iqiyiPattern = /wenxue.m.iqiyi.com/g
+  let isZongheng = zonghengPattern.test(originalUrl)
+  let site
+  isZongheng ? site = 'zongheng' : site = 'iqiyi'
+  return {isRootPage, site, pageType}
+}
+
+/**
  * 发送webb性能日志，common 5s 请求失败，发送common异常日志
  */
 export function sendWebbLogCommon () {
@@ -80,4 +97,62 @@ export function sendWebbLogLink (PageButton, button) {
       button: button
     })
   }
+}
+
+/**
+ * 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.adShow
+ */
+export function showAdLog () {
+  // 获取当前页面站点信息
+  let {site, pageType} = getSiteInfo()
+  let old
+  /**
+   * 观察者模式监听变量变化，变量变化执行函数
+   *
+   * @param {string} oldVal 改变前的值
+   * @param {string} newVal 改变后的值
+  */
+  function observer (oldVal, newVal) {
+    if ((newVal === true) && (pageType !== 'detail')) {
+      sendTCLog('interaction', {
+        type: 'o',
+        action: 'adShow'
+      }, {
+        show: 'adShow',
+        hasAd: true,
+        site: site
+      })
+      // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
+      window.MIP.adShow = false
+    }
+  }
+  // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
+  Object.defineProperty(window.MIP, 'adShow', {
+    enumerable: true,
+    configurable: true,
+    get: function () {
+      return old
+    },
+    set: function (val) {
+      // 调用变量改变时处理函数
+      observer(old, val)
+      old = val
+    }
+  })
+}
+
+/**
+ * 发送首跳展现日志
+ */
+export function sendRootLog () {
+  // 获取当前页面站点信息
+  let {isRootPage, site} = getSiteInfo()
+  sendTCLog('interaction', {
+    type: 'o',
+    action: 'pageShow'
+  }, {
+    show: 'pageShow',
+    isRootPage: isRootPage,
+    site: site
+  })
 }
