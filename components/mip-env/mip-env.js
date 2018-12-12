@@ -112,7 +112,7 @@ function dpOk (sourceDpArr) {
  */
 function uaOk (sourceUaArr) {
   const checkUaFuns = {
-    baidu: platform.isBaidu,
+    baidu: platform.isBaiduApp,
     uc: platform.isUc,
     chrome: platform.isChrome,
     safari: platform.isSafari,
@@ -202,8 +202,13 @@ export default class MipEnv extends CustomElement {
     const element = this.element
     const scope = element.getAttribute('scope')
     const isOk = scopeOk(scope) // 检测scope是否合规
+    const id = element.getAttribute('targetId')
+    const targetDom = id !== '' ? document.documentElement.querySelector('#' + id) : null
     if (!isOk) {
       // 检测不合规时将内容清空
+      if (targetDom !== null) {
+        targetDom.remove()
+      }
       element.innerHTML = ''
     }
   }

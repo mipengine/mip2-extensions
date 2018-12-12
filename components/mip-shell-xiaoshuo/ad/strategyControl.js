@@ -7,7 +7,7 @@
 
 import {Constant} from '../common/constant-config'
 import state from '../common/state'
-import {getCurrentWindow, getRootWindow} from '../common/util'
+import {getCurrentWindow, getRootWindow, getHashData} from '../common/util'
 import {
   initFirstFetchCache
 } from './strategyCompute'
@@ -69,7 +69,7 @@ export default class strategyControl {
     const novelPageNum = novelInstance.novelPageNum || ''
     const pageType = novelInstance.currentPageMeta.pageType || ''
     const isNeedAds = novelInstance.adsCache == null ? true : novelInstance.adsCache.isNeedAds
-
+    const novelInstanceId = novelInstance.novelInstanceId
     // 基础novelData数据
     let novelData = {
       isLastPage,
@@ -81,7 +81,8 @@ export default class strategyControl {
       officeId,
       pageType,
       silentFollow: isRootPage,
-      isNeedAds
+      isNeedAds,
+      novelInstanceId
     }
     // TODO: 当结果页卡片入口为断点续读时，添加entryFrom: 'from_nvl_toast', 需要修改SF里记录到hash里，等SF修改完成，此处添加
     // 当第二次翻页时候，需要告知后端出品专广告
@@ -101,6 +102,9 @@ export default class strategyControl {
     }
     if (novelInstance.adsCache != null && novelInstance.adsCache.isFirstFetch) {
       Object.assign(novelData, {ignoreSendLog: true})
+    }
+    if (getHashData('srcid')) {
+      Object.assign(novelData, {frsrcid: getHashData('srcid')})
     }
     return novelData
   }

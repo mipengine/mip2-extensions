@@ -84,7 +84,7 @@ export default {
     textLines () {
       let lines = [this.texttip]
       try {
-        lines = MIP.util.json5.parse(this.texttip)
+        lines = MIP.util.jsonParse(this.texttip)
       } catch (e) {
         console.warn('[mip-appdl] texttip 属性格式不正确', e)
       }
