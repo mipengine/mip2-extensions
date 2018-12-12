@@ -170,7 +170,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       // 加大title和文本之间的行间距
       let title = reader.querySelector('.title') || ''
       if (title) {
-        title.style.margin = '58px 0 21px'
+        title.style.margin = '73px 0 21px'
       }
     }
   }

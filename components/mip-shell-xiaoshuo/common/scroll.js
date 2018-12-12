@@ -64,7 +64,7 @@ export default class Scroll {
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.insertBefore(div, warp)
-    currentWindow.MIP.viewport.setScrollTop(70)
+    currentWindow.MIP.viewport.setScrollTop(40)
   }
 
   /**
@@ -190,7 +190,7 @@ export default class Scroll {
     } else {
       // 是这一章第一节，增加title上下的margin
       let title = readwarp[1].querySelector('h2.title')
-      title.style.padding = '58px 0 21px'
+      title.style.padding = '73px 0 21px'
     }
 
     // 隐藏下载按钮
