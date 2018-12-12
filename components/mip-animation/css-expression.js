@@ -211,10 +211,10 @@ function varNode (cssArr, { dom, options }) {
   let len = cssArr.length
   let key, defaultVal
   if (len === 0) throw new Error('invalid parameters!')
-  if (len === 1) {
-    key = cssArr[0].trim()
-    if (!startsWith(key, '--')) throw new Error('variable is illegal')
-  } else {
+  // len >= 1
+  key = cssArr[0].trim()
+  if (!startsWith(key, '--')) throw new Error('variable is illegal')
+  if (len > 1) {
     defaultVal = cssArr.slice(1).join('')
   }
 
