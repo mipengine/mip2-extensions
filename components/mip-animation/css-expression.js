@@ -65,8 +65,6 @@ function parseToTree (css) {
   let pointer = result
   // 括号标志位
   let parenthese = 0
-  // 不去除正常四则运算的括号
-  let parentheseMap = {}
   // 参数
   let arg
   for (let i = 0; i < css.length; i++) {
@@ -84,12 +82,21 @@ function parseToTree (css) {
       if (startMatch[1]) {
         // rest 例如 10px + width() 的 10px +
         let rest = str.slice(0, startMatch.index)
+        // 由于我加了嵌套 root() 所以括号不匹配会首先从这里报错
+        if (rest) {
+          if (arg.push) {
+            arg.push(rest)
+          } else {
+            throw new Error('括号数不匹配！')
+          }
+        }
         rest && arg.push(rest)
         str = ''
         let obj = {
           name: startMatch[1],
           params: [[]]
         }
+        // 这里是第一次，arg 还未初始化
         if (!arg) {
           pointer.push(obj)
         } else {
@@ -99,25 +106,19 @@ function parseToTree (css) {
         pointer = obj.params
         arg = obj.params[0]
         stack.push(pointer)
-        parentheseMap[parenthese] = false
       } else {
-        parentheseMap[parenthese] = true
+        throw Error(`css calc() doesn't support bracket operation`)
       }
       continue
     }
-    if (css[i] === '(') {
-      throw Error(`css calc() doesn't support bracket operation`)
-    }
     let endMatch = str.match(/\)$/)
     if (endMatch) {
-      if (!parentheseMap[parenthese]) {
-        let rest = str.slice(0, -1)
-        rest && arg.push(rest)
-        str = ''
-        stack.pop()
-        pointer = stack[stack.length - 1]
-        arg = pointer[pointer.length - 1]
-      }
+      let rest = str.slice(0, -1)
+      rest && arg.push(rest)
+      str = ''
+      stack.pop()
+      pointer = stack[stack.length - 1]
+      arg = pointer[pointer.length - 1]
       parenthese--
       continue
     }
