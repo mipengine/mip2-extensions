@@ -182,7 +182,7 @@ const funcNode = {
     return numNode(strArr.join(''))
   },
   var: (strArr, dim, { dom, options }) => {
-    return varNode(strArr, options)
+    return varNode(strArr, { dom, options })
   },
   rand: (strArr, dim, { dom, options }) => {
     return randNode(strArr)
@@ -206,7 +206,7 @@ function randNode (cssArr) {
   }
   throw new Error('number of parameters is illegal!')
 }
-function varNode (cssArr, options) {
+function varNode (cssArr, { dom, options }) {
   // 按照 mdn 规范，第一个逗号后面的所有内容都是 default value
   let len = cssArr.length
   let key, defaultVal
@@ -218,7 +218,7 @@ function varNode (cssArr, options) {
     defaultVal = cssArr.slice(1).join('')
   }
 
-  let val = options[key]
+  let val = parseCss(options[key], dom, options)
   if (val) {
     return val
   }
