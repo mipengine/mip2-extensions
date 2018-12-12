@@ -64,7 +64,7 @@ export default class Scroll {
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.insertBefore(div, warp)
-    currentWindow.MIP.viewport.setScrollTop(40)
+    currentWindow.MIP.viewport.setScrollTop(70)
   }
 
   /**
