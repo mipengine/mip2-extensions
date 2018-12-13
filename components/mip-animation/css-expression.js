@@ -131,8 +131,7 @@ function calculate (css, obj, dim) {
     if (typeof val !== 'string') {
       let strArr = []
       // 遍历参数 params 进行计算
-      let len = val.params.length
-      for (let index = 0; index < len; index++) {
+      for (let index = 0; index < val.params.length; index++) {
         if (index === 0) {
           if (val.name === 'translateY') {
             strArr.push(calculate(val.params[index], obj, 'height'))
