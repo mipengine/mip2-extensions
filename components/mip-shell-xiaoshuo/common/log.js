@@ -3,7 +3,7 @@
  * author: JennyL <jiaojiaomao220@163.com>
  */
 
-import {getCurrentWindow} from './util'
+import {getCurrentWindow, getRootWindow, getParamFromString} from './util'
 import state from './state'
 
 /**
@@ -34,7 +34,7 @@ export function sendTCLog (type, info, extra) {
   // TC日志添加referer参数 , url需要encode,否则打点时会被特殊字符&等解析
   let referer = encodeURIComponent(window.document.referrer)
   // 添加小说实例ID
-  const novelInstanceId = novelInstance.novelInstanceId
+  const novelInstanceId = novelInstance ? novelInstance.novelInstanceId : null
   extra = Object.assign({referer, novelInstanceId}, extra)
 
   let eventName = type + '-log'
@@ -80,4 +80,28 @@ export function sendWebbLogLink (PageButton, button) {
       button: button
     })
   }
+}
+
+/**
+ * 无限下拉 ABtest pv统计打点
+ *
+ *
+ */
+export function sendReadTypePvTcLog (type) {
+  let url = window.location.href
+  // 非sf下不走打点函数
+  if (!window.MIP.util.isCacheUrl(url)) {
+    return
+  }
+  let currentWindow = getCurrentWindow()
+  let rootWindow = getRootWindow(currentWindow)
+  const bkid = getParamFromString(url, 'bkid')
+  sendTCLog('interaction', {
+    type: 'o',
+    action: 'read_type'
+  }, {
+    sids: rootWindow.MIP.hash.hashTree.sids.value,
+    bkid: bkid,
+    'read_type': type
+  })
 }

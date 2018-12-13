@@ -3,7 +3,9 @@
  * @author: guoshuang
  */
 
-import {getParamFromString} from './util'
+import {getParamFromString, getCurrentWindow, getRootWindow} from './util'
+let currentWindow = getCurrentWindow()
+let rootWindow = getRootWindow(currentWindow)
 class Flag {
   constructor () {
     // 无线下拉bkid
@@ -11,7 +13,7 @@ class Flag {
     // 无限下拉sid
     this.sid = ['127771']
     // 结果页的sids
-    this.resSids = window.MIP.hash.hashTree.sids ? window.MIP.hash.hashTree.sids.value.split('_') : []
+    this.resSids = rootWindow.MIP.hash.hashTree.sids ? rootWindow.MIP.hash.hashTree.sids.value.split('_') : []
   }
   /**
    * 安卓4及其以下的浏览器
@@ -33,7 +35,7 @@ class Flag {
   /**
    * 判断是否命中sids
    *
-   * @private
+   * @public
    */
   isSids () {
     if (!this.resSids) {
@@ -45,6 +47,16 @@ class Flag {
       }
     }
     return false
+  }
+  /**
+   * 判断是否命中bkid
+   *
+   * @public
+   */
+  isBkid () {
+    let url = window.location.href
+    let bkid = getParamFromString(url, 'bkid')
+    return this.bkid.indexOf(bkid) > -1
   }
   /**
    * 判断是否命中无限下拉的bookid
@@ -60,9 +72,9 @@ class Flag {
     if (!window.MIP.util.isCacheUrl(url)) {
       return false
     }
-    let bkid = getParamFromString(url, 'bkid')
+
     // 命中bkid和sid，走无限下拉
-    if (this.bkid.indexOf(bkid) > -1 && this.isSids()) {
+    if (this.isBkid() && this.isSids()) {
       return true
     }
     return false

@@ -23,7 +23,7 @@ import Strategy from './ad/strategyControl'
 import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow, getNovelInstanceId} from './common/util'
 import state from './common/state'
-import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './common/log' // 日志
+import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink, sendReadTypePvTcLog} from './common/log' // 日志
 import Prerender from './feature/prerender'
 
 let novelEvents = new NovelEvents()
@@ -95,6 +95,14 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
     // 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
     this.initPageLayout()
+    // 发送tc日志，记录 无限下拉abtest pv
+    if (flag.isBkid()) {
+      if (flag.isSids()) {
+        sendReadTypePvTcLog('unlimitedPulldown')
+      } else {
+        sendReadTypePvTcLog('afterSwitchPage')
+      }
+    }
   }
 
   /**

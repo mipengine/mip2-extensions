@@ -1,5 +1,6 @@
 import {setTimeout, clearTimeout} from 'timers'
 import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow, getParamFromString} from './util'
+import {sendReadTypePvTcLog} from './log'
 import './../mip-shell-xiaoshuo.less'
 
 let currentWindow = getCurrentWindow()
@@ -41,9 +42,11 @@ export default class Scroll {
    * @public
    */
   init () {
+    // 给body上添加无限下拉标识
+    currentWindow.document.body.setAttribute('load-type', 'infinite')
     // 添加正在加载样式
     let div = document.createElement('div')
-    div.setAttribute('id', 'loadingbottom')
+    div.setAttribute('id', 'infinite-loading-bottom')
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.appendChild(div)
@@ -60,7 +63,7 @@ export default class Scroll {
     // 添加正在加载样式
     let warp = currentWindow.document.querySelector('#mip-reader-warp > div')
     let div = document.createElement('div')
-    div.setAttribute('id', 'loadingtop')
+    div.setAttribute('id', 'infinite-loading-top')
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.insertBefore(div, warp)
@@ -85,7 +88,7 @@ export default class Scroll {
       if (!pageIdQuery.nextPage) {
         if (this.flag.next) {
           this.flag.next = false
-          this.loadingStr('loadingbottom', '您已阅读完全部更新章节')
+          this.loadingStr('infinite-loading-bottom', '您已阅读完全部更新章节')
           this.loading = false
         }
         clearTimeout(this.timer)
@@ -93,7 +96,7 @@ export default class Scroll {
         return
       }
       this.loading = true
-      this.prerender(pageIdQuery.nextPage, this.appendDom, 'nextPage', 'loadingbottom')
+      this.prerender(pageIdQuery.nextPage, this.appendDom, 'nextPage', 'infinite-loading-bottom')
     } else if (this.isScrollToPageTop()) {
       // top
       if (this.loading) {
@@ -102,7 +105,7 @@ export default class Scroll {
       if (!pageIdQuery.previousPage) {
         if (this.flag.pre) {
           this.flag.pre = false
-          this.loadingStr('loadingtop', '您已阅读到第一章')
+          this.loadingStr('infinite-loading-top', '您已阅读到第一章')
           this.loading = false
         }
         clearTimeout(this.timer)
@@ -110,7 +113,7 @@ export default class Scroll {
         return
       }
       this.loading = true
-      this.prerender(pageIdQuery.previousPage, this.insertDom, 'previousPage', 'loadingtop')
+      this.prerender(pageIdQuery.previousPage, this.insertDom, 'previousPage', 'infinite-loading-top')
     }
   }
 
@@ -144,6 +147,8 @@ export default class Scroll {
         currentWindow.MIP.viewer.page.children = []
         // 纵横神策pv埋点
         this.saLog(jsonld, iframe[0].contentWindow)
+        // 发送tc无限下拉展现日志
+        sendReadTypePvTcLog('unlimitedPulldown')
         // 移除页面上iframe
         iframe[0].parentNode.removeChild(iframe[0])
         this.loading = false
@@ -214,7 +219,7 @@ export default class Scroll {
    * @private
    */
   insertDom (dom, id) {
-    let warp = currentWindow.document.querySelector('#mip-reader-warp > #loadingtop + div')
+    let warp = currentWindow.document.querySelector('#mip-reader-warp > #infinite-loading-top + div')
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)
@@ -234,7 +239,7 @@ export default class Scroll {
    * @private
    */
   appendDom (dom, id) {
-    let loadingbottom = document.querySelector('#loadingbottom')
+    let loadingbottom = document.querySelector('#infinite-loading-bottom')
     let div = document.createElement('div')
     div.setAttribute('id', id)
     div.appendChild(dom)
