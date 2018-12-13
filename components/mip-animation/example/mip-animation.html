@@ -15,6 +15,7 @@
     .inner-00,
     .inner-01,
     .inner-02,
+    .inner-021,
     .inner-03,
     .inner-04,
     .inner-11,
@@ -27,6 +28,7 @@
     .inner-00,
     .inner-01,
     .inner-02,
+    .inner-021,
     .inner-03,
     .inner-04,
     .inner-0 {
@@ -62,7 +64,7 @@
         {
           "selector": ".inner-00",
           "keyframes": {
-            "transform": "translateX(calc(index() * 1px + num(10px)* 2px + rand() * 20px)) rotate(45deg)"
+            "transform": "translateX(200px)"
           },
           "duration": 1000
         }
@@ -80,7 +82,7 @@
               "transform": "translateX(0px)"
             },
             {
-              "transform": "translateX(width())"
+              "transform": "translate(width(), 50px)"
             }
           ],
           "duration": 1000
@@ -107,7 +109,23 @@
       </script>
     </mip-animation>
 
-    <h2>calc() index() num() rand() var()</h2>
+    <h2>var()</h2>
+    <div class="inner-021"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-021",
+          "--y": "40deg",
+          "--x": "calc(var(--y) + 10 * 5deg)",
+          "keyframes": {
+            "transform": "translateX(calc(index() * 1px + num(10px)* 2px + rand() * 20px)) rotate(var(--x, 0deg))"
+          },
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+
+    <h2>calc() index() num() rand()</h2>
     <div class="inner-03"></div>
     <mip-animation trigger="visibility">
       <script type="application/json">
@@ -118,7 +136,7 @@
               "transform": "translateX(0px)"
             },
             {
-              "transform": "translateX(calc(index() * 1px + num(10px)* 2px + rand() * 20px)) rotate(var(--x, 50deg))"
+              "transform": "translate(calc(index() * 1px + num(10px)* 2px + rand() * 20px), calc(index() * 1px + num(10px)* 2px + rand() * 20px))"
             }
           ],
           "duration": 1000
@@ -269,7 +287,7 @@
     <button on="tap:anim.restart">restart</button>
     <button on="tap:anim.togglePause">toggle pause</button>
     <button on="tap:anim.reverse">reverse</button>
-    <button on="tap:anim.seekTo(6000)">seekTo 6000</button>
+    <button on="tap:anim.seekTo(600)">seekTo 600</button>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="/mip-animation/mip-animation.js"></script>
   </body>

@@ -49,8 +49,8 @@ function parseCss (cssString, dom, options) {
   // the first thing is to test whether it need to be parsed
   if (!isVar(cssString) && !isOperate(cssString)) return cssString
   // 这里的解析主要针对这种形式 `rand(1, 3)`，所以在最外层套了一层 `root()` 方便解析，然后再取出其内的内容进行计算返回
-  let tree = parseToTree('root(' + cssString + ')')
-  return calculate(tree[0].params[0], { dom, options })
+  let tree = parseToTree(cssString)
+  return calculate(tree, { dom, options })
 }
 /**
  * 解析 CSS 字符串
@@ -59,14 +59,20 @@ function parseCss (cssString, dom, options) {
  * @returns {string} 解析后的字符串
  */
 function parseToTree (css) {
+  // 针对 media 的参数可以直接有括号，所以加了 parent，不知道有没有更好的办法
   let str = ''
-  let result = []
-  let stack = [result]
-  let pointer = result
-  // 括号标志位
-  let parenthese = 0
+  let result = {
+    name: 'root',
+    params: [[]],
+    parent: ''
+  }
+
+  // pointer 永远指向参数
+  let pointer = result.params
   // 参数
-  let arg
+  let arg = result.params[0]
+  let stack = [result]
+
   for (let i = 0; i < css.length; i++) {
     if (css[i] === ',') {
       arg.push(str)
@@ -77,57 +83,48 @@ function parseToTree (css) {
     }
     str += css[i]
     let startMatch = str.match(/(\w+)?\($/)
-    if (startMatch) {
-      parenthese++
-      if (startMatch[1]) {
-        // rest 例如 10px + width() 的 10px +
-        let rest = str.slice(0, startMatch.index)
-        // 由于我加了嵌套 root() 所以括号不匹配会首先从这里报错
-        if (rest) {
-          if (arg.push) {
-            arg.push(rest)
-          } else {
-            throw new Error('括号数不匹配！')
-          }
-        }
-        rest && arg.push(rest)
-        str = ''
-        let obj = {
-          name: startMatch[1],
-          params: [[]]
-        }
-        // 这里是第一次，arg 还未初始化
-        if (!arg) {
-          pointer.push(obj)
-        } else {
-          arg.push(obj)
-        }
-        // pointer 永远指向参数
-        pointer = obj.params
-        arg = obj.params[0]
-        stack.push(pointer)
-      } else {
-        throw Error(`css calc() doesn't support bracket operation`)
+    if (startMatch && startMatch[1]) {
+      // rest 例如 10px + width() 的 10px +
+      let rest = str.slice(0, startMatch.index)
+      rest && arg.push(rest)
+      str = ''
+      let obj = {
+        name: startMatch[1],
+        params: [[]],
+        parent: stack[stack.length - 1].name
       }
+      arg.push(obj)
+      // pointer 永远指向参数
+      pointer = obj.params
+      arg = obj.params[0]
+      stack.push(obj)
       continue
     }
     let endMatch = str.match(/\)$/)
     if (endMatch) {
+      // 特殊判断，针对 media 的参数可以直接有括号，所以需要把括号也放进去
+      if (stack[stack.length - 1].name === 'root') {
+        arg.push(str)
+        str = ''
+        continue
+      }
       let rest = str.slice(0, -1)
       rest && arg.push(rest)
       str = ''
+
       stack.pop()
-      pointer = stack[stack.length - 1]
+      if (stack.length === 0) {
+        throw new Error('括号数不匹配')
+      }
+      pointer = stack[stack.length - 1].params
       arg = pointer[pointer.length - 1]
-      parenthese--
       continue
     }
   }
-  if (parenthese !== 0) throw new Error('括号数不匹配！')
   if (str !== '') {
-    pointer.push(str)
+    arg.push(str)
   }
-  return result
+  return result.params[0]
 }
 /**
  * 对参数进行计算
@@ -163,7 +160,7 @@ function calculate (css, obj, dim) {
         css[i] = funcNode[val.name](strArr, dim, obj)
       } else {
         // 这里是 transform 的各个属性，如 translate，rotate 等，可直接返回结果。
-        css[i] = val.name + '(' + strArr.join('') + ')'
+        css[i] = val.name + '(' + strArr.join(',') + ')'
       }
     }
   }
@@ -171,16 +168,16 @@ function calculate (css, obj, dim) {
 }
 const funcNode = {
   width: (strArr, dim, { dom, options }) => {
-    return dimNode(strArr.join(''), 'width', dom)
+    return dimNode('width', dom, ...strArr)
   },
   height: (strArr, dim, { dom, options }) => {
-    return dimNode(strArr.join(''), 'height', dom)
+    return dimNode('height', dom, ...strArr)
   },
   calc: (strArr, dim, { dom, options }) => {
-    return calcNode(strArr.join(''), dim, dom)
+    return calcNode(dim, dom, ...strArr)
   },
   num: (strArr, dim, { dom, options }) => {
-    return numNode(strArr.join(''))
+    return numNode(...strArr)
   },
   var: (strArr, dim, { dom, options }) => {
     return varNode(strArr, { dom, options })
@@ -225,7 +222,7 @@ function varNode (cssArr, { dom, options }) {
   }
   return defaultVal
 }
-function dimNode (css, dim, dom) {
+function dimNode (dim, dom, css) {
   css = css.replace(/\s/g, '')
   if (!css) {
     return util.rect.getElementOffset(dom)[dim] + 'px'
@@ -249,9 +246,12 @@ function getOperator (str, operators) {
     }
   }
 }
-function calcNode (str, dim, dom) {
+function calcNode (dim, dom, str) {
   if (/^\s+/.test(str) || /\s+$/.test(str)) {
-    throw Error(`calc(${str}) arguments is invalid`)
+    throw new Error(`calc(${str}) arguments is invalid`)
+  }
+  if (/[(||)]/.test(str)) {
+    throw new Error(`css calc() doesn't support bracket operation`)
   }
   // 采用后缀表达式计算结果
   let operators = {
