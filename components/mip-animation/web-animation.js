@@ -8,17 +8,26 @@ import parseCss from './css-expression'
 import { getComputedStyle } from './css-expression-ast'
 import { extractKeyframes } from './keyframes-from-stylesheets'
 const KEYFRAMES_PROPS = {
-  'offset': true,
-  'easing': true
+  offset: true,
+  easing: true
 }
 
 const WHITELISTPROPS = {
-  'opacity': true,
-  'transform': true,
+  opacity: true,
+  transform: true,
   'transform-origin': true,
-  'visibility': true,
+  visibility: true,
   'offset-distance': true,
-  'offsetDistance': true
+  offsetDistance: true
+}
+/**
+ * 经过尝试，duration 不能是字符串，以下 4 个可以，因此可以通过 var 来取值
+ */
+const NEEDPARSE = {
+  delay: true,
+  endDelay: true,
+  iterations: true,
+  iterationStart: true
 }
 export default class WebAnimation {
   constructor (config) {
@@ -204,7 +213,7 @@ function getDomConfigList (rootDom = document, options) {
     let keys = Object.keys(options)
     for (let key of keys) {
       let str = options[key]
-      if (typeof str === 'string') {
+      if (typeof str === 'string' && NEEDPARSE[key]) {
         options[key] = parseCss(str, dom, options)
       }
     }

@@ -59,12 +59,11 @@ function parseCss (cssString, dom, options) {
  * @returns {string} 解析后的字符串
  */
 function parseToTree (css) {
-  // 针对 media 的参数可以直接有括号，所以加了 parent，不知道有没有更好的办法
+  // 针对 media 的参数可以直接有括号，所以 result 加了 parent，不过在 web-animation.js 里的 getDomConfigList 做了过滤，所以这里就去掉了
   let str = ''
   let result = {
     name: 'root',
-    params: [[]],
-    parent: ''
+    params: [[]]
   }
 
   // pointer 永远指向参数
@@ -90,8 +89,7 @@ function parseToTree (css) {
       str = ''
       let obj = {
         name: startMatch[1],
-        params: [[]],
-        parent: stack[stack.length - 1].name
+        params: [[]]
       }
       arg.push(obj)
       // pointer 永远指向参数
@@ -102,12 +100,6 @@ function parseToTree (css) {
     }
     let endMatch = str.match(/\)$/)
     if (endMatch) {
-      // 特殊判断，针对 media 的参数可以直接有括号，所以需要把括号也放进去
-      if (stack[stack.length - 1].name === 'root') {
-        arg.push(str)
-        str = ''
-        continue
-      }
       let rest = str.slice(0, -1)
       rest && arg.push(rest)
       str = ''
