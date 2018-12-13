@@ -116,11 +116,17 @@
         {
           "selector": ".inner-021",
           "--y": "40deg",
-          "--x": "calc(var(--y) + 10 * 5deg)",
+          "--x": "calc(var(--y) + 10 * 14deg)",
+          "--z": 0.5,
+          "--w": 2,
+          "--v": 1000,
+          "iterations": "var(--w)",
+          "iterationStart": "var(--z)",
+          "delay": "var(--v)",
           "keyframes": {
-            "transform": "translateX(calc(index() * 1px + num(10px)* 2px + rand() * 20px)) rotate(var(--x, 0deg))"
+            "transform": "translateX(calc(index() *+1px + num(10px)* 2px + +rand() * 20px)) rotate(var(--x, 0deg))"
           },
-          "duration": 1000
+          "duration": 2000
         }
       </script>
     </mip-animation>
