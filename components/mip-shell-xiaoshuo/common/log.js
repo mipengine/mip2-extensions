@@ -3,7 +3,7 @@
  * author: JennyL <jiaojiaomao220@163.com>
  */
 
-import {getCurrentWindow} from './util'
+import {getCurrentWindow, getRootWindow, getParamFromString} from './util'
 import state from './state'
 
 const {isRootPage, novelInstance, originalUrl} = state(window)
@@ -37,7 +37,7 @@ export function sendTCLog (type, info, extra) {
   // TC日志添加referer参数 , url需要encode,否则打点时会被特殊字符&等解析
   let referer = encodeURIComponent(window.document.referrer)
   // 添加小说实例ID
-  const novelInstanceId = novelInstance.novelInstanceId
+  const novelInstanceId = novelInstance ? novelInstance.novelInstanceId : null
   extra = Object.assign({referer, novelInstanceId}, extra)
 
   let eventName = type + '-log'
@@ -59,7 +59,7 @@ export function sendTCLog (type, info, extra) {
 /**
  * 获取当前页面站点信息，发送首跳展现日志和广告日志用到
  *
- * @returns {Object} 返回站点信息
+ * @returnqws {Object} 返回站点信息
  */
 export function getSiteInfo () {
   let zonghengPattern = /www.xmkanshu.com/g
@@ -67,7 +67,7 @@ export function getSiteInfo () {
   let isZongheng = zonghengPattern.test(originalUrl)
   let site
   isZongheng ? site = 'zongheng' : site = 'iqiyi'
-  return {isRootPage, site, pageType}
+  return {site, pageType}
 }
 
 /**
@@ -104,8 +104,9 @@ export function sendWebbLogLink (PageButton, button) {
  */
 export function showAdLog () {
   // 获取当前页面站点信息
-  let {site, pageType} = getSiteInfo()
+  let {site} = getSiteInfo()
   let old
+
   /**
    * 观察者模式监听变量变化，变量变化执行函数
    *
@@ -146,7 +147,7 @@ export function showAdLog () {
  */
 export function sendRootLog () {
   // 获取当前页面站点信息
-  let {isRootPage, site} = getSiteInfo()
+  let {site} = getSiteInfo()
   sendTCLog('interaction', {
     type: 'o',
     action: 'pageShow'
@@ -154,5 +155,30 @@ export function sendRootLog () {
     show: 'pageShow',
     isRootPage: isRootPage,
     site: site
+  })
+}
+
+/**
+ * 无限下拉 ABtest pv统计打点
+ *
+ *
+ */
+export function sendReadTypePvTcLog (type) {
+  // 非sf下不走打点函数
+  if (window.MIP.standalone) {
+    return
+  }
+  let currentWindow = getCurrentWindow()
+  let rootWindow = getRootWindow(currentWindow)
+  let url = window.location.href
+  // 获取 bookid
+  const bkid = getParamFromString(url, 'bkid')
+  sendTCLog('interaction', {
+    type: 'o',
+    action: 'read_type'
+  }, {
+    sids: rootWindow.MIP.hash.hashTree.sids.value,
+    bkid: bkid,
+    'read_type': type
   })
 }

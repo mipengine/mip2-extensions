@@ -23,7 +23,7 @@ import Strategy from './ad/strategyControl'
 import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow, getNovelInstanceId} from './common/util'
 import state from './common/state'
-import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink, showAdLog, sendRootLog} from './common/log' // 日志
+import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink, showAdLog, sendRootLog, sendReadTypePvTcLog} from './common/log' // 日志
 import Prerender from './feature/prerender'
 
 let novelEvents = new NovelEvents()
@@ -54,6 +54,17 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
     // 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
     this.initPageLayout()
+
+    // 判断页面类型，发送tc日志，记录 无限下拉abtest pv
+    let routes = JSON.parse(this.element.querySelector('script').innerText)
+    let pageType = routes.routes[0].meta.pageType
+    if (flag.isNovelShell(pageType) && flag.isBkid()) {
+      if (flag.isSids()) {
+        sendReadTypePvTcLog('unlimitedPulldown')
+      } else {
+        sendReadTypePvTcLog('switchPage')
+      }
+    }
   }
 
   /**
@@ -108,13 +119,12 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     } catch (e) {
       throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json mipShellConfig')
     }
-
     // 小流量下走无限下拉逻辑
     // 判断当前页是阅读页走无限下拉逻辑
     if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {
       let scroll = new Scroll()
       scroll.init() // 初始化阅读器样式
-      scroll.start()
+      setTimeout(scroll.start.bind(scroll), 0)
       // 清除首屏阅读器内上一页、下一页和目录按钮
       let page = document.querySelector('.navigator')
       page.style.display = 'none'
@@ -130,7 +140,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       // 加大title和文本之间的行间距
       let title = reader.querySelector('.title') || ''
       if (title) {
-        title.style.margin = '1.5rem 0'
+        title.style.margin = '73px 0 21px'
       }
     }
   }
@@ -176,7 +186,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
 
     // 暴露给外部html的调用方法, 显示目录侧边栏
     this.addEventAction('showShellCatalog', function () {
-      window.MIP.reciveClick = +new Date()
       if (flag.isUnlimitedPulldownSids()) {
         this.catalog.show(this)
         this.footer.hide()
@@ -323,7 +332,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
-      window.MIP.fileClick = +new Date()
       this.catalog.show(this)
       this.footer.hide()
       this.header.hide()
@@ -460,7 +468,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   processShellConfigInLeaf (shellConfig, matchIndex) {
     shellConfig.routes[matchIndex].meta.header.bouncy = false
   }
-
+  // 基类方法， 关闭shell header上的x
+  showHeaderCloseButton () {
+    return false
+  }
   prerenderAllowed () {
     return true
   }

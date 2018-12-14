@@ -6,7 +6,7 @@
 import state from '../common/state'
 
 // 广告数据的缓存时间
-const AD_DATA_CACHE = 300000
+const AD_DATA_CACHE = 600000
 
 // 页面的类型集
 const PAGE_TYPES = {
