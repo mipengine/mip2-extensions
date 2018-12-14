@@ -1,3 +1,10 @@
+/**
+ * file: 无限下拉demo文件
+ *
+ * 因为是demo，小流量上线，没有改变原有dom结构，所以文件中涉及大量js操作dom
+ * @author: guoshuang
+ */
+
 import {setTimeout, clearTimeout} from 'timers'
 import {getCacheUrl, getJsonld, getPrerenderJsonld, getCurrentWindow, getParamFromString} from './util'
 import {sendReadTypePvTcLog} from './log'
@@ -5,7 +12,6 @@ import './../mip-shell-xiaoshuo.less'
 
 let currentWindow = getCurrentWindow()
 let reader = currentWindow.document.querySelector('#mip-reader-warp')
-// var timer
 
 let pageIdQuery = {
   pre: '',
@@ -66,6 +72,7 @@ export default class Scroll {
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.insertBefore(div, warp)
+    // 按照ue指示，设定首屏title与浏览器上边距之间的距离
     currentWindow.MIP.viewport.setScrollTop(70)
   }
 
@@ -194,6 +201,7 @@ export default class Scroll {
     } else {
       // 是这一章第一节，增加title上下的margin
       let title = readwarp[1].querySelector('h2.title')
+      // 按照ue要求修改title的上下间距
       title.style.padding = '57px 0 21px'
     }
 

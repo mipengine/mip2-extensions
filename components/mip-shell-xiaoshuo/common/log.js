@@ -88,13 +88,14 @@ export function sendWebbLogLink (PageButton, button) {
  *
  */
 export function sendReadTypePvTcLog (type) {
-  let url = window.location.href
   // 非sf下不走打点函数
-  if (!window.MIP.util.isCacheUrl(url)) {
+  if (window.MIP.standalone) {
     return
   }
   let currentWindow = getCurrentWindow()
   let rootWindow = getRootWindow(currentWindow)
+  let url = window.location.href
+  // 获取 bookid
   const bkid = getParamFromString(url, 'bkid')
   sendTCLog('interaction', {
     type: 'o',

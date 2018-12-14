@@ -4,6 +4,7 @@
  */
 
 import {getParamFromString, getCurrentWindow, getRootWindow} from './util'
+
 let currentWindow = getCurrentWindow()
 let rootWindow = getRootWindow(currentWindow)
 class Flag {
