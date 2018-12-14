@@ -95,8 +95,11 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
     // 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
     this.initPageLayout()
-    // 发送tc日志，记录 无限下拉abtest pv
-    if (flag.isBkid()) {
+
+    // 判断页面类型，发送tc日志，记录 无限下拉abtest pv
+    let routes = JSON.parse(this.element.querySelector('script').innerText)
+    let pageType = routes.routes[0].meta.pageType
+    if (flag.isNovelShell(pageType) && flag.isBkid()) {
       if (flag.isSids()) {
         sendReadTypePvTcLog('unlimitedPulldown')
       } else {
