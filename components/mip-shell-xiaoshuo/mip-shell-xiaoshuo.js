@@ -165,7 +165,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {
       let scroll = new Scroll()
       scroll.init() // 初始化阅读器样式
-      scroll.start()
+      setTimeout(scroll.start.bind(scroll), 0)
       // 清除首屏阅读器内上一页、下一页和目录按钮
       let page = document.querySelector('.navigator')
       page.style.display = 'none'
