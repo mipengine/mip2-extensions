@@ -1,7 +1,7 @@
 {
   "parser": "vue-eslint-parser",
   "parserOptions": {
-      "ecmaVersion": 8,
+      "parser": "babel-eslint",
       "sourceType": "module",
       "allowImportExportEverywhere": false
   },
