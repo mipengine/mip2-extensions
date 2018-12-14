@@ -44,14 +44,13 @@ export default class Scroll {
   init () {
     // 给body上添加无限下拉标识
     currentWindow.document.body.setAttribute('load-type', 'infinite')
+    this.initLoadingTop()
     // 添加正在加载样式
     let div = document.createElement('div')
     div.setAttribute('id', 'infinite-loading-bottom')
     let loadingHTML = loadingDom()
     div.innerHTML = loadingHTML
     reader.appendChild(div)
-    this.initLoadingTop()
-    pageIdQuery.nextPage && this.prerender(pageIdQuery.nextPage, this.appendDom, 'nextPage')
   }
 
   /**
