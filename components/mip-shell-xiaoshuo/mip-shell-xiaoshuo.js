@@ -100,7 +100,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       if (flag.isSids()) {
         sendReadTypePvTcLog('unlimitedPulldown')
       } else {
-        sendReadTypePvTcLog('afterSwitchPage')
+        sendReadTypePvTcLog('switchPage')
       }
     }
   }
