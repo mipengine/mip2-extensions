@@ -3,12 +3,18 @@
  * @author: guoshuang
  */
 
-import {getParamFromString} from './util'
+import {getParamFromString, getCurrentWindow, getRootWindow} from './util'
 
+let currentWindow = getCurrentWindow()
+let rootWindow = getRootWindow(currentWindow)
 class Flag {
   constructor () {
     // 无线下拉bkid
-    this.bkid = ['377566031', '228265', '32544050', '494196121', '831262', '61031200']
+    this.bkid = ['377566031', '228265', '32544050', '494196121', '831262', '61031200', '570946121', '735720121', '32784061', '1316808']
+    // 无限下拉sid
+    this.sid = ['127771']
+    // 结果页的sids
+    this.resSids = rootWindow.MIP.hash.hashTree.sids ? rootWindow.MIP.hash.hashTree.sids.value.split('_') : []
   }
   /**
    * 安卓4及其以下的浏览器
@@ -28,6 +34,32 @@ class Flag {
     return false
   }
   /**
+   * 判断是否命中sids
+   *
+   * @public
+   */
+  isSids () {
+    if (!this.resSids) {
+      return false
+    }
+    for (let i = 0; i < this.sid.length; i++) {
+      if (this.resSids.includes(this.sid[i])) {
+        return true
+      }
+    }
+    return false
+  }
+  /**
+   * 判断是否命中bkid
+   *
+   * @public
+   */
+  isBkid () {
+    let url = window.location.href
+    let bkid = getParamFromString(url, 'bkid')
+    return this.bkid.indexOf(bkid) > -1
+  }
+  /**
    * 判断是否命中无限下拉的bookid
    *
    * @public
@@ -41,9 +73,9 @@ class Flag {
     if (!window.MIP.util.isCacheUrl(url)) {
       return false
     }
-    let bkid = getParamFromString(url, 'bkid')
-    // 命中bkid，走无限下拉
-    if (this.bkid.indexOf(bkid) > -1) {
+
+    // 命中bkid和sid，走无限下拉
+    if (this.isBkid() && this.isSids()) {
       return true
     }
     return false
