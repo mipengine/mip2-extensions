@@ -73,13 +73,12 @@ class Catalog {
    * 函数说明：异步获取目录成功的回调渲染函数
    *
    * @param {Object} data 异步成功返回获取的数据
-   * @param {Array} catalogs 定义在模板里的catalogs，同样是_renderCatalog函数定义的，只需要传过去即可
    */
-  renderCatalogCallBack (data, catalogs) {
+  renderCatalogCallBack (data, isRelunch) {
     let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
     let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
     let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
-    catalogs = data.data.catalog.chapters
+    let catalogs = data.data.catalog.chapters
     this.categoryList = data.data.catalog.chapters
     let renderCatalog = catalogs => catalogs.map(catalog => `
       <div class="catalog-page">
@@ -89,6 +88,18 @@ class Catalog {
         </a>
       </div>`).join('\n')
     $catalogContent.innerHTML = renderCatalog(catalogs)
+    if (isRelunch) {
+      let currentPage = this.getCurrentPage()
+      let catLocation = {
+        section: currentPage.chapter,
+        page: currentPage.page
+      }
+      let catalog = this.$catalogSidebar.querySelectorAll('.catalog-page')
+      let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
+      catalog[catLocation.section - 1].querySelector('a').classList.add('active')
+      this.nowCatNum = catLocation.section
+      $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
+    }
     this.reverse($contentTop, $catalogContent)
   }
 
@@ -110,46 +121,49 @@ class Catalog {
       chapterStatus = book.chapterStatus
     }
     let catalogHtml = `
-      <div class="mip-catalog-btn book-catalog-info">
-        <div class="catalog-header-wrapper book-catalog-info-header">
-          <div class="book-catalog-info-title">
-            <p class="book-catalog-title-name catalog-title">${title}</p>
-            <div class="catalog-content-total-wrapper">
-              <p class="catalog-content-total"><span>${chapterStatus}</span><span class="chapter-number">${chapterNumber}</span></p>
-            </div>
-          </div>
-          <div class="catalog-content-center-wrapper">
-            <div class="width-50 text-left catalog-content-center-left"><a href="#">目录</a></div>
-            <div class="width-50 text-right catalog-content-center-left">
-              <a href="#" class="catalog-reserve">
-                <i class="icon icon-order reverse-infor"><span class="reverse-name"> 倒序 </span></i>
-              </a>
-            </div>
-            </div>
-        </div>
-      </div>
       <div class="mip-shell-catalog mip-border mip-border-right">
         <div class="novel-catalog-content-wrapper">
-          <div class="net-err-info">因网络原因暂时无法获取目录</div>
+          <div class="mip-catalog-btn book-catalog-info">
+            <div class="catalog-header-wrapper book-catalog-info-header">
+              <div class="book-catalog-info-title">
+                <p class="book-catalog-title-name catalog-title">${title}</p>
+                <div class="catalog-content-total-wrapper">
+                  <p class="catalog-content-total"><span>${chapterStatus}</span><span class="chapter-number">${chapterNumber}</span></p>
+                </div>
+              </div>
+              <div class="catalog-content-center-wrapper">
+                <div class="width-50 text-left catalog-content-center-left"><a href="#">目录</a></div>
+                <div class="width-50 text-right catalog-content-center-left">
+                  <a href="#" class="catalog-reserve">
+                    <i class="icon icon-order reverse-infor"><span class="reverse-name"> 倒序 </span></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="net-err-info">
+            <div class="bg"></div>
+            <div>暂无内容</div>
+            <span class="relunchBtn">重新加载</span>
+          </div>
           <div class="novel-catalog-content">
           </div>
-          </div>
         </div>
-        <!--<div class="scroll">-->
-        <!--</div>-->
       </div>
     `
     if (!catalogs) {
       // 目录配置为空
       this.isCatFetch = true
-      const originUrl = encodeURIComponent(MIP.util.getOriginalUrl())
+      const originUrl = encodeURIComponent(util.getOriginalUrl())
 
       MIP.sandbox.fetchJsonp('https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
         jsonpCallback: 'callback'
       }).then(res => res.json())
         .then(data => {
-          this.renderCatalogCallBack(data, catalogs)
+          this.renderCatalogCallBack(data, false)
         }).catch(err => {
+          let relunchBtn = this.$catalogSidebar.querySelector('.relunchBtn')
+          relunchBtn.addEventListener('click', e => this.relunchCatalog())
           this.catalogFailMessageEvent()
           console.warn(new Error('网络异常'), err)
           this.categoryList = false
@@ -191,8 +205,8 @@ class Catalog {
     if (book) {
       $catalogBook.style.display = 'block'
     } else {
-      $catalog.style.height = 'calc(100% - 62px)'
-      $catalog.style.height = '-webkit-calc(100% - 62px)'
+      $catalog.style.height = 'calc(100%)'
+      $catalog.style.height = '-webkit-calc(100%)'
     }
 
     // 实现倒序，点击倒序，目录顺序倒序，倒序字边正序
@@ -366,7 +380,7 @@ class Catalog {
     //   catalog[i].innerHTML = catalog[i].innerHTML
     // }
     if (!this.categoryList) {
-      util.css(document.querySelector('.net-err-info'), {
+      util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
         display: 'block'
       })
       return
@@ -415,6 +429,23 @@ class Catalog {
       return false
     })
     return true
+  }
+
+  relunchCatalog () {
+    const originUrl = encodeURIComponent(util.getOriginalUrl())
+    MIP.sandbox.fetchJsonp('https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
+      jsonpCallback: 'callback'
+    }).then(res => res.json())
+      .then(data => {
+        util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
+          display: 'none'
+        })
+        this.renderCatalogCallBack(data, true)
+      }).catch(err => {
+        this.catalogFailMessageEvent()
+        console.warn(new Error('网络异常'), err)
+        this.categoryList = false
+      })
   }
 }
 
