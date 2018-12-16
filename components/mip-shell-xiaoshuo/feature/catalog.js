@@ -73,6 +73,7 @@ class Catalog {
    * 函数说明：异步获取目录成功的回调渲染函数
    *
    * @param {Object} data 异步成功返回获取的数据
+   * @param {boolean} isRelunch 是否需要定位到当前章节
    */
   renderCatalogCallBack (data, isRelunch) {
     let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
@@ -431,6 +432,9 @@ class Catalog {
     return true
   }
 
+  /**
+   * 重新加载目录
+   */
   relunchCatalog () {
     const originUrl = encodeURIComponent(util.getOriginalUrl())
     MIP.sandbox.fetchJsonp('https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
