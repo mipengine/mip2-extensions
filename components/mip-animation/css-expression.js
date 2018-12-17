@@ -28,9 +28,13 @@ function closest (dom, selector) {
     return dom.closest(selector)
   }
   // ployfill for closest
-  if (!document.documentElement.contains(dom)) return null
+  if (!document.documentElement.contains(dom)) {
+    return null
+  }
   while (dom !== null && dom.nodeType === 1) {
-    if (match(dom, selector)) return dom
+    if (match(dom, selector)) {
+      return dom
+    }
     dom = dom.parentElement || dom.parentNode
   }
   return null
@@ -47,10 +51,12 @@ function match (dom, selector) {
 }
 function parseCss (cssString, dom, options) {
   // the first thing is to test whether it need to be parsed
-  if (!isVar(cssString) && !isOperate(cssString)) return cssString
+  if (!isVar(cssString) && !isOperate(cssString)) {
+    return cssString
+  }
   // 这里的解析主要针对这种形式 `rand(1, 3)`，所以在最外层套了一层 `root()` 方便解析，然后再取出其内的内容进行计算返回
   let tree = parseToTree(cssString)
-  return calculate(tree, { dom, options })
+  return calculate(tree, {dom, options})
 }
 /**
  * 解析 CSS 字符串
@@ -158,37 +164,43 @@ function calculate (css, obj, dim) {
   return css.join('').trim()
 }
 const funcNode = {
-  width: (strArr, dim, { dom, options }) => {
+  width: (strArr, dim, {dom, options}) => {
     return dimNode('width', dom, ...strArr)
   },
-  height: (strArr, dim, { dom, options }) => {
+  height: (strArr, dim, {dom, options}) => {
     return dimNode('height', dom, ...strArr)
   },
-  calc: (strArr, dim, { dom, options }) => {
-    return calcNode({ dim, dom, options }, ...strArr)
+  calc: (strArr, dim, {dom, options}) => {
+    return calcNode({dim, dom, options}, ...strArr)
   },
-  num: (strArr, dim, { dom, options }) => {
+  num: (strArr, dim, {dom, options}) => {
     return numNode(...strArr)
   },
-  var: (strArr, dim, { dom, options }) => {
-    return varNode(strArr, { dom, options })
+  var: (strArr, dim, {dom, options}) => {
+    return varNode(strArr, {dom, options})
   },
-  rand: (strArr, dim, { dom, options }) => {
-    return randNode(strArr, { dom, dim, options })
+  rand: (strArr, dim, {dom, options}) => {
+    return randNode(strArr, {dom, dim, options})
   }
 }
 
 function randNode (cssArr, obj) {
   // maybe [0] -> ''.slice(0, -1) == ""
   let len = cssArr.length
-  if (len === 0) return Math.random()
-  if (len === 1 && cssArr[0] === '') return Math.random()
+  if (len === 0) {
+    return Math.random()
+  }
+  if (len === 1 && cssArr[0] === '') {
+    return Math.random()
+  }
   if (len === 2) {
     let min = constantNode(cssArr[0])
     let max = constantNode(cssArr[1])
     min = min.resolve(obj)
     max = max.resolve(obj)
-    if (min.unit !== max.unit) throw new SyntaxError('two parameters should be the same kind type')
+    if (min.unit !== max.unit) {
+      throw new SyntaxError('two parameters should be the same kind type')
+    }
     let min_ = Math.min(min.num, max.num)
     let max_ = Math.max(min.num, max.num)
     let rand = Math.random()
@@ -196,14 +208,18 @@ function randNode (cssArr, obj) {
   }
   throw new Error('number of parameters is illegal!')
 }
-function varNode (cssArr, { dom, options }) {
+function varNode (cssArr, {dom, options}) {
   // 按照 mdn 规范，第一个逗号后面的所有内容都是 default value
   let len = cssArr.length
   let key, defaultVal
-  if (len === 0) throw new Error('invalid parameters!')
+  if (len === 0) {
+    throw new Error('invalid parameters!')
+  }
   // len >= 1
   key = cssArr[0].trim()
-  if (!startsWith(key, '--')) throw new Error('variable is illegal')
+  if (!startsWith(key, '--')) {
+    throw new Error('variable is illegal')
+  }
   if (len > 1) {
     defaultVal = cssArr.slice(1).join('')
   }
@@ -228,7 +244,7 @@ function dimNode (dim, dom, css) {
     }
     throw new SyntaxError('closest should hava a parameter')
   }
-  selector = selector = css.substring(1, css.length - 1)
+  selector = css.substring(1, css.length - 1)
   return util.rect.getElementOffset(document.querySelector(selector))[dim] + 'px'
 }
 function getOperator (str, operators) {
@@ -293,10 +309,10 @@ function numNode (css) {
 
 function compute (op, left, right, { dom, dim, options }) {
   if (left.type !== 'CONSTANT') {
-    left = left.resolve({ dom, dim, options })
+    left = left.resolve({dom, dim, options})
   }
   if (right.type !== 'CONSTANT') {
-    right = right.resolve({ dom, dim, options })
+    right = right.resolve({dom, dim, options})
   }
   if (op === '/') {
     if (right.unit) throw new SyntaxError('denominator should be a number ')

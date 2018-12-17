@@ -38,7 +38,9 @@ export class PercentNode extends NumericNode {
     super('PERCENT', num, unit)
   }
   resolve ({ dom, dim }) {
-    if (dim !== 'width' && dim !== 'height') return new NumberNode('0', 'px')
+    if (dim !== 'width' && dim !== 'height') {
+      return new NumberNode('0', 'px')
+    }
     let num = util.rect.getElementOffset(dom)[dim] * this.num / 100
     return new NumberNode(num, 'px')
   }
