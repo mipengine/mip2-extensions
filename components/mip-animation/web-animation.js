@@ -248,7 +248,9 @@ function createKeyframes (target, keyframes, options) {
   if (Object.prototype.toString.call(keyframes) === '[object Object]') {
     let props = Object.keys(keyframes)
     for (let prop of props) {
-      if (!validateProp(prop)) throw new SyntaxError('非法的属性！')
+      if (!validateProp(prop)) {
+        throw new SyntaxError('非法的属性！')
+      }
       let value = keyframes[prop]
       let computedValue
       if (KEYFRAMES_PROPS[prop]) {
@@ -276,7 +278,9 @@ function createKeyframes (target, keyframes, options) {
       let val = arr[i]
       let props = Object.keys(val)
       for (let prop of props) {
-        if (!validateProp(prop)) throw new SyntaxError('非法的属性！')
+        if (!validateProp(prop)) {
+          throw new SyntaxError('非法的属性！')
+        }
         if (KEYFRAMES_PROPS[prop]) {
           continue
         }

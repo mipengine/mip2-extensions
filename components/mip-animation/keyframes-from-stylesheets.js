@@ -5,18 +5,26 @@
 
 export function extractKeyframes (name) {
   let { styleSheets } = document
-  if (!styleSheets) return null
+  if (!styleSheets) {
+    return null
+  }
   for (let i = styleSheets.length - 1; i >= 0; i--) {
     let keyframes = scanStyle(styleSheets[i], name)
-    if (keyframes) return keyframes
+    if (keyframes) {
+      return keyframes
+    }
   }
   return null
 }
 
 function scanStyle (styleSheet, name) {
-  if (!styleSheet.cssRules) return null
+  if (!styleSheet.cssRules) {
+    return null
+  }
   let node = styleSheet.ownerNode
-  if (!node) return null
+  if (!node) {
+    return null
+  }
   // mip 好像没有 mip-keyframes
   return scanRules(styleSheet.cssRules, name)
 }
@@ -28,7 +36,9 @@ function scanRules (rules, name) {
       return createKeyframes(rule)
     } else if (rule.type === 4 || rule.type === 12) {
       let val = scanRules(rule.cssRules, name)
-      if (val) return val
+      if (val) {
+        return val
+      }
     }
   }
   return null
@@ -37,7 +47,9 @@ function scanRules (rules, name) {
 function isEnabled (rule) {
   if (rule.media && rule.media.mediaText) {
     let enabled = window.matchMedia(rule.media.mediaText).matches
-    if (!enabled) return false
+    if (!enabled) {
+      return false
+    }
   }
   if (rule.type === 12) {
     if (!window.CSS || !window.CSS.supports ||
