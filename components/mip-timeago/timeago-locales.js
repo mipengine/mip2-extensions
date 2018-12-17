@@ -5,9 +5,7 @@
  * https://github.com/hustcc/timeago.js
  */
 
-/**
- * ar (Arabic)
- */
+// ar (Arabic)
 export const ar = function (number, index) {
   if (index === 0) {
     return ['منذ لحظات', 'بعد لحظات']
@@ -38,9 +36,7 @@ export const ar = function (number, index) {
   }
 }
 
-/**
-   * be (Belarusian)
-   */
+// be (Belarusian)
 export const be = function (number, index) {
   const seconds =
       formatNum.bind(null, 'секунду', '%s секунду', '%s секунды', '%s секунд')
@@ -76,14 +72,14 @@ export const be = function (number, index) {
   }
 
   /**
-     *
-     * @param f1 - 1
-     * @param f - 21, 31, ...
-     * @param s - 2-4, 22-24, 32-34 ...
-     * @param t - 5-20, 25-30, ...
-     * @param n
-     * @return {string}
-     */
+   *
+   * @param {string} f1  - 1
+   * @param {string} f  - 21, 31, ...
+   * @param {string} s  - 2-4, 22-24, 32-34 ...
+   * @param {string} t  - 5-20, 25-30, ...
+   * @param {number} n n
+   * @returns {string} format string
+   */
   function formatNum (f1, f, s, t, n) {
     const n10 = n % 10
     let str = t
@@ -100,9 +96,7 @@ export const be = function (number, index) {
   }
 }
 
-/**
-   * bg (Bulgarian)
-   */
+// bg (Bulgarian)
 export const bg = function (number, index) {
   return [
     ['току що', 'съвсем скоро'],
@@ -122,9 +116,7 @@ export const bg = function (number, index) {
   ][index]
 }
 
-/**
-   * ca (Catalan)
-   */
+// ca (Catalan)
 export const ca = function (number, index) {
   return [
     ['fa un moment', 'd\'aquí un moment'],
@@ -144,9 +136,7 @@ export const ca = function (number, index) {
   ][index]
 }
 
-/**
-   * da (Danish)
-   */
+// da (Danish)
 export const da = function (number, index) {
   return [
     ['for et øjeblik siden', 'om et øjeblik'],
@@ -166,9 +156,7 @@ export const da = function (number, index) {
   ][index]
 }
 
-/**
-   * de (German)
-   */
+// de (German)
 export const de = function (number, index) {
   return [
     ['gerade eben', 'vor einer Weile'],
@@ -188,9 +176,7 @@ export const de = function (number, index) {
   ][index]
 }
 
-/**
-   * el (Greek)
-   */
+// el (Greek)
 export const el = function (number, index) {
   return [
     ['μόλις τώρα', 'σε λίγο'],
@@ -210,9 +196,7 @@ export const el = function (number, index) {
   ][index]
 }
 
-/**
-   * en (English)
-   */
+// en (English)
 export const en = function (number, index) {
   return [
     ['just now', 'right now'],
@@ -232,9 +216,7 @@ export const en = function (number, index) {
   ][index]
 }
 
-/**
-   * enShort (English - short)
-   */
+// enShort (English - short)
 export const enShort = function (number, index) {
   return [
     ['just now', 'right now'],
@@ -254,9 +236,7 @@ export const enShort = function (number, index) {
   ][index]
 }
 
-/**
-   * es (Spanish)
-   */
+// es (Spanish)
 export const es = function (number, index) {
   return [
     ['justo ahora', 'en un rato'],
@@ -276,9 +256,7 @@ export const es = function (number, index) {
   ][index]
 }
 
-/**
-   * eu (Basque)
-   */
+// eu (Basque)
 export const eu = function (number, index) {
   return [
     ['orain', 'denbora bat barru'],
@@ -298,9 +276,7 @@ export const eu = function (number, index) {
   ][index]
 }
 
-/**
-   * fi (Finnish)
-   */
+// fi (Finnish)
 export const fi = function (number, index) {
   return [
     ['juuri äsken', 'juuri nyt'],
@@ -320,9 +296,7 @@ export const fi = function (number, index) {
   ][index]
 }
 
-/**
-   * fr (French)
-   */
+// fr (French)
 export const fr = function (number, index) {
   return [
     ['à l\'instant', 'dans un instant'],
@@ -342,9 +316,7 @@ export const fr = function (number, index) {
   ][index]
 }
 
-/**
-   * he (Hebrew)
-   */
+// he (Hebrew)
 export const he = function (number, index) {
   return [
     ['זה עתה', 'עכשיו'],
@@ -364,9 +336,7 @@ export const he = function (number, index) {
   ][index]
 }
 
-/**
-   * hu (Hungarian)
-   */
+// hu (Hungarian)
 export const hu = function (number, index) {
   return [
     ['éppen most', 'éppen most'],
@@ -386,9 +356,7 @@ export const hu = function (number, index) {
   ][index]
 }
 
-/**
-   * inBG (Bangla)
-   */
+// inBG (Bangla)
 export const inBG = function (number, index) {
   return [
     ['এইমাত্র', 'একটা সময়'],
@@ -408,9 +376,7 @@ export const inBG = function (number, index) {
   ][index]
 }
 
-/**
-   * inHI (Hindi)
-   */
+// inHI (Hindi)
 export const inHI = function (number, index) {
   return [
     ['अभी', 'कुछ समय'],
@@ -430,9 +396,7 @@ export const inHI = function (number, index) {
   ][index]
 }
 
-/**
-   * inID (Malay)
-   */
+// inID (Malay)
 export const inID = function (number, index) {
   return [
     ['baru saja', 'sebentar'],
@@ -452,9 +416,7 @@ export const inID = function (number, index) {
   ][index]
 }
 
-/**
-   * it (Italian)
-   */
+// it (Italian)
 export const it = function (number, index) {
   return [
     ['poco fa', 'tra poco'],
@@ -474,9 +436,7 @@ export const it = function (number, index) {
   ][index]
 }
 
-/**
-   * ja (Japanese)
-   */
+// ja (Japanese)
 export const ja = function (number, index) {
   return [
     ['すこし前', 'すぐに'],
@@ -496,9 +456,7 @@ export const ja = function (number, index) {
   ][index]
 }
 
-/**
-   * ko (Korean)
-   */
+// ko (Korean)
 export const ko = function (number, index) {
   return [
     ['방금', '곧'],
@@ -518,9 +476,7 @@ export const ko = function (number, index) {
   ][index]
 }
 
-/**
-   * ml (Malayalam)
-   */
+// ml (Malayalam)
 export const ml = function (number, index) {
   return [
     ['ഇപ്പോള്‍', 'കുറച്ചു മുന്‍പ്'],
@@ -540,9 +496,7 @@ export const ml = function (number, index) {
   ][index]
 }
 
-/**
-   * nbNO (Norwegian Bokmål)
-   */
+// nbNO (Norwegian Bokmål)
 export const nbNO = function (number, index) {
   return [
     ['akkurat nå', 'om litt'],
@@ -562,9 +516,7 @@ export const nbNO = function (number, index) {
   ][index]
 }
 
-/**
-   * nl (Dutch)
-   */
+// nl (Dutch)
 export const nl = function (number, index) {
   return [
     ['recent', 'binnenkort'],
@@ -584,9 +536,7 @@ export const nl = function (number, index) {
   ][index]
 }
 
-/**
-   * nnNO (Norwegian Nynorsk)
-   */
+// nnNO (Norwegian Nynorsk)
 export const nnNO = function (number, index) {
   return [
     ['nett no', 'om litt'],
@@ -606,9 +556,7 @@ export const nnNO = function (number, index) {
   ][index]
 }
 
-/**
-   * pl (Polish)
-   */
+// pl (Polish)
 export const pl = function (number, index) {
   const l = [
     ['w tej chwili', 'za chwilę'],
@@ -639,9 +587,7 @@ export const pl = function (number, index) {
   return l[index & 1 ? (number % 10 > 4 || number % 10 < 2 || ~~(number / 10) % 10 === 1 ? index : ++index / 2 + 13) : index]
 }
 
-/**
-   * ptBR (Portuguese)
-   */
+// ptBR (Portuguese)
 export const ptBR = function (number, index) {
   return [
     ['agora mesmo', 'daqui um pouco'],
@@ -661,9 +607,7 @@ export const ptBR = function (number, index) {
   ][index]
 }
 
-/**
-   * ro (Romanian)
-   */
+// ro (Romanian)
 export const ro = function (number, index) {
   const langTable = [
     ['chiar acum', 'chiar acum'],
@@ -694,9 +638,7 @@ export const ro = function (number, index) {
   ]
 }
 
-/**
-   * ru (Russian)
-   */
+// ru (Russian)
 export const ru = function (number, index) {
   const seconds =
       formatNum.bind(null, 'секунду', '%s секунду', '%s секунды', '%s секунд')
@@ -732,14 +674,14 @@ export const ru = function (number, index) {
   }
 
   /**
-     *
-     * @param f1 - 1
-     * @param f - 21, 31, ...
-     * @param s - 2-4, 22-24, 32-34 ...
-     * @param t - 5-20, 25-30, ...
-     * @param n
-     * @return {string}
-     */
+   *
+   * @param {string}f1  - 1
+   * @param {string} f  - 21, 31, ...
+   * @param {string} s  - 2-4, 22-24, 32-34 ...
+   * @param {string} t  - 5-20, 25-30, ...
+   * @param {number} n n
+   * @returns {string} format string
+   */
   function formatNum (f1, f, s, t, n) {
     const n10 = n % 10
     let str = t
@@ -755,9 +697,7 @@ export const ru = function (number, index) {
   }
 }
 
-/**
-   * sv (Swedish)
-   */
+// sv (Swedish)
 export const sv = function (number, index) {
   return [
     ['just nu', 'om en stund'],
@@ -777,9 +717,7 @@ export const sv = function (number, index) {
   ][index]
 }
 
-/**
-   * ta (Tamil)
-   */
+// ta (Tamil)
 export const ta = function (number, index) {
   return [
     ['இப்போது', 'சற்று நேரம் முன்பு'],
@@ -799,9 +737,7 @@ export const ta = function (number, index) {
   ][index]
 }
 
-/**
-   * th (Thai)
-   */
+// th (Thai)
 export const th = function (number, index) {
   return [
     ['เมื่อสักครู่นี้', 'อีกสักครู่'],
@@ -821,9 +757,7 @@ export const th = function (number, index) {
   ][index]
 }
 
-/**
-   * tr (Turkish)
-   */
+// tr (Turkish)
 export const tr = function (number, index) {
   return [
     ['az önce', 'şimdi'],
@@ -843,9 +777,7 @@ export const tr = function (number, index) {
   ][index]
 }
 
-/**
-   * uk (Ukrainian)
-   */
+// uk (Ukrainian)
 export const uk = function (number, index) {
   const seconds =
       formatNum.bind(null, 'секунду', '%s секунду', '%s секунди', '%s секунд')
@@ -895,9 +827,7 @@ export const uk = function (number, index) {
   }
 }
 
-/**
-   * vi (Vietnamese)
-   */
+// vi (Vietnamese)
 export const vi = function (number, index) {
   return [
     ['vừa xong', 'một lúc'],
@@ -917,9 +847,7 @@ export const vi = function (number, index) {
   ][index]
 }
 
-/**
-   * zhCN (Chinese)
-   */
+// zhCN (Chinese)
 export const zhCN = function (number, index) {
   return [
     ['刚刚', '片刻后'],
@@ -939,9 +867,7 @@ export const zhCN = function (number, index) {
   ][index]
 }
 
-/**
-   * zhTW (Taiwanese)
-   */
+// zhTW (Taiwanese)
 export const zhTW = function (number, index) {
   return [
     ['剛剛', '片刻後'],
