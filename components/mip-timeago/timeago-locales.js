@@ -674,6 +674,7 @@ export const ru = function (number, index) {
   }
 
   /**
+   * format number
    *
    * @param {string}f1  - 1
    * @param {string} f  - 21, 31, ...
