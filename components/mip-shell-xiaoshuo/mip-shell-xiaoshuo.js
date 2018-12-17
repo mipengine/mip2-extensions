@@ -23,7 +23,7 @@ import Strategy from './ad/strategyControl'
 import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow, getNovelInstanceId} from './common/util'
 import state from './common/state'
-import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink, sendReadTypePvTcLog} from './common/log' // 日志
+import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink, showAdLog, sendRootLog, sendReadTypePvTcLog} from './common/log' // 日志
 import Prerender from './feature/prerender'
 
 let novelEvents = new NovelEvents()
@@ -42,48 +42,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 阅读器内部预渲染开关
     this.isReaderPrerender = false
   }
-  /**
-   * 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.adShow
-   *
-   * @param {string} pageType 页面类型 page detail catalog ...
-   * @param {string} site 区分站点  目前只有 zongheng iqiyi
-   */
-  showAdLog (pageType, site) {
-    let old
-    /**
-     * 观察者模式监听变量变化，变量变化执行函数
-     *
-     * @param {string} oldVal 改变前的值
-     * @param {string} newVal 改变后的值
-    */
-    function observer (oldVal, newVal) {
-      if ((newVal === true) && (pageType !== 'detail')) {
-        sendTCLog('interaction', {
-          type: 'o',
-          action: 'adShow'
-        }, {
-          show: 'adShow',
-          hasAd: true,
-          site: site
-        })
-        // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
-        window.MIP.adShow = false
-      }
-    }
-    // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
-    Object.defineProperty(window.MIP, 'adShow', {
-      enumerable: true,
-      configurable: true,
-      get: function () {
-        return old
-      },
-      set: function (val) {
-        // 调用变量改变时处理函数
-        observer(old, val)
-        old = val
-      }
-    })
-  }
+
   // 通过小说JS给dom添加预渲染字段
   connectedCallback () {
     // 从结果页进入小说阅读页加上预渲染的标识prerender，但是内部的每页不能加，会影响翻页内的预渲染
@@ -202,33 +161,13 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
         prerender.resetNavigatorBtn()
       }
     }
-    const {isRootPage, novelInstance, originalUrl} = state(window)
-    const pageType = novelInstance.currentPageMeta.pageType || ''
-    let zonghengPattern = /www.xmkanshu.com/g
-    let iqiyiPattern = /wenxue.m.iqiyi.com/g
-    let isZongheng = zonghengPattern.test(originalUrl)
-    let isIqiyi = iqiyiPattern.test(originalUrl)
-    let site
-    if (isZongheng) {
-      site = 'zongheng'
-    }
-    if (isIqiyi) {
-      site = 'iqiyi'
-    }
-    sendTCLog('interaction', {
-      type: 'o',
-      action: 'pageShow'
-    }, {
-      show: 'pageShow',
-      isRootPage: isRootPage,
-      site: site
-    })
-    let prePageButton = document.querySelector('.navigator a:first-child')
-    let nextPageButton = document.querySelector('.navigator a:last-child')
+    const {isRootPage, novelInstance} = state(window)
+    // 发送首跳非首跳展现日志
+    sendRootLog()
     // 监控页面底部上一页按钮跳转是否异常，异常发送异常日志
-    sendWebbLogLink(prePageButton, 'prePageButton')
+    sendWebbLogLink(document.querySelector('.navigator a:first-child'), 'prePageButton')
     // 监控页面底部下一页按钮跳转是否异常，异常发送异常日志
-    sendWebbLogLink(nextPageButton, 'nextPageButton')
+    sendWebbLogLink(document.querySelector('.navigator a:last-child'), 'nextPageButton')
     // 用来记录翻页的次数，主要用来触发品专的广告
     novelInstance.novelPageNum++
     if (novelInstance.currentPageMeta.pageType === 'page') {
@@ -313,7 +252,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       name: 'current-page-ready'
     })
     // 观察者模式监听广告渲染是否成功字段 window.MIP.adShow
-    this.showAdLog(pageType, site)
+    showAdLog()
   }
   /**
    * 基类方法，翻页之前执行的方法
