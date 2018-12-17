@@ -21,7 +21,7 @@ const WHITELISTPROPS = {
   'offsetDistance': true
 }
 /**
- * 经过尝试，duration 不能是字符串，以下 4 个可以，因此可以通过 var 来取值
+ * 经过尝试，duration 不能是字符串，以下 4 个可以，因此可以通过 var 来取值，但是 delay && endDelay 都不能带单位
  */
 const NEEDPARSE = {
   delay: true,
@@ -201,7 +201,7 @@ function getDomConfigList (rootDom = document, options) {
     options = Object.assign({}, options, getSwitchConfig(options.switch))
   }
 
-  let list = [...doms].map(dom => [dom, options])
+  let list = [...doms].map(dom => [dom, JSON.parse(JSON.stringify(options))])
 
   // subtargets
   list = mergeSubtargets(list, options.subtargets, doms)

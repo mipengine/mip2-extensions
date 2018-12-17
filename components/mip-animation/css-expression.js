@@ -165,7 +165,7 @@ const funcNode = {
     return dimNode('height', dom, ...strArr)
   },
   calc: (strArr, dim, { dom, options }) => {
-    return calcNode(dim, dom, ...strArr)
+    return calcNode({ dim, dom, options }, ...strArr)
   },
   num: (strArr, dim, { dom, options }) => {
     return numNode(...strArr)
@@ -174,19 +174,20 @@ const funcNode = {
     return varNode(strArr, { dom, options })
   },
   rand: (strArr, dim, { dom, options }) => {
-    return randNode(strArr)
+    return randNode(strArr, { dom, dim, options })
   }
 }
 
-function randNode (cssArr) {
+function randNode (cssArr, obj) {
   // maybe [0] -> ''.slice(0, -1) == ""
-  let len = cssArr.join('').split('').length
+  let len = cssArr.length
   if (len === 0) return Math.random()
+  if (len === 1 && cssArr[0] === '') return Math.random()
   if (len === 2) {
     let min = constantNode(cssArr[0])
     let max = constantNode(cssArr[1])
-    min = min.resolve()
-    max = max.resolve()
+    min = min.resolve(obj)
+    max = max.resolve(obj)
     if (min.unit !== max.unit) throw new SyntaxError('two parameters should be the same kind type')
     let min_ = Math.min(min.num, max.num)
     let max_ = Math.max(min.num, max.num)
@@ -213,6 +214,7 @@ function varNode (cssArr, { dom, options }) {
   }
   return defaultVal
 }
+// width()，width('.inner-01')，height(closest('.inner-02'))
 function dimNode (dim, dom, css) {
   css = css.replace(/\s/g, '')
   if (!css) {
@@ -226,7 +228,7 @@ function dimNode (dim, dom, css) {
     }
     throw new SyntaxError('closest should hava a parameter')
   }
-  selector = selector = css.substring(1, css.length - 2)
+  selector = selector = css.substring(1, css.length - 1)
   return util.rect.getElementOffset(document.querySelector(selector))[dim] + 'px'
 }
 function getOperator (str, operators) {
@@ -237,7 +239,7 @@ function getOperator (str, operators) {
     }
   }
 }
-function calcNode (dim, dom, str) {
+function calcNode (obj, str) {
   if (/^\s+/.test(str) || /\s+$/.test(str)) {
     throw new Error(`calc(${str}) arguments is invalid`)
   }
@@ -268,7 +270,7 @@ function calcNode (dim, dom, str) {
       let arg2 = stack.pop()
       let arg1 = stack.pop()
       let op = oStack.pop()
-      let result = compute(op, arg1, arg2, dim, dom)
+      let result = compute(op, arg1, arg2, obj)
       stack.push(result)
     }
     oStack.push(operator)
@@ -280,21 +282,21 @@ function calcNode (dim, dom, str) {
     let arg2 = stack.pop()
     let arg1 = stack.pop()
     let op = oStack.pop()
-    let result = compute(op, arg1, arg2, dim, dom)
+    let result = compute(op, arg1, arg2, obj)
     stack.push(result)
   }
-  return stack[0].resolve().css()
+  return stack[0].resolve(obj).css()
 }
 function numNode (css) {
   return parseFloat(css)
 }
 
-function compute (op, left, right, dim, dom) {
+function compute (op, left, right, { dom, dim, options }) {
   if (left.type !== 'CONSTANT') {
-    left = left.resolve({ dom, dim })
+    left = left.resolve({ dom, dim, options })
   }
   if (right.type !== 'CONSTANT') {
-    right = right.resolve({ dom, dim })
+    right = right.resolve({ dom, dim, options })
   }
   if (op === '/') {
     if (right.unit) throw new SyntaxError('denominator should be a number ')

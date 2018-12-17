@@ -48,13 +48,13 @@ export class EmNode extends NumericNode {
   constructor (num, unit) {
     super('EM', num, unit)
   }
-  resolve ({ dom }) {
+  resolve ({ dom, options }) {
     let num
     if (this.unit === 'rem') {
-      num = parseFloat(getComputedStyle(document.documentElement, 'font-size')) * this.num
+      num = parseFloat(getComputedStyle(document.documentElement, options, 'font-size')) * this.num
       return new NumberNode(num, 'px')
     }
-    num = parseFloat(getComputedStyle(dom, 'font-size')) * this.num
+    num = parseFloat(getComputedStyle(dom, options, 'font-size')) * this.num
     return new NumberNode(num, 'px')
   }
 }
