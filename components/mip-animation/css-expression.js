@@ -12,7 +12,7 @@ import {
 
 const VAR_RE = /(calc|var|url|rand|index|width|height|num)\(/i
 const OPERATE_RE = /(\+|-|\/|\*)/i
-const { util } = MIP
+const {util} = MIP
 
 function isVar (string) {
   return VAR_RE.test(string)

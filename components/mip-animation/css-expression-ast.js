@@ -2,7 +2,7 @@
  * @file css-expression-ast.js
  * @author chenyongle (chenyongle@baidu.com)
  */
-const { util, viewport } = MIP
+const {util, viewport} = MIP
 const NORM_RE = /\d(%|px|em|rem|vw|vh|vmin|vmax|s|ms|deg|grad|turn|rad)/i
 const INFINITY_RE = /^(infinity|infinite)$/i
 const DEG_TO_RAD = 2 * Math.PI / 360

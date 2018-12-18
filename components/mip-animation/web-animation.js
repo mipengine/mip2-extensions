@@ -5,8 +5,8 @@
 
 import playState from './play-state'
 import parseCss from './css-expression'
-import { getComputedStyle } from './css-expression-ast'
-import { extractKeyframes } from './keyframes-from-stylesheets'
+import {getComputedStyle} from './css-expression-ast'
+import {extractKeyframes} from './keyframes-from-stylesheets'
 const KEYFRAMES_PROPS = {
   offset: true,
   easing: true
