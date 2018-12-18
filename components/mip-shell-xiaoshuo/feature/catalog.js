@@ -21,6 +21,7 @@ class Catalog {
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
     this.nowCatNum = 1
+    this.isShowNetErr = false
   }
 
   /**
@@ -143,9 +144,11 @@ class Catalog {
             </div>
           </div>
           <div class="net-err-info">
-            <div class="bg"></div>
-            <div>暂无内容</div>
-            <span class="relunchBtn">重新加载</span>
+            <div class="sm_con">
+              <div class="bg"></div>
+              <div class="cn">暂无内容</div>
+              <span class="relunchBtn">重新加载</span>
+            </div>
           </div>
           <div class="novel-catalog-content">
           </div>
@@ -381,9 +384,21 @@ class Catalog {
     //   catalog[i].innerHTML = catalog[i].innerHTML
     // }
     if (!this.categoryList) {
-      util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
-        display: 'block'
-      })
+      if (!this.isShowNetErr) {
+        let errCont = this.$catalogSidebar.querySelector('.net-err-info')
+        util.css(errCont, {
+          'display': 'block',
+          'height': 'calc(100% - ' + this.$catalogSidebar.querySelector('.book-catalog-info').clientHeight + 'px)'
+        })
+        util.css(document.querySelector('.sm_con'), {
+          'margin-top': (document.querySelector('.net-err-info').clientHeight - document.querySelector('.sm_con').clientHeight) * 0.4 + 'px'
+        })
+        errCont.addEventListener('touchmove', e => {
+          e && e.stopPropagation()
+          e.preventDefault()
+        })
+        this.isShowNetErr = true
+      }
       return
     }
     let currentPage = this.getCurrentPage()
