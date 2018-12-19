@@ -62,6 +62,8 @@ export function setTransformStyle (element, transition) {
   }
 
   element.style.transform = entries.join(' ')
+  // add prefix for iOS 8
+  element.style.webkitTransform = entries.join(' ')
 }
 
 /**
