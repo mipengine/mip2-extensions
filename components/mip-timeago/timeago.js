@@ -105,8 +105,9 @@ function diffSec (date) {
 
 /**
  * timeago: the function to get `timeago` instance.
- * - nowDate: the relative date, default is new Date().
- * - defaultLocale: the default locale, default is en. if your set it, then the `locale` parameter of format is not needed of you.
+ *
+ * @param {Date} date the relative date, default is new Date().
+ * @param {string} locale the default locale, default is en. if your set it, then the `locale` parameter of format is not needed of you.
  **/
 export function timeago (date, locale) {
   return formatDiff(diffSec(date), locale)
@@ -114,8 +115,9 @@ export function timeago (date, locale) {
 
 /**
  * register: register a new language locale
- * - locale: locale name, e.g. en / zh_CN, notice the standard.
- * - localeFunc: the locale process function
+ *
+ * @param {string} locale locale name, e.g. en / zh_CN, notice the standard.
+ * @param {Function} localeFunc the locale process function
  **/
 timeago.register = function (locale, localeFunc) {
   locales[locale] = localeFunc
