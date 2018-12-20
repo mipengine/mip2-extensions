@@ -10,6 +10,11 @@ import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
 import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 
+// const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?'
+// const originUrl = MIP.util.getOriginalUrl()
+const CATALOG_URL = 'http://yq01-psdy-diaoyan1053.yq01.baidu.com:8948/novel/api/mipinfo?'
+const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=2&fr=bdgfh&mip=1'
+
 let util = MIP.util
 let event = util.event
 class Catalog {
@@ -142,12 +147,18 @@ class Catalog {
     if (!catalogs) {
       // 目录配置为空
       this.isCatFetch = true
-      const originUrl = encodeURIComponent(MIP.util.getOriginalUrl())
+      let params = [
+        'originUrl=' + encodeURIComponent(originUrl),
+        'num=60',
+        'type=middle'
+      ]
 
-      MIP.sandbox.fetchJsonp('https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
+      MIP.sandbox.fetchJsonp(CATALOG_URL + params.join('&'), {
         jsonpCallback: 'callback'
       }).then(res => res.json())
         .then(data => {
+          // DELETE ME
+          console.log(data)
           this.renderCatalogCallBack(data, catalogs)
         }).catch(err => {
           this.catalogFailMessageEvent()
