@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>parallax</title>
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+      .parallax-container {
+        position: relative;
+      }
+      .parallax-container span {
+        position: absolute;
+        bottom: 10%;
+        left: 10%;
+        font-size: 20px;
+        color: #efefef;
+        z-index: 1;
+      }
+      .blank {
+        background: #d7d7d7;
+        height: 1000px;
+        text-align: center;
+        display: flex;
+        display: -webkit-flex;
+        align-items: center;
+        -webkit-align-items: center;
+        justify-content: center;
+        -webkit-justify-content: center;
+        font-size: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="blank">往上滚动</div>
+      <div class="parallax-container">
+        <span
+          mip-fx="parallax fly-in-top"
+          data-parallax-factor="1.3">Parallax</span>
+        <mip-img
+          src="https://www.mipengine.org/static/img/sample_01.jpg"
+          height="275"
+          width="414"
+          layout="responsive"></mip-img>
+      </div>
+      <div class="blank">往下滚动</div>
+    </div>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-fx-collection/mip-fx-collection.js"></script>
+  </body>
+</html>
