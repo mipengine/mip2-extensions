@@ -15,9 +15,11 @@
       .blank {
         height: 1200px;
         text-align: center;
-        display: flex;
+        display: -webkit-flex;
         align-items: center;
+        -webkit-align-items: center;
         justify-content: center;
+        -webkit-justify-content: center;
         font-size: 50px;
       }
     </style>
@@ -27,7 +29,7 @@
       <div class="blank">往上滚动</div>
       <div class="container">
         <mip-img
-          src="https://www.mipengine.org/static/img/sample_01.jpg"
+          src="./sample_01.jpg"
           height="275"
           width="414"
           layout="responsive"

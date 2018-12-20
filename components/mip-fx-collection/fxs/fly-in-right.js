@@ -30,10 +30,12 @@ export default class FlyInRight extends FlyInBottom {
       this.triggered = true
     }
 
-    MIP.util.css(this.element, {
-      'transition-duration': this.duration + 'ms',
-      'transition-timing-function': this.easing
+    setTimeout(() => {
+      MIP.util.css(this.element, {
+        'transition-duration': this.duration + 'ms',
+        'transition-timing-function': this.easing
+      })
+      setTransformStyle(this.element, `translateX(-${this.distance}vw)`)
     })
-    setTransformStyle(this.element, `translateX(-${this.distance}vw)`)
   }
 }

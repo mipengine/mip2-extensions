@@ -90,10 +90,12 @@ export default class FlyInBottom extends Fx {
       this.triggered = true
     }
 
-    MIP.util.css(this.element, {
-      'transition-duration': this.duration + 'ms',
-      'transition-timing-function': this.easing
+    setTimeout(() => {
+      MIP.util.css(this.element, {
+        'transition-duration': this.duration + 'ms',
+        'transition-timing-function': this.easing
+      })
+      setTransformStyle(this.element, `translateY(-${this.distance}vh)`)
     })
-    setTransformStyle(this.element, `translateY(-${this.distance}vh)`)
   }
 }

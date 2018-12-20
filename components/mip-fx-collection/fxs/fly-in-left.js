@@ -10,6 +10,11 @@ export default class FlyInLeft extends FlyInBottom {
 
     /** @override */
     this.type = 'fly-in-left'
+
+    MIP.util.css(this.element, {
+      '-webkit-backface-visibility': 'hidden',
+      '-webkit-perspective': 1000
+    })
   }
 
   /** @override */
@@ -29,11 +34,12 @@ export default class FlyInLeft extends FlyInBottom {
       })
       this.triggered = true
     }
-
-    MIP.util.css(this.element, {
-      'transition-duration': this.duration + 'ms',
-      'transition-timing-function': this.easing
+    setTimeout(() => {
+      MIP.util.css(this.element, {
+        'transition-duration': this.duration + 'ms',
+        'transition-timing-function': this.easing
+      })
+      setTransformStyle(this.element, `translateX(${this.distance}vw)`)
     })
-    setTransformStyle(this.element, `translateX(${this.distance}vw)`)
   }
 }
