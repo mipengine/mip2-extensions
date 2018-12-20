@@ -18,13 +18,15 @@ const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=2&f
 let util = MIP.util
 let event = util.event
 
-let reverseHanlder
+let reverseHandler
+let isReverse = false // false = 正序，从小到大，默认情况；true = 倒序，从大到小。
 
 // 以下字段isCatFetch=true时才有（根据RD反馈，线上其实不存在在HTML里面配置目录的书了，所以应该都走fetch了）
 let firstChapter
 let latestChapter
 let isFirstChapterLoaded
 let isLatestChapterLoaded
+let lastScrollTop
 let catalogScrollListener
 let isFetchLoading = false
 let categoryContentHeight
@@ -91,10 +93,9 @@ class Catalog {
    * 函数说明：异步获取目录成功的回调渲染函数
    *
    * @param {Object} data 异步成功返回获取的数据
-   * @param {boolean} isRelunch 是否需要定位到当前章节
+   * @param {boolean} isReload 是否需要定位到当前章节
    */
-  // TODO 待合并代码后把参数变成对象
-  renderCatalogCallBack (data, isRelunch, isAppend, isUp) {
+  renderCatalogCallBack (data, {isReload = false, isAppend = false, isUp = false} = {}) {
     let $contentTop = this.$catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
     let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
@@ -126,14 +127,22 @@ class Catalog {
 
     if (!isAppend) {
       $catalogContent.innerHTML = renderCatalog(catalogs)
-    } else if (isUp) {
-      $catalogContent.innerHTML = renderCatalog(catalogs) + $catalogContent.innerHTML
+    } else if (!isReverse) {
+      if (isUp) {
+        $catalogContent.innerHTML = renderCatalog(catalogs) + $catalogContent.innerHTML
+      } else {
+        $catalogContent.innerHTML += renderCatalog(catalogs)
+      }
     } else {
-      $catalogContent.innerHTML += renderCatalog(catalogs)
+      if (isUp) {
+        $catalogContent.innerHTML += renderCatalog(catalogs.reverse())
+      } else {
+        $catalogContent.innerHTML = renderCatalog(catalogs.reverse()) + $catalogContent.innerHTML
+      }
     }
     categoryContentHeight = $catalogContent.clientHeight
 
-    if (isRelunch) {
+    if (isReload) {
       let currentPage = this.getCurrentPage()
       let catLocation = {
         section: currentPage.chapter,
@@ -168,6 +177,8 @@ class Catalog {
     this.reverse($contentTop, $catalogContent)
     if (!isAppend) {
       this.bindCatalogScroll($catWrapper)
+    } else {
+      lastScrollTop = $catWrapper.scrollTop
     }
   }
 
@@ -175,19 +186,35 @@ class Catalog {
     if (catalogScrollListener) {
       $scrollWrapper.removeEventListener('scroll', catalogScrollListener)
     }
+    lastScrollTop = $scrollWrapper.scrollTop
     catalogScrollListener = e => {
       if (isFetchLoading || (isFirstChapterLoaded && isLatestChapterLoaded)) {
         return
       }
       let type
-      if (!isFirstChapterLoaded && $scrollWrapper.scrollTop < 500) {
-        type = 'up'
-      } else if (!isLatestChapterLoaded && $scrollWrapper.scrollTop + $scrollWrapper.clientHeight + 300 > categoryContentHeight) {
-        type = 'down'
+      let currentScrollTop = $scrollWrapper.scrollTop
+      let moveUp = currentScrollTop < lastScrollTop && currentScrollTop < 500
+      let moveDown = currentScrollTop > lastScrollTop && currentScrollTop + $scrollWrapper.clientHeight + 300 > categoryContentHeight
+      lastScrollTop = currentScrollTop
+      if (!isReverse) {
+        if (!isFirstChapterLoaded && moveUp) {
+          type = 'up'
+        } else if (!isLatestChapterLoaded && moveDown) {
+          type = 'down'
+        }
+      } else {
+        if (!isLatestChapterLoaded && moveUp) {
+          type = 'down'
+        } else if (!isFirstChapterLoaded && moveDown) {
+          type = 'up'
+        }
       }
       if (type) {
         this.loadCategory(type).then(data => {
-          this.renderCatalogCallBack(data, false, true, type === 'up')
+          this.renderCatalogCallBack(data, {
+            isAppend: true,
+            isUp: type === 'up'
+          })
         })
       }
     }
@@ -210,7 +237,7 @@ class Catalog {
       'num=60',
       'type=' + type
     ]
-    console.log(params)
+    // console.log(params)
 
     return MIP.sandbox.fetchJsonp(CATALOG_URL + params.join('&'), {
       jsonpCallback: 'callback'
@@ -275,7 +302,7 @@ class Catalog {
       this.isCatFetch = true
       this.loadCategory('middle')
         .then(data => {
-          this.renderCatalogCallBack(data, false)
+          this.renderCatalogCallBack(data)
         }).catch(err => {
           let relunchBtn = this.$catalogSidebar.querySelector('.relunchBtn')
           relunchBtn.addEventListener('click', e => this.relunchCatalog())
@@ -423,10 +450,10 @@ class Catalog {
       temp[i] = catalog[i].outerHTML
     }
 
-    if (reverseHanlder) {
-      reverse.removeEventListener('click', reverseHanlder)
+    if (reverseHandler) {
+      reverse.removeEventListener('click', reverseHandler)
     }
-    reverseHanlder = () => {
+    reverseHandler = () => {
       for (let left = 0; left < length / 2; left++) {
         let right = length - 1 - left
         let temporary = temp[left]
@@ -449,24 +476,27 @@ class Catalog {
         section: currentPage.chapter,
         page: currentPage.page
       }
+      isFetchLoading = true
       if (currentPage && currentPage !== 1) {
         catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
         if (reverseName.innerHTML === ' 倒序') {
           catalog[catLocation.section - 1].querySelector('a').classList.add('active')
           this.nowCatNum = catLocation.section
           // $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop //定位，暂时去掉直接跳转到开始
-          $catWrapper.scrollTop = 0
+          $catWrapper.scrollTop = lastScrollTop = 0
         } else {
           catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
           this.nowCatNum = catLocation.section
           // $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop //定位，暂时去掉直接跳转到开始
-          $catWrapper.scrollTop = 0
+          $catWrapper.scrollTop = lastScrollTop = 0
         }
       } else {
-        $catWrapper.scrollTop = 0
+        $catWrapper.scrollTop = lastScrollTop = 0
       }
+      isReverse = !isReverse
+      setTimeout(() => { isFetchLoading = false }, 0)
     }
-    reverse.addEventListener('click', reverseHanlder)
+    reverse.addEventListener('click', reverseHandler)
   }
 
   bindShowEvent (shellElement) {
@@ -573,7 +603,9 @@ class Catalog {
         util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
           display: 'none'
         })
-        this.renderCatalogCallBack(data, true)
+        this.renderCatalogCallBack(data, {
+          isReload: true
+        })
       }).catch(err => {
         this.catalogFailMessageEvent()
         console.warn(new Error('网络异常'), err)
