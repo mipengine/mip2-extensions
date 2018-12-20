@@ -104,8 +104,10 @@ export default class MIPDateCountDown extends CustomElement {
   }
 
   /**
-   * @param {number} ms
-   * @return {Object}
+   * get YDHMS From Ms
+   *
+   * @param {number} ms time(ms)
+   * @returns {Object} date object
    */
   getYDHMSFromMs (ms) {
     const TimeUnit = {
@@ -148,8 +150,10 @@ export default class MIPDateCountDown extends CustomElement {
   }
 
   /**
-   * @param {number} input
-   * @return {string}
+   * pad start
+   *
+   * @param {number} input input
+   * @returns {string} pad string
    * @private
    */
   padStart (input) {
@@ -164,8 +168,10 @@ export default class MIPDateCountDown extends CustomElement {
   }
 
   /**
-   * @param {number} input
-   * @return {number}
+   * support back date
+   *
+   * @param {number} input input
+   * @returns {number} dealed input
    * @private
    */
   supportBackDate (input) {
