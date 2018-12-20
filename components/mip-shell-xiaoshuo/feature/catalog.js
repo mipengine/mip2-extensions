@@ -17,6 +17,18 @@ const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=2&f
 
 let util = MIP.util
 let event = util.event
+
+let reverseHanlder
+
+// 以下字段isCatFetch=true时才有（根据RD反馈，线上其实不存在在HTML里面配置目录的书了，所以应该都走fetch了）
+let firstChapter
+let latestChapter
+let isFirstChapterLoaded
+let isLatestChapterLoaded
+let catalogScrollListener
+let isFetchLoading = false
+let categoryContentHeight
+
 class Catalog {
   constructor (config, book) {
     // 渲染侧边栏目录元素
@@ -81,20 +93,46 @@ class Catalog {
    * @param {Object} data 异步成功返回获取的数据
    * @param {boolean} isRelunch 是否需要定位到当前章节
    */
-  renderCatalogCallBack (data, isRelunch) {
-    let $catalogSidebar = document.querySelector('.mip-shell-catalog-wrapper')
-    let $contentTop = $catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
-    let $catalogContent = $catalogSidebar.querySelector('.novel-catalog-content')
+  // TODO 待合并代码后把参数变成对象
+  renderCatalogCallBack (data, isRelunch, isAppend, isUp) {
+    let $contentTop = this.$catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
+    let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
+    let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let catalogs = data.data.catalog.chapters
-    this.categoryList = data.data.catalog.chapters
-    let renderCatalog = catalogs => catalogs.map(catalog => `
-      <div class="catalog-page">
+    if (!isAppend) {
+      isFirstChapterLoaded = isLatestChapterLoaded = false
+      firstChapter = data.data.catalog.firstChapter
+      latestChapter = data.data.catalog.latestChapter
+      this.categoryList = catalogs
+    } else if (isUp) {
+      this.categoryList = catalogs.concat(this.categoryList)
+    } else {
+      this.categoryList = this.categoryList.concat(catalogs)
+    }
+    let renderCatalog = catalogs => catalogs.map((catalog, index) => {
+      if (index === 0 && catalog.id === firstChapter.id) {
+        isFirstChapterLoaded = true
+      }
+      if (index === catalogs.length - 1 && catalog.id === latestChapter.id) {
+        isLatestChapterLoaded = true
+      }
+      return `<div class="catalog-page">
         <a class="mip-catalog-btn catalog-page-content"
         mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
         ${catalog.name}
         </a>
-      </div>`).join('\n')
-    $catalogContent.innerHTML = renderCatalog(catalogs)
+      </div>`
+    }).join('\n')
+
+    if (!isAppend) {
+      $catalogContent.innerHTML = renderCatalog(catalogs)
+    } else if (isUp) {
+      $catalogContent.innerHTML = renderCatalog(catalogs) + $catalogContent.innerHTML
+    } else {
+      $catalogContent.innerHTML += renderCatalog(catalogs)
+    }
+    categoryContentHeight = $catalogContent.clientHeight
+
     if (isRelunch) {
       let currentPage = this.getCurrentPage()
       let catLocation = {
@@ -102,7 +140,7 @@ class Catalog {
         page: currentPage.page
       }
       let catalog = this.$catalogSidebar.querySelectorAll('.catalog-page')
-      let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
+
       let originY, y
       $catWrapper.addEventListener('touchstart', e => {
         originY = e.touches[0].screenY
@@ -125,6 +163,58 @@ class Catalog {
       $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
     }
     this.reverse($contentTop, $catalogContent)
+    if (!isAppend) {
+      this.bindCatalogScroll($catWrapper)
+    }
+  }
+
+  bindCatalogScroll ($scrollWrapper) {
+    if (catalogScrollListener) {
+      $scrollWrapper.removeEventListener('scroll', catalogScrollListener)
+    }
+    catalogScrollListener = e => {
+      if (isFetchLoading || (isFirstChapterLoaded && isLatestChapterLoaded)) {
+        return
+      }
+      let type
+      if (!isFirstChapterLoaded && $scrollWrapper.scrollTop < 500) {
+        type = 'up'
+      } else if (!isLatestChapterLoaded && $scrollWrapper.scrollTop + $scrollWrapper.clientHeight + 300 > categoryContentHeight) {
+        type = 'down'
+      }
+      if (type) {
+        this.loadCategory(type).then(data => {
+          this.renderCatalogCallBack(data, false, true, type === 'up')
+        })
+      }
+    }
+    $scrollWrapper.addEventListener('scroll', catalogScrollListener)
+  }
+
+  // type = up / down / middle
+  loadCategory (type) {
+    isFetchLoading = true
+    let url
+    if (type === 'middle') {
+      url = originUrl
+    } else if (type === 'up') {
+      url = this.categoryList[0].contentUrl[0]
+    } else {
+      url = this.categoryList[this.categoryList.length - 1].contentUrl[0]
+    }
+    let params = [
+      'originUrl=' + encodeURIComponent(url),
+      'num=60',
+      'type=' + type
+    ]
+    console.log(params)
+
+    return MIP.sandbox.fetchJsonp(CATALOG_URL + params.join('&'), {
+      jsonpCallback: 'callback'
+    }).then(res => {
+      isFetchLoading = false
+      return res.json()
+    })
   }
 
   /**
@@ -180,18 +270,8 @@ class Catalog {
     if (!catalogs) {
       // 目录配置为空
       this.isCatFetch = true
-      let params = [
-        'originUrl=' + encodeURIComponent(originUrl),
-        'num=60',
-        'type=middle'
-      ]
-
-      MIP.sandbox.fetchJsonp(CATALOG_URL + params.join('&'), {
-        jsonpCallback: 'callback'
-      }).then(res => res.json())
+      this.loadCategory('middle')
         .then(data => {
-          // DELETE ME
-          console.log(data)
           this.renderCatalogCallBack(data, false)
         }).catch(err => {
           let relunchBtn = this.$catalogSidebar.querySelector('.relunchBtn')
@@ -202,6 +282,7 @@ class Catalog {
         })
     } else {
       // 目录为数组，本地目录, 直接读取渲染
+      // deprecated
       this.categoryList = catalogs
       renderCatalog = catalogs => catalogs.map(catalog => `
         <div class="catalog-page">
@@ -338,7 +419,11 @@ class Catalog {
     for (let i = 0; i < length; i++) {
       temp[i] = catalog[i].outerHTML
     }
-    reverse.addEventListener('click', () => {
+
+    if (reverseHanlder) {
+      reverse.removeEventListener('click', reverseHanlder)
+    }
+    reverseHanlder = () => {
       for (let left = 0; left < length / 2; left++) {
         let right = length - 1 - left
         let temporary = temp[left]
@@ -377,7 +462,8 @@ class Catalog {
       } else {
         $catWrapper.scrollTop = 0
       }
-    })
+    }
+    reverse.addEventListener('click', reverseHanlder)
   }
 
   bindShowEvent (shellElement) {
@@ -479,10 +565,7 @@ class Catalog {
    * 重新加载目录
    */
   relunchCatalog () {
-    const originUrl = encodeURIComponent(util.getOriginalUrl())
-    MIP.sandbox.fetchJsonp('https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?originUrl=' + originUrl, {
-      jsonpCallback: 'callback'
-    }).then(res => res.json())
+    this.loadCategory('middle')
       .then(data => {
         util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
           display: 'none'
