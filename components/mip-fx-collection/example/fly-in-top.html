@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>fly-in-top</title>
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+      body {
+        background: #d7d7d7;
+      }
+      .container {
+        position: relative;
+      }
+      .blank {
+        height: 1200px;
+        text-align: center;
+        display: -webkit-flex;
+        align-items: center;
+        -webkit-align-items: center;
+        justify-content: center;
+        -webkit-justify-content: center;
+        font-size: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="blank">往上滚动</div>
+      <div class="container">
+        <mip-img
+          src="./sample_01.jpg"
+          height="275"
+          width="414"
+          layout="responsive"
+          mip-fx="fly-in-top"></mip-img>
+      </div>
+      <div class="blank">往下滚动</div>
+    </div>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-fx-collection/mip-fx-collection.js"></script>
+  </body>
+</html>
