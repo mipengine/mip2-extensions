@@ -101,19 +101,22 @@ class Catalog {
       let originY, y
       $catWrapper.addEventListener('touchstart', e => {
         originY = e.touches[0].screenY
-        $catWrapper.addEventListener('touchmove', e => {
-          y = e.touches[0].screenY
-          // 触底后向上滑动
-          if ($catWrapper.scrollTop >= ($catWrapper.scrollHeight - $catWrapper.clientHeight) && y < originY) {
-            e && e.stopPropagation()
-            e.preventDefault()
-          }
-          // 触顶后向下滑动
-          if ($catWrapper.scrollTop === 0 && y > originY) {
-            e && e.stopPropagation()
-            e.preventDefault()
-          }
-        })
+      })
+      $catWrapper.addEventListener('touchmove', e => {
+        if ($catWrapper.scrollTop < $catWrapper.scrollHeight - $catWrapper.clientHeight && $catWrapper.scrollTop > 0) {
+          return
+        }
+        y = e.touches[0].screenY
+        // 触底后向上滑动
+        if ($catWrapper.scrollTop >= ($catWrapper.scrollHeight - $catWrapper.clientHeight) && y < originY) {
+          e && e.stopPropagation()
+          e.preventDefault()
+        }
+        // 触顶后向下滑动
+        if ($catWrapper.scrollTop === 0 && y > originY) {
+          e && e.stopPropagation()
+          e.preventDefault()
+        }
       })
       catalog[catLocation.section - 1].querySelector('a').classList.add('active')
       this.nowCatNum = catLocation.section
