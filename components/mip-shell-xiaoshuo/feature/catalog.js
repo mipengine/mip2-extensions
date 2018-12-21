@@ -22,14 +22,19 @@ let reverseHandler
 let isReverse = false // false = 正序，从小到大，默认情况；true = 倒序，从大到小。
 
 // 以下字段isCatFetch=true时才有（根据RD反馈，线上其实不存在在HTML里面配置目录的书了，所以应该都走fetch了）
+// 记录首尾章节的信息（后端返回的对象）
 let firstChapter
 let latestChapter
+// 记录首尾章节是否已经被加载（因为分页了），如果已被加载，那滚动时就不再发请求了
 let isFirstChapterLoaded
 let isLatestChapterLoaded
+// 记录上一次目录的滚动位置，用以判断滚动方向
 let lastScrollTop
+// 记录滚动响应函数，方便 removeEventListener 避免重复绑定
 let catalogScrollListener
-let isFetchLoading = false
+// 记录目录当前高度，方便在滚动时进行判断，且不必每次都获取 DOM
 let categoryContentHeight
+let isFetchLoading = false
 
 class Catalog {
   constructor (config, book) {
@@ -237,13 +242,18 @@ class Catalog {
       'num=60',
       'type=' + type
     ]
-    // console.log(params)
 
     return MIP.sandbox.fetchJsonp(CATALOG_URL + params.join('&'), {
       jsonpCallback: 'callback'
     }).then(res => {
       isFetchLoading = false
       return res.json()
+    }).then(data => {
+      if (data.errno !== 0) {
+        throw new Error(data)
+      } else {
+        return data
+      }
     })
   }
 
@@ -289,7 +299,7 @@ class Catalog {
             <div class="sm_con">
               <div class="bg"></div>
               <div class="cn">暂无内容</div>
-              <span class="relunchBtn">重新加载</span>
+              <span class="reloadBtn">重新加载</span>
             </div>
           </div>
           <div class="novel-catalog-content">
@@ -304,8 +314,8 @@ class Catalog {
         .then(data => {
           this.renderCatalogCallBack(data)
         }).catch(err => {
-          let relunchBtn = this.$catalogSidebar.querySelector('.relunchBtn')
-          relunchBtn.addEventListener('click', e => this.relunchCatalog())
+          let reloadBtn = this.$catalogSidebar.querySelector('.reloadBtn')
+          reloadBtn.addEventListener('click', e => this.reload())
           this.catalogFailMessageEvent()
           console.warn(new Error('网络异常'), err)
           this.categoryList = false
@@ -597,7 +607,7 @@ class Catalog {
   /**
    * 重新加载目录
    */
-  relunchCatalog () {
+  reload () {
     this.loadCategory('middle')
       .then(data => {
         util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
@@ -611,6 +621,12 @@ class Catalog {
         console.warn(new Error('网络异常'), err)
         this.categoryList = false
       })
+  }
+
+  getLatestChapterId () {
+    if (this.isCatFetch && latestChapter) {
+      return latestChapter.id
+    }
   }
 }
 
