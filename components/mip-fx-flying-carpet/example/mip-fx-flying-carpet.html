@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>mip-fx-flying-carpet</title>
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+      body {
+        background: #ccc
+      }
+
+      mip-fx-flying-carpet {
+        width: 90%;
+        margin: auto;
+        background: #fff;
+      }
+
+      .example2 {
+        width: 60%;
+        height: 300px;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        color: #fff;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div style="height: 500px;"></div>
+      <mip-fx-flying-carpet height="200"  style="position: fixed; bottom: 0; left: 0; right: 0">
+        <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg" height="275" width="414" layout="responsive" />
+      </mip-fx-flying-carpet>
+      <div style="height: 500px;"></div>
+      <mip-fx-flying-carpet height="200">
+        <div class="example2">
+          这是个广告 1
+        </div>
+        <div class="example2">
+          这是个广告 2
+        </div>
+      </mip-fx-flying-carpet>
+      <div style="height: 500px;"></div>
+    </div>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-fx-flying-carpet/mip-fx-flying-carpet.js"></script>
+  </body>
+</html>
