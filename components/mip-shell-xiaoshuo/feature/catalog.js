@@ -98,7 +98,10 @@ class Catalog {
    * 函数说明：异步获取目录成功的回调渲染函数
    *
    * @param {Object} data 异步成功返回获取的数据
-   * @param {boolean} isReload 是否需要定位到当前章节
+   * @param {?Object} options 一些配置项
+   * @param {boolean} options.isReload 是否需要定位到当前章节
+   * @param {boolean} options.isAppend 是否是追加章节（上下滑动加载更多）
+   * @param {boolean} options.isUp 是否是向上追加章节（无视排序，只看章节本身的先后。加载以前的章节，isUp=true)
    */
   renderCatalogCallBack (data, {isReload = false, isAppend = false, isUp = false} = {}) {
     let $contentTop = this.$catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
