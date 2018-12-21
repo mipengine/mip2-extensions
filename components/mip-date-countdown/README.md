@@ -6,7 +6,7 @@
 ----|----
 类型|通用
 支持布局|responsive, fixed-height, fill, container, fixed
-所需脚本| https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js, https://c.mipcdn.com/static/v2/mip-date-countdown/mip-datecountdown.js
+所需脚本| https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js</br>https://c.mipcdn.com/static/v2/mip-date-countdown/mip-date-countdown.js
 
 ## 示例
 
