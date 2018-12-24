@@ -12,7 +12,7 @@ import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 
 // const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?'
 const originUrl = MIP.util.getOriginalUrl()
-const CATALOG_URL = 'https://yq01-psdy-diaoyan1053.yq01.baidu.com:8948/novel/api/mipinfo?'
+const CATALOG_URL = 'http://yq01-psdy-diaoyan1053.yq01.baidu.com:8948/novel/api/mipinfo?'
 // const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=2&fr=bdgfh&mip=1'
 
 let util = MIP.util
