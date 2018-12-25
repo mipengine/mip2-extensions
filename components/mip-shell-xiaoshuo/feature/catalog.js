@@ -12,7 +12,7 @@ import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 
 // const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?'
 const originUrl = MIP.util.getOriginalUrl()
-const CATALOG_URL = 'https://yq01-psdy-diaoyan1053.yq01.baidu.com:8948/novel/api/mipinfo?'
+const CATALOG_URL = 'http://yq01-psdy-diaoyan1053.yq01.baidu.com:8948/novel/api/mipinfo?'
 // const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=2&fr=bdgfh&mip=1'
 
 let util = MIP.util
@@ -20,6 +20,9 @@ let event = util.event
 
 let reverseHandler
 let isReverse = false // false = 正序，从小到大，默认情况；true = 倒序，从大到小。
+// 记录上一次成功获取的 page
+// 因为目录添加排序之后，当前章节可能在 this.categoryList 里找不到了，但这种情况不需要返回 matchErr 错误，所以需要记录起来。
+let lastPage
 
 // 以下字段isCatFetch=true时才有（根据RD反馈，线上其实不存在在HTML里面配置目录的书了，所以应该都走fetch了）
 // 记录首尾章节的信息（后端返回的对象）
@@ -59,6 +62,7 @@ class Catalog {
     if (!this.isCatFetch) { // 纵横目前为同步获取目录，依靠crid高亮定位，所以这就是目前纵横的逻辑
       let crid = this.getLocationQuery().crid // 获取crid和currentPage.chapter判断是否一致
       if (crid && +crid === +currentPage.chapter) {
+        lastPage = currentPage
         return currentPage
       }
       return
@@ -71,6 +75,11 @@ class Catalog {
         result.chapter = index + 1 // 重写索引
       }
     })
+    // 如果找不到记录，可能是因为排序导致的，获取上一次（进入页面时）的 page 对象即可
+    if (result === 'matchErr') {
+      return lastPage
+    }
+    lastPage = result
     return result
   }
 
@@ -112,19 +121,21 @@ class Catalog {
       isFirstChapterLoaded = isLatestChapterLoaded = false
       firstChapter = data.data.catalog.firstChapter
       latestChapter = data.data.catalog.latestChapter
-      this.categoryList = catalogs
+      this.categoryList = catalogs.concat([])
     } else if (isUp) {
       this.categoryList = catalogs.concat(this.categoryList)
     } else {
       this.categoryList = this.categoryList.concat(catalogs)
     }
-    let renderCatalog = catalogs => catalogs.map((catalog, index) => {
-      if (index === 0 && catalog.id === firstChapter.id) {
+    if (catalogs && catalogs.length !== 0) {
+      if (catalogs[0].id === firstChapter.id) {
         isFirstChapterLoaded = true
       }
-      if (index === catalogs.length - 1 && catalog.id === latestChapter.id) {
+      if (catalogs[catalogs.length - 1].id === latestChapter.id) {
         isLatestChapterLoaded = true
       }
+    }
+    let renderCatalog = catalogs => catalogs.map(catalog => {
       return `<div class="catalog-page">
         <a class="mip-catalog-btn catalog-page-content"
         mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
@@ -134,7 +145,7 @@ class Catalog {
     }).join('\n')
 
     if (!isAppend) {
-      $catalogContent.innerHTML = renderCatalog(catalogs)
+      $catalogContent.innerHTML = !isReverse ? renderCatalog(catalogs) : renderCatalog(catalogs.reverse())
     } else if (!isReverse) {
       if (isUp) {
         $catalogContent.innerHTML = renderCatalog(catalogs) + $catalogContent.innerHTML
@@ -229,16 +240,17 @@ class Catalog {
     $scrollWrapper.addEventListener('scroll', catalogScrollListener)
   }
 
-  // type = up / down / middle
+  // type = up / down / middle / asc / desc
   loadCategory (type) {
     isFetchLoading = true
     let url
-    if (type === 'middle') {
-      url = originUrl
-    } else if (type === 'up') {
+    if (type === 'up') {
       url = this.categoryList[0].contentUrl[0]
-    } else {
+    } else if (type === 'down') {
       url = this.categoryList[this.categoryList.length - 1].contentUrl[0]
+    } else {
+      // middle / asc / desc
+      url = originUrl
     }
     let params = [
       'originUrl=' + encodeURIComponent(url),
@@ -455,59 +467,19 @@ class Catalog {
    */
   reverse ($contentTop, $catalogContent) {
     let reverse = $contentTop.querySelector('.catalog-reserve')
-    let catalog = $catalogContent.querySelectorAll('div')
     let reverseName = $contentTop.querySelector('.reverse-name')
-    let temp = []
-    let length = catalog.length
-    for (let i = 0; i < length; i++) {
-      temp[i] = catalog[i].outerHTML
-    }
 
     if (reverseHandler) {
       reverse.removeEventListener('click', reverseHandler)
     }
     reverseHandler = () => {
-      for (let left = 0; left < length / 2; left++) {
-        let right = length - 1 - left
-        let temporary = temp[left]
-        temporary = temp[left]
-        temp[left] = temp[right]
-        temp[right] = temporary
-      }
-      $catalogContent.innerHTML = temp.join('')
-      reverseName.innerHTML = reverseName.innerHTML === ' 正序' ? ' 倒序' : ' 正序'
-      let catalog = $catalogContent.querySelectorAll('div')
-      let $catWrapper = document.querySelector('.novel-catalog-content-wrapper')
-      if (!this.categoryList) {
-        util.css(document.querySelector('.net-err-info'), {
-          display: 'block'
-        })
-        return
-      }
-      let currentPage = this.getCurrentPage()
-      let catLocation = {
-        section: currentPage.chapter,
-        page: currentPage.page
-      }
-      isFetchLoading = true
-      if (currentPage && currentPage !== 1) {
-        catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
-        if (reverseName.innerHTML === ' 倒序') {
-          catalog[catLocation.section - 1].querySelector('a').classList.add('active')
-          this.nowCatNum = catLocation.section
-          // $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop //定位，暂时去掉直接跳转到开始
-          $catWrapper.scrollTop = lastScrollTop = 0
-        } else {
-          catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
-          this.nowCatNum = catLocation.section
-          // $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop //定位，暂时去掉直接跳转到开始
-          $catWrapper.scrollTop = lastScrollTop = 0
-        }
-      } else {
-        $catWrapper.scrollTop = lastScrollTop = 0
-      }
-      isReverse = !isReverse
-      setTimeout(() => { isFetchLoading = false }, 0)
+      // isReverse = false时，默认 asc。点击后改为 desc
+      let type = !isReverse ? 'desc' : 'asc'
+      reverseName.innerHTML = !isReverse ? ' 倒序' : ' 正序'
+      this.loadCategory(type).then(data => {
+        isReverse = !isReverse
+        this.renderCatalogCallBack(data)
+      })
     }
     reverse.addEventListener('click', reverseHandler)
   }
@@ -611,6 +583,7 @@ class Catalog {
    * 重新加载目录
    */
   reload () {
+    isReverse = false
     this.loadCategory('middle')
       .then(data => {
         util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
