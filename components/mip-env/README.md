@@ -68,7 +68,7 @@ param:
   ua
   说明: userAgent
   必选: 否
-  取值: 'baidu' , 'uc' , 'chrome' , 'safari' , 'firefox' , 'qq'
+  取值: 'baidu' , 'baidubrowser', 'uc' , 'chrome' , 'safari' , 'firefox' , 'qq'
   备注: 
   1、所有值不区分大小写。填写了ua键则必须有值才行
   2、所有取值均可在前面加"!",表示非xx
