@@ -12,6 +12,7 @@ import './../mip-shell-xiaoshuo.less'
 
 let currentWindow = getCurrentWindow()
 let reader = currentWindow.document.querySelector('#mip-reader-warp')
+let divMidContainer = document.createElement('div')
 
 let pageIdQuery = {
   pre: '',
@@ -136,6 +137,127 @@ export default class Scroll {
   prerender (url, fn, direction, loadingId) {
     // 启动弱网判断
     let weakTimer = this.weakNetwork(loadingId)
+    let me = this
+    // 请求最新数据
+    let xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function () {
+      if (me.loadingErrorFlag) {
+        return
+      }
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        clearTimeout(weakTimer) // 获取成功，清除弱网机制
+
+        let result = xhr.responseText
+
+        // jsonld 的script 标签提取
+        let jsonldPart = result.slice(result.indexOf('<script type="application/ld+json">'))
+        jsonldPart = jsonldPart.slice(0, jsonldPart.indexOf('</script>') + 9)
+
+        // mip-reader-wrapper div标签内容提取
+        let readerWrapperPart = result.slice(
+          result.indexOf('<div id="mip-reader-warp">'),
+          result.indexOf('<div class="navigator">')
+        )
+
+        // 处理数据
+        divMidContainer.innerHTML = jsonldPart + readerWrapperPart
+
+        // 去除hash
+        let pageId = getCacheUrl(url.replace(/#.*$/, ''))
+        // 获取jsonld
+        let jsonld = getJsonld(divMidContainer)
+
+        let {dom, id} = me.getPageDom(divMidContainer, pageId, jsonld.currentPage)
+
+        // 插入指定的位置
+        fn(dom, id)
+
+        // 清空容器
+        divMidContainer.innerHTML = ''
+        // 更新触顶或触底的url
+        pageIdQuery[direction] = getCacheUrl(jsonld[direction].url)
+        // 清空当前children，防止超过限制报错
+        // currentWindow.MIP.viewer.page.children = []
+        // 纵横神策pv埋点，这里需要配合调整 +++++++++
+        // me.saLog(jsonld, iframe[0].contentWindow)
+        // 发送tc无限下拉展现日志
+        sendReadTypePvTcLog('unlimitedPulldown')
+        // 移除页面上iframe
+        // iframe[0].parentNode.removeChild(iframe[0])
+        me.loading = false
+        setTimeout(me.start.bind(me), 0)
+      } else {
+        me.loadingError(loadingId)
+      }
+    }
+    xhr.open('GET', url)
+    xhr.send()
+  }
+
+  /**
+   * 获取div中的文章dom
+   *
+   * @param {Object} div 目标容器
+   * @param {string} pageId 对应的pageid
+   * @param {Object} currentPage 当前页的jsonld.currentPage
+   *
+   * @private
+   *
+   * return dom 处理后的阅读器dom元素
+   * return id  本页的pageid
+   */
+  getPageDom (div, pageId, currentPage) {
+    let readwarp = div.querySelector('#mip-reader-warp').childNodes
+    // 判断是否有添加 show-xiaoshuo-container
+    // 解决偶现获取到了dom，但是由于js阻塞引起的没有添加show-xiaoshuo-container样式类，导致文中出现一片空白的情况
+    let readwarpClass = readwarp[1].className || []
+    readwarpClass = readwarpClass.split(' ')
+    if (readwarpClass.indexOf('show-xiaoshuo-container') < 0) {
+      readwarp[1].className = readwarp[1].className + ' show-xiaoshuo-container'
+    }
+
+    readwarp[1].style.padding = '0 .32rem'
+    readwarp[1].lastElementChild.style.display = 'none'
+
+    // 如果不是这一章第一节，就删掉当前页的title
+    // 因为源站还是翻页的方式，只是cache下是无限下拉，所以需要手动干掉
+    if (currentPage.isFirstPage !== undefined && !currentPage.isFirstPage) {
+      let title = readwarp[1].querySelector('h2.title')
+      title.style.display = 'none'
+    } else {
+      // 是这一章第一节，增加title上下的margin
+      let title = readwarp[1].querySelector('h2.title')
+      // 按照ue要求修改title的上下间距
+      if (title && title.style) {
+        title.style.padding = '57px 0 21px'
+      }
+    }
+
+    // 隐藏下载按钮
+    let downloadNode = readwarp[1].querySelector('.zhdown-inner') || readwarp[1].querySelector('.top-download') || ''
+    if (downloadNode) {
+      downloadNode.style.display = 'none'
+    }
+
+    return {
+      dom: readwarp[1],
+      id: pageId
+    }
+  }
+
+  /**
+   * 获取iframe中的文章dom
+   *
+   * @param {string} url 目标url
+   * @param {Function} fn 插入iframe的方式
+   * @param {string} direction 更新上一页或者下一页的url
+   * @param {string} loadingId 触顶或触底loading的dom id
+   *
+   * @private
+   */
+  prerender1 (url, fn, direction, loadingId) {
+    // 启动弱网判断
+    let weakTimer = this.weakNetwork(loadingId)
     window.MIP.viewer.page.prerender([url]).then(iframe => {
       if (this.loadingErrorFlag) {
         return
@@ -179,7 +301,7 @@ export default class Scroll {
    * return dom 处理后的阅读器dom元素
    * return id  本页的pageid
    */
-  getPageDom (iframe, pageId, currentPage) {
+  getPageDom1 (iframe, pageId, currentPage) {
     let nextdocument = iframe.contentWindow.document
     let readwarp = nextdocument.getElementById('mip-reader-warp').childNodes
     // 判断是否有添加 show-xiaoshuo-container

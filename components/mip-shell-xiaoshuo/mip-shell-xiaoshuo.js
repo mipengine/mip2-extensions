@@ -458,16 +458,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     this.shellConfig = shellConfig
     this.novelPageNum = 0
     this.currentPageType = []
-    shellConfig.routes.forEach(routerConfig => {
-      routerConfig.meta.header.bouncy = false
-    })
   }
 
-  // 基类方法，在页面翻页时页面由于alwaysReadOnLoad为true重新刷新，因此shell的config需要重新配置
-  // matchIndex是用来标识它符合了哪个路由，根据不同的路由修改不同的配置
-  processShellConfigInLeaf (shellConfig, matchIndex) {
-    shellConfig.routes[matchIndex].meta.header.bouncy = false
-  }
   // 基类方法， 关闭shell header上的x
   showHeaderCloseButton () {
     return false
