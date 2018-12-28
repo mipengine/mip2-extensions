@@ -10,10 +10,10 @@ import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
 import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 
-// const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?'
+// const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?' // online
+const CATALOG_URL = 'http://yq01-psdy-diaoyan1006.yq01.baidu.com:8948/novel/api/mipinfo?' // yongfei
 const originUrl = MIP.util.getOriginalUrl()
-const CATALOG_URL = 'http://yq01-psdy-diaoyan1053.yq01.baidu.com:8948/novel/api/mipinfo?'
-// const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=2&fr=bdgfh&mip=1'
+// const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=50&fr=bdgfh&mip=1'
 
 let util = MIP.util
 let event = util.event
@@ -47,7 +47,7 @@ class Catalog {
     this.$catalogSidebar = this._renderCatalog(config, book)
     // 禁止冒泡，防止目录滚动到底后，触发外层小说页面滚动
     this.propagationStopped = this._stopPropagation()
-    this.nowCatNum = 1
+    // this.nowCatNum = 1
     this.isShowNetErr = false
   }
 
@@ -68,19 +68,20 @@ class Catalog {
       return
     }
     // 异步获取，标准逻辑，需要匹配currentPage的chapter与categoryList里的id。成功返回索引，否则false
-    let result = 'matchErr' // 匹配失败
-    this.categoryList.forEach((item, index) => {
-      if (+item.id === +currentPage.chapter) { // 匹配成功
-        result = currentPage
-        result.chapter = index + 1 // 重写索引
+    for (let i = 0; i < this.categoryList.length; i++) {
+      if (+this.categoryList[i].id === +currentPage.chapter) {
+        lastPage = currentPage
+        return currentPage
       }
-    })
-    // 如果找不到记录，可能是因为排序导致的，获取上一次（进入页面时）的 page 对象即可
-    if (result === 'matchErr') {
-      return lastPage
     }
-    lastPage = result
-    return result
+    // this.categoryList.forEach((item, index) => {
+    //   if (+item.id === +currentPage.chapter) { // 匹配成功
+    //     result = currentPage
+    //     result.chapter = index + 1 // 重写索引
+    //   }
+    // })
+    // 如果找不到记录，可能是因为排序导致的，获取上一次（进入页面时）的 page 对象即可
+    return lastPage || 'matchErr'
   }
 
   /**
@@ -136,7 +137,7 @@ class Catalog {
       }
     }
     let renderCatalog = catalogs => catalogs.map(catalog => {
-      return `<div class="catalog-page">
+      return `<div class="catalog-page" data-chapter-id="${catalog.id}">
         <a class="mip-catalog-btn catalog-page-content"
         mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
         ${catalog.name}
@@ -163,11 +164,11 @@ class Catalog {
 
     if (isReload) {
       let currentPage = this.getCurrentPage()
-      let catLocation = {
-        section: currentPage.chapter,
-        page: currentPage.page
-      }
-      let catalog = this.$catalogSidebar.querySelectorAll('.catalog-page')
+      // let catLocation = {
+      //   section: currentPage.chapter,
+      //   page: currentPage.page
+      // }
+      // let catalog = this.$catalogSidebar.querySelectorAll('.catalog-page')
 
       let originY, y
       $catWrapper.addEventListener('touchstart', e => {
@@ -189,9 +190,14 @@ class Catalog {
           e.preventDefault()
         }
       })
-      catalog[catLocation.section - 1].querySelector('a').classList.add('active')
-      this.nowCatNum = catLocation.section
-      $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
+      let $activeCatalog = this.$catalogSidebar.querySelector(`.catalog-page[data-chapter-id="${currentPage.chapter}"]`)
+      if ($activeCatalog) {
+        $activeCatalog.querySelector('a').classList.add('active')
+        $catWrapper.scrollTo = $activeCatalog.offsetTop
+      }
+      // catalog[catLocation.section - 1].querySelector('a').classList.add('active')
+      // this.nowCatNum = catLocation.section
+      // $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
     }
     this.reverse($contentTop, $catalogContent)
     if (!isAppend) {
@@ -254,7 +260,6 @@ class Catalog {
     }
     let params = [
       'originUrl=' + encodeURIComponent(url),
-      'num=60',
       'type=' + type
     ]
 
@@ -479,6 +484,12 @@ class Catalog {
       this.loadCategory(type).then(data => {
         isReverse = !isReverse
         this.renderCatalogCallBack(data)
+        // 高亮但不定位
+        let currentPage = this.getCurrentPage()
+        let $activeCatalog = this.$catalogSidebar.querySelector(`.catalog-page[data-chapter-id="${currentPage.chapter}"]`)
+        if ($activeCatalog) {
+          $activeCatalog.querySelector('a').classList.add('active')
+        }
       })
     }
     reverse.addEventListener('click', reverseHandler)
@@ -509,8 +520,7 @@ class Catalog {
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
-    let reverseName = this.$catalogSidebar.querySelector('.reverse-name')
-    let catalog = [...$catalogContent.querySelectorAll('div')]
+    // let catalog = [...$catalogContent.querySelectorAll('div')]
     // 处理UC浏览器默认禁止滑动，触发dom变化后UC允许滑动
     // for (let i = 0; i < catalog.length; i++) {
     //   catalog[i].innerHTML = catalog[i].innerHTML
@@ -542,21 +552,30 @@ class Catalog {
       console.error(new Error('请检查模板配置的currentPage.chapter是否与异步目录章节id匹配'))
       return
     }
-    let catLocation = {
-      section: currentPage.chapter,
-      page: currentPage.page
+    // let catLocation = {
+    //   section: currentPage.chapter,
+    //   page: currentPage.page
+    // }
+    let $formalActiveLink = $catalogContent.querySelector('.catalog-page a.active')
+    let $currentActiveCatalog = $catalogContent.querySelector(`.catalog-page[data-chapter-id="${currentPage.chapter}"]`)
+    if ($formalActiveLink) {
+      $formalActiveLink.classList.remove('active')
     }
-    if (reverseName.innerHTML === ' 正序') {
-      catalog[catalog.length - this.nowCatNum].querySelector('a').classList.remove('active')
-      catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
-      this.nowCatNum = catLocation.section
-      $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop
-    } else {
-      catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
-      catalog[catLocation.section - 1].querySelector('a').classList.add('active')
-      this.nowCatNum = catLocation.section
-      $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
+    if ($currentActiveCatalog) {
+      $currentActiveCatalog.querySelector('a').classList.add('active')
+      $catWrapper.scrollTop = $currentActiveCatalog.offsetTop
     }
+    // if (isReverse) {
+    //   catalog[catalog.length - this.nowCatNum].querySelector('a').classList.remove('active')
+    //   catalog[catalog.length - catLocation.section].querySelector('a').classList.add('active')
+    //   this.nowCatNum = catLocation.section
+    //   $catWrapper.scrollTop = catalog[catalog.length - catLocation.section].offsetTop
+    // } else {
+    //   catalog[this.nowCatNum - 1].querySelector('a').classList.remove('active')
+    //   catalog[catLocation.section - 1].querySelector('a').classList.add('active')
+    //   this.nowCatNum = catLocation.section
+    //   $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
+    // }
   }
 
   // 隐藏侧边目录
