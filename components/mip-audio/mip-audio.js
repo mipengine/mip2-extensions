@@ -8,6 +8,10 @@ let {
   CustomElement,
   util
 } = MIP
+
+const CUSTOM_EVENT_SHOW_PAGE = 'show-page'
+const CUSTOM_EVENT_HIDE_PAGE = 'hide-page'
+
 export default class MipAudio extends CustomElement {
   constructor (...args) {
     // 继承父类属性、方法
@@ -39,7 +43,7 @@ export default class MipAudio extends CustomElement {
    * Get attribute Set from attribute List
    *
    * @param {NamedNodeMap} attributes the attribute list, spec: https://dom.spec.whatwg.org/#interface-namednodemap
-   * @return {Object} the attribute set, legacy:
+   * @returns {Object} the attribute set, legacy:
    * @example
    * {
    *     "src": "http://xx.mp4",
@@ -86,6 +90,9 @@ export default class MipAudio extends CustomElement {
       this.container.appendChild(this.customControls)
     }
 
+    window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, () => this.audioElement.load())
+    window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, () => this.audioElement.pause())
+
     // 事件绑定：获取总播放时长，更新DOM
     // FIXME: 由于ios10手机百度不执行loadedmetadata函数，
     // 魅族自带浏览器在播放前获取总播放时长为0.需要修改
@@ -112,7 +119,7 @@ export default class MipAudio extends CustomElement {
    * 根据用户配置，创建audio标签
    *
    * @private
-   * @return {Object} 创建的audio元素
+   * @returns {Object} 创建的audio元素
    */
   createAudioTag () {
     let audioEle = document.createElement('audio')
@@ -129,7 +136,7 @@ export default class MipAudio extends CustomElement {
    * 创建默认交互控件DOM
    *
    * @private
-   * @return {string} 创建的audio控件DOM
+   * @returns {string} 创建的audio控件DOM
    */
   createDefaultController () {
     let audioDom =
@@ -212,7 +219,7 @@ export default class MipAudio extends CustomElement {
    *
    * @private
    * @param {number} now 秒数
-   * @return {string} 格式化后的时间
+   * @returns {string} 格式化后的时间
    */
   msToDate (now) {
     if (isNaN(now)) {
