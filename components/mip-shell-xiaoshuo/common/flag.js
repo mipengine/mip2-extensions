@@ -41,7 +41,7 @@ class Flag {
   /**
    * 判断是否命中sids
    *
-   * @param sid 小流量的sid
+   * @param {Array} sid 小流量的sid
    */
   isSids (sid) {
     let sids = sid || this.sid
@@ -58,7 +58,7 @@ class Flag {
   /**
    * 判断是否命中bkid
    *
-   * @param bkid 书名的ID
+   * @param {Array} bkid 书名的ID
    */
   isBkid (bkid) {
     let bkids = bkid || this.bkid
@@ -100,7 +100,7 @@ class Flag {
   /**
    * 判断是否命中预渲染的小流量
    *
-   * @param pageType 当前页面类型
+   * @param {string} pageType 当前页面类型
    */
   isPrerender (pageType) {
     return pageType
