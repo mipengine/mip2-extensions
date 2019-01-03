@@ -13,7 +13,7 @@ import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 // const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?' // online
 const CATALOG_URL = 'http://yq01-psdy-diaoyan1006.yq01.baidu.com:8948/novel/api/mipinfo?' // yongfei
 const originUrl = MIP.util.getOriginalUrl()
-// const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=50&fr=bdgfh&mip=1'
+// const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=100&fr=bdgfh&mip=1'
 
 let util = MIP.util
 let event = util.event
@@ -240,6 +240,15 @@ class Catalog {
             isAppend: true,
             isUp: type === 'up'
           })
+
+          // 如果往上滚动，渲染完成后定位到当前章节，这样防止下一次滚动不了
+          if (type === 'up') {
+            let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
+            let $currentActiveLink = this.$catalogSidebar.querySelector(`.mip-catalog-btn.active`)
+            if ($currentActiveLink) {
+              $catWrapper.scrollTop = $currentActiveLink.offsetTop - 46
+            }
+          }
         })
       }
     }
