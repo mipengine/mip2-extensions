@@ -152,14 +152,9 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     // 判断是否支持预渲染
-    if (this.currentPageMeta.header.title.indexOf('雪中悍刀行') !== -1 && String(navigator.userAgent).indexOf('iPhone OS 8') === -1) {
-      this.isReaderPrerender = true
-    }
-    if (this.isReaderPrerender) {
-      if (this.currentPageMeta.pageType === 'page') {
-        __setConfig()
-        prerender.resetNavigatorBtn()
-      }
+    if (flag.isPrerender(this.currentPageMeta.pageType)) {
+      __setConfig()
+      prerender.resetNavigatorBtn()
     }
     const {isRootPage, novelInstance} = state(window)
     // 发送首跳非首跳展现日志
@@ -232,10 +227,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 获取当前页面的数据，以及需要预渲染的链接
     let jsonld = getJsonld(getCurrentWindow())
     // 预渲染
-    if (this.currentPageMeta.pageType === 'page') {
-      if (this.isReaderPrerender) {
-        prerender.readerPrerender(jsonld)
-      }
+    if (flag.isPrerender(this.currentPageMeta.pageType)) {
+      prerender.readerPrerender(jsonld)
     }
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
