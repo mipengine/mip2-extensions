@@ -93,7 +93,7 @@ class Flag {
    *
    * @public
    */
-  isIos8 () {
+  isNotIos8 () {
     return userAgent.indexOf('iPhone OS 8') === -1
   }
 
@@ -104,7 +104,7 @@ class Flag {
    */
   isPrerender (pageType) {
     return pageType
-      ? this.isIos8() &&
+      ? this.isNotIos8() &&
         this.isNovelShell(pageType) &&
         this.isBkid(this.prerenderBkid) &&
         this.isSids(this.prerenderSid)
