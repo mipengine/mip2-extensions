@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <link rel="canonical" href="">
+  <title>mip-font</title>
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+
+  <style mip-custom>
+
+    @font-face {
+      font-family: 'FontA';
+      font-style: normal;
+      font-weight: 400;
+      src: url(./FontA.ttf) format('truetype');
+    }
+
+    @font-face {
+      font-family: 'FontB';
+      font-style: normal;
+      font-weight: 400;
+      src: url(./FontB.ttf) format('truetype');
+    }
+
+    @font-face {
+      font-family: 'FontC';
+      font-style: normal;
+      font-weight: 400;
+      src: url(./FontC.ttf) format('truetype');
+    }
+
+    .fonta-loaded .fonta {
+      font-family: 'FontA', serif, sans-serif;
+      color: blue;
+    }
+    .fontb-loaded .fontb {
+      font-family: 'FontB', serif, sans-serif;
+      color: green;
+    }
+    .fontc-loaded .fontc {
+      font-family: 'FontC', serif, sans-serif;
+      color: green;
+    }
+
+    .fonta-loading, .fontb-loading, .fontc-loading {
+      color: blue;
+    }
+    .fonta-loading .fonta,
+      .fontb-loading .fontb,
+        .fontc-loading .fontc {
+        color: blue;
+    }
+    .fonta-missing .fonta,
+      .fontb-missing .fontb,
+        .fontc-missing .fontc {
+        color: red;
+    }
+  </style>
+
+</head>
+<body>
+  <!-- test 不存在字体 -->
+  <mip-font
+    layout="nodisplay"
+    font-family="FontA"
+    timeout="2000"
+    on-error-remove-class="fonta-loading"
+    on-error-add-class="fonta-missing"
+    on-load-remove-class="fonta-loading"
+    on-load-add-class="fonta-loaded">
+  </mip-font>
+
+  <!-- test 存在的自定义字体 -->
+  <mip-font
+    layout="nodisplay"
+    font-family="FontB"
+    timeout="2000"
+    on-error-remove-class="fontb-loading"
+    on-error-add-class="fontb-missing"
+    on-load-remove-class="fontb-loading"
+    on-load-add-class="fontb-loaded">
+  </mip-font>
+
+  <!-- timeout 设为0 test 缓存字体，如果100ms内返回字体则有缓存，如果 -->
+  <mip-font
+    layout="nodisplay"
+    font-family="FontC"
+    timeout="0"
+    on-error-remove-class="fontc-loading"
+    on-error-add-class="fontc-missing"
+    on-load-remove-class="fontc-loading"
+    on-load-add-class="fontc-loaded">
+  </mip-font>
+
+  <p>Default: The Default Font is here.</p>
+
+  <p class="fonta">NoExist: The FontA isn't existed.(timeout 2000ms)</p>
+
+  <p class="fontb">Exist: The FontB existed.(timeout 2000ms)</p>
+
+  <p class="fontc">Cached: The FontC isn't cached.(timeout 0ms)</p>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-font/mip-font.js"></script>
+
+</body>
+</html>

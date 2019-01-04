@@ -107,12 +107,13 @@ function dpOk (sourceDpArr) {
 
 /**
  * @function uaOk 检测userAgent是否合规
- * @param {Array} sourceUaArr userAgent, baidu/uc/chrome/safari/qq/firefox
+ * @param {Array} sourceUaArr userAgent, baidu/baidubrowser/uc/chrome/safari/qq/firefox
  * @returns {boolean} true/false
  */
 function uaOk (sourceUaArr) {
   const checkUaFuns = {
     baidu: platform.isBaiduApp,
+    baidubrowser: platform.isBaidu,
     uc: platform.isUc,
     chrome: platform.isChrome,
     safari: platform.isSafari,
