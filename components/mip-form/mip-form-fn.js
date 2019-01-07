@@ -45,7 +45,7 @@ export default class Form {
         // 为了使余下浏览器不多次触发submit, 使用prevent
         evt = event
         event.preventDefault()
-        this.onSubmit(this)
+        this.onSubmit(element)
       }
     })
   }
