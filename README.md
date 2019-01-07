@@ -25,3 +25,11 @@
 4.**官方审核通过，合入上线**
 
 官方审核通过后，代码将合入 `master` 分支并上线。若不通过，请根据反馈修改后再次提交。
+
+
+5.**使用**
+
+```
+// 页面中引用
+<script src="https://c.mipcdn.com/static/v2/mip-example/mip-example.js"></script>
+```

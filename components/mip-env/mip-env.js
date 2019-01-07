@@ -107,12 +107,13 @@ function dpOk (sourceDpArr) {
 
 /**
  * @function uaOk 检测userAgent是否合规
- * @param {Array} sourceUaArr userAgent, baidu/uc/chrome/safari/qq/firefox
+ * @param {Array} sourceUaArr userAgent, baidu/baidubrowser/uc/chrome/safari/qq/firefox
  * @returns {boolean} true/false
  */
 function uaOk (sourceUaArr) {
   const checkUaFuns = {
-    baidu: platform.isBaidu,
+    baidu: platform.isBaiduApp,
+    baidubrowser: platform.isBaidu,
     uc: platform.isUc,
     chrome: platform.isChrome,
     safari: platform.isSafari,
@@ -202,8 +203,13 @@ export default class MipEnv extends CustomElement {
     const element = this.element
     const scope = element.getAttribute('scope')
     const isOk = scopeOk(scope) // 检测scope是否合规
+    const id = element.getAttribute('targetId')
+    const targetDom = id !== '' ? document.documentElement.querySelector('#' + id) : null
     if (!isOk) {
       // 检测不合规时将内容清空
+      if (targetDom !== null) {
+        targetDom.remove()
+      }
       element.innerHTML = ''
     }
   }
