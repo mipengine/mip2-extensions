@@ -13,6 +13,7 @@ export default class MipStatsBaidu extends CustomElement {
 
     // 获取参数
     this.config = this.getConfig()
+    this.created()
   }
 
   // 提前渲染
@@ -20,7 +21,7 @@ export default class MipStatsBaidu extends CustomElement {
     return true
   }
 
-  connectedCallback () {
+  created () {
     let { element, config } = this
 
     if (!config) {
@@ -91,11 +92,27 @@ export default class MipStatsBaidu extends CustomElement {
     }
   }
 
-  // 绑定事件追踪
+  /**
+   * 绑定事件追踪
+   */
   bindEle () {
-    // 获取所有需要触发的dom
-    let tagBox = document.querySelectorAll('*[data-stats-baidu-obj]')
+    const now = Date.now()
+    const intervalTimer = setInterval(() => {
+      // 获取所有需要触发的dom
+      this.bindEleHandler(document.querySelectorAll('*[data-stats-baidu-obj]'))
+      // 由于存在异步渲染
+      if (Date.now() - now >= 8000) {
+        clearInterval(intervalTimer)
+      }
+    }, 100)
+  }
 
+  /**
+   * 处理点击统计的 dom 列表
+   *
+   * @param {Array<HTMLElement>} tagBox 需要记录点击统计的 dom 元素列表
+   */
+  bindEleHandler (tagBox) {
     for (let node of tagBox.values()) {
       let statusData = node.getAttribute('data-stats-baidu-obj')
 
