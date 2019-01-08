@@ -8,6 +8,10 @@ let {
   CustomElement,
   util
 } = MIP
+
+const CUSTOM_EVENT_SHOW_PAGE = 'show-page'
+const CUSTOM_EVENT_HIDE_PAGE = 'hide-page'
+
 export default class MipAudio extends CustomElement {
   constructor (...args) {
     // 继承父类属性、方法
@@ -85,6 +89,9 @@ export default class MipAudio extends CustomElement {
       // 将用户自定义controller挪出audio
       this.container.appendChild(this.customControls)
     }
+
+    window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, () => this.audioElement.load())
+    window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, () => this.playOrPause('pause'))
 
     // 事件绑定：获取总播放时长，更新DOM
     // FIXME: 由于ios10手机百度不执行loadedmetadata函数，

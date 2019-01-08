@@ -6,7 +6,7 @@
 ----|----
 类型|通用
 支持布局|fixed-height,responsive
-所需脚本|无
+所需脚本|https://c.mipcdn.com/static/v2/mip-image-slider/mip-image-slider.js
 
 ## 示例
 

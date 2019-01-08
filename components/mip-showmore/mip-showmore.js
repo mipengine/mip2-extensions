@@ -600,7 +600,7 @@ export default class MipShowMore extends CustomElement {
   /**
    * 匹配target
    *
-   * @param  {string} id 节点的id
+   * @param  {string} id
    * @param  {HTMLElement} node dom节点
    * @returns {HTMLElement} node dom节点
    */

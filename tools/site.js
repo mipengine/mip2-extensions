@@ -12,10 +12,10 @@ const dist = path.resolve(__dirname, '../dist')
 const examplesPath = path.resolve(dist, 'examples')
 
 // copy example files from /components dir to dist/examples
-glob.sync('components/mip-*/example/*.*', {realpath: true})
-  .forEach(file => {
-    let compName = file.match(/components\/(mip-.+)\/example/)[1]
-    fs.copySync(file, path.join(dist, 'examples', compName, path.basename(file)))
+glob.sync('components/mip-*', {realpath: true})
+  .forEach(cPath => {
+    let compName = cPath.match(/components\/(mip-.+)/)[1]
+    fs.copySync(path.join(cPath, 'example'), path.join(dist, 'examples', compName))
   })
 
 const components = fs.readdirSync(examplesPath).map(comp => {

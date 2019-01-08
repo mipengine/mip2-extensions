@@ -134,7 +134,7 @@ export default class MipLightbox extends CustomElement {
   /**
    * isOpen description
    *
-   * @return {boolean} 是否打开标志
+   * @returns {boolean} 是否打开标志
    */
   isOpen () {
     return this.open
