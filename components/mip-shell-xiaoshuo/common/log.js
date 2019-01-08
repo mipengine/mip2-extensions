@@ -59,7 +59,7 @@ export function sendTCLog (type, info, extra) {
 /**
  * 获取当前页面站点信息，发送首跳展现日志和广告日志用到
  *
- * @returnqws {Object} 返回站点信息
+ * @returns {Object} 返回站点信息
  */
 export function getSiteInfo () {
   let zonghengPattern = /www.xmkanshu.com/g
