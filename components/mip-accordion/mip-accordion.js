@@ -137,7 +137,7 @@ export default class MipAccordion extends CustomElement {
    * 获取 sission
    *
    * @param  {Object} sessionsKey 之前记录的session
-   * @return {Object} data        返回session里的数据
+   * @returns {Object} data        返回session里的数据
    */
   getSession (sessionsKey) {
     try {
@@ -222,7 +222,7 @@ export default class MipAccordion extends CustomElement {
    * 获取最近的下一个兄弟元素
    *
    * @param  {Object} ele  当前元素
-   * @return {Object} item 最近的下一个兄弟元素
+   * @returns {Object} item 最近的下一个兄弟元素
    */
   nextSibling (ele) {
     if (ele.nextElementSibling !== undefined) {
