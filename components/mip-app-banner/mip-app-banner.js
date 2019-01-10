@@ -83,7 +83,7 @@ export default class MipAppBanner extends CustomElement {
   /**
    * 判断打开平台
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   canShowBanner () {
     this.isSysBanner = platform.isSafari() || platform.isBaidu() // || platform.isQQ();
