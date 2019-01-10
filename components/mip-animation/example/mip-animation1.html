@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    .wrapper {
+      background: #dcdcdc;
+      height: 500px;
+    }
+
+    .inner-00,
+    .inner {
+      width: 20px;
+      height: 40px;
+    }
+
+    .inner-00,
+    .inner-01,
+    .inner-02,
+    .inner-03,
+    .inner-04,
+    .inner-0 {
+      background: red;
+    }
+
+    .inner-11,
+    .inner-1 {
+      background: yellow;
+    }
+
+    .inner-22,
+    .inner-2 {
+      background: green;
+    }
+
+    .inner-3 {
+      background: black;
+    }
+
+    </style>
+  </head>
+  <body>
+    <h2>基本用法, iterations=2, iterationStart=0.5, delay=1000</h2>
+    <div class="inner-00"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-00",
+          "keyframes": {
+            "transform": "translateX(200px)"
+          },
+          "iterations": 2,
+          "iterationStart": 0.5,
+          "delay": 1000,
+          "duration": 2000
+        }
+      </script>
+    </mip-animation>
+
+    <h2>subtargets 和 on 语法</h2>
+    <div class="wrapper">
+      <div class="inner inner-0"></div>
+      <div class="inner inner-1"></div>
+      <div class="inner inner-2"></div>
+      <div class="inner inner-3"></div>
+    </div>
+    <mip-animation id="anim">
+      <script type="application/json">
+        {
+          "selector": ".inner",
+          "keyframes": [
+            {
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(300px)"
+            }
+          ],
+          "switch": [
+            {
+              "media": "(max-width: 375px)",
+              "subtargets": [
+                {
+                  "index": 1,
+                  "duration": 800
+                },
+                {
+                  "selector": ".inner-3",
+                  "duration": 600
+                }
+              ]
+            },
+            {
+              "media": "(min-width: 376px)",
+              "subtargets": [
+                {
+                  "index": 1,
+                  "duration": 10000
+                },
+                {
+                  "selector": ".inner-3",
+                  "duration": 12000
+                }
+              ]
+            }
+          ],
+          "duration": 1000,
+          "subtargets": [
+            {
+              "index": 1,
+              "duration": 5000
+            },
+            {
+              "selector": ".inner-3",
+              "duration": 6000
+            }
+          ]
+        }
+      </script>
+    </mip-animation>
+    <button on="tap:anim.start">start</button>
+    <button on="tap:anim.pause">pause</button>
+    <button on="tap:anim.resume">resume</button>
+    <button on="tap:anim.restart">restart</button>
+    <button on="tap:anim.togglePause">toggle-pause</button>
+    <button on="tap:anim.reverse">reverse</button>
+    <button on="tap:anim.seekTo(600)">seekTo 600</button>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-animation/mip-animation.js"></script>
+  </body>
+</html>
