@@ -17,85 +17,100 @@ export default class MipVizEcharts extends CustomElement {
 
     /**
      * 图表的数据
-     * @type Object
+     *
+     * @type {?Object}
      */
     this.data = null
 
     /**
      * 存储 script 的数据
-     * @type string
+     *
+     * @type {string}
      */
-    this.inlineData = null
+    this.inlineData = ''
 
     /**
      * 远程图表数据的链接
-     * @type string
+     *
+     * @type {string}
      */
-    this.src = null
+    this.src = ''
 
     /**
      * 是否使用自定义的 width 数据
-     * @type boolean
+     *
+     * @type {boolean}
      */
     this.useDataWidth = false
 
     /**
      * 是否使用自定义的 height 数据
-     * @type boolean
+     *
+     * @type {boolean}
      */
     this.useDataHeight = false
 
     /**
      * 计算后的宽度
-     * @type number
+     *
+     * @type {number}
      */
     this.measuredWidth = 400
 
     /**
      * 计算后的高度
-     * @type number
+     *
+     * @type {number}
      */
     this.measuredHeight = 400
 
     /**
      * 数据传入的宽度
-     * @type number
+     *
+     * @type {number}
      */
     this.dataWidth = viewport.getWidth()
 
     /**
      * 数据传入的高度
-     * @type number
+     *
+     * @type {number}
      */
     this.dataHeight = viewport.getHeight()
 
     /**
      * 指定图表的留白
-     * @type Object
+     *
+     * @type {?Object}
      */
     this.padding = null
 
     /**
      * 图表库类
-     * @type Object
+     *
+     * @type {?Object}
      */
     this.echarts = null
 
     /**
      * 图表容器
-     * @type HTMLElement
+     *
+     * @type {?HTMLElement}
      */
     this.container = null
 
     /**
      * 图标对象
-     * @type Object
+     *
+     * @type {?Object}
      */
     this.chart = null
   }
 
   /**
-   * 指定在渲染 layout 的过程中是否出现 loading
+   * 指定在渲染 layout 的过程中是否出现 loading，默认 true
+   *
+   * @returns {boolean} 是否展示 loading
    */
   isLoadingEnabled () {
     return true
@@ -103,38 +118,36 @@ export default class MipVizEcharts extends CustomElement {
 
   /**
    * layout 渲染完成之后执行的回调
-   *
-   * @overwrite
-   * @returns {Promsie} 返回的 promise
    */
-  layoutCallback () {
+  async layoutCallback () {
     let me = this
-    this.initialize()
-    /* eslint-disable */
-    return import('./echarts.common.min')
-      .then(() => me.loadData())
-      .then(() => me.measuredBox())
-      .then(() => me.renderGraph())
-      .catch(err => console.error(me.getName() + ': ', err))
-    /* eslint-enable */
+    me.initialize()
+    try {
+      await import('./echarts.common.min')
+      await me.loadData()
+      me.measuredBox()
+      me.renderGraph()
+    } catch (err) {
+      console.error(me.getName() + ': ', err)
+    }
   }
 
   /**
    * 组件初始化
    */
   initialize () {
-    this.container = this.element.ownerDocument.createElement('div')
-    this.applyFillContent(this.container, true)
-    this.element.appendChild(this.container)
+    let me = this
+    me.container = this.element.ownerDocument.createElement('div')
+    me.applyFillContent(me.container, true)
+    me.element.appendChild(me.container)
   }
 
   /**
    * 计算图表容器的宽高
-   *
-   * @returns {Promsie} 返回的 promise
    */
   measuredBox () {
-    let box = this.element
+    let me = this
+    let box = me.element
     let boxMeasuredWidth = box.clientWidth
     let boxMeasuredHeight = box.clientHeight
     let boxWidth = box.getAttribute('width')
@@ -142,93 +155,72 @@ export default class MipVizEcharts extends CustomElement {
 
     // 处理隐藏的 layout 的情况
     if (!boxMeasuredWidth) {
-      if (this.useDataWidth) {
-        boxMeasuredWidth = this.dataWidth
-      } else {
-        boxMeasuredWidth = viewport.getWidth()
-      }
+      boxMeasuredWidth = me.useDataWidth ? me.dataWidth : viewport.getWidth()
     }
     if (!boxMeasuredHeight) {
-      if (this.useDataHeight) {
-        boxMeasuredHeight = this.dataHeight
-      } else {
-        boxMeasuredHeight = boxMeasuredWidth * boxHeight / boxWidth
-      }
+      boxMeasuredHeight = me.useDataHeight ? me.dataHeight : (boxMeasuredWidth * boxHeight / boxWidth)
     }
 
-    this.measuredHeight = boxMeasuredHeight
-    this.measuredWidth = boxMeasuredWidth
-
-    return Promise.resolve()
+    me.measuredHeight = boxMeasuredHeight
+    me.measuredWidth = boxMeasuredWidth
   }
 
   /**
    * 组件初始化渲染
-   *
-   * @overwrite
    */
   build () {
-    this.inlineData = this.getInlineData()
-    this.src = this.element.getAttribute('src')
-    this.useDataWidth = this.element.hasAttribute('use-data-width')
-    this.useDataHeight = this.element.hasAttribute('use-data-height')
+    let me = this
+    me.inlineData = me.getInlineData()
+    me.src = me.element.getAttribute('src')
+    me.useDataWidth = me.element.hasAttribute('use-data-width')
+    me.useDataHeight = me.element.hasAttribute('use-data-height')
   }
 
   /**
    * 载入图表数据，本地载入和远程载入
-   *
-   * @returns {Promsie} 返回的 promise
    */
-  loadData () {
+  async loadData () {
     let me = this
-    if (this.inlineData) {
+    let data
+    if (me.inlineData) {
       try {
-        let data = util.jsonParse(this.inlineData)
-        this.data = data.data || {}
-        this.padding = data.padding
-        this.dataWidth = data.width || this.dataWidth
-        this.dataHeight = data.height || this.dataHeight
+        data = util.jsonParse(me.inlineData)
       } catch (e) {
         console.error(me.getName() + ': 解析数据出错')
       }
-      return Promise.resolve()
-    }
-    // 请求数据
-    return new Promise((resolve, reject) => {
-      fetch(this.src).then(response => {
-        return response.json()
-      }).then(data => {
-        me.data = data.data || {}
-        me.padding = data.padding
-        me.dataWidth = data.width || me.dataWidth
-        me.dataHeight = data.height || me.dataHeight
-        resolve(me.data)
-      }).catch(err => {
+    } else {
+      try {
+        let fetchData = await fetch(me.src)
+        data = await fetchData.json()
+      } catch (err) {
         console.error(me.getName() + ': 请求数据出错')
-        reject(err)
-      })
-    })
+      }
+    }
+
+    me.data = data.data || {}
+    me.padding = data.padding
+    me.dataWidth = data.width || me.dataWidth
+    me.dataHeight = data.height || me.dataHeight
   }
 
   /**
    * 获取 script 的数据内容
    *
-   * @returns {String} script 标签中的数据内容
+   * @returns {string} script 标签中的数据内容
    */
   getInlineData () {
-    let scripts = this.element.querySelectorAll('script')
-    if (scripts.length === 0) {
+    let script = this.element.querySelector('script')
+    if (!script) {
       return
     }
-    let child = scripts[0]
-    return child.textContent
+    return script.textContent
   }
 
   /**
    * 处理留白的配置数据
    *
    * @param {string} widthOrHeight 指定宽还是高
-   * @returns {number} 留白数据
+   * @returns {number} 宽度或者高度留白的数值
    */
   getDataPadding (widthOrHeight) {
     let p = this.padding
@@ -252,20 +244,21 @@ export default class MipVizEcharts extends CustomElement {
    * 渲染图表
    */
   renderGraph () {
-    if (this.useDataWidth) {
-      this.measuredWidth = this.dataWidth
+    let me = this
+    if (me.useDataWidth) {
+      me.measuredWidth = me.dataWidth
     }
-    if (this.useDataHeight) {
-      this.measuredHeight = this.dataHeight
+    if (me.useDataHeight) {
+      me.measuredHeight = me.dataHeight
     }
 
-    let width = this.measuredWidth - this.getDataPadding('width')
-    let height = this.measuredHeight - this.getDataPadding('height')
+    let width = me.measuredWidth - me.getDataPadding('width')
+    let height = me.measuredHeight - me.getDataPadding('height')
 
-    this.echarts = window.echarts
-    this.chart = this.echarts.init(this.container)
-    this.chart.setOption(this.data)
-    this.chart.resize({width, height, silent: true})
+    me.echarts = window.echarts
+    me.chart = me.echarts.init(me.container)
+    me.chart.setOption(me.data)
+    me.chart.resize({width, height, silent: true})
   }
 
   /**
