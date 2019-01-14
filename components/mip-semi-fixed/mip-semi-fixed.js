@@ -1,14 +1,16 @@
 import './mip-semi-fixed.less'
 
-let { CustomElement, util, viewport, viewer } = MIP
-let { fixedElement } = viewer
+const {CustomElement, util, viewport, viewer} = MIP
+const {fixedElement} = viewer
+
 /**
- * [YOFFSET 默认fixed top 的距离]
- * @type {integer}
+ * 默认 fixed top 的距离
+ * @type {number}
  */
-let YOFFSET = 0
+let Y_OFFSET = 0
+
 /**
- * [STATUS 状态标记对象
+ * STATUS 状态标记对象
  * @type {Object}
  */
 const STATUS = {
@@ -16,12 +18,24 @@ const STATUS = {
   STATUS_SCROLL: 'mip-semi-fixed-scrollStatus'
 }
 
-export default class MipSemiFixed extends CustomElement {
-  // 提前渲染
-  prerenderAllowed () {
-    return true
+/**
+ * 获取 fixed class name
+ *
+ * @param {HTMLElement} element 元素实例
+ */
+function getFixedClassNames (element) {
+  let fixedClassNames = element.getAttribute('fixed-class-names')
+
+  if (!fixedClassNames) {
+    fixedClassNames = element.getAttribute('fixedClassNames')
+
+    fixedClassNames && console.warn('[Deprecated] fixedClassNames 写法即将废弃，请使用 fixed-class-names')
   }
 
+  return fixedClassNames
+}
+
+export default class MipSemiFixed extends CustomElement {
   // 插入文档时执行
   build () {
     let element = this.element
@@ -35,8 +49,9 @@ export default class MipSemiFixed extends CustomElement {
       console.error('必须有 <div mip-semi-fixed-container> 子节点')
       return
     }
-    this.threshold = element.getAttribute('threshold') || YOFFSET
-    this.fixedClassNames = ' ' + element.getAttribute('fixedClassNames')
+
+    this.threshold = element.getAttribute('threshold') || Y_OFFSET
+    this.fixedClassNames = ' ' + getFixedClassNames(element)
     this.container.setAttribute(STATUS.STATUS_SCROLL, '')
 
     // SF环境中
@@ -55,21 +70,17 @@ export default class MipSemiFixed extends CustomElement {
         console.error(e)
       }
 
-      viewport.on('scroll', () => {
-        this.onIframeScroll(viewport)
-      })
-      document.body.addEventListener('touchmove', event => {
-        this.onIframeScroll(viewport)
-      })
+      viewport.on('scroll', () => this.onIframeScroll(viewport))
+
+      document.body.addEventListener('touchmove', () => this.onIframeScroll(viewport))
+
       this.onIframeScrolll(viewport)
     } else {
       // 监听滚动事件和 touchmove 事件
-      viewport.on('scroll', () => {
-        this.onScroll(viewport)
-      })
-      document.body.addEventListener('touchmove', event => {
-        this.onScroll(viewport)
-      })
+      viewport.on('scroll', () => this.onScroll(viewport))
+
+      document.body.addEventListener('touchmove', () => this.onScroll(viewport))
+
       this.onScroll(viewport)
     }
 
@@ -87,7 +98,7 @@ export default class MipSemiFixed extends CustomElement {
     }
 
     /**
-     * [关闭点击事件]
+     * 关闭点击事件
      */
     this.addEventAction('close', event => {
       event.preventDefault()
@@ -103,15 +114,10 @@ export default class MipSemiFixed extends CustomElement {
   }
 
   /**
-   * [onScroll mip 页面滑动事件]
-   *
-   * @param  {Object} viewport 视图
+   * onScroll mip 页面滑动事件
    */
-  onScroll (viewport) {
-    let element = this.element
-    let container = this.container
-    let threshold = this.threshold
-    let fixedClassNames = this.fixedClassNames
+  onScroll () {
+    let {element, container, threshold, fixedClassNames} = this
     let offsetTop = util.rect.getElementOffset(element).top
 
     if (offsetTop <= threshold) {
@@ -128,11 +134,9 @@ export default class MipSemiFixed extends CustomElement {
   }
 
   /**
-   * [onIframeScroll iframe 下 mip 页面滑动事件]
-   *
-   * @param  {Object} viewport 视图
+   * onIframeScroll iframe 下 mip 页面滑动事件
    */
-  onIframeScroll (viewport) {
+  onIframeScroll () {
     let element = this.element
     let offsetTop = util.rect.getElementOffset(element).top
 
