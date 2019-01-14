@@ -209,7 +209,7 @@ export default class MipVizEcharts extends CustomElement {
    * @returns {string} script 标签中的数据内容
    */
   getInlineData () {
-    let script = this.element.querySelector('script')
+    let script = this.element.querySelector('script[type="application/json"]')
     if (!script) {
       return
     }
