@@ -13,10 +13,10 @@
 
 ### 基本用法
 
-[info]JSONP 异步请求的接口需要遵循规范 `callback` 为 `'callback'`。
+> JSONP 异步请求的接口需要遵循规范 `callback` 为 `'callback'`。
 
 ```html
-<mip-list src="https://raw.githubusercontent.com/mipengine/mip2-extensions/master/components/mip-list/example/data.js" pre-load>
+<mip-list src="https://raw.githubusercontent.com/mipengine/mip2-extensions/master/components/mip-list/example/data.js" preload>
   <template type="mip-mustache">
     <div>
       <li>name: {{ name }}</li>
@@ -32,7 +32,7 @@
 <mip-list
   template="mip-template-id1"
   src="https://raw.githubusercontent.com/mipengine/mip2-extensions/master/components/mip-list/example/data.js"
-  pre-load
+  preload
 >
   <template type="mip-mustache" id="mip-template-id1">
     <div>
@@ -72,7 +72,7 @@
 
 ### 点击加载更多
 
-[info]有 `has-more` 属性时，`<mip-list>` 标签必须要有 `id` 属性，同时需要有点击按钮的 DOM 节点，并且此节点有 `on` 属性，属性值为：`tap:对应mip-list的id.more`
+> 有 `has-more` 属性时，`<mip-list>` 标签必须要有 `id` 属性，同时需要有点击按钮的 DOM 节点，并且此节点有 `on` 属性，属性值为：`tap:对应mip-list的id.more`
 
 ```html
 <mip-list
@@ -83,7 +83,7 @@
   pn-name="pageNum"
   pn="2"
   timeout="3000"
-  pre-load
+  preload
 >
   <template type="mip-mustache" id="mip-template-id2">
     <div>
@@ -150,9 +150,9 @@
 单位：无
 默认值：1
 
-### pre-load
+### preload
 
-说明：异步加载数据，如果添加 `pre-load` 参数，则在初始化时加载第一页内容
+说明：异步加载数据，如果添加 `preload` 参数，则在初始化时加载第一页内容
 必选项：否
 
 ### timeout

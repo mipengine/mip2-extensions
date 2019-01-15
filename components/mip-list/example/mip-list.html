@@ -26,7 +26,7 @@
 <body>
   <h4>基本用法</h4>
   <p>JSONP 异步请求的接口需要遵循规范 `callback` 为 `'callback'`</p>
-  <mip-list src="./data.js" pre-load>
+  <mip-list src="./data.js" preload>
     <template type="mip-mustache">
       <div>
         <li>name: {{ name }}</li>
@@ -40,7 +40,7 @@
   <mip-list
     template="mip-template-id1"
     src="./data.js"
-    pre-load
+    preload
   >
     <template type="mip-mustache" id="mip-template-id1">
       <div>
@@ -85,7 +85,7 @@
     pn-name="pageNum"
     pn="2"
     timeout="3000"
-    pre-load
+    preload
   >
     <template type="mip-mustache" id="mip-template-id2">
       <div>

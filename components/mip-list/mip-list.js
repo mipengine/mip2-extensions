@@ -39,9 +39,6 @@ export default class MIPList extends CustomElement {
     if (this.has('pnName')) {
       log.warn(this.element, '[Deprecated] pnName 属性不允许再使用，请使用 \'pn-name\' 代替')
     }
-    if (this.has('preLoad')) {
-      log.warn(this.element, '[Deprecated] preLoad 属性不允许再使用，请使用 \'pre-load\' 代替')
-    }
   }
 
   /**
@@ -82,15 +79,9 @@ export default class MIPList extends CustomElement {
       })
     }
 
-    // FIXME: preLoad 属性不符合规范，需要下线
-    if (this.has('preLoad') || this.has('pre-load')) {
+    if (this.has('preload')) {
       let url = getUrl(this.src, this.pnName, this.pn++)
-      let opts = { timeout: this.timeout }
-      if (process.env.NODE_ENV === 'development') {
-        window.DEBUG_FETCH_COUNT = (window.DEBUG_FETCH_COUNT || 0) + 1
-        opts.jsonpCallbackFunction = `jsonp_${window.DEBUG_FETCH_COUNT}`
-      }
-      fetchJsonp(url, opts)
+      fetchJsonp(url, { timeout: this.timeout })
         .then(res => res.json())
         .then(data => {
           if (!data.status && data.data) {
@@ -131,12 +122,7 @@ export default class MIPList extends CustomElement {
     this.button.innerHTML = '加载中...'
 
     let url = getUrl(src, this.pnName, this.pn++)
-    let opts = { timeout: this.timeout }
-    if (process.env.NODE_ENV === 'development') {
-      window.DEBUG_FETCH_COUNT = (window.DEBUG_FETCH_COUNT || 0) + 1
-      opts.jsonpCallbackFunction = `jsonp_${window.DEBUG_FETCH_COUNT}`
-    }
-    fetchJsonp(url, opts)
+    fetchJsonp(url, { timeout: this.timeout })
       .then(res => res.json())
       .then(data => {
         if (data.status || !data.data) {
