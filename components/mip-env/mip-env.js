@@ -5,8 +5,7 @@
  */
 let {
   CustomElement,
-  util,
-  viewer
+  util
 } = MIP
 let { platform } = util
 
@@ -75,16 +74,12 @@ function cacheOk (sourceCacheArr) {
 }
 
 /**
- * @function cacheOk 检测分发平台是否合规
+ * @function dpOk 检测分发平台是否合规
  * @param {Array} sourceDpArr 分发平台，sm or baidu
  * @returns {boolean} true/false
  */
 function dpOk (sourceDpArr) {
-  if (!viewer.isIframed) {
-    console.warn('require in iframe')
-    return false
-  }
-  // 有不带"!"的cache, 则以不带"!"的dp作为最终判断依据, 判断符为“||”
+  // 有不带"!"的dp, 则以不带"!"的dp作为最终判断依据, 判断符为“||”
   // sourceDpArr[0]为不带"!"的cache结合
   if (sourceDpArr[0] && sourceDpArr[0].length > 0) {
     return sourceDpArr[0].some(item => {
@@ -95,7 +90,7 @@ function dpOk (sourceDpArr) {
     })
   }
 
-  // 带有"!"的cache合集，判断符为“&&”
+  // 带有"!"的dp合集，判断符为“&&”
   // sourceDpArr[1]为带"!"的dp合集
   return sourceDpArr[1].every(item => {
     const allowDpArr = ALLOW_DP_OR_CACHE[item.substr(1)] || []
@@ -107,17 +102,19 @@ function dpOk (sourceDpArr) {
 
 /**
  * @function uaOk 检测userAgent是否合规
- * @param {Array} sourceUaArr userAgent, baidu/uc/chrome/safari/qq/firefox
+ * @param {Array} sourceUaArr userAgent, baidu/baidubrowser/uc/chrome/safari/qq/firefox
  * @returns {boolean} true/false
  */
 function uaOk (sourceUaArr) {
   const checkUaFuns = {
     baidu: platform.isBaiduApp,
+    baidubrowser: platform.isBaidu,
     uc: platform.isUc,
     chrome: platform.isChrome,
     safari: platform.isSafari,
     qq: platform.isQQ,
-    firefox: platform.isFireFox
+    firefox: platform.isFireFox,
+    wechat: platform.isWechatApp
   }
   // 有不带"!"的ua, 则以不带"!"ua作为最终判断依据, 判断符为“||”
   // sourceUaArr[0]为带"!"的ua合集
