@@ -22,9 +22,9 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 // hm.js? 后为你的统计 token。此例 token="02890d4a309827eb62bc3335b2b28f7f"
 ```
 
-### MIP 插件引入
+### MIP 组件通过 JSON 数据引入
 
-```
+```html
 <mip-stats-baidu>
   <script type="application/json">
     {
@@ -43,11 +43,10 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 [warning] `data-stats-baidu-obj` 要求配置外层为单引号，内层为双引号。或按照下文 **`data-stats-baidu-obj` 双引号配置方法** 处理。
 
-```
+```html
 <div data-stats-baidu-obj='{"type":"click","data":["_trackPageview", "/virtual/login"]}'>
   点击发送请求
 </div>
- 
 ```
 
 ## 属性
@@ -76,7 +75,7 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 必填：否  
 格式：数组
 
-### 事件追踪
+### 事件追踪属性
 
 属性: `data-stats-baidu-obj`
 
@@ -94,7 +93,6 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 备注：`_setAccount` 无需设置，`token` 合法会自动执行 `_hmt.push(['_setAccount',token])`
 
-
 ## 其它使用方式
 
 > 可以正常运行，但不推荐
@@ -107,18 +105,18 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 // hm.js? 后为你的统计 token。此例 token="02890d4a309827eb62bc3335b2b28f7f"
 ```
 
-### MIP 插件引入
+### MIP 组件通过属性引入
 
-```
+```html
 <mip-stats-baidu token="02890d4a309827eb62bc3335b2b28f7f"></mip-stats-baidu>
 
 ```
 
-### 事件追踪:
+### 属性传入事件追踪属性
 
 [warning] `data-stats-baidu-obj` 要求配置外层为单引号，内层为双引号。或按照下文 **`data-stats-baidu-obj` 双引号配置方法** 处理。
 
-```
+```html
 <div data-stats-baidu-obj='{"type":"click","data":["_trackPageview", "/virtual/login"]}'>
   点击发送请求
 </div>
@@ -131,7 +129,6 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 说明：`token`，从百度统计代码中截取  
 必填：是  
 格式：字符串
-
 
 ### setconfig
 
@@ -163,7 +160,7 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 `data-stats-baidu-obj` 值必须 `encodeURIComponent` 处理, 方法如下：
 
-```
+```js
 // 理想配置
 {"type":"click","data":["_trackPageview", "/virtual/login"]};
 
