@@ -1,13 +1,13 @@
 /**
  * @file mip-vd-tabs.js
- * @author zhangjignfeng chenqiushi(qiushidev@gmail.com)
+ * @author zhangjignfeng convert es module: chenqiushi(qiushidev@gmail.com)
  */
 
 /* global $ */
-const {CustomElement} = MIP
-
 import Tab from './tab'
 import './mip-vd-tabs.less'
+
+const {CustomElement} = MIP
 
 const EPISODE_RANGE = 25
 const EPISODE_PAGE_SIZE = 50
@@ -26,6 +26,7 @@ const TOGGLE_CLS = 'mip-vd-tabs-nav-toggle'
 const BOTTOM_CLS = 'mip-vd-tabs-nav-bottom'
 const TPL_REG = /\{\{\w}}/g
 
+/* eslint-disable no-new */
 export default class MIPVdTabs extends CustomElement {
   build () {
     window.require(['zepto'], $ => {
@@ -318,7 +319,7 @@ export default class MIPVdTabs extends CustomElement {
 
       // 展开
       function toggleDown () {
-        $navLayerUl.html(generateEpisodeDown.call(ptr, linkTpl))
+        $navLayerUl.html(ptr.generateEpisodeDown(linkTpl))
         $navLayer.append($navLayerUl)
         $el.append($mask.show())
         _this.view.after($navLayer.show())
