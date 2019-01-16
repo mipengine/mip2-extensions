@@ -7,28 +7,21 @@ const {fixedElement} = viewer
  * 默认 fixed top 的距离
  * @type {number}
  */
-let Y_OFFSET = 0
-
-/**
- * STATUS 状态标记对象
- * @type {Object}
- */
-const STATUS = {
-  STATUS_FIXED: 'mip-semi-fixed-fixedStatus',
-  STATUS_SCROLL: 'mip-semi-fixed-scrollStatus'
-}
+const Y_OFFSET = 0
+const STATUS_FIXED = 'mip-semi-fixed-fixedStatus'
+const STATUS_SCROLL = 'mip-semi-fixed-scrollStatus'
 
 /**
  * 获取 fixed class name
+ * FIXME: 这里应该返回数组，直接使用字符串不严谨
  *
- * @param {HTMLElement} element 元素实例
+ * @param {string} class name string
  */
 function getFixedClassNames (element) {
   let fixedClassNames = element.getAttribute('fixed-class-names')
 
   if (!fixedClassNames) {
     fixedClassNames = element.getAttribute('fixedClassNames')
-
     fixedClassNames && console.warn('[Deprecated] fixedClassNames 写法即将废弃，请使用 fixed-class-names')
   }
 
@@ -51,17 +44,17 @@ export default class MipSemiFixed extends CustomElement {
     }
 
     this.threshold = element.getAttribute('threshold') || Y_OFFSET
-    this.fixedClassNames = ' ' + getFixedClassNames(element)
-    this.container.setAttribute(STATUS.STATUS_SCROLL, '')
+    this.fixedClassNames = getFixedClassNames(element)
+    this.container.setAttribute(STATUS_SCROLL, '')
 
     // SF环境中
     if (!MIP.standalone && util.platform.isIos()) {
       try {
         let wrapp = fixedElement._fixedLayer.querySelector('#' + element.id)
         this.fixedContainer = wrapp.querySelector('div[mip-semi-fixed-container]')
-        this.fixedContainer.className += this.fixedClassNames
-        this.fixedContainer.setAttribute(STATUS.STATUS_FIXED, '')
-        this.fixedContainer.removeAttribute(STATUS.STATUS_SCROLL)
+        this.fixedContainer.className += ' ' + this.fixedClassNames
+        this.fixedContainer.setAttribute(STATUS_FIXED, '')
+        this.fixedContainer.removeAttribute(STATUS_SCROLL)
         util.css(this.fixedContainer, {
           top: this.threshold + 'px',
           opacity: 0
@@ -87,9 +80,9 @@ export default class MipSemiFixed extends CustomElement {
     // 初始状态为 fixed 时
     if (!util.platform.isIos() && offsetTop <= this.threshold) {
       if (this.container.className.indexOf(this.fixedClassNames) < 0) {
-        this.container.className += this.fixedClassNames
+        this.container.className += ' ' + this.fixedClassNames
       }
-      this.container.setAttribute(STATUS.STATUS_FIXED, '')
+      this.container.setAttribute(STATUS_FIXED, '')
       util.css(this.container, 'top', this.threshold + 'px')
     } else if (util.platform.isIos() && !MIP.standalone && offsetTop <= this.threshold) {
       util.css(this.fixedContainer.parentNode, {display: 'block'})
@@ -122,13 +115,13 @@ export default class MipSemiFixed extends CustomElement {
 
     if (offsetTop <= threshold) {
       if (container.className.indexOf(fixedClassNames) < 0) {
-        container.className += fixedClassNames
+        container.className += ' ' + fixedClassNames
       }
-      container.setAttribute(STATUS.STATUS_FIXED, '')
+      container.setAttribute(STATUS_FIXED, '')
       util.css(container, 'top', threshold + 'px')
     } else {
-      container.className = container.className.replace(fixedClassNames, '')
-      container.removeAttribute(STATUS.STATUS_FIXED)
+      container.className = container.className.replace(' ' + fixedClassNames, '')
+      container.removeAttribute(STATUS_FIXED)
       util.css(container, 'top', '')
     }
   }
