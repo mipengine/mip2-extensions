@@ -14,7 +14,6 @@ App 下载，可区分 Android 和 iOS。
 
 ```html
 <mip-appdl
-  tpl="imageText"
   src="http://ms0.meituan.net/touch/css/i/logo.png"
   texttip= "['积分能当钱花了','下载百度浏览器','下载百度浏览器']"
   downbtntext="立即使用"
@@ -31,7 +30,6 @@ App 下载，可区分 Android 和 iOS。
 ```html
 <mip-fixed type="bottom">
   <mip-appdl
-    tpl="imageText"
     src="http://ms0.meituan.net/touch/css/i/logo.png"
     texttip= "['积分能当钱花了','下载百度浏览器','下载百度浏览器']"
     downbtntext="立即使用"
@@ -45,12 +43,10 @@ App 下载，可区分 Android 和 iOS。
 
 ## 属性
 
-### tpl (废弃)
-
 ### src
 
 说明：图片地址
-必填：是（`tpl` 为 `imageText` 的场景）
+必填：是
 格式：字符串
 取值：URL 类型
 
