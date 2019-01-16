@@ -5,43 +5,45 @@
 
 /* global MIP */
 
-let {viewer, util} = MIP
-let {Gesture, fn, jsonParse} = util
+const {viewer, util} = MIP
+const {Gesture, fn, jsonParse} = util
 
-/**
- * 初始化百度统计组件
- */
-function initStatsBaidu () {
-  let elem = this.element
-  let config = getStatsBaiduConfig(elem)
-  let token = config.token
+export default class MIPStatsBaidu extends MIP.CustomElement {
+  /**
+   * 渲染组件
+   */
+  build () {
+    let elem = this.element
+    let config = getStatsBaiduConfig(elem)
+    let token = config.token
 
-  // 检测token是否存在
-  if (token) {
-    window._hmt = window._hmt || []
-    window._hmt.push([
-      '_setAccount',
-      token
-    ])
+    // 检测token是否存在
+    if (token) {
+      window._hmt = window._hmt || []
+      window._hmt.push([
+        '_setAccount',
+        token
+      ])
 
-    // 如果是在iframe内部，则单独处理referrer，因为referrer统计不对
-    if (viewer.isIframed) {
-      setReferrer()
-    }
-    if (config && Array.isArray(config.conf) && config.conf.length) {
-      let conf = config.conf
-      for (let i = 0; i < conf.length; i++) {
-        window._hmt.push(conf[i])
+      // 如果是在iframe内部，则单独处理referrer，因为referrer统计不对
+      if (viewer.isIframed) {
+        setReferrer()
       }
+      if (config && Array.isArray(config.conf) && config.conf.length) {
+        let conf = config.conf
+        for (let i = 0; i < conf.length; i++) {
+          window._hmt.push(conf[i])
+        }
+      }
+
+      bindEle()
+
+      let hm = document.createElement('script')
+      hm.src = 'https://hm.baidu.com/hm.js?' + token
+      elem.appendChild(hm)
+    } else {
+      console.warn('请在配置中提供 token 字段'); // eslint-disable-line
     }
-
-    bindEle()
-
-    let hm = document.createElement('script')
-    hm.src = 'https://hm.baidu.com/hm.js?' + token
-    elem.appendChild(hm)
-  } else {
-    console.warn('请在配置中提供 token 字段'); // eslint-disable-line
   }
 }
 
@@ -283,10 +285,4 @@ function buildReferrer (url, params) {
   return url.indexOf('#') < 0 && urlData
     ? (url + conjMark + urlData)
     : url.replace('#', conjMark + urlData + '#')
-}
-
-export default class MIPStatsBaidu extends MIP.CustomElement {
-  build () {
-    initStatsBaidu.apply(this)
-  }
 }
