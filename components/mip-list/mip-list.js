@@ -31,7 +31,7 @@ export default class MipList extends CustomElement {
       this.container.setAttribute('role', 'list')
     }
 
-    if(element.hasAttribute("has-class")) {
+    if (element.hasAttribute("has-class")) {
       this.addClassList(); 
     }
 
