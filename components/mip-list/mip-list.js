@@ -122,24 +122,24 @@ export default class MipList extends CustomElement {
    * addClassList add分类列表内容函数
    */
   addClassList(){
-    this.addEventAction('class',function(e){
-        const url = e.target.getAttribute('[class-url]') || ''     
-        if (url) {
-            fetch(url,{method:'GET',credentials: 'include'})
-            .then(function(res){ 
-                return res.ok ? res.json() : console.error('数据获取失败') 
-            })
-            .then(data=>{
-                if (data) {
-                    this.add = true
-                    this.renderTemplate(data)
-                } else { 
-                  console.log('响应数据为空') 
-                }        
-            })
-        } else {
-          console.error('请求分类url不能为空')
-        }
+    this.addEventAction('class', function (e) {
+      const url = e.target.getAttribute('[class-url]') || ''    
+      if (url) {
+          fetch(url,{method:'GET', credentials: 'include'})
+          .then(function(res){ 
+              return res.ok ? res.json() : console.error('数据获取失败')
+          })
+          .then(data => {
+              if (data) {
+                  this.add = true
+                  this.renderTemplate(data)
+              } else { 
+                console.log('响应数据为空')
+              }     
+          })
+      } else {
+        console.error('请求分类url不能为空')
+    }
     })
   }
 }
