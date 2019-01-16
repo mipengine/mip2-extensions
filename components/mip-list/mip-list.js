@@ -123,29 +123,25 @@ export default class MipList extends CustomElement {
    * 
    */
   addClassList(){
-
       this.addEventAction("class",function(e){
           const url = e.target.getAttribute("[class-url]") || "";
           
-          if(url)
-          {
+          if (url) {
               fetch(url,{method:"GET",credentials: 'include'})
               .then(function(res){ 
                   return res.ok ? res.json() : console.error("数据获取失败"); 
               })
               .then(data=>{
-                  if(data){
+                  if (data) {
                       this.add = true;
 
                       this.renderTemplate(data);
-                  }
-                  else{ 
+                  } else { 
                       console.log("响应数据为空"); 
                   }
                  
               })
-          }
-          else{
+          } else {
                console.error('请求分类url不能为空'); 
           }
       })
@@ -186,7 +182,7 @@ function render (htmls) {
     fragment.appendChild(node)
   }
 
-  if(this.add){
+  if (this.add) {
     const element = document.createElement("div");
 
     element.appendChild(fragment); delete this.add;
