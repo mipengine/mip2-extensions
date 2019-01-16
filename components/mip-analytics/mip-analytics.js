@@ -5,7 +5,7 @@
 
 /* global MIP, Image */
 
-let {util, performance} = MIP
+const {util, performance} = MIP
 
 /**
  * mip performance 上报的性能数据
@@ -256,13 +256,6 @@ export default class MIPAnalytics extends MIP.CustomElement {
    * 销毁组件的时候清除所有的回调
    */
   disconnectedCallback () {
-    clearAllTimer()
-  }
-
-  /**
-   * 兼容 customElement v0 标准的组件销毁回调
-   */
-  detachedCallback () {
     clearAllTimer()
   }
 }
