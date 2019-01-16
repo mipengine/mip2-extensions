@@ -57,7 +57,7 @@ export default class MIPToggle extends CustomElement {
     if (this.enterClass) {
       return !el.classList.contains(this.enterClass)
     }
-    return el.style.display === 'none' || util.css(el, 'style') === 'none'
+    return el.style.display === 'none' || util.css(el, 'display') === 'none'
   }
 
   build () {
