@@ -5,12 +5,20 @@
 
 /* global MIP, _czc */
 
-let {fn, Gesture, util} = MIP
-let jsonParse = util.jsonParse
+const {fn, Gesture, util} = MIP
+const jsonParse = util.jsonParse
 
+/**
+ * 标识 dom 是否被绑定上事件
+ *
+ * @type {string}
+ */
 const DATA_STATS_CNZZ_FALG = 'data-stats-cnzz-flag'
 
 export default class MIPStatsCnzz extends MIP.CustomElement {
+  /**
+   * 渲染组件
+   */
   build () {
     let element = this.element
     let token = element.getAttribute('token')
