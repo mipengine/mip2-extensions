@@ -3,30 +3,13 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
-/**
- * 引入工具类
- *
- * @type {Object}
- */
-let util = require('util')
+/* global MIP */
 
-/**
- * 模板库
- *
- * @type {Object}
- */
-let templates = require('templates')
+import dataProcessor from './data'
 
-/**
- * 引入 fixed 元素类
- *
- * @type {Object}
- */
-let fixedElement = require('fixed-element')
-
-// let log = require('mip-ad-ecom/log');
-let dataProcessor = require('mip-ad-ecom/data')
-let regexs = dataProcessor.regexs
+const {util, templates, viewer} = MIP
+const fixedElement = viewer.fixedElement
+const REGEXS = dataProcessor.REGEXS
 
 let maxzIndex = 0
 let excr = 44
@@ -34,15 +17,14 @@ let excr = 44
 /**
  * 获取样式
  * 由于目前只需要取 height 和 paddig-bottom,
- * 所以对util.css结果进行处理, 返回整数
+ * 所以对 util.css 结果进行处理, 返回整数
  *
  * @param   {HTMLElement} elem     dom 节点
  * @param   {string} style 获取样式
  * @returns {number} res 返回的数值
  */
 function getCss (elem, style) {
-  let res = parseInt(util.css(elem, style), 10)
-  return res || 0
+  return parseInt(util.css(elem, style), 10) || 0
 }
 
 /**
@@ -57,9 +39,10 @@ function getCss (elem, style) {
  */
 function renderStyleOrScript (str, reg, tag, attr, container) {
   let node = container.querySelector(tag + '[' + attr + ']') || document.createElement(tag)
-  node.setAttribute(attr, '')
   let substrs = str.match(reg)
-  substrs && substrs.forEach(function (tmp) {
+
+  node.setAttribute(attr, '')
+  substrs && substrs.forEach(tmp => {
     let reg = new RegExp('<' + tag + '>([\\S\\s]*)</' + tag + '>', 'g')
     let substr = reg.exec(tmp)
     let innerhtml = substr && substr[1] ? substr[1] : ''
@@ -73,17 +56,18 @@ function renderStyleOrScript (str, reg, tag, attr, container) {
 }
 
 /**
-   * 创建定制化组件的 template 子节点
-   *
-   * @param   {string}  html 定制化组件 dom 字符串
-   * @param   {number} id   template id
-   * @returns {HTMLElement}     tpl  template 子节点
-   */
+ * 创建定制化组件的 template 子节点
+ *
+ * @param   {string}  html 定制化组件 dom 字符串
+ * @param   {number} id   template id
+ * @returns {HTMLElement}     tpl  template 子节点
+ */
 function createTemplateNode (html, id) {
   let tpl = document.createElement('template')
   tpl.setAttribute('type', 'mip-mustache')
   tpl.id = id
-  tpl.innerHTML = dataProcessor.subStr(html, regexs.innerHtml)
+  tpl.innerHTML = dataProcessor.getSubString(html, REGEXS.innerHtml)
+
   return tpl
 }
 
@@ -96,17 +80,14 @@ function createTemplateNode (html, id) {
  */
 function createCustomNode (html, customTag) {
   let node = document.createElement(customTag)
-  let tagandAttrs = dataProcessor.subStr(html, regexs.tagandAttr).split(' ')
-
-  for (let i = 0; i < tagandAttrs.length; i++) {
-    let attrs = tagandAttrs[i].split('=')
-
-    if (attrs[0] && attrs[1]) {
-      node.setAttribute(attrs[0], attrs[1].replace(/"/ig, ''))
-    }
-  }
-
+  let tagandAttrs = dataProcessor.getSubString(html, REGEXS.tagandAttr).split(' ')
   let id = customTag + '-' + Math.random().toString(36).slice(2)
+
+  tagandAttrs.forEach(item => {
+    let attrs = item.split('=')
+    attrs[0] && attrs[1] && node.setAttribute(attrs[0], attrs[1].replace(/"/ig, ''))
+  })
+
   node.setAttribute('template', id)
   node.appendChild(createTemplateNode(html, id))
 
@@ -114,19 +95,19 @@ function createCustomNode (html, customTag) {
 }
 
 /**
-   * [renderHtml 渲染html]
-   *
-   * @param   {HTMLElement}     element   mip-ad-ecom 节点
-   * @param   {string}  str       返回的 tpl 字符串
-   * @param   {number} len       模块中第几个组件
-   * @param   {Object}  result    渲染mustache模板的数据
-   * @param   {HTMLElement}     container 装载定制化组件节点的容器
-   * @returns {string}  customTag 定制化组件标签
-   */
+ * [renderHtml 渲染html]
+ *
+ * @param   {HTMLElement}     element   mip-ad-ecom 节点
+ * @param   {string}  str       返回的 tpl 字符串
+ * @param   {number} len       模块中第几个组件
+ * @param   {Object}  result    渲染mustache模板的数据
+ * @param   {HTMLElement}     container 装载定制化组件节点的容器
+ * @returns {string}  customTag 定制化组件标签
+ */
 function renderHtml (element, str, len, result, container) {
-  let html = str.replace(regexs.script, '').replace(regexs.style, '')
-  let customTag = (new RegExp(regexs.tag, 'g')).exec(html)
-  customTag = customTag && customTag[1] ? customTag[1] : null
+  let html = str.replace(REGEXS.script, '').replace(REGEXS.style, '')
+  let customTag = (new RegExp(REGEXS.tag, 'g')).exec(html)
+  customTag = (customTag && customTag[1]) ? customTag[1] : null
 
   if (!customTag) {
     return null
@@ -135,11 +116,13 @@ function renderHtml (element, str, len, result, container) {
   // html 处理
   let customNode = createCustomNode(html, customTag)
   let itemNode = document.createElement('div')
+
   itemNode.setAttribute('mip-ad-ecom-item', len)
   itemNode.appendChild(customNode)
   container.appendChild(itemNode)
+
   // 模板渲染
-  templates.render(customNode, result, true).then(function (res) {
+  templates.render(customNode, result, true).then(res => {
     res.element.innerHTML = res.html
 
     if (res.element.hasAttribute('mip-fixed') &&
@@ -181,7 +164,7 @@ function render (element, tplData, container) {
     }
 
     // style 处理
-    renderStyleOrScript(str, regexs.style, 'style', 'mip-ad-ecom-css', document.head)
+    renderStyleOrScript(str, REGEXS.style, 'style', 'mip-ad-ecom-css', document.head)
 
     // html 处理
     let customTag = renderHtml(element, str, len, result, container)
@@ -191,7 +174,7 @@ function render (element, tplData, container) {
     }
 
     // script 处理
-    renderStyleOrScript(str, regexs.script, 'script', customTag, document.body)
+    renderStyleOrScript(str, REGEXS.script, 'script', customTag, document.body)
   }
 }
 
@@ -214,79 +197,84 @@ function proxyLink (element, fixedLayer) {
 
     // @todo: 这个地方的 log 没有引入
     if (fixedLayer) {
-      // path = log.getXPath(this, fixedLayer)
       path.unshift('.mip-fixedlayer')
-    } else {
-      // path = log.getXPath(this, element)
     }
-    let xpath = path ? path.join('_') : ''
 
+    let xpath = path ? path.join('_') : ''
     let logUrl = (link) || this.href
+
     logUrl += ((logUrl[logUrl.length - 1] === '&') ? '' : '&') + 'clk_info=' + JSON.stringify({xpath: xpath})
-    if (link) {
-      // log.sendLog(logUrl, {});
-    } else {
+    if (!link) {
       this.href = logUrl
     }
   })
 }
 
 /**
- * [getConfigScriptElement 获取页面配置的content内容]
- * 不在此做解析
+ * 获取页面配置的 content 内容, 不在此做解析
  *
- * @param   {HTMLElement} elem   mip-ad-ecom element 节点
- * @returns {HTMLScriptElement}  返回`application/json`的script配置节点
+ * @param   {HTMLElement} elem    mip-ad-ecom element 节点
+ * @returns {?HTMLScriptElement}  返回`application/json`的script配置节点
  */
 function getConfigScriptElement (elem) {
   if (!elem) {
     return
   }
-  // scriptJson: 配置script写在组件标签内部
+  // scriptJson: 配置 script 写在组件标签内部
   let scriptJson = elem.querySelector('script[type="application/json"]')
   if (!scriptJson) {
-    // 需要mustache渲染情况下，为了防止sanitizer.js移除script，将配置写在组件外
+    // 需要 mustache 渲染情况下，为了防止 sanitizer.js 移除 script，将配置写在组件外
     scriptJson = document.querySelector('script[for="' + elem.id + '"]')
   }
   return scriptJson
 }
 
-// 广告加载前loading效果
-function addPlaceholder () {
+/**
+ * 添加广告加载前的 loading 效果
+ *
+ * @param {HTMLElement} element 广告组件 DOM
+ */
+function addPlaceholder (element) {
   let placeholder = document.createElement('div')
-  this.placeholder = placeholder
-  placeholder.classList.add('mip-ad-ecom-placeholder')
+  const PLACEHOLDER_PREFIX = 'mip-ad-ecom-placeholder'
+
+  let getHtml = (num, suffix) => {
+    let ret = ''
+    for (let i = 0; i < num; i++) {
+      ret += `<span class="${PLACEHOLDER_PREFIX}${suffix && `-${suffix}`} text${i + 1}"></span>`
+    }
+    return ret
+  }
+  placeholder.classList.add(PLACEHOLDER_PREFIX)
   placeholder.setAttribute('mip-ad-ecom-container', '')
-  placeholder.innerHTML = '' +
-    '<span class="mip-ad-ecom-placeholder-title"></span>' +
-    '<span class="mip-ad-ecom-placeholder-text text1"></span>' +
-    '<span class="mip-ad-ecom-placeholder-text text2"></span>' +
-    '<span class="mip-ad-ecom-placeholder-text text3"></span>' +
-    '<span class="mip-ad-ecom-placeholder-space"></span>' +
-    '<span class="mip-ad-ecom-placeholder-title"></span>' +
-    '<span class="mip-ad-ecom-placeholder-text text1"></span>' +
-    '<span class="mip-ad-ecom-placeholder-text text2"></span>' +
-    '<span class="mip-ad-ecom-placeholder-text text3"></span>'
-  this.element.appendChild(placeholder)
+  placeholder.innerHTML = `
+    ${getHtml(1, 'title')}
+    ${getHtml(3, 'text')}
+    ${getHtml(1, 'space')}
+    ${getHtml(1, 'title')}
+    ${getHtml(3, 'text')}
+  `
+  element.appendChild(placeholder)
+  return placeholder
 }
 
-// 移除 广告占位
-function removePlaceholder () {
-  let me = this
-  this.placeholder.classList.add('fadeout')
+/**
+ * 移除广告占位
+ *
+ * @param {HTMLElement} placeholder  占位 DOM 元素
+ */
+function removePlaceholder (placeholder) {
+  placeholder.classList.add('fadeout')
+
   // 占位符增加淡出效果
-  this.placeholder.addEventListener('transitionend', function () {
-    me.placeholder.remove()
-  }, false)
-  this.placeholder.addEventListener('webkitTransitionend', function () {
-    me.placeholder.remove()
-  }, false)
+  placeholder.addEventListener('transitionend', () => placeholder.remove(), false)
+  placeholder.addEventListener('webkitTransitionend', () => placeholder.remove(), false)
 }
 
 export default {
-  render: render,
-  proxyLink: proxyLink,
-  getConfigScriptElement: getConfigScriptElement,
-  addPlaceholder: addPlaceholder,
-  removePlaceholder: removePlaceholder
+  render,
+  proxyLink,
+  getConfigScriptElement,
+  addPlaceholder,
+  removePlaceholder
 }

@@ -1,6 +1,6 @@
 # mip-ad-ecom 百度凤巢广告
 
-mip-ad-ecom 百度凤巢广告组件，仅在百度搜索来源的MIP页中生效。
+mip-ad-ecom 百度凤巢广告组件，仅在百度搜索来源的 MIP 页中生效。和 mip-custom 组件用法一样
 
 标题|内容
 ----|----

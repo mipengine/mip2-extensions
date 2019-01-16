@@ -4,11 +4,11 @@
  */
 
 /**
- * 正则表达式
+ * 正则表达式管理 map
  *
  * @type {Object}
  */
-let regexs = {
+const REGEXS = {
   html: /<mip-\S*>(.*)<\/mip-\S*></,
   script: /<script[^>]*>(.*?)<\/script>/g,
   style: /<style[^>]*>(.*?)<\/style>/g,
@@ -22,20 +22,39 @@ let regexs = {
 }
 
 /**
+ * mip-ad-ecom 组件所引入的动态组件的请求或者静态资源的 host
+ *
+ * @type {string}
+ */
+const DOMAIN = 'https://mipengine.baidu.com/'
+
+/**
+ * 广告请求的 ajax url
+ *
+ * @type {string}
+ */
+const AJAX_URL = DOMAIN + 'common?'
+
+/**
  * 请求数据所需参数
  *
  * @type {Object}
  */
-let params = {
+let REQUEST_PARAMS = {
   logid: '',
   query: '',
   title: '',
-  originalUrl: getSubString(window.location.pathname, regexs.regHttps) ||
-    getSubString(window.location.pathname, regexs.regHttp)
+  originalUrl: getSubString(window.location.pathname, REGEXS.regHttps) ||
+    getSubString(window.location.pathname, REGEXS.regHttp)
 }
 
-let config = {
-  domain: 'https://mipengine.baidu.com/',
+/**
+ * 默认的 amd paths 的配置
+ *
+ * @type {string}
+ */
+const CONFIG = {
+  domain: DOMAIN,
   paths: {
     'js/nav': 'static/js/nav',
     'js/util': 'static/js/util',
@@ -54,13 +73,17 @@ function getHashData (key) {
   return MIP && MIP.hash && MIP.hash.get ? MIP.hash.get(key) : ''
 }
 
-function addPaths (config) {
+/**
+ * 修改动态配置 AMD path
+ *
+ * @param   {Object} config amd 模块配置信息
+ * @returns {Object}       修改后的 amd 模块配置
+ */
+function updatePaths (config) {
   if (config.paths) {
-    for (let key in config.paths) {
-      if (config.paths.hasOwnProperty(key)) {
-        config.paths[key] = config.domain + config.paths[key]
-      }
-    }
+    Object.keys(config.paths).forEach(key => {
+      config.paths[key] = config.domain + config.paths[key]
+    })
   }
 
   return config
@@ -76,17 +99,16 @@ function addPaths (config) {
  */
 function getSubString (str, reg, pos) {
   pos = pos ? 0 : 1
-  let res = str.match(reg) && str.match(reg)[pos] ? str.match(reg)[pos] : ''
-  return res
+  return str.match(reg) && str.match(reg)[pos] ? str.match(reg)[pos] : ''
 }
 
 export default {
-  domain: 'https://mipengine.baidu.com/',
-  ajaxUrl: 'https://mipengine.baidu.com/common?',
-  regexs: regexs,
-  params: params,
-  config: config,
-  addPaths: addPaths,
-  subStr: getSubString,
-  getHashData: getHashData
+  DOMAIN,
+  AJAX_URL,
+  REGEXS,
+  REQUEST_PARAMS,
+  CONFIG,
+  updatePaths,
+  getSubString,
+  getHashData
 }

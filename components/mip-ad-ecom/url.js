@@ -3,35 +3,34 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
-/**
- * 引入工具类
- *
- * @type {Object}
- */
-let util = require('util')
-let dom = require('mip-ad-ecom/dom')
-let data = require('mip-ad-ecom/data')
+/* global MIP */
+
+import dom from './dom'
+import dataProcessor from './data'
+
+const util = MIP.util
+const {jsonParse, fn} = util
 
 /**
- * mip连接特殊情况，从 hash 中获取参数
+ * mip 连接特殊情况，从 hash 中获取参数
  *
  * @returns {Object}     合并后的数据对象
  */
 function getHashParams () {
-  let params = data.params
+  let params = dataProcessor.REQUEST_PARAMS
   for (let key in params) {
     if (params.hasOwnProperty(key)) {
-      params[key] = data.getHashData(key) || params[key]
+      params[key] = dataProcessor.getHashData(key) || params[key]
     }
   }
 
   // 修改字段名
-  params.logid = data.getHashData('lid')
-  params.eqid = data.getHashData('eqid')
+  params.logid = dataProcessor.getHashData('lid')
+  params.eqid = dataProcessor.getHashData('eqid')
 
   // 内容联盟导流字段
-  let originalSource = data.getHashData('originalSource')
-  let mediaid = data.getHashData('mediaid')
+  let originalSource = dataProcessor.getHashData('originalSource')
+  let mediaid = dataProcessor.getHashData('mediaid')
   if (originalSource) {
     params.originalSource = originalSource
   }
@@ -55,7 +54,7 @@ function getUserParams (element) {
   try {
     let script = dom.getConfigScriptElement(element)
     if (script) {
-      userParams = JSON.parse(script.textContent)
+      userParams = jsonParse(script.textContent)
       if (!userParams.accid) {
         console.warn('mip-ad-ecom 缺少 accid 参数')
         return
@@ -91,19 +90,19 @@ function getUrlParams (element) {
   if (!userParams) {
     return null
   }
-  // 唯一与mip-custom 不同的地方，请求增加参数 &from=cmip
-  return util.fn.extend(getHashParams(), userParams, {'from': 'cmip'})
+  // 唯一与 mip-custom 不同的地方，请求增加参数 &from=cmip
+  return fn.extend(getHashParams(), userParams, {'from': 'cmip'})
 }
 
 /**
  * url 拼接函数
  *
  * @param   {HTMLElement} element mip-ad-ecom 组件节点
- * @returns {string}  拼接后的url
+ * @returns {string}  拼接后的 url
  */
-function getUrl (element) {
+export default function getUrl (element) {
   let firstKey = true
-  let url = data.ajaxUrl
+  let url = dataProcessor.AJAX_URL
   let urlParams = getUrlParams(element)
 
   if (!urlParams) {
@@ -118,8 +117,4 @@ function getUrl (element) {
   }
 
   return url
-}
-
-export default {
-  get: getUrl
 }

@@ -3,70 +3,88 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
-/* global MIP, fetch */
+/* global MIP, fetch, location */
 
-import url from './url'
+import getUrl from './url'
 import dom from './dom'
 import dataProcessor from './data'
+import './mip-ad-ecom.less'
 
-let {util, viewer} = MIP
-// let logData = dataProcessor.logData
-// let performanceData = dataProcessor.performanceData
+const {util, viewer, CustomElement} = MIP
 
-export default class MIPAdEcom extends MIP.CustomElement {
+/**
+ * mip-ad-ecom 组件的外层容器 class 名
+ *
+ * @type {string}
+ */
+const AD_CONTAINER = 'mip-ad-ecom-container'
+
+export default class MIPAdEcom extends CustomElement {
+  constructor (element) {
+    super(element)
+
+    /**
+     * 广告组件的占位 DOM
+     *
+     * @type {?HTMLElement}
+     */
+    this.placeholder = null
+
+    /**
+     * commonUrl
+     *
+     * @type {string}
+     */
+    this.commonUrl = ''
+
+    /**
+     * regexs
+     *
+     * @type {?Object}
+     */
+    this.regexs = dataProcessor.REGEXS
+
+    /**
+     * sourceType
+     *
+     * @type {string}
+     */
+    this.sourceType = ''
+  }
+
   /**
-   * prerenderAllowed钩子,优先加载
+   * prerenderAllowed 钩子,优先加载
    */
   prerenderAllowed () {
     return true
   }
 
   /**
-   * build钩子，触发渲染. 广告需要尽早执行所以用build
+   * build 钩子，触发渲染. 广告需要尽早执行所以用 build
    */
   build () {
     let me = this
-    dom.addPlaceholder.apply(this)
+    let ele = me.element
     let checkElement = () => {
-      if (dom.getConfigScriptElement(me.element)) {
-        me.initCustom()
-        return true
+      if (dom.getConfigScriptElement(ele)) {
+        this.sourceType = ele.getAttribute('source-type') || ''
+        // this.commonUrl = './mock.json'
+        this.commonUrl = getUrl(ele)
+        // 在一些情况下不展示定制化 MIP
+        if (!me.isShowCustom()) {
+          return
+        }
+        return me.fetchData(me.commonUrl, me.render.bind(me), ele)
       }
-      console.warn('获取不到配置！！')
-      return false
+      return console.warn('获取不到配置！！')
     }
+
+    me.placeholder = dom.addPlaceholder(ele)
+
     if (!checkElement()) {
       window.requestAnimationFrame(checkElement)
     }
   }
-
-  /**
-   * 定制化渲染的主流程：分区请求+渲染
-   *
-   */
-  initCustom () {
-    let me = this
-
-    // 初始化
-    me.initBuild()
-
-    // 异常情况下不展示定制化MIP
-    if (!me.isShowCustom()) {
-      return
-    }
-    me.fetchData(me.commonUrl, me.render.bind(me), me.element)
-  }
-
-  /**
-   * 初始化参数
-   *
-   */
-  initBuild () {
-    let me = this
-    me.regexs = dataProcessor.regexs
-    me.sourceType = me.element.getAttribute('source-type') || ''
-    me.commonUrl = url.get(me.element)
-  };
 
   /**
    * 判断是否展示定制化MIP
@@ -78,64 +96,42 @@ export default class MIPAdEcom extends MIP.CustomElement {
     let isShowCustom = true
 
     // 非结果页进入不展现定制化内容
-    if (!viewer.isIframed) {
+    if (!viewer.isIframed ||
+      // 非百度、cache 不展现定制化内容
+      !(me.regexs.domain.test(window.document.referrer) || util.fn.isCacheUrl(location.href)) ||
+      // 无异步 url 不展现定制化内容
+      !me.commonUrl
+    ) {
       me.element.remove()
       isShowCustom = false
     }
-    // 非百度、cache不展现定制化内容
-    if (!(me.regexs.domain.test(window.document.referrer) || util.fn.isCacheUrl(window.location.href))) {
-      me.element.remove()
-      isShowCustom = false
-    }
-    // 无异步url不展现定制化内容
-    if (!me.commonUrl) {
-      me.element.remove()
-      isShowCustom = false
-    }
+
     return isShowCustom
   }
 
   /**
-   * 渲染
+   * 渲染广告内容
    *
-   * @param {Object} data 和模板匹配的数据
-   * @param {HTMLElement} element 需要渲染的element
+   * @param {Object}      data    和模板匹配的数据
+   * @param {HTMLElement} element 需要渲染的 element
    */
   render (data, element) {
-    // let commonData = {}
-    let template = {}
-    let config
     if (!data || !element) {
       return
     }
-    if (data.config) {
-      config = dataProcessor.addPaths(data.config)
-      require.config(config)
-    } else if (dataProcessor.config) {
-      config = dataProcessor.addPaths(dataProcessor.config)
-      require.config(config)
-    }
 
-    // common 数据缓存
-    // if (data.common) {
-    //   commonData = data.common
-    // }
+    let templates = data.template || []
 
-    // 模板数据缓存
-    if (data.template) {
-      template = data.template
-    }
-
-    for (let i = 0; i < template.length; i++) {
-      let tplData = template[i]
+    window.require.config(dataProcessor.updatePaths(data.config || dataProcessor.CONFIG))
+    templates.forEach((tplData, index) => {
       let container = document.createElement('div')
 
-      container.setAttribute('mip-ad-ecom-container', i)
+      container.setAttribute(AD_CONTAINER, index)
       element.appendChild(container)
 
       // dom 渲染
       dom.render(element, tplData, container)
-    }
+    })
   }
 
   /**
@@ -146,7 +142,7 @@ export default class MIPAdEcom extends MIP.CustomElement {
    * @returns {Object} matchTempData 返回element匹配的数据
    * @returns {Object} matchTempData.common common数据信息
    * @returns {Object} matchTempData.config 配置
-   * @returns {Array} matchTempData.template 模板
+   * @returns {Array}  matchTempData.template 模板
    */
   getMatchData (element, data) {
     if (!element || !data) {
@@ -158,17 +154,17 @@ export default class MIPAdEcom extends MIP.CustomElement {
       return
     }
 
-    let template = data.template
+    let templates = data.template
     let matchTempData = {
       common: data.common,
       config: data.config,
       template: []
     }
 
-    let tLen = template && template.length
+    let tLen = templates && templates.length
     if (tLen && tLen > 0) {
       for (let i = 0; i < tLen; i++) {
-        let singleTempData = template[i]
+        let singleTempData = templates[i]
         if (!singleTempData || !singleTempData.length) {
           break
         }
@@ -195,34 +191,24 @@ export default class MIPAdEcom extends MIP.CustomElement {
     if (!url) {
       return
     }
-    // let errorData = {}
     // fetch
-    fetch(url, {
-      credentials: 'include'
-    }).then(function (res) {
-      return res.json()
-    }).then(function (data) {
-      // 返回数据问题
-      if (data && data.errno) {
-        console.error(data.errmsg)
+    fetch(url, {credentials: 'include'})
+      .then(res => res.json())
+      .then(data => {
+        // 返回数据问题
+        if (data && data.errno) {
+          console.warn(data.errmsg)
+          me.element.remove()
+          return
+        }
+        callback && callback(data.data, element)
+        let adContainers = [...document.querySelectorAll(`[${AD_CONTAINER}]`)]
+        adContainers.forEach(item => item.classList.add('fadein'))
+        me.placeholder && dom.removePlaceholder(me.placeholder)
+      }, error => {
         me.element.remove()
-        return
-      }
-      callback && callback(data.data, element)
-
-      // 广告插入页面时，增加渐显效果
-      let mipCustomContainers = document.querySelectorAll('[mip-ad-ecom-container]')
-      for (let i = mipCustomContainers.length - 1; i >= 0; i--) {
-        let mipCustomContainer = mipCustomContainers[i]
-        mipCustomContainer.classList.add('fadein')
-      }
-      dom.removePlaceholder.apply(me)
-    }, function (error) {
-      me.element.remove()
-      console.error(error)
-    }).catch(function (err) {
-      console.warn(err)
-    })
+        console.warn(error)
+      }).catch(console.warn)
   }
 
   /**
@@ -231,8 +217,7 @@ export default class MIPAdEcom extends MIP.CustomElement {
    * @param {Object} data 需要缓存的数据
    */
   storeData (data) {
-    let me = this
-    let queue = me.getQueue()
+    let queue = this.getQueue()
     if (!data || !queue) {
       return
     }
@@ -243,7 +228,6 @@ export default class MIPAdEcom extends MIP.CustomElement {
 
   /**
    * 初始化模板、数据队列
-   *
    */
   initQueue () {
     window.MIP = window.MIP || {}
@@ -258,8 +242,8 @@ export default class MIPAdEcom extends MIP.CustomElement {
    * @param {HTMLElement} temp 入队列元素
    */
   pushQueue (temp) {
-    let me = this
-    let queue = me.getQueue()
+    let queue = this.getQueue()
+
     if (!temp || !queue) {
       return
     }
@@ -269,7 +253,7 @@ export default class MIPAdEcom extends MIP.CustomElement {
   /**
    * 获取模板队列和缓存数据状态
    *
-   * @returns {boolean} 判断的结果
+   * @returns {Array} 获取 MIP 组件渲染队列
    */
   getQueue () {
     return window.MIP && MIP.custom && {
@@ -287,16 +271,12 @@ export default class MIPAdEcom extends MIP.CustomElement {
     let me = this
     let queue = me.getQueue()
     let tempQueue = queue && queue.tempQueue
+
     if (!data) {
       return
     }
     if (tempQueue && tempQueue.length > 0) {
-      let tLen = tempQueue.length
-      for (let i = 0; i < tLen; i++) {
-        let element = tempQueue[i]
-        let elementData = me.getMatchData(element, data)
-        me.render(elementData, element)
-      }
+      tempQueue.forEach(item => me.render(me.getMatchData(item, data), item))
     }
     me.storeData(data)
   }
