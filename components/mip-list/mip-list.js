@@ -122,7 +122,8 @@ export default class MipList extends CustomElement {
    * [addClassList add分类列表内容函数]
    * 
    */
-  addClassList(){
+
+   addClassList(){
       this.addEventAction("class",function(e){
           const url = e.target.getAttribute("[class-url]") || "";
           
