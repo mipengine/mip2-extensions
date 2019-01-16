@@ -76,6 +76,39 @@
     </template>
   </mip-list>
   <div on="tap:mip-list.more"> 点击查看更多 </div>
+
+  <div>绑定分类
+      [info]有 `has-class` 属性时，`mip-list` 标签必须要有 `id` 属性，同时需要有点击按钮的 DOM 节点，并且此节点有 `on` 属性，属性值为：`tap:对应mip-list的id.class和[class-url]属性，
+      属性值为对应分类数据的url`
+  </div>
+  <div>
+    <button on = "tap:list.class" [class-url] = "http://xxx/xxx1.json">分类1</button>
+    <button on = "tap:list.class" [class-url] = "http://xxx/xxx2.json">分类2</button>
+  </div>
+  <mip-list id = "list" has-class template = "list-template" synchronous-data>
+    <mip-data>
+        <script type="application/json" >
+          {
+            "items": [{
+              "name": "lee",
+              "alias": "xialong"
+            }, {
+              "name": "ruige",
+              "alias": "ruimm"
+            }, {
+              "name": "langbo",
+              "alias": "bobo"
+            }]
+          }
+        </script>
+    </mip-data>
+    <template id = "list-template" type="mip-mustache" >
+      <div>
+        <li>name: {{name}}</li>
+        <li>alias: {{alias}}</li>
+      </div>
+    </template>
+</mip-list>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
   <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
   <script src="/mip-list/mip-list.js"></script>
