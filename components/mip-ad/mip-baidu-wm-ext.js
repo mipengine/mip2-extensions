@@ -5,6 +5,11 @@
 
 /* global MIP */
 
+/**
+ * container api 标识
+ *
+ * @type {string}
+ */
 const API_STR = '__container_api_'
 
 /**
@@ -51,7 +56,7 @@ export default function render (el) {
 
           fixedElement.moveToFixedLayer(data, parseInt(idx, 10))
         }
-      }, false)
+      })
     }
   } else {
     console.error('请输入正确的 domain 或者 token')

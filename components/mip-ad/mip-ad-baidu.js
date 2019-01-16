@@ -5,7 +5,13 @@
 
 /* global MIP */
 
+/**
+ * container api 标识
+ *
+ * @type {string}
+ */
 const API_STR = '__container_api_'
+
 let globalJsSrc = '//dup.baidustatic.com/js/dm.js'
 let globalScriptId = 'MIP_DUP_JS'
 
@@ -29,11 +35,12 @@ export default function render (el, me) {
   if (scripts && !elem) {
     let sid = '_' + Math.random().toString(36).slice(2)
     let container = document.createElement('div')
+    let apiArr = (window[API_STR] = window[API_STR] || [])
 
     container.id = sid
+    el.appendChild(container)
 
-    el.appendChild(container);
-    (window[API_STR] = window[API_STR] || []).push({
+    apiArr.push({
       containerId: sid,
       proxy: 0,
       slotId: cproId
@@ -123,7 +130,7 @@ function initadbaidu (elem, cproId, me, script) {
           fixedElement.moveToFixedLayer(data, parseInt(idx, 10))
         }
       }
-    }, false)
+    })
   }
 
   me.applyFillContent(document.getElementById(sid), true)
