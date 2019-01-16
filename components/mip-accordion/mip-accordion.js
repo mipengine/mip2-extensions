@@ -7,9 +7,9 @@
 
 import './mip-accordion.less'
 
-let {CustomElement, util} = MIP
-let {jsonParse} = util
-let localurl = location.href
+const {CustomElement, util} = MIP
+const {jsonParse} = util
+const localurl = location.href
 
 /**
  * 表示展开状态的 DOM 属性 key
@@ -66,113 +66,6 @@ const OPEN_STATUS = 'open'
  * @type {string}
  */
 const CLOSE_STATUS = 'close'
-
-/**
- * 恢复用户上次的选择
- */
-function userSelect () {
-  let ele = this.element
-  let sessionData = getSession(this.sessionKey)
-
-  for (let prop in sessionData) {
-    if (!sessionData.hasOwnProperty(prop)) {
-      return
-    }
-
-    if (sessionData[prop]) {
-      let content = ele.querySelector('#' + prop)
-      content.setAttribute(ARIA_EXPANDED_ATTRIBUTE, OPEN_STATUS)
-      ele.querySelector('section').setAttribute(EXPANDED_ATTRIBUTE, OPEN_STATUS)
-    }
-  }
-}
-
-/**
- * 绑定事件
- */
-function bindEvent () {
-  let element = this.element
-  let sessionKey = this.sessionKey
-  let sections = this.sections
-  let aniTimeAttr = element.getAttribute('animatetime')
-  let aniTime = aniTimeAttr === undefined || isNaN(aniTimeAttr)
-    ? 0.24
-    : Math.min(parseFloat(aniTimeAttr, 10), 1)
-  let accordionHeaders = element.querySelectorAll(`.${MIP_ACCORDION_HEADER_CLASS}`)
-
-  accordionHeaders.forEach(accordionHeader => {
-    accordionHeader.addEventListener('click', function () {
-      let targetId = accordionHeader.getAttribute(ARIA_CONTROLS_ATTRIBUTE)
-      let targetContent = element.querySelector('#' + targetId)
-      let expanded = targetContent.getAttribute(ARIA_EXPANDED_ATTRIBUTE)
-
-      if (expanded === OPEN_STATUS) {
-        // 收起内容区域
-        heightAni({
-          ele: targetContent,
-          type: 'fold',
-          transitionTime: aniTime,
-          cbFun: function (dom) {
-            dom.setAttribute(ARIA_EXPANDED_ATTRIBUTE, CLOSE_STATUS)
-          }.bind(undefined, targetContent)
-        })
-
-        sections.forEach(section => {
-          let $showMore = section.querySelector('.show-more')
-          let $showLess = section.querySelector('.show-less')
-          section.classList.remove(EXPANDED_ATTRIBUTE)
-          if ($showMore && $showLess) {
-            util.css($showMore, 'display', 'block')
-            util.css($showLess, 'display', 'none')
-          }
-        })
-
-        setSession(sessionKey, targetId, false)
-      } else {
-        // 同时只能展开一个节点
-        if (element.hasAttribute('expaned-limit')) {
-          sections.forEach(section => {
-            let content = section.querySelector(`.${MIP_ACCORDION_CONTENT_CLASS}`)
-            let header = section.querySelector(`.${MIP_ACCORDION_HEADER_CLASS}`)
-            let id = header.getAttribute(ARIA_CONTROLS_ATTRIBUTE)
-
-            section.removeAttribute(EXPANDED_ATTRIBUTE)
-            content.removeAttribute(ARIA_EXPANDED_ATTRIBUTE)
-            setSession(sessionKey, id, false)
-
-            heightAni({
-              ele: content,
-              type: 'fold',
-              transitionTime: aniTime
-            })
-          })
-        }
-
-        targetContent.setAttribute(ARIA_EXPANDED_ATTRIBUTE, OPEN_STATUS)
-
-        sections.forEach(section => {
-          let $showMore = section.querySelector('.show-more')
-          let $showLess = section.querySelector('.show-less')
-          section.setAttribute(EXPANDED_ATTRIBUTE, OPEN_STATUS)
-          if ($showMore && $showLess) {
-            util.css($showLess, 'display', 'block')
-            util.css($showMore, 'display', 'none')
-          }
-        })
-
-        // unfold animation
-        heightAni({
-          ele: targetContent,
-          type: 'unfold',
-          oriHeight: 0,
-          transitionTime: aniTime
-        })
-
-        setSession(sessionKey, targetId, true)
-      }
-    })
-  })
-}
 
 /**
  * 设置 session storage 缓存
@@ -330,9 +223,116 @@ export default class MIPAccordion extends CustomElement {
     })
 
     if (type === 'automatic') {
-      userSelect.apply(this)
+      this.userSelect()
     }
 
-    bindEvent.apply(this)
+    this.bindEvents()
+  }
+
+  /**
+   * 恢复用户上次的选择
+   */
+  userSelect () {
+    let ele = this.element
+    let sessionData = getSession(this.sessionKey)
+
+    for (let prop in sessionData) {
+      if (!sessionData.hasOwnProperty(prop)) {
+        return
+      }
+
+      if (sessionData[prop]) {
+        let content = ele.querySelector('#' + prop)
+        content.setAttribute(ARIA_EXPANDED_ATTRIBUTE, OPEN_STATUS)
+        ele.querySelector('section').setAttribute(EXPANDED_ATTRIBUTE, OPEN_STATUS)
+      }
+    }
+  }
+
+  /**
+   * 绑定事件
+   */
+  bindEvents () {
+    let element = this.element
+    let sessionKey = this.sessionKey
+    let sections = this.sections
+    let aniTimeAttr = element.getAttribute('animatetime')
+    let aniTime = aniTimeAttr === undefined || isNaN(aniTimeAttr)
+      ? 0.24
+      : Math.min(parseFloat(aniTimeAttr, 10), 1)
+    let accordionHeaders = element.querySelectorAll(`.${MIP_ACCORDION_HEADER_CLASS}`)
+
+    accordionHeaders.forEach(accordionHeader => {
+      accordionHeader.addEventListener('click', function () {
+        let targetId = accordionHeader.getAttribute(ARIA_CONTROLS_ATTRIBUTE)
+        let targetContent = element.querySelector('#' + targetId)
+        let expanded = targetContent.getAttribute(ARIA_EXPANDED_ATTRIBUTE)
+
+        if (expanded === OPEN_STATUS) {
+          // 收起内容区域
+          heightAni({
+            ele: targetContent,
+            type: 'fold',
+            transitionTime: aniTime,
+            cbFun: function (dom) {
+              dom.setAttribute(ARIA_EXPANDED_ATTRIBUTE, CLOSE_STATUS)
+            }.bind(undefined, targetContent)
+          })
+
+          sections.forEach(section => {
+            let $showMore = section.querySelector('.show-more')
+            let $showLess = section.querySelector('.show-less')
+            section.classList.remove(EXPANDED_ATTRIBUTE)
+            if ($showMore && $showLess) {
+              util.css($showMore, 'display', 'block')
+              util.css($showLess, 'display', 'none')
+            }
+          })
+
+          setSession(sessionKey, targetId, false)
+        } else {
+          // 同时只能展开一个节点
+          if (element.hasAttribute('expaned-limit')) {
+            sections.forEach(section => {
+              let content = section.querySelector(`.${MIP_ACCORDION_CONTENT_CLASS}`)
+              let header = section.querySelector(`.${MIP_ACCORDION_HEADER_CLASS}`)
+              let id = header.getAttribute(ARIA_CONTROLS_ATTRIBUTE)
+
+              section.removeAttribute(EXPANDED_ATTRIBUTE)
+              content.removeAttribute(ARIA_EXPANDED_ATTRIBUTE)
+              setSession(sessionKey, id, false)
+
+              heightAni({
+                ele: content,
+                type: 'fold',
+                transitionTime: aniTime
+              })
+            })
+          }
+
+          targetContent.setAttribute(ARIA_EXPANDED_ATTRIBUTE, OPEN_STATUS)
+
+          sections.forEach(section => {
+            let $showMore = section.querySelector('.show-more')
+            let $showLess = section.querySelector('.show-less')
+            section.setAttribute(EXPANDED_ATTRIBUTE, OPEN_STATUS)
+            if ($showMore && $showLess) {
+              util.css($showLess, 'display', 'block')
+              util.css($showMore, 'display', 'none')
+            }
+          })
+
+          // unfold animation
+          heightAni({
+            ele: targetContent,
+            type: 'unfold',
+            oriHeight: 0,
+            transitionTime: aniTime
+          })
+
+          setSession(sessionKey, targetId, true)
+        }
+      })
+    })
   }
 }
