@@ -7,57 +7,7 @@
 
 import './mip-nav-slidedown.less'
 
-let {CustomElement, util} = MIP
-
-/**
- * 渲染移动端头部以及按钮
- *
- * @param {HTMLElement} element 组件自身 DOM
- */
-function render (element) {
-  let id = element.getAttribute('data-id')
-  let showBrand = !(element.getAttribute('data-showBrand') === 0)
-  let brandName = element.getAttribute('data-brandName') || ''
-  let brandHref = element.getAttribute('data-brandhref') || '#'
-  let ulNav = element.querySelector('#' + id)
-  let container = document.createElement('div')
-
-  const ICON_BAR_HTML = `<span class="icon-bar"></span>`
-  const btnWrap = `
-    <div class="navbar-header">
-      <button class="navbar-toggle collapsed" type="button" data-target="#${id}" aria-controls="${id}" aria-expanded="false">
-        <span class="sr-only">导航</span>
-        ${ICON_BAR_HTML}${ICON_BAR_HTML}${ICON_BAR_HTML}
-      </button>
-      ${showBrand ? '<a href=' + brandHref + ' class="navbar-brand">' + brandName + '</a>' : ''}
-    </div>`
-
-  container.appendChild(util.dom.create(btnWrap))
-  container.appendChild(ulNav)
-  element.appendChild(container)
-  document.querySelector('.mip-nav-wrapper').classList.add('show')
-}
-
-/**
- * 给菜单和关闭按钮绑定事件，clseBtn 点击 trigger
- *
- * @param {HTMLElement} element 组件自身 DOM
- */
-function bindEvents (element) {
-  let toggleBtn = element.querySelector('.navbar-header .navbar-toggle')
-  let closeBtn = element.querySelector('#navbar-wise-close-btn')
-
-  toggleBtn && toggleBtn.addEventListener('click', navClickHandler, false)
-
-  if (closeBtn) {
-    closeBtn.addEventListener('touchstart', () => element.classList.add('down'))
-    closeBtn.addEventListener('mousedown', () => element.classList.add('down'))
-    closeBtn.addEventListener('touchend', () => element.classList.remove('down'))
-    closeBtn.addEventListener('mouseup', () => element.classList.remove('down'))
-    closeBtn.addEventListener('click', navClickHandler, false)
-    closeBtn.addEventListener('touchend', navClickHandler, false)
-  }
-}
+const {CustomElement, util} = MIP
 
 /**
  * 按钮事件处理
@@ -71,7 +21,7 @@ function navClickHandler () {
 
   // 关闭菜单
   if ($wiseNav.classList.contains('in')) {
-    util.css($wiseNav, 'height', '0px')
+    util.css($wiseNav, 'height', '0')
     util.css(document.body, 'overflow', 'scroll')
     util.css(document.querySelector('.navbar-wise-close'), 'margin-top', '20px')
     document.body.classList.add('no-scroll')
@@ -120,8 +70,56 @@ export default class MipNavSlidedown extends CustomElement {
    */
   build () {
     let element = this.element
-    render(element)
-    bindEvents(element)
-    this.element.removeAttribute('style')
+    this.render()
+    this.bindEvents()
+    element.removeAttribute('style')
+  }
+
+  /**
+   * 给菜单和关闭按钮绑定事件，clseBtn 点击 trigger
+   */
+  bindEvents () {
+    let element = this.element
+    let toggleBtn = element.querySelector('.navbar-header .navbar-toggle')
+    let closeBtn = element.querySelector('#navbar-wise-close-btn')
+
+    toggleBtn && toggleBtn.addEventListener('click', navClickHandler)
+
+    if (closeBtn) {
+      closeBtn.addEventListener('touchstart', () => element.classList.add('down'))
+      closeBtn.addEventListener('mousedown', () => element.classList.add('down'))
+      closeBtn.addEventListener('touchend', () => element.classList.remove('down'))
+      closeBtn.addEventListener('mouseup', () => element.classList.remove('down'))
+      closeBtn.addEventListener('click', navClickHandler)
+      closeBtn.addEventListener('touchend', navClickHandler)
+    }
+  }
+
+  /**
+   * 渲染移动端头部以及按钮
+   */
+  render () {
+    let element = this.element
+    let id = element.getAttribute('data-id')
+    let showBrand = !(element.getAttribute('data-showBrand') === 0)
+    let brandName = element.getAttribute('data-brandName') || ''
+    let brandHref = element.getAttribute('data-brandhref') || '#'
+    let ulNav = element.querySelector('#' + id)
+    let container = document.createElement('div')
+
+    const ICON_BAR_HTML = `<span class="icon-bar"></span>`
+    const btnWrap = `
+      <div class="navbar-header">
+        <button class="navbar-toggle collapsed" type="button" data-target="#${id}" aria-controls="${id}" aria-expanded="false">
+          <span class="sr-only">导航</span>
+          ${ICON_BAR_HTML}${ICON_BAR_HTML}${ICON_BAR_HTML}
+        </button>
+        ${showBrand ? '<a href=' + brandHref + ' class="navbar-brand">' + brandName + '</a>' : ''}
+      </div>`
+
+    container.appendChild(util.dom.create(btnWrap))
+    container.appendChild(ulNav)
+    element.appendChild(container)
+    document.querySelector('.mip-nav-wrapper').classList.add('show')
   }
 }
