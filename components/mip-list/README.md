@@ -185,5 +185,53 @@
         isEnd: 1 
     }
 }  
-```     
+```   
+### 点击切换分类
 
+[info]有 `has-class` 属性时，`mip-list` 标签必须要有 `id` 属性，同时需要有点击按钮的 DOM 节点，并且此节点有 `on` 属性，属性值为：`tap:对应mip-list的id.class`和`[class-url]`属性，属性值为对应分类数据的`url`
+
+```html
+<div>
+  <button on = "tap:list.class" [class-url] = "http://xxx/xxx1.json">分类1</button>
+  <button on = "tap:list.class" [class-url] = "http://xxx/xxx2.json">分类2</button>
+</div>
+<mip-list 
+  template="mip-template-id"
+  id="mip-list"
+  has-class>
+  <template type="mip-mustache" id="mip-template-id">
+    <div>
+      <li>{{key}}: {{value}}</li>
+    </div>
+  </template>
+</mip-list>
+```
+
+## 属性
+
+### synchronous-data
+
+说明：使用同步数据开关属性    
+必选项：否    
+类型：字符串    
+取值范围：无    
+单位：无    
+默认值：无 
+
+### id
+
+说明：`<mip-list>` 组件 `id`    
+必选项：否    
+类型：字符串    
+取值范围：字符串    
+单位：无    
+默认值：无
+
+### has-class
+
+说明：是否给列表绑定分类  
+必选项：否    
+类型：字符串    
+取值范围：无    
+单位：无    
+默认值：无 
