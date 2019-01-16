@@ -2,30 +2,33 @@
  * @file mip-iqiyi-video.js 视频组件
  * @author chenyongle
  */
-const { CustomElement } = MIP
+
+const {CustomElement} = MIP
+
 /**
  * 获取 element 中所有 data-param-* 的键值对
  *
  * @param {HTMLElement} element element
- * @param {Function} optComputeParamNameFunc optComputeParamNameFunc
- * @param {RegExp} optParamPattern optParamPattern
+ * @param {RegExp} optParamPattern 正则匹配
+ * @returns {Object} 返回参数对象
  */
-function getDataParams (element, optComputeParamNameFunc = key => key,
-  optParamPattern = /^param(.+)/) {
+function getDataParams (element, optParamPattern = /^param(.+)/) {
   let {dataset} = element
   let params = {}
   for (let key of Object.keys(dataset)) {
     let matches = key.match(optParamPattern)
     if (matches) {
       let param = matches[1][0].toLowerCase() + matches[1].substr(1)
-      params[optComputeParamNameFunc(param)] = dataset[key]
+      params[param] = dataset[key]
     }
   }
   return params
 }
+
 function addParamsToUrl (src, params) {
   return src + `&${serializeQS(params)}`
 }
+
 function serializeQS (params) {
   let serialize = []
   for (let [key, value] of Object.entries(params)) {
@@ -59,7 +62,7 @@ export default class MIPIqiyiVideo extends CustomElement {
     this.videoTvid = null
   }
   build () {
-    const iframe = document.createElement('iframe')
+    let iframe = document.createElement('iframe')
     this.iframe = iframe
     this.iframe.setAttribute('frameborder', 0)
     this.iframe.setAttribute('allowfullscreen', true)
@@ -92,8 +95,7 @@ export default class MIPIqiyiVideo extends CustomElement {
     }
     let src = 'https://open.iqiyi.com/developer/player_js/coopPlayerIndex.html' +
       '?vid=' + this.videoVid + '&tvId=' + this.videoTvid
-    const params = getDataParams(this.element)
-    this.iframeSrc = src = addParamsToUrl(src, params)
+    this.iframeSrc = src = addParamsToUrl(src, getDataParams(this.element))
     return src
   }
   getVideoVid () {
