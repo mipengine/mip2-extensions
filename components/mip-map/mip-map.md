@@ -17,8 +17,7 @@
   <script type="application/json">
     {
       "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
-      "hide-map": false,
-      "get-position": true,
+      "get-position": false,
       "location": {
         "province": "北京",
         "city": "北京市",
@@ -72,8 +71,11 @@
     },
     "controls": {
       "NavigationControl": {
+        "showZoomInfo": true,
+        "enableGeolocation": true
       },
       "MapTypeControl": {
+        "type": "BMAP_MAPTYPE_CONTROL_DROPDOWN"
       }
     },
     "info": {
@@ -94,13 +96,6 @@
 ### data-only-get-sdk
 
 说明：是否只加载地图 SDK
-必填：否
-格式：Boolean
-默认：false
-
-### hide-map
-
-说明：是否隐藏地图
 必填：否
 格式：Boolean
 默认：false
