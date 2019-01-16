@@ -11,9 +11,7 @@ let {
   viewport
 } = MIP
 
-let filter = 'all'
-
-let filterKey = 'mipFilterKey'
+const FILTER_KEY = 'mipFilterKey'
 
 const customUtil = {
   // used multiple times
@@ -50,9 +48,7 @@ const customUtil = {
 
 export default class MipFilter extends CustomElement {
   build () {
-    let {
-      element
-    } = this
+    const element = this.element
     let filter = new Filter({
       filterWrap: element.querySelector(element.getAttribute('mip-filter-filterWrap')),
       itemWrap: element.querySelector(element.getAttribute('mip-filter-itemWrap')),
@@ -64,64 +60,15 @@ export default class MipFilter extends CustomElement {
 
 class Filter {
   constructor (opt = {}) {
-    let {
-      filterWrap,
-      itemWrap
-    } = opt
-    this.opt = opt
-
-    // opt opt.filterWrap opt.itemWrap必须被定义
-    if (!opt || !filterWrap || !itemWrap) {
+    if (!opt || !opt.filterWrap || !opt.itemWrap) {
       return
     }
-
     opt.mobileWidth = opt.mobileWidth || 767
     opt.emptyTip = opt.emptyTip || '没有符合的内容'
 
-    /**
-     * shoot: on mobile when filter btn is clicked.
-     * slide up or down the whole filter.
-     */
-    this.toggleFilter = function () {
-      let listWrap = filterWrap.querySelector('.filter-list')
-      // hide and show filter list only on wise
-      if (viewport.getWidth() <= opt.mobileWidth) {
-        if (customUtil.hasClass(listWrap, 'show')) {
-          // hide filter list
-          listWrap.style.height = '0px'
-        } else {
-          // show filter list
-          util.css(listWrap, {
-            transition: 'none',
-            height: 'auto',
-            WebkitTransition: 'none'
-          })
-          let height = getComputedStyle(listWrap).height
-          // target height acquired, now start the animation
-          util.css(listWrap, {
-            height: '0px',
-            transition: 'height 0.3s'
-          })
-          setTimeout(function () {
-            // trick: in setTimeout, or there won't be any animation
-            listWrap.style.height = height
-          }, 10)
-        }
-        customUtil.toggleClass(listWrap, 'show')
-      }
-    }
-
-    // add click event to all filters when clicked, select the filter,
-    // if wise, collapse filter list.
-    let self = this
-
-    util.event.delegate(opt.filterWrap, '.filter-link', 'click', function () {
-      self.filterSelect(this)
-    })
-    // add click event to filter result, which show only on wise.
-    // when clicked, uncollapse and collapse filter list.
-    opt.filterWrap.querySelector('.filter-result').addEventListener('click', self.toggleFilter)
-    // opt.filterWrap.querySelector('.filter-result').addEventListener('click', self.toggleFilter)
+    this.opt = opt
+    this.filterWrap = opt.filterWrap
+    this.itemWrap = opt.itemWrap
   }
 
   /**
@@ -129,15 +76,61 @@ class Filter {
    * add filter color and text to default-"none"
    */
   init () {
-    filter = hash.get(filterKey)
-    this.setHash(filter)
-    let filterTarget = this.opt.filterWrap.querySelector('[data-filtertype="' + filter + '"]')
-    filterTarget = filterTarget || this.opt.filterWrap.querySelector('[data-filtertype="all"]')
+    const filterValue = hash.get(FILTER_KEY) || 'all'
+    let filterTarget = this.filterWrap.querySelector('[data-filtertype="' + filterValue + '"]')
+    filterTarget = filterTarget || this.filterWrap.querySelector('[data-filtertype="all"]')
+    this.setHash(filterValue)
     this.filterSelect(filterTarget)
+
+    // add click event to all filters when clicked
+    let self = this
+    util.event.delegate(this.filterWrap, '.filter-link', 'click', function () {
+      self.filterSelect(this)
+    })
+    // add click event to filter result, which show only on mobile.
+    // when clicked, uncollapse and collapse filter list.
+    if (viewport.getWidth() <= this.opt.mobileWidth) {
+      this.filterWrap.querySelector('.filter-result').addEventListener('click', () => {
+        this.toggleFilter()
+      })
+    }
+  }
+
+  /**
+   * shoot: on mobile when filter btn is clicked.
+   * slide up or down the whole filter.
+   */
+  toggleFilter () {
+    const listWrap = this.filterWrap.querySelector('.filter-list')
+    if (customUtil.hasClass(listWrap, 'show')) {
+      // hide filter list
+      listWrap.style.height = '0px'
+    } else {
+      // show filter list
+      util.css(listWrap, {
+        transition: 'none',
+        height: 'auto',
+        WebkitTransition: 'none'
+      })
+
+      // target height acquired, now start the animation
+      const height = window.getComputedStyle(listWrap).height
+      util.css(listWrap, {
+        height: '0px',
+        transition: 'height 0.3s'
+      })
+
+      setTimeout(() => {
+        // trick: in setTimeout, or there won't be any animation
+        listWrap.style.height = height
+      }, 10)
+    }
+    customUtil.toggleClass(listWrap, 'show')
   }
 
   /**
    * @param {string} setValue
+   *
    * 修改url
    */
   setHash (setValue) {
@@ -145,22 +138,23 @@ class Filter {
     let hashKeys = []
     if (hasTreeKeys.length > 0) {
       for (let key of hasTreeKeys) {
-        key !== filterKey && hash.get(key) && hashKeys.push(key + '=' + hash.get(key))
+        key !== FILTER_KEY && hash.get(key) && hashKeys.push(key + '=' + hash.get(key))
       }
     }
 
-    hashKeys.push(filterKey + '=' + setValue)
+    hashKeys.push(FILTER_KEY + '=' + setValue)
     window.location.hash = '&' + hashKeys.join('&')
     hash.refreshHashTree()
   }
 
   /**
    * @param {Object} target HTML Element
+   *
    * shoot: when a filter is clicked.
    * add filter color and text to selected one.
    */
   filterSelect (target) {
-    let oldEle = this.opt.filterWrap.querySelector('.active') || ''
+    let oldEle = this.filterWrap.querySelector('.active') || ''
     let newEle = target
     if (oldEle) {
       customUtil.removeClass(oldEle, 'active')
@@ -171,8 +165,8 @@ class Filter {
     if (text === '查看全部') {
       text = '无'
     }
-    this.opt.filterWrap.querySelector('.filter-result').innerText = this.opt.filterText + text
-    // in wise, when select, collapse filter
+    this.filterWrap.querySelector('.filter-result').innerText = this.opt.filterText + text
+    // in mobile, when select, collapse filter
     if (viewport.getWidth() <= this.opt.mobileWidth && oldEle) {
       this.toggleFilter()
     }
@@ -201,32 +195,29 @@ class Filter {
    * shoot: when filter btn is clicked.
    * hide items that cant pass the filter.
    */
-  applyFilter (filter) {
-    let num = 0
-    // hack: arr.forEach() cannot be used in uc&qq browser
-    for (let item of this.opt.itemWrap.querySelectorAll('.filter-item')) {
-      if (item.dataset.filtertype.match(customUtil.containReg(filter)) || filter === 'all') {
-        num++
+  applyFilter (selectedFilter) {
+    const filterItems = this.itemWrap.querySelectorAll('.filter-item')
+    let filterMatched = false
+    for (let item of filterItems) {
+      if (item.dataset.filtertype.match(customUtil.containReg(selectedFilter)) || selectedFilter === 'all') {
+        filterMatched = true
         item.style.display = 'block'
       } else {
         item.style.display = 'none'
       }
     }
-    if (!num) {
-      // no item can be shown, add "no item" text
-      if (!this.opt.itemWrap.querySelector('.filter-emptytip')) {
-        let emptyTip = util.dom.create('<div></div>')
-        customUtil.addClass(emptyTip, 'filter-emptytip')
-        emptyTip.innerHTML = this.opt.emptyTip
-        this.opt.itemWrap.appendChild(emptyTip)
-      }
-    } else {
-      let emptyTip = this.opt.itemWrap.querySelector('.filter-emptytip')
-      if (emptyTip) {
-        this.opt.itemWrap.removeChild(emptyTip)
-      }
+    // no item can be shown, add "no item" text
+    let emptyTip = this.itemWrap.querySelector('.filter-emptytip')
+    if (!emptyTip) {
+      emptyTip = util.dom.create('<div></div>')
+      customUtil.addClass(emptyTip, 'filter-emptytip')
+      emptyTip.innerHTML = this.opt.emptyTip
+      this.itemWrap.appendChild(emptyTip)
     }
-    this.setHash(filter)
+    if (filterMatched) {
+      this.itemWrap.removeChild(emptyTip)
+    }
+    this.setHash(selectedFilter)
     viewport.setScrollTop(0)
   }
 }
