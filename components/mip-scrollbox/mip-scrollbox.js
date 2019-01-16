@@ -7,7 +7,7 @@
 
 import './mip-scrollbox.less'
 
-let {CustomElement, util, viewport} = MIP
+const {CustomElement, util, viewport} = MIP
 
 /**
  * 默认配置
@@ -46,7 +46,7 @@ export default class MIPScrollbox extends CustomElement {
    */
   build () {
     let element = this.element
-    let config = util.fn.extend({}, DEFAULTS, element.dataset)
+    let config = Object.assign({}, DEFAULTS, element.dataset)
     let updateView = util.fn.throttle(() => viewport.trigger('changed'), 200)
 
     // 绑定滚动事件触发更新视图
@@ -59,15 +59,18 @@ export default class MIPScrollbox extends CustomElement {
 
     let nodes = element.querySelectorAll('[data-item]')
     let width = 0
-    let cols = 0;
+    let cols = 0
+    let nodesArr = [].slice.call(nodes)
 
-    [].slice.call(nodes).forEach(node => {
+    // 这个 for 循环是用来计算宽度 width 的
+    nodesArr.forEach(node => {
       let col = node.dataset.col || 3
       width += col * config.rate
       cols += col - 0
-    });
+    })
 
-    [].slice.call(nodes).forEach(node => {
+    // 这个 for 循序是需要用到通过上面 for 循序计算出来的总的 width
+    nodesArr.forEach(node => {
       node.style.width = (node.dataset.col || 3) * config.rate / width * 100 + '%'
       node.style.paddingRight = config.right / cols + '%'
     })
