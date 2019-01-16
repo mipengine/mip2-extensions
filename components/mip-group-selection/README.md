@@ -250,19 +250,25 @@ https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
 ### 配合事件绑定
 当用户选择某个元素时，分组选择组件会抛出名为 `selected` 的事件(event)，使用组件[事件通信机制](https://www.mipengine.org/doc/3-widget/6-help/3-mip-normal.html)可以监听这个事件，并与其他组件/数据交互（action）。
 
-如下方示例，当分组选择组件`mip-group-selection`中`selected`事件(event)被触发时，调用 id 为`mygototop01`组件的`gototop`作为响应（action）。
+如下方示例，当分组选择组件`mip-group-selection`中`selected`事件(event)被触发时，调用 id 为`mytoggle1`组件的`toggle`作为响应（action）。
 
 ```html
 <mip-group-selection
 	class="mip-hidden"
-	on="selected:mygototop01.gototop"
+	on="selected:mytoggle1.toggle"
 	>
 	<!--内容略-->
 </mip-group-selection>
 
-<mip-fixed type="gototop">
-  <mip-gototop id="mygototop01"></mip-gototop>
+<mip-fixed type="right" bottom="10px">
+  <mip-toggle id="mytoggle1">
+    <!--内容略-->
+  </mip-toggle>
 </mip-fixed>
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="/mip-group-selection/mip-group-selection.js"></script>
+<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+<script src="https://c.mipcdn.com/static/v1/mip-toggle/mip-toggle.js"></script>
 ```
 
 ## 属性说明
