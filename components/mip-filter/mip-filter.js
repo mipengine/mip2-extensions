@@ -14,29 +14,24 @@ let {
 const FILTER_KEY = 'mipFilterKey'
 
 const customUtil = {
-  // used multiple times
   containReg (txt) {
     return new RegExp('(\\s+|^)' + txt + '(\\s+|$)')
   },
-  // check if dom has certain class
   hasClass (ele, cls) {
     return ele.className.match(this.containReg(cls))
   },
-  // add certain class to dom
   addClass (ele, cls) {
     if (this.hasClass(ele, cls)) {
       return
     }
     ele.className = (ele.className + ' ' + cls).trim()
   },
-  // remove certain class from dom
   removeClass (ele, cls) {
     if (!this.hasClass(ele, cls)) {
       return
     }
     ele.className = ele.className.replace(this.containReg(cls), ' ').trim()
   },
-  // toggle certain class of dom
   toggleClass (ele, cls) {
     if (this.hasClass(ele, cls)) {
       this.removeClass(ele, cls)
@@ -72,8 +67,7 @@ class Filter {
   }
 
   /**
-   * shoot: at first time,
-   * add filter color and text to default-"none"
+   * 初始化当前 filter
    */
   init () {
     const filterValue = hash.get(FILTER_KEY) || 'all'
@@ -82,13 +76,11 @@ class Filter {
     this.setHash(filterValue)
     this.filterSelect(filterTarget)
 
-    // add click event to all filters when clicked
     let self = this
     util.event.delegate(this.filterWrap, '.filter-link', 'click', function () {
       self.filterSelect(this)
     })
-    // add click event to filter result, which show only on mobile.
-    // when clicked, uncollapse and collapse filter list.
+    // 仅在移动设备下展现筛选结果
     if (viewport.getWidth() <= this.opt.mobileWidth) {
       this.filterWrap.querySelector('.filter-result').addEventListener('click', () => {
         this.toggleFilter()
@@ -97,31 +89,28 @@ class Filter {
   }
 
   /**
-   * shoot: on mobile when filter btn is clicked.
-   * slide up or down the whole filter.
+   * 点击筛选结果时，展开/收起筛选列表
    */
   toggleFilter () {
     const listWrap = this.filterWrap.querySelector('.filter-list')
     if (customUtil.hasClass(listWrap, 'show')) {
-      // hide filter list
-      listWrap.style.height = '0px'
+      listWrap.style.height = 0
     } else {
-      // show filter list
       util.css(listWrap, {
         transition: 'none',
         height: 'auto',
         WebkitTransition: 'none'
       })
 
-      // target height acquired, now start the animation
+      // 收起动画
       const height = window.getComputedStyle(listWrap).height
       util.css(listWrap, {
-        height: '0px',
+        height: 0,
         transition: 'height 0.3s'
       })
 
       setTimeout(() => {
-        // trick: in setTimeout, or there won't be any animation
+        // trick: 使用 setTimeout 设置动画，否则动画不执行
         listWrap.style.height = height
       }, 10)
     }
@@ -129,9 +118,9 @@ class Filter {
   }
 
   /**
-   * @param {string} setValue
+   * 修改 url hash
    *
-   * 修改url
+   * @param {string} setValue
    */
   setHash (setValue) {
     let hasTreeKeys = Object.keys(hash.hashTree)
@@ -148,10 +137,9 @@ class Filter {
   }
 
   /**
-   * @param {Object} target HTML Element
+   * 选择筛选项
    *
-   * shoot: when a filter is clicked.
-   * add filter color and text to selected one.
+   * @param {Object} target HTML Element
    */
   filterSelect (target) {
     let oldEle = this.filterWrap.querySelector('.active') || ''
@@ -166,7 +154,7 @@ class Filter {
       text = '无'
     }
     this.filterWrap.querySelector('.filter-result').innerText = this.opt.filterText + text
-    // in mobile, when select, collapse filter
+    // 移动设备中，点击选中筛选项后，自动折叠筛选列表
     if (viewport.getWidth() <= this.opt.mobileWidth && oldEle) {
       this.toggleFilter()
     }
@@ -174,7 +162,7 @@ class Filter {
   }
 
   /**
-   * Get Node Text
+   * 获取 Dom 文本
    *
    * @param {Object} node HTML Element
    * @returns {string} node Text
@@ -191,9 +179,9 @@ class Filter {
   }
 
   /**
-   * @param {string} filter
-   * shoot: when filter btn is clicked.
-   * hide items that cant pass the filter.
+   * 筛选功能
+   *
+   * @param {string} selectedFilter
    */
   applyFilter (selectedFilter) {
     const filterItems = this.itemWrap.querySelectorAll('.filter-item')
@@ -206,7 +194,7 @@ class Filter {
         item.style.display = 'none'
       }
     }
-    // no item can be shown, add "no item" text
+    // 没有内容展示时提示
     let emptyTip = this.itemWrap.querySelector('.filter-emptytip')
     if (!emptyTip) {
       emptyTip = util.dom.create('<div></div>')
