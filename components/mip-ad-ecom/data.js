@@ -90,7 +90,7 @@ function updatePaths (config) {
 }
 
 /**
- * [getSubString 根据正则获取子串]
+ * 根据正则获取子串
  *
  * @param   {string}  str 截取前字符串
  * @param   {RegExp}  reg 正则表达式

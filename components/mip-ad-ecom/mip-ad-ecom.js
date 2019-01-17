@@ -10,7 +10,9 @@ import dom from './dom'
 import dataProcessor from './data'
 import './mip-ad-ecom.less'
 
-const {util, viewer, CustomElement} = MIP
+const { util, standalone, CustomElement } = MIP
+const { fn, log } = util
+const logger = log('mip-ad-ecom')
 
 /**
  * mip-ad-ecom 组件的外层容器 class 名
@@ -76,7 +78,7 @@ export default class MIPAdEcom extends CustomElement {
         }
         return me.fetchData(me.commonUrl, me.render.bind(me), ele)
       }
-      return console.warn('获取不到配置！！')
+      return logger.warn(ele, '获取不到配置')
     }
 
     me.placeholder = dom.addPlaceholder(ele)
@@ -96,9 +98,10 @@ export default class MIPAdEcom extends CustomElement {
     let isShowCustom = true
 
     // 非结果页进入不展现定制化内容
-    if (!viewer.isIframed ||
+    if (standalone ||
       // 非百度、cache 不展现定制化内容
-      !(me.regexs.domain.test(window.document.referrer) || util.fn.isCacheUrl(location.href)) ||
+      !(me.regexs.domain.test(window.document.referrer) ||
+      fn.isCacheUrl(location.href)) ||
       // 无异步 url 不展现定制化内容
       !me.commonUrl
     ) {
@@ -191,24 +194,25 @@ export default class MIPAdEcom extends CustomElement {
     if (!url) {
       return
     }
-    // fetch
+
+    // 获取数据
     fetch(url, {credentials: 'include'})
       .then(res => res.json())
       .then(data => {
         // 返回数据问题
         if (data && data.errno) {
-          console.warn(data.errmsg)
-          me.element.remove()
+          logger.warn(element, data.errmsg)
+          element.remove()
           return
         }
         callback && callback(data.data, element)
         let adContainers = [...document.querySelectorAll(`[${AD_CONTAINER}]`)]
         adContainers.forEach(item => item.classList.add('fadein'))
         me.placeholder && dom.removePlaceholder(me.placeholder)
-      }, error => {
-        me.element.remove()
-        console.warn(error)
-      }).catch(console.warn)
+      }, err => {
+        element.remove()
+        logger.warn(err)
+      }).catch(err => logger.warn(element, err))
   }
 
   /**

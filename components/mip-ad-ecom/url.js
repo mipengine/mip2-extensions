@@ -8,8 +8,9 @@
 import dom from './dom'
 import dataProcessor from './data'
 
-const util = MIP.util
-const {jsonParse, fn} = util
+const { util } = MIP
+const { jsonParse, fn, log } = util
+const logger = log('mip-ad-ecom')
 
 /**
  * mip 连接特殊情况，从 hash 中获取参数
@@ -56,12 +57,10 @@ function getUserParams (element) {
     if (script) {
       userParams = jsonParse(script.textContent)
       if (!userParams.accid) {
-        console.warn('mip-ad-ecom 缺少 accid 参数')
-        return
+        return logger.warn(element, '缺少 accid 属性')
       }
       if (!userParams.title) {
-        console.warn('mip-ad-ecom 缺少 title 参数')
-        return
+        return logger.warn(element, '缺少 title 属性')
       }
 
       // 站长传过来的title 是编码后的，需要进行解码
@@ -72,10 +71,9 @@ function getUserParams (element) {
       }
     }
   } catch (err) {
-    console.warn('json is illegal'); // eslint-disable-line
-    console.warn(err); // eslint-disable-line
-    return
+    return logger.warn(element, '不正确的 JSON', err)
   }
+
   return userParams
 }
 
@@ -91,7 +89,7 @@ function getUrlParams (element) {
     return null
   }
   // 唯一与 mip-custom 不同的地方，请求增加参数 &from=cmip
-  return fn.extend(getHashParams(), userParams, {'from': 'cmip'})
+  return fn.extend(getHashParams(), userParams, {from: 'cmip'})
 }
 
 /**

@@ -7,9 +7,16 @@
 
 import dataProcessor from './data'
 
-const {util, templates, viewer} = MIP
+const { util, templates, viewer } = MIP
 const fixedElement = viewer.fixedElement
 const REGEXS = dataProcessor.REGEXS
+
+/**
+ * mip-ad-ecom placeholder 类名
+ *
+ * @type {string}
+ */
+const PLACEHOLDER_PREFIX = 'mip-ad-ecom-placeholder'
 
 let maxzIndex = 0
 let excr = 44
@@ -185,14 +192,13 @@ function render (element, tplData, container) {
  * @param  {HTMLElement} fixedLayer  fixed body
  */
 function proxyLink (element, fixedLayer) {
-  util.event.delegate(element, 'a', 'click', (event) => {
+  util.event.delegate(element, 'a', 'click', event => {
     if (this.hasAttribute('mip-link') || /clk_info/.test(this.href)) {
       return
     }
 
     // 处理需要单独发送日志的 a 标签
     let link = this.getAttribute('data-log-href')
-
     let path = null
 
     // @todo: 这个地方的 log 没有引入
@@ -236,7 +242,6 @@ function getConfigScriptElement (elem) {
  */
 function addPlaceholder (element) {
   let placeholder = document.createElement('div')
-  const PLACEHOLDER_PREFIX = 'mip-ad-ecom-placeholder'
 
   let getHtml = (num, suffix) => {
     let ret = ''
