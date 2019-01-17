@@ -5,8 +5,9 @@
 
 /* global MIP, _czc */
 
-const {fn, Gesture, util} = MIP
-const jsonParse = util.jsonParse
+const { fn, Gesture, util } = MIP
+const { jsonParse, log } = util
+const logger = log('mip-stats-cnzz')
 
 /**
  * 标识 dom 是否被绑定上事件
@@ -14,6 +15,13 @@ const jsonParse = util.jsonParse
  * @type {string}
  */
 const DATA_STATS_CNZZ_FALG = 'data-stats-cnzz-flag'
+
+/**
+ * 标识需要绑定站长统计事件的 DOM
+ *
+ * @type {string}
+ */
+const DATA_STATS_CNZZ_OBJ_ATTR = 'data-stats-cnzz-obj'
 
 export default class MIPStatsCnzz extends MIP.CustomElement {
   /**
@@ -33,6 +41,7 @@ export default class MIPStatsCnzz extends MIP.CustomElement {
         lineNum = 11
       }
     }
+
     if (token) {
       window._czc = window._czc || []
       _czc.push([
@@ -44,12 +53,11 @@ export default class MIPStatsCnzz extends MIP.CustomElement {
       let src = `https://s${lineNum}.cnzz.com/z_stat.php?id=${token}&web_id=${token}`
 
       setConfig && _czc.push(buildArry(decodeURIComponent(setConfig)))
-      cnzzScript.setAttribute('language', 'javaScript')
       cnzzScript.src = src
       element.appendChild(cnzzScript)
       bindEle()
     } else {
-      console.warn('请配置统计所需 token')
+      logger.warn(element, '请配置统计所需 token')
     }
   }
 }
@@ -57,12 +65,12 @@ export default class MIPStatsCnzz extends MIP.CustomElement {
 /**
  * 事件处理句柄
  *
- * @param {HTMLElement} tagBox 带有 data-stats-cnzz-obj 属性值的 DOM 元素
+ * @param {HTMLElement} tagBoxs 带有 data-stats-cnzz-obj 属性值的 DOM 元素
  */
-function bindEleHandler (tagBox) {
-  for (let index = 0; index < tagBox.length; index++) {
-    let target = tagBox[index]
-    let statusData = target.getAttribute('data-stats-cnzz-obj')
+function bindEleHandler (tagBoxs) {
+  for (let index = 0; index < tagBoxs.length; index++) {
+    let target = tagBoxs[index]
+    let statusData = target.getAttribute(DATA_STATS_CNZZ_OBJ_ATTR)
     let hasBindFlag = target.hasAttribute(DATA_STATS_CNZZ_FALG)
 
     // 检测 statusData 是否存在
@@ -73,7 +81,7 @@ function bindEleHandler (tagBox) {
     try {
       statusData = jsonParse(decodeURIComponent(statusData))
     } catch (e) {
-      console.warn('事件追踪 data-stats-cnzz-obj 数据不是合法的 JSON')
+      logger.warn(target, `事件追踪 ${DATA_STATS_CNZZ_OBJ_ATTR} 数据不是合法的 JSON`)
       continue
     }
 
@@ -112,7 +120,7 @@ function bindEleHandler (tagBox) {
  * 绑定的事件触发
  */
 function eventHandler () {
-  let tempData = this.getAttribute('data-stats-cnzz-obj')
+  let tempData = this.getAttribute(DATA_STATS_CNZZ_OBJ_ATTR)
   if (!tempData) {
     return
   }
@@ -124,7 +132,7 @@ function eventHandler () {
     let attrData = buildArry(statusJson.data)
     _czc.push(attrData)
   } catch (e) {
-    return console.warn('事件追踪 data-stats-cnzz-obj 数据不是合法的 JSON')
+    return logger.warn(this, `事件追踪 ${DATA_STATS_CNZZ_OBJ_ATTR} 数据不是合法的 JSON`)
   }
 }
 
@@ -135,7 +143,7 @@ function bindEle () {
   let now = Date.now()
   let intervalTimer = setInterval(() => {
     // 获取所有需要触发的 DOM
-    bindEleHandler(document.querySelectorAll('*[data-stats-cnzz-obj]'))
+    bindEleHandler(document.querySelectorAll(`*[${DATA_STATS_CNZZ_OBJ_ATTR}]`))
     // 由于存在异步渲染，需要设定一个时间段进行轮询确保都绑定上了事件
     if (Date.now() - now >= 8000) {
       clearInterval(intervalTimer)
