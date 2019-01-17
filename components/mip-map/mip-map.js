@@ -1,19 +1,36 @@
 import './mip-map.less'
 
-let {
-  CustomElement,
-  util,
-  viewer,
-  sandbox
-} = MIP
-
+const { CustomElement, util, viewer, sandbox } = MIP
 const log = util.log('mip-map')
+
+/**
+ * 工具方法 拼接键值对
+ *
+ * @param {Object} obj 需要处理的对象
+ * @returns {string} 拼接字符串
+ */
+function traverseAndConcat (obj) {
+  let output = ''
+  Object.keys(obj).forEach(key => {
+    let val = obj[key]
+    if (val) {
+      output += val
+    }
+  })
+  return output
+}
 
 export default class MIPMap extends CustomElement {
   constructor (...args) {
     super(...args)
-    let ele = this.element
-    let config = this.jsonParse(ele.querySelector('script[type="application/json"]').textContent)
+    let el = this.element
+    let config = {}
+
+    try {
+      config = util.jsonParse(el.querySelector('script[type="application/json"]').textContent)
+    } catch (e) {
+      log.warn(e)
+    }
 
     this.ak = config.ak || ''
     this.location = config.location
@@ -26,15 +43,6 @@ export default class MIPMap extends CustomElement {
     this.point = {}
     this.marker = null
     this.currentMarker = null
-  }
-
-  jsonParse (json) {
-    try {
-      return JSON.parse(json)
-    } catch (e) {
-      log.warn(e)
-      return {}
-    }
   }
 
   /**
@@ -86,7 +94,7 @@ export default class MIPMap extends CustomElement {
     let BMap = window.BMap
 
     // 配置地址
-    let address = this.traverseAndConcat(this.location)
+    let address = traverseAndConcat(this.location)
 
     // 没有定位信息，则使用自动定位
     if (!address || !this.location.city) {
@@ -139,39 +147,22 @@ export default class MIPMap extends CustomElement {
    */
   addControls () {
     let BMap = window.BMap
-    for (let key in this.controls) {
-      if (this.controls.hasOwnProperty(key)) {
-        let params = this.controls[key] || {}
+    let controls = this.controls
 
-        // 识别 BMAP_* 常量
-        Object.keys(params).forEach(prop => {
-          let val = params[prop]
-          if (typeof val === 'string' && val.indexOf('BMAP_') !== -1) {
-            params[prop] = window[val]
-          }
-        })
+    Object.keys(controls).forEach(key => {
+      let params = controls[key] || {}
 
-        let Fn = BMap[key]
-        Fn && this.map.addControl(new Fn(params))
-      }
-    }
-  }
+      // 识别 BMAP_* 常量
+      Object.keys(params).forEach(prop => {
+        let val = params[prop]
+        if (typeof val === 'string' && val.indexOf('BMAP_') !== -1) {
+          params[prop] = window[val]
+        }
+      })
 
-  /**
-   * 工具方法 拼接键值对
-   *
-   * @param {Object} obj 需要处理的对象
-   * @returns {string} 拼接字符串
-   */
-  traverseAndConcat (obj) {
-    let output = ''
-    for (let key in obj) {
-      if (!obj.hasOwnProperty(key) || !obj[key]) {
-        continue
-      }
-      output += obj[key]
-    }
-    return output
+      let Fn = BMap[key]
+      Fn && this.map.addControl(new Fn(params))
+    })
   }
 
   /**
@@ -196,9 +187,7 @@ export default class MIPMap extends CustomElement {
     // 暴露自动定位方法
     this.addEventAction('getLocal', () => {
       // 可能会在未完全初始化的时候调用
-      this.getMapJDK().then(() => {
-        this.getCurrentLocation()
-      })
+      this.getMapJDK().then(this.getCurrentLocation.bind(this))
     })
     // 配置控件
     this.controls && this.addControls()
@@ -234,8 +223,6 @@ export default class MIPMap extends CustomElement {
     wrapper.id = 'allmap'
     this.element.appendChild(wrapper)
 
-    this.getMapJDK().then(() => {
-      this.resolveOptions()
-    })
+    this.getMapJDK().then(this.resolveOptions.bind(this))
   }
 }
