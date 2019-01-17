@@ -7,7 +7,10 @@
 
 import './mip-stats-tianrun.less'
 
-export default class MipStatsTianrun extends MIP.CustomElement {
+const { CustomElement, util } = MIP
+const logger = util.log('mip-stats-tianrun')
+
+export default class MipStatsTianrun extends CustomElement {
   /**
    * 渲染组件
    */
@@ -31,7 +34,7 @@ export default class MipStatsTianrun extends MIP.CustomElement {
     }
 
     // 脚本加载失败
-    statsScript.onerror = () => console.warn('天润统计脚本加载失败')
+    statsScript.onerror = () => logger.warn(element, '天润统计脚本加载失败')
 
     element.appendChild(statsScript)
   }
