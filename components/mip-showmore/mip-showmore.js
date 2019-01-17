@@ -5,20 +5,20 @@
 
 import './mip-showmore.less'
 
-const { CustomElement, viewport, util } = MIP
+const { CustomElement, viewport, util, hash } = MIP
 const log = util.log('mip-showmore')
 const DOCUMENT_URL = 'https://www.mipengine.org/v2/components/dynamic-content/mip-showmore.html'
 
 let sidsArr
-const sidsA = '126449'
-const sidsB = '126450'
-const sidsC = '126490'
+const SIDS_A = '126449'
+const SIDS_B = '126450'
+const SIDS_C = '126490'
 
 // 获取实验组id
-if (MIP.hash.hashTree.sids) {
-  sidsArr = MIP.hash.hashTree.sids.value.split('_')
+if (hash.hashTree.sids) {
+  sidsArr = hash.hashTree.sids.value.split('_')
 
-  if (matchIsSids(sidsA)) { // 命中实验组
+  if (matchIsSids(SIDS_A)) { // 命中实验组
     let sidsBtn = document.querySelector('.mip-showmore-btn')
     sidsBtn.innerHTML = '展开全部'
     sidsBtn.classList.add('mip-showmore-btn-sidsA')
@@ -29,7 +29,7 @@ if (MIP.hash.hashTree.sids) {
       document.querySelector('mip-showmore').setAttribute('bottomshadow', 1)
     }
   }
-  if (matchIsSids(sidsB)) { // 命中实验组
+  if (matchIsSids(SIDS_B)) { // 命中实验组
     let sidsBtn = document.querySelector('.mip-showmore-btn')
     sidsBtn.innerHTML = '展开全部'
     sidsBtn.classList.add('mip-showmore-btn-sidsB')
@@ -88,20 +88,20 @@ export default class MIPShowMore extends CustomElement {
   }
 
   build () {
-    if (MIP.hash.hashTree.sids && matchIsSids(sidsC)) { // 命中实验组
+    if (hash.hashTree.sids && matchIsSids(SIDS_C)) { // 命中实验组
       this.element.setAttribute('maxheight', '99999')
     }
     this.analysisDep()
     this.firstInit()
     this.bindClick()
-    this.addEventAction('toggle', (event) => {
+    this.addEventAction('toggle', event => {
       this.toggle(event)
     })
 
     window.addEventListener('orientationchange', () => {
       this.firstInit()
     })
-    if (MIP.hash.hashTree.sids && matchIsSids(sidsC)) { // 命中实验组
+    if (hash.hashTree.sids && matchIsSids(SIDS_C)) { // 命中实验组
       let sidsBtn = document.querySelector('.wrap-showmore-btn')
       sidsBtn.style.cssText = 'display: none!important'
     }
@@ -365,11 +365,11 @@ export default class MIPShowMore extends CustomElement {
         if (closeclass) {
           clickBtn.classList.remove(closeclass)
         } else {
-          if (MIP.hash.hashTree.sids && (matchIsSids(sidsA) || matchIsSids(sidsB))) {
-            clickBtn.innerHTML = clickBtn.dataset.opentext + '<span class="down-icon"></span>'
-          } else {
-            clickBtn.innerHTML = clickBtn.dataset.opentext
+          let suffix = ''
+          if (hash.hashTree.sids && (matchIsSids(SIDS_A) || matchIsSids(SIDS_B))) {
+            suffix = '<span class="down-icon"></span>'
           }
+          clickBtn.innerHTML = clickBtn.dataset.opentext + suffix
         }
       }
       // v1.0.0 显示“展开”按钮
