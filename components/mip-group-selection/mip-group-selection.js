@@ -1,6 +1,6 @@
 import './mip-group-selection.less'
 
-let {
+const {
   util,
   viewer,
   viewport,
@@ -16,34 +16,30 @@ export default class MIPGroupSelection extends CustomElement {
    *
    * @returns {Object} Promise
    */
-  getData () {
+  async getData () {
     let groupData
-    return new Promise((resolve, reject) => {
-      if (this.dataUrl) {
-        fetch(this.dataUrl, {
-          credentials: 'include'
-        }).then(res => {
-          if (res.ok) {
-            res.json().then(data => {
-              resolve(data)
-            })
-          }
-          reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
-        }).catch(() => {
-          reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
-        })
-      } else {
-        groupData = this.element.querySelector('script[type="application/json"]')
-        if (groupData) {
-          try {
-            groupData = JSON.parse(groupData.textContent)
-          } catch (e) {
-            reject(new Error('mip-city-selection 组件 json 配置错误, 请检查 json 格式。'))
-          }
-          resolve(groupData)
+    if (this.dataUrl) {
+      let res = await fetch(this.dataUrl, { credentials: 'include' })
+      if (res.ok) {
+        try {
+          groupData = await res.json()
+        } catch (e) {
+          return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
         }
+        return groupData
       }
-    })
+      return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
+    }
+    groupData = this.element.querySelector('script[type="application/json"]')
+    if (groupData) {
+      try {
+        groupData = util.jsonParse(groupData.textContent)
+      } catch (e) {
+        return Promise.reject(new Error('mip-city-selection 组件 json 配置错误, 请检查 json 格式。'))
+      }
+      return groupData
+    }
+    return null
   }
 
   /**
@@ -132,8 +128,6 @@ export default class MIPGroupSelection extends CustomElement {
       this.bindSidebarClickEvent()
       // 绑定列表元素选择事件
       this.bindItemClickEvent()
-    }, dat => {
-      log.warn(dat)
-    })
+    }, log.warn)
   }
 }

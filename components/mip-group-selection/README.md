@@ -6,8 +6,7 @@ mip-group-selection 分组选择组件，可用于城市分组，英文名分组
 ----|----
 类型|通用
 支持布局|responsive,fixed-height,fill,container,fixed
-所需脚本|https://c.mipcdn.com/static/v2/mip-group-selection/mip-group-selection.js<br>
-https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-group-selection/mip-group-selection.js<br/> https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js
 
 ## 示例
 
@@ -17,8 +16,8 @@ https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
 
 ```html
 <mip-group-selection class="mip-hidden">
-	<!-- 在 application/json 中配置全部城市 -->
-	<script type="application/json">
+  <!-- 在 application/json 中配置全部城市 -->
+  <script type="application/json">
     {
       "list": [{
         "key": "热门",
@@ -85,12 +84,12 @@ https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
       <div class="mip-group-selection-content">
         {{#list}}
           <div class="mip-group-selection-group mip-group-selection-part-letter">
-              <div class="mip-group-selection-title" data-anchor="{{key}}">{{key}}</div>
-              {{#cities}}
+            <div class="mip-group-selection-title" data-anchor="{{key}}">{{key}}</div>
+            {{#cities}}
               <a class="mip-group-selection-item" href="#" data-code="{{code}}" data-pinyin="{{pinyin}}">{{city}}</a>
-              {{/cities}}
+            {{/cities}}
           </div>
-          {{/list}}
+        {{/list}}
       </div>
       <mip-fixed class="mip-group-selection-sidebar-wrapper">
         <div class="mip-group-selection-sidebar">
@@ -99,8 +98,8 @@ https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
           {{/list}}
           </div>
       </mip-fixed>
-		</template>
-	</div>
+    </template>
+  </div>
 </mip-group-selection>
 <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
 ```
@@ -254,10 +253,10 @@ https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js
 
 ```html
 <mip-group-selection
-	class="mip-hidden"
-	on="selected:mytoggle1.toggle"
-	>
-	<!--内容略-->
+  class="mip-hidden"
+  on="selected:mytoggle1.toggle"
+  >
+  <!--内容略-->
 </mip-group-selection>
 
 <mip-fixed type="right" bottom="10px">
