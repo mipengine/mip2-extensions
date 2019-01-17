@@ -5,13 +5,10 @@
  * @author caoru@baidu.com
  */
 import './mip-app-banner.less'
-let {
-  CustomElement,
-  util,
-  viewer
-} = MIP
-let platform = util.platform
-let fetchJsonp = MIP.sandbox.fetchJsonp
+
+const { CustomElement, util, viewer } = MIP
+const { platform } = util
+const { fetchJsonp } = MIP.sandbox
 const log = util.log('mip-app-banner')
 
 // app 调起
@@ -22,18 +19,18 @@ let openButton = {
     })
   },
   onClick (openInAppUrl, installAppUrl) {
-    let timer = setTimeout(function () {
-      window.top.location.href = installAppUrl
+    let timer = setTimeout(() => {
+      viewer.open(installAppUrl, { isMipLink: false, replace: true })
       clearTimeout(timer)
     }, 1500)
     window.open(openInAppUrl, '_top')
-    let visibilitychange = function () {
+    let visibilitychange = () => {
       let tag = document.hidden || document.webkitHidden
       tag && clearTimeout(timer)
     }
     document.addEventListener('visibilitychange', visibilitychange)
     document.addEventListener('webkitvisibilitychange', visibilitychange)
-    window.addEventListener('pagehide', function () {
+    window.addEventListener('pagehide', () => {
       clearTimeout(timer)
     })
   }
@@ -90,11 +87,7 @@ export default class MIPAppBanner extends CustomElement {
    */
   canShowBanner () {
     let isSysBanner = platform.isSafari() || platform.isBaidu() // || platform.isQQ();
-    // fix: 结果页判断改为使用standalone
-    if (!viewer.isIframed && isSysBanner) {
-      return false
-    }
-    if (viewer.isIframed && isSysBanner) {
+    if (isSysBanner) {
       return false
     }
     this.metaTag = document.head.querySelector('meta[name=apple-itunes-app]')
@@ -145,7 +138,7 @@ export default class MIPAppBanner extends CustomElement {
     let manifestLink = document.head.querySelector('link[rel=manifest],link[rel=origin-manifest]')
     let isChromeAndroid = platform.isAndroid() && platform.isChrome()
 
-    if (!viewer.isIframed && isChromeAndroid) {
+    if (MIP.standalone && isChromeAndroid) {
       el.remove()
       return
     }
