@@ -8,16 +8,16 @@
 ----|----
 类型|通用
 支持布局|responsive
-所需脚本|https://c.mipcdn.com/static/v1/mip-vd-baidu/mip-vd-baidu.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-vd-baidu/mip-vd-baidu.js
 
 ## 示例
 
 ### 基本用法
 ```html
 <mip-vd-baidu layout="responsive" width="640" height="360" 
-	title="MIP移动网页加速器" 
-	src="http://mip-doc.bj.bcebos.com/MIPSampleVideo.mp4" 
-	poster="https://mip-doc.bj.bcebos.com/mip-video-poster.jpg">
+  title="MIP移动网页加速器" 
+  src="http://mip-doc.bj.bcebos.com/MIPSampleVideo.mp4" 
+  poster="https://mip-doc.bj.bcebos.com/mip-video-poster.jpg">
 </mip-vd-baidu>
 ```
 

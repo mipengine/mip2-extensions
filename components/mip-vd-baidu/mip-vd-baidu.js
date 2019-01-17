@@ -4,7 +4,7 @@
  */
 
 const {CustomElement, util} = MIP
-const server = 'https://mipvideo.baidu.com/getvideo'
+const SERVER = 'https://mipvideo.baidu.com/getvideo'
 
 export default class MIPVdBaidu extends CustomElement {
   build () {
@@ -35,7 +35,7 @@ export default class MIPVdBaidu extends CustomElement {
 
     let notHttps = vSrc.indexOf('http://') === 0
     if (notHttps) {
-      fetch(this.makeUrl(server, videoData), {
+      fetch(this.makeUrl(SERVER, videoData), {
         credentials: 'include'
       }).then(res => {
         return res.json()
