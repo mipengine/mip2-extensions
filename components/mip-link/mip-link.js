@@ -1,29 +1,32 @@
-let {
-  CustomElement,
-  util
-} = MIP
+const { CustomElement, util } = MIP
 
-const STYLE = [
+const STYLE_ATTRS = [
   'display',
   'font-size',
   'color'
 ]
 
 export default class MIPLink extends CustomElement {
-  // 判断是否禁止缓存
+  /**
+   * 判断是否禁止缓存
+   *
+   * @returns {boolean} no cache
+   */
   isNoCache () {
     let cacheMeta = document.querySelector('meta[property="mip:use_cache"]')
-    if (cacheMeta && cacheMeta.getAttribute('content') === 'no') {
-      return true
-    }
-    return false
+    return cacheMeta && cacheMeta.getAttribute('content') === 'no'
   }
 
+  /**
+   * 获取元素css样式
+   *
+   * @param {string} style string of style like 'display'
+   * @returns {?string} css style
+   */
   getCssStyle (style) {
-    let res = document && document.defaultView &&
-    document.defaultView.getComputedStyle(this.element, null) &&
-    document.defaultView.getComputedStyle(this.element, null)[style]
-    return res || null
+    let defaultView = document && document.defaultView
+    let css = defaultView && defaultView.getComputedStyle(this.element, null)
+    return css && css[style]
   }
 
   build () {
@@ -35,6 +38,7 @@ export default class MIPLink extends CustomElement {
     tagA.setAttribute('href', href)
     tagA.setAttribute('mip-link', '')
 
+    // 子元素添加到 a 标签下面
     for (let child of [...el.childNodes]) {
       tagA.appendChild(child)
     }
@@ -46,8 +50,8 @@ export default class MIPLink extends CustomElement {
       width: '100%'
     })
 
-    for (let i = 0; i < STYLE.length; i++) {
-      let key = STYLE[i]
+    for (let i = 0; i < STYLE_ATTRS.length; i++) {
+      let key = STYLE_ATTRS[i]
       let val = this.getCssStyle(key)
       if (val && val !== '0px') {
         util.css(tagA, key, val)
