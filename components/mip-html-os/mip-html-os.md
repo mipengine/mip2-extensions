@@ -11,8 +11,8 @@
 ## 示例
 
 ```html
-<mip-html-os os="android" class="mip-html-os"><p>This Is Android</p></mip-html-os>
-<mip-html-os os="ios" class="mip-html-os"><p>This Is Ios</p></mip-html-os>
+<mip-html-os os="android"><p>This Is Android</p></mip-html-os>
+<mip-html-os os="ios"><p>This Is Ios</p></mip-html-os>
 ```
 
 ## 属性
