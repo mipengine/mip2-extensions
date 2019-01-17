@@ -265,8 +265,8 @@ export default class MIPShowMore extends CustomElement {
     if (!this.clickBtn) {
       return
     }
-    this.clickBtn.addEventListener('click', () => {
-      this.toggle.apply()
+    this.clickBtn.addEventListener('click', event => {
+      this.toggle(event)
     })
   }
   // 点击时按钮添加class
