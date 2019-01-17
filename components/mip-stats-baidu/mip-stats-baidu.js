@@ -7,7 +7,7 @@
 
 const { viewer, util, CustomElement } = MIP
 const { Gesture, fn, jsonParse } = util
-const log = util.log('mip-stats-baidu')
+const logger = util.log('mip-stats-baidu')
 
 /**
  * 绑定交互式的百度统计的属性
@@ -57,7 +57,7 @@ export default class MIPStatsBaidu extends CustomElement {
       hm.src = `https://hm.baidu.com/hm.js?${token}`
       elem.appendChild(hm)
     } else {
-      log.warn(elem, '请在配置中提供 token 字段'); // eslint-disable-line
+      logger.warn(elem, '请在配置中提供 token 字段'); // eslint-disable-line
     }
   }
 }
@@ -84,7 +84,7 @@ function getStatsBaiduConfig (el) {
       return config
     }
   } catch (e) {
-    log.warn(el, '配置数据不是合法的 JSON', e)
+    logger.warn(el, '配置数据不是合法的 JSON', e)
   }
   return {
     token: el.getAttribute('token'),
@@ -129,7 +129,7 @@ function eventHandler () {
   try {
     statusJson = jsonParse(decodeURIComponent(tempData))
   } catch (e) {
-    return log.warn(this.element, `事件追踪 ${DATA_STATS_BAIDU_OBJ_ATTR} 数据不是合法的 JSON 数据`)
+    return logger.warn(this, `事件追踪 ${DATA_STATS_BAIDU_OBJ_ATTR} 数据不是合法的 JSON 数据`)
   }
   if (!statusJson.data) {
     return
@@ -191,13 +191,13 @@ function bindEle () {
 /**
  * 处理点击统计的 DOM 列表
  *
- * @param {Array<HTMLElement>} tagBox 需要记录点击统计的 DOM 元素列表
+ * @param {Array<HTMLElement>} tagBoxs 需要记录点击统计的 DOM 元素列表
  */
-function bindEleHandler (tagBox) {
-  for (let index = 0; index < tagBox.length; index++) {
-    let tag = tagBox[index]
-    let statusData = tag.getAttribute(DATA_STATS_BAIDU_OBJ_ATTR)
-    let hasBindFlag = tag.hasAttribute(DATA_STATS_FALG)
+function bindEleHandler (tagBoxs) {
+  for (let index = 0; index < tagBoxs.length; index++) {
+    let target = tagBoxs[index]
+    let statusData = target.getAttribute(DATA_STATS_BAIDU_OBJ_ATTR)
+    let hasBindFlag = target.hasAttribute(DATA_STATS_FALG)
 
     // 检测 statusData 是否存在
     if (!statusData || hasBindFlag) {
@@ -207,7 +207,7 @@ function bindEleHandler (tagBox) {
     try {
       statusData = jsonParse(decodeURIComponent(statusData))
     } catch (e) {
-      log.warn(tagBox, `事件追踪 ${DATA_STATS_BAIDU_OBJ_ATTR} 数据不是合法的 JSON 数据`)
+      logger.warn(target, `事件追踪 ${DATA_STATS_BAIDU_OBJ_ATTR} 数据不是合法的 JSON 数据`)
       continue
     }
 
@@ -226,30 +226,30 @@ function bindEleHandler (tagBox) {
       continue
     }
 
-    if (tag.classList.contains('mip-stats-eventload')) {
+    if (target.classList.contains('mip-stats-eventload')) {
       continue
     }
 
-    tag.classList.add('mip-stats-eventload')
+    target.classList.add('mip-stats-eventload')
 
     if (eventType === 'load') {
       window._hmt.push(data)
     } else if (eventType === 'click' &&
-      tag.hasAttribute('on') &&
-      tag.getAttribute('on').match('tap:') &&
+      target.hasAttribute('on') &&
+      target.getAttribute('on').match('tap:') &&
       fn.hasTouch()
     ) {
       /**
        * 解决 on=tap: 和 click 冲突短线方案
        * @TODO 这个为短线方案
        */
-      let gesture = new Gesture(tag)
+      let gesture = new Gesture(target)
       gesture.on('tap', eventHandler)
     } else {
-      tag.addEventListener(eventType, eventHandler, false)
+      target.addEventListener(eventType, eventHandler, false)
     }
 
-    tag.setAttribute(DATA_STATS_FALG, '1')
+    target.setAttribute(DATA_STATS_FALG, '1')
   }
 }
 
