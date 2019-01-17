@@ -1,18 +1,15 @@
 import './mip-sidebar.less'
 
-let {
-  CustomElement,
-  util
-} = MIP
+const { CustomElement, util } = MIP
 
 const ANIMATION_TIMEOUT = 300
 
 export default class MIPSidebar extends CustomElement {
   constructor (...args) {
     super(...args)
-    // 限制 side 属性是 left 或者 right
     this.side = this.element.getAttribute('side')
-    if (this.side !== 'left' && this.side !== 'right') {
+    // side 必须是 left 或者 right，默认是 left
+    if (!['left', 'right'].includes(this.side)) {
       this.side = 'left'
       this.element.setAttribute('side', this.side)
     }
@@ -31,16 +28,20 @@ export default class MIPSidebar extends CustomElement {
    * 打开 sidebar 和 mask
    */
   open () {
+    let el = this.element
+    let mask = this.mask
+
     if (this.isOpen) {
       return
     }
     this.isOpen = true
-    util.css(this.element, {display: 'block'})
-    util.css(this.mask, {display: 'block'})
+
+    util.css(el, { display: 'block' })
+    util.css(mask, { display: 'block' })
 
     setTimeout(() => {
-      this.element.classList.add('show')
-      this.mask.classList.add('show')
+      el.classList.add('show')
+      mask.classList.add('show')
     }, 0)
 
     setTimeout(() => {
@@ -49,7 +50,7 @@ export default class MIPSidebar extends CustomElement {
 
     this.bodyOverflow = getComputedStyle(document.body).overflow
     document.body.style.overflow = 'hidden'
-    this.element.setAttribute('aria-hidden', 'false')
+    el.setAttribute('aria-hidden', 'false')
   }
 
   /**
@@ -58,24 +59,26 @@ export default class MIPSidebar extends CustomElement {
    * @param {Object} e 点击事件
    */
   close (e) {
+    let el = this.element
+    let mask = this.mask
+
     e.preventDefault()
     if (!this.running) {
       return
     }
-
     this.running = false
 
-    this.element.classList.remove('show')
-    this.mask.classList.remove('show')
+    el.classList.remove('show')
+    mask.classList.remove('show')
 
     setTimeout(() => {
       this.isOpen = false
-      util.css(this.element, {display: 'none'})
-      util.css(this.mask, {display: 'none'})
+      util.css(el, { display: 'none' })
+      util.css(mask, { display: 'none' })
     }, ANIMATION_TIMEOUT)
 
     document.body.style.overflow = this.bodyOverflow
-    this.element.setAttribute('aria-hidden', 'true')
+    el.setAttribute('aria-hidden', 'true')
   }
 
   build () {
@@ -96,17 +99,9 @@ export default class MIPSidebar extends CustomElement {
     this.mask.addEventListener('touchmove', e => {
       e.preventDefault()
     }, false)
-    this.mask.addEventListener('click', e => {
-      this.close(e)
-    })
-    this.addEventAction('toggle', e => {
-      this.toggle(e)
-    })
-    this.addEventAction('open', () => {
-      this.open()
-    })
-    this.addEventAction('close', e => {
-      this.close(e)
-    })
+    this.mask.addEventListener('click', this.close.bind(this))
+    this.addEventAction('toggle', this.toggle.bind(this))
+    this.addEventAction('open', this.open.bind(this))
+    this.addEventAction('close', this.close.bind(this))
   }
 }
