@@ -7,23 +7,22 @@
  * 通用广告组件的 render 方法
  *
  * @param {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
- * @param {Object}      me 当前 mip-ad CustomElement 对象
  */
-export default function render (el, me) {
+export default function render (el) {
   let tpl = el.getAttribute('tpl')
 
   switch (tpl) {
     case 'onlyImg':
-      renderOnlyImg(el, me)
+      renderOnlyImg(el)
       break
     case 'noneImg':
-      renderNoneImg(el, me)
+      renderNoneImg(el)
       break
     case 'oneImg':
-      renderOneImg(el, me)
+      renderOneImg(el)
       break
     case 'moreImg':
-      renderMoreImg(el, me)
+      renderMoreImg(el)
       break
   }
 }
@@ -32,9 +31,8 @@ export default function render (el, me) {
  * banner 样式渲染函数
  *
  * @param {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
- * @param {Object}      me 当前 mip-ad CustomElement 对象
  */
-function renderOnlyImg (el, me) {
+function renderOnlyImg (el) {
   let url = el.getAttribute('href')
   let src = el.getAttribute('src')
   let size = (el.getAttribute('data-size') || '').trim().split(' ')
@@ -47,16 +45,15 @@ function renderOnlyImg (el, me) {
   node.innerHTML = html
 
   el.appendChild(node)
-  me.applyFillContent(node, true)
+  el.customElement.applyFillContent(node, true)
 }
 
 /**
  * 无图样式渲染函数
  *
  * @param {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
- * @param {Object}      me 当前 mip-ad CustomElement 对象
  */
-function renderNoneImg (el, me) {
+function renderNoneImg (el) {
   let url = el.getAttribute('href')
   let title = el.getAttribute('data-title')
   let html = `<div class="mip-ad-row"><div class="c-span12 c-line-clamp2">${title}</div></div>`
@@ -67,16 +64,15 @@ function renderNoneImg (el, me) {
   node.innerHTML = html
 
   el.appendChild(node)
-  me.applyFillContent(node, true)
+  el.customElement.applyFillContent(node, true)
 }
 
 /**
  * 单图样式渲染函数
  *
  * @param {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
- * @param {Object}      me 当前 mip-ad CustomElement 对象
  */
-function renderOneImg (el, me) {
+function renderOneImg (el) {
   let url = el.getAttribute('href')
   let src = el.getAttribute('src')
   let title = el.getAttribute('data-title')
@@ -96,16 +92,15 @@ function renderOneImg (el, me) {
   node.innerHTML = html
 
   el.appendChild(node)
-  me.applyFillContent(node, true)
+  el.customElement.applyFillContent(node, true)
 }
 
 /**
  * 多图样式渲染函数
  *
  * @param {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
- * @param {Object}      me 当前 mip-ad CustomElement 对象
  */
-function renderMoreImg (el, me) {
+function renderMoreImg (el) {
   let url = el.getAttribute('href')
   let srcs = el.getAttribute('src').split(';')
   let dataTxt = el.getAttribute('data-txt')
@@ -141,7 +136,7 @@ function renderMoreImg (el, me) {
     node.innerHTML = html
 
     el.appendChild(node)
-    me.applyFillContent(node, true)
+    el.customElement.applyFillContent(node, true)
   }
 }
 

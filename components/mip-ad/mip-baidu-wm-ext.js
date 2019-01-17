@@ -12,6 +12,8 @@
  */
 const API_STR = '__container_api_'
 
+const log = MIP.util.log('mip-ad')
+
 /**
  * 渲染 ssp 内容联盟广告
  *
@@ -39,26 +41,26 @@ export default function render (el) {
       let child = document.getElementById(token)
 
       child.addEventListener('DOMSubtreeModified', e => {
-        let elem = window.getComputedStyle(child, null)
-        let posVal = elem.getPropertyValue('position')
-        let pos = elem && posVal ? posVal : ''
+        let elemStyle = window.getComputedStyle(child, null)
+        let posVal = elemStyle.getPropertyValue('position')
+        let pos = elemStyle && posVal ? posVal : ''
 
         if (layer && layer.querySelector('#' + token)) {
           return
         }
 
         if (pos === 'fixed' && layer) {
-          let idx = document.querySelectorAll('mip-fixed').length
+          let mipFixedElementsLen = document.querySelectorAll('mip-fixed').length
           let data = {
             element: child.parentElement,
-            id: 'Fixed' + idx
+            id: 'Fixed' + mipFixedElementsLen
           }
 
-          fixedElement.moveToFixedLayer(data, parseInt(idx, 10))
+          fixedElement.moveToFixedLayer(data, +mipFixedElementsLen)
         }
       })
     }
   } else {
-    console.error('请输入正确的 domain 或者 token')
+    log.error(el, '请传入正确的 domain 或者 token 属性')
   }
 }

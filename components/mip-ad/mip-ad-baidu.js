@@ -19,9 +19,8 @@ let globalScriptId = 'MIP_DUP_JS'
  * 网盟广告组件的 render 方法
  *
  * @param {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
- * @param {Object}      me 当前 mip-ad CustomElement 对象
  */
-export default function render (el, me) {
+export default function render (el) {
   let cproId = el.getAttribute('cproid') || el.getAttribute('crop-id')
 
   if (!cproId) {
@@ -29,10 +28,10 @@ export default function render (el, me) {
   }
 
   // 定制化, 特殊处理，处理 preload 逻辑
-  let elem = el.querySelector('script') || null
-  let scripts = document.querySelector('script[mip-preload="mip-script-wm"]')
+  let innerScriptDom = el.querySelector('script') || null
+  let wmPreloadScriptDom = document.querySelector('script[mip-preload="mip-script-wm"]')
 
-  if (scripts && !elem) {
+  if (wmPreloadScriptDom && !innerScriptDom) {
     let sid = '_' + Math.random().toString(36).slice(2)
     let container = document.createElement('div')
     let apiArr = (window[API_STR] = window[API_STR] || [])
@@ -46,8 +45,8 @@ export default function render (el, me) {
       slotId: cproId
     })
   } else {
-    if (elem && isJsonScriptTag(elem)) {
-      let obj = JSON.parse(elem.textContent.toString())
+    if (innerScriptDom && isJsonScriptTag(innerScriptDom)) {
+      let obj = JSON.parse(innerScriptDom.textContent.toString())
 
       globalJsSrc = '//cpro.baidustatic.com/cpro/ui/c.js'
       globalScriptId = 'MIP_DUP_JS_EXT';
@@ -59,7 +58,7 @@ export default function render (el, me) {
       (window.cproStyleApi = window.cproStyleApi || {})[cproId] = obj
     }
 
-    !elem && initadbaidu(el, cproId, me, initJs())
+    !innerScriptDom && initAdBaidu(el, cproId, initJs())
   }
 }
 
@@ -86,17 +85,16 @@ function initJs () {
 /**
  * 广告组件初始化
  *
- * @param  {HTMLElement} elem 组件 DOM 对象
+ * @param  {HTMLElement} el 组件 DOM 对象
  * @param  {string} cproId  广告 id
- * @param  {Object} me 当前组件 customElement 对象
  * @param  {HTMLElement} script  script 对象
  */
-function initadbaidu (elem, cproId, me, script) {
+function initAdBaidu (el, cproId, script) {
   let sid = '_' + Math.random().toString(36).slice(2)
   let container = document.createElement('div')
 
   container.id = sid
-  elem.appendChild(container);
+  el.appendChild(container);
 
   (window.slotbydup = window.slotbydup || []).push({
     id: cproId,
@@ -111,29 +109,30 @@ function initadbaidu (elem, cproId, me, script) {
     let child = document.getElementById(sid)
 
     child.addEventListener('DOMSubtreeModified', e => {
-      let elem = window.getComputedStyle(child, null)
-      let posVal = elem.getPropertyValue('position')
-      let pos = elem && posVal ? posVal : ''
+      let elemStyle = window.getComputedStyle(child, null)
+      let posVal = elemStyle.getPropertyValue('position')
+      let pos = elemStyle && posVal ? posVal : ''
 
       if (layer && layer.querySelector('#' + sid)) {
         return
       }
+
       if (pos === 'fixed') {
-        elem.appendChild(document.getElementById(sid))
+        el.appendChild(document.getElementById(sid))
         if (layer) {
-          let idx = document.querySelectorAll('mip-fixed').length
+          let mipFixedElementsLen = document.querySelectorAll('mip-fixed').length
           let data = {
             element: child.parentElement,
-            id: 'Fixed' + idx
+            id: 'Fixed' + mipFixedElementsLen
           }
 
-          fixedElement.moveToFixedLayer(data, parseInt(idx, 10))
+          fixedElement.moveToFixedLayer(data, +mipFixedElementsLen)
         }
       }
     })
   }
 
-  me.applyFillContent(document.getElementById(sid), true)
+  el.customElement.applyFillContent(document.getElementById(sid), true)
 }
 
 /**

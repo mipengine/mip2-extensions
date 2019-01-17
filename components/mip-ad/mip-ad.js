@@ -39,7 +39,7 @@ export default class MIPAd extends MIP.CustomElement {
     }[type]
 
     if (renderFunc && typeof renderFunc === 'function') {
-      renderFunc(el, this)
+      renderFunc(el)
     }
   }
 }
