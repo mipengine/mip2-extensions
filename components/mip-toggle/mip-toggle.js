@@ -1,7 +1,4 @@
-let {
-  CustomElement,
-  util
-} = MIP
+const { CustomElement, util } = MIP
 
 export default class MIPToggle extends CustomElement {
   constructor (...args) {
@@ -20,7 +17,7 @@ export default class MIPToggle extends CustomElement {
     if (this.enterClass) {
       this.element.classList.remove(this.enterClass)
     } else {
-      util.css(this.element, {display: 'none'})
+      util.css(this.element, { display: 'none' })
     }
   }
 
@@ -33,11 +30,16 @@ export default class MIPToggle extends CustomElement {
     if (this.enterClass) {
       this.element.classList.add(this.enterClass)
     } else {
-      util.css(this.element, {display: this.display})
+      util.css(this.element, { display: this.display })
     }
     this.setHideTimeout(timeout)
   }
 
+  /**
+   * 设置 timeout 时间后隐藏元素
+   *
+   * @param {number} timeout 延时
+   */
   setHideTimeout (timeout) {
     if (timeout === Infinity) {
       return
@@ -62,7 +64,7 @@ export default class MIPToggle extends CustomElement {
 
   build () {
     if (this.display !== 'block') {
-      util.css(this.element, {display: this.display})
+      util.css(this.element, { display: this.display })
     }
 
     this.addEventAction('toggle', e => {
@@ -83,6 +85,11 @@ export default class MIPToggle extends CustomElement {
     this.clearHideTimeout()
   }
 
+  /**
+   * 解析 timeout，默认是 Infinity
+   *
+   * @param {string} timeout timeout 属性
+   */
   parseTimeout (timeout) {
     if (timeout === 'Infinity') {
       return Infinity
