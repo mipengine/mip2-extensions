@@ -20,7 +20,7 @@ export function isSecureUrl (url) {
 }
 
 /**
- * string endsWith
+ * 判断字符串是否以某字符串结尾
  *
  * @param {string} str string
  * @param {string} suffix suffix
@@ -46,13 +46,11 @@ let a
 let cache = {}
 
 /**
- * Returns a Location-like object for the given URL. If it is relative,
- * the URL gets resolved.
- * Consider the returned object immutable. This is enforced during
- * testing by freezing the object.
+ * 把 url 处理成 URL {@link https://developer.mozilla.org/en-US/docs/Web/API/URL/URL}
+ * 如果 url 是相对路径，会被转成绝对地址
  *
  * @param {string} url url
- * @returns {!Location} parsed url
+ * @returns {URL} parsed url
  */
 export function parseUrl (url) {
   if (!a) {
@@ -126,7 +124,7 @@ function parseUrlWithA (a, url) {
 }
 
 /**
- * get url without hash
+ * 返回去掉 hash 的 URL
  *
  * @param {string} url source url
  * @returns {string} substring
