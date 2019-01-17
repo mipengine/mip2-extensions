@@ -7,7 +7,7 @@
 
 import './mip-nav-slidedown.less'
 
-const {CustomElement, util} = MIP
+const { CustomElement, util } = MIP
 
 /**
  * 按钮事件处理
@@ -17,16 +17,16 @@ function navClickHandler () {
     return
   }
 
-  let $wiseNav = document.querySelector('#bs-navbar')
+  let wiseNav = document.querySelector('#bs-navbar')
 
   // 关闭菜单
-  if ($wiseNav.classList.contains('in')) {
-    util.css($wiseNav, 'height', '0')
+  if (wiseNav.classList.contains('in')) {
+    util.css(wiseNav, 'height', '0')
     util.css(document.body, 'overflow', 'scroll')
     util.css(document.querySelector('.navbar-wise-close'), 'margin-top', '20px')
     document.body.classList.add('no-scroll')
     document.documentElement.classList.add('no-scroll')
-    setTimeout(() => $wiseNav.classList.remove('in'), 500)
+    setTimeout(() => wiseNav.classList.remove('in'), 500)
   } else {
     // 打开菜单
     document.body.classList.add('no-scroll')
@@ -43,17 +43,17 @@ function navClickHandler () {
    */
   function setNavHeight (mode) {
     if (mode === 'open') {
-      $wiseNav.classList.add('in')
+      wiseNav.classList.add('in')
     }
 
-    if ((mode === 'resize' && $wiseNav.classList.contains('in')) || mode === 'open') {
+    if ((mode === 'resize' && wiseNav.classList.contains('in')) || mode === 'open') {
       let listNum = document.querySelectorAll('#bs-navbar li').length
       let offsetTop = document.querySelector('mip-nav-slidedown')
         ? document.querySelector('mip-nav-slidedown').getBoundingClientRect().top
         : 0
       let navHeight = window.innerHeight - document.querySelector('.navbar-header').clientHeight - offsetTop
 
-      util.css($wiseNav, 'height', navHeight + 'px')
+      util.css(wiseNav, 'height', navHeight + 'px')
 
       // 关闭按钮距离底部固定为 90 px
       let closeBtnTop = navHeight - (document.querySelector('.navbar-right li').clientHeight) * listNum - 90
