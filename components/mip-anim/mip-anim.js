@@ -1,7 +1,4 @@
-let {
-  CustomElement,
-  util
-} = MIP
+const { CustomElement, util } = MIP
 
 export default class MipAnim extends CustomElement {
   constructor (...args) {
@@ -10,15 +7,15 @@ export default class MipAnim extends CustomElement {
     this.alt = this.element.getAttribute('alt') || ''
   }
 
-  initialize () {
+  firstInviewCallback () {
     let el = this.element
-    let placeholderImg = this.element.querySelector('mip-img')
+    let placeholderImg = el.querySelector('mip-img')
     if (this.src) {
       // 加载gif图
       promiseIf({ src: this.src, alt: this.alt }).then(imageObj => {
         // 隐藏默认图
         if (placeholderImg) {
-          util.css(placeholderImg, {display: 'none'})
+          util.css(placeholderImg, { display: 'none' })
         }
         el.appendChild(imageObj)
       })
@@ -35,9 +32,5 @@ export default class MipAnim extends CustomElement {
         }
       })
     }
-  }
-
-  firstInviewCallback () {
-    this.initialize()
   }
 }
