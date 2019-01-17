@@ -10,6 +10,8 @@
 
 ### 基本使用
 
+`mip-form` 通过必选项 `method` 设置提交方法，`url` 设置表单提交地址。同时可选项 `validatetarget` 和 `validatetype` 支持对表单中 `input` 进行校验。
+
 ```html
 <mip-form method="get" url="https://www.mipengine.org?we=123">
   <input type="text" name="username" validatetarget="username" validatetype="must" placeholder="姓名">
@@ -20,6 +22,8 @@
 </mip-form>
 ```
 ### 加清空按钮
+
+`<mip-from>` 添加 `clear` 属性可以对表单中 `<input>` 添加清空按钮。
 
 ```html
 <mip-form method="get" url="https://www.mipengine.org" clear>
@@ -69,7 +73,7 @@
 
 ### url
 
-说明：必须是 HTTP(S) 或 // 开头的地址
+说明：表单提交地址，必须是 HTTP(S) 或 // 开头的地址
 必选项: 是
 
 ### validatetarget
@@ -79,7 +83,7 @@
 
 ### validatetype
 
-说明：验证类型, 用于支持简单的验证。目前提供 `email`, `phone`, `idcar`, `custom`。当为 `custom` 时则需要填写 `validatereg`
+说明：验证类型, 用于支持简单的验证。目前提供 `must`, `email`, `phone`, `idcar`, `custom`。当类型为 `must` 时表示提交项不能为空，类型为 `custom` 时则需要填写 `validatereg` 实现自定义校验。
 必选项：否
 
 ### validatereg
