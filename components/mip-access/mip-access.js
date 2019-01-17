@@ -110,7 +110,7 @@ class Access {
   _applyPingback () {
     fetch(this._pingback, {
       credentials: 'include'
-    }).then(function (res) {})
+    })
   }
 
   _runAuthorization () {
@@ -143,21 +143,18 @@ class Access {
   }
 
   _applyAuthorization () {
-    let self = this
-    fetch(self._authorization, {
+    fetch(this._authorization, {
       credentials: 'include'
-    }).then(function (res) {
+    }).then((res) => {
       if (res.ok) {
-        res.text().then(function (data) {
-          self._authorizationFallback = JSON.parse(data)
-          self._applyAuthorizationToElement()
+        res.text().then((data) => {
+          this._authorizationFallback = JSON.parse(data)
+          this._applyAuthorizationToElement()
         })
       } else {
-        self._applyAuthorizationToElement()
+        this._applyAuthorizationToElement()
       }
-    }).catch(function () {
-      self._applyAuthorizationToElement()
-    })
+    }).catch(() => this._applyAuthorizationToElement())
   }
 
   _applyAuthorizationToElement () {
@@ -211,13 +208,13 @@ class Access {
       MIPDOC_URL: this._getUrlWithoutFragment(mipUrl),
       CANONICAL_URL: this._getUrlWithoutFragment(canonical),
       DOCUMENT_REFERRER: document.referrer,
-      RANDOM: Math.random()
-    }
-    vars.AUTHDATA = function (field) {
-      if (this._authorizationFallback) {
-        return this._authorizationFallback[field]
+      RANDOM: Math.random(),
+      AUTHDATA (field) {
+        if (this._authorizationFallback) {
+          return this._authorizationFallback[field]
+        }
+        return undefined
       }
-      return undefined
     }
     return vars
   }
@@ -243,13 +240,12 @@ class Access {
   }
 
   _bindEvent () {
-    let self = this
-    window.addEventListener('message', function (event) {
+    window.addEventListener('message', (event) => {
       if ((event.origin === 'https://mipcache.bdstatic.com' ||
           event.origin === 'https://c.mipcdn.com') &&
         event.source && event.data &&
         event.data.type === 'refresh') {
-        if (event.source && event.source === self._login._openWin) {
+        if (event.source && event.source === this._login._openWin) {
           location.reload()
           event.source.postMessage({
             type: 'success'
