@@ -7,7 +7,8 @@
 
 import './mip-scrollbox.less'
 
-const {CustomElement, util, viewport} = MIP
+const { CustomElement, util, viewport } = MIP
+const logger = util.log('mip-scrollbox')
 
 /**
  * 默认配置
@@ -27,15 +28,15 @@ export default class MIPScrollbox extends CustomElement {
    */
   connectedCallback () {
     let me = this
-    let element = this.element;
-    [
+    let element = me.element
+    ;[
       '[data-wrapper]',
       '[data-inner]',
       '[data-scroller]',
       '[data-item]'
     ].forEach(key => {
       if (!element.querySelectorAll(key).length) {
-        console.warn('组件必须包含属性元素 `' + key + '` 。', element)
+        logger.error(element, `组件必须包含属性 '${key}'`)
         me.build = function () {}
       }
     })
@@ -60,7 +61,7 @@ export default class MIPScrollbox extends CustomElement {
     let nodes = element.querySelectorAll('[data-item]')
     let width = 0
     let cols = 0
-    let nodesArr = [].slice.call(nodes)
+    let nodesArr = [...nodes]
 
     // 这个 for 循环是用来计算宽度 width 的
     nodesArr.forEach(node => {
