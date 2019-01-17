@@ -23,7 +23,7 @@
 ```
 ### 加清空按钮
 
-`<mip-from>` 添加 `clear` 属性可以对表单中 `<input>` 添加清空按钮。
+`<mip-form>` 添加 `clear` 属性可以对表单中 `<input>` 添加清空按钮。
 
 ```html
 <mip-form method="get" url="https://www.mipengine.org" clear>
@@ -73,7 +73,7 @@
 
 ### url
 
-说明：表单提交地址，必须是 HTTP(S) 或 // 开头的地址
+说明：表单提交地址，必须是 http(s) 或 // 开头的地址
 必选项: 是
 
 ### validatetarget
