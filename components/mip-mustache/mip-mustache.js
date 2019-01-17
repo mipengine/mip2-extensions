@@ -4,9 +4,16 @@
  */
 import sanitizer from './sanitizer'
 import mustache from 'mustache'
+
 const {templates} = MIP
+
 let Inheritor = templates.inheritTemplate()
-// 继承自 Template，必须暴露两个方法
+
+/**
+ * Mustache 封装后的内容，继承自 Template，必须暴露两个方法 cache 和 render
+ *
+ * @class {Mustache}
+ */
 class Mustache extends Inheritor {
   cache (templateHTML) {
     mustache.parse(templateHTML)

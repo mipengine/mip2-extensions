@@ -1,8 +1,12 @@
 /**
  * @file Mustache template
  * @author chenyongle(chenyongle@baidu.com)
+ * @description 这个文件主要是对模板内容进行过滤，不合法的内容将会被忽略
  */
 import htmlSanitizer from './html-sanitizer'
+/**
+ * 可用的自闭合标签
+ */
 const SELF_CLOSING_TAGS = {
   'br': true,
   'col': true,
@@ -20,7 +24,9 @@ const SELF_CLOSING_TAGS = {
   'meta': true,
   'param': true
 }
-
+/**
+ * 黑名单标签，不可用
+ */
 const BLACKLISTED_TAGS = {
   'applet': true,
   'audio': true,
@@ -60,8 +66,14 @@ const BLACKLISTED_TAGS = {
 //   'u'
 // ]
 
+/**
+ * attr 的合法前缀
+ */
 const WHITELISTED_ATTR_PREFIX_REGEX = /^data-/i
 
+/**
+ * 不合法的 attr ，以下几个 BLACKLISTED 都是不合法的内容，不可使用
+ */
 const BLACKLISTED_ATTR_VALUES = [
   'javascript:',
   'vbscript:',
@@ -91,6 +103,9 @@ const BLACKLISTED_TAG_SPECIFIC_ATTRS = {
   'select': BLACKLISTED_FIELDS_ATTR
 }
 
+/**
+ * 合法的 attr，可以使用
+ */
 const WHITELISTED_ATTRS = [
   'fallback',
   'href',
@@ -99,11 +114,7 @@ const WHITELISTED_ATTRS = [
 ]
 
 function isValidAttr (tagName, attrName, attrValue) {
-  if (attrName.indexOf('on') === 0 && attrName !== 'on') {
-    return false
-  }
-
-  if (attrName === 'style') {
+  if ((attrName.indexOf('on') === 0 && attrName !== 'on') || attrName === 'style') {
     return false
   }
 
@@ -135,6 +146,10 @@ function isValidAttr (tagName, attrName, attrValue) {
   return true
 }
 
+/**
+ * 对 html 进行检查，过滤不合法内容
+ * @param {string} html 模板字符串
+ */
 export default function sanitize (html) {
   let tagPolicy = htmlSanitizer.makeTagPolicy()
   let ignore = 0
