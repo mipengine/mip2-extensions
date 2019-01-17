@@ -6,7 +6,7 @@
 ----|----
 类型|通用
 支持布局|N/S
-所需脚本|https://c.mipcdn.com/static/v1/mip-access/mip-access.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-access/mip-access.js
 
 ## 示例
 
