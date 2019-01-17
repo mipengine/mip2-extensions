@@ -1,9 +1,6 @@
 import './mip-appdl.less'
 
-let {
-  CustomElement,
-  util
-} = MIP
+const { CustomElement, util } = MIP
 
 const log = util.log('mip-appdl')
 
@@ -17,47 +14,18 @@ export default class MIPAppdl extends CustomElement {
     this.textTip = el.getAttribute('texttip') || ''
   }
 
-  initialize () {
-    let showText = this.getShowText()
-    let imageStr = this.src
-      ? `
-          <div class="mip-appdl-imgbox">
-            <img src=${this.src} class="mip-appdl-downimg">
-          </div>
-        `
-      : ''
-    let html =
-      `
-        <div class="mip-appdl-box ${this.src ? '' : 'mip-appdl-pm10'}">
-          <div class="mip-appdl-content">
-            ${imageStr}
-            <div class="mip-appdl-textbox">
-              ${showText}
-            </div>
-            <div class="mip-appdl-downbtn">
-              <a href=${this.downloadUrl} target="_blank">${this.downBtnText}</a>
-            </div>
-            <div class="mip-appdl-closebutton"></div>
-          </div>
-        </div>
-      `
-
-    if (this.downloadUrl) {
-      this.element.append(util.dom.create(html))
-      this.element.querySelector('.mip-appdl-closebutton').addEventListener('click', () => {
-        this.element.parentNode.removeChild(this.element)
-      })
-    }
-  }
-
+  /**
+   * 根据 texttip 生成 html
+   *
+   * @returns {string} texttip html
+   */
   getShowText () {
     let lines = []
     let showText = []
     if (this.textTip) {
       try {
         // 字符串转数组
-        /* eslint-disable no-new-func */
-        lines = new Function('return ' + this.textTip)()
+        lines = util.jsonParse(this.textTip)
       } catch (e) {
         log.warn('texttip 属性格式不正确!')
       }
@@ -80,6 +48,38 @@ export default class MIPAppdl extends CustomElement {
   }
 
   build () {
-    this.initialize()
+    let showText = this.getShowText()
+    let imageStr = ''
+    if (this.src) {
+      imageStr =
+        `
+          <div class="mip-appdl-imgbox">
+            <img src=${this.src} class="mip-appdl-downimg">
+          </div>
+        `
+    }
+    let html =
+      `
+        <div class="mip-appdl-box ${this.src ? '' : 'mip-appdl-pm10'}">
+          <div class="mip-appdl-content">
+            ${imageStr}
+            <div class="mip-appdl-textbox">
+              ${showText}
+            </div>
+            <div class="mip-appdl-downbtn">
+              <a href=${this.downloadUrl} target="_blank">${this.downBtnText}</a>
+            </div>
+            <div class="mip-appdl-closebutton"></div>
+          </div>
+        </div>
+      `
+
+    if (this.downloadUrl) {
+      let el = this.element
+      el.appendChild(util.dom.create(html))
+      el.querySelector('.mip-appdl-closebutton').addEventListener('click', () => {
+        el.parentNode.removeChild(el)
+      })
+    }
   }
 }
