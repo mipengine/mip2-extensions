@@ -36,7 +36,7 @@ export default class MIPGoToTop extends CustomElement {
     let el = this.element
     let timer
 
-    el.addEventListener('click', this.scrollToTop)
+    el.addEventListener('click', this.scrollToTop.bind(this))
 
     // 实时获取滚动高度
     viewport.on('scroll', () => {
