@@ -132,13 +132,9 @@ export default class MIPInstallServiceWorker extends CustomElement {
 function registerServiceWorker (src) {
   if (navigator.serviceWorker) {
     navigator.serviceWorker.register(src)
-      .then(function () {
+      .then(() => {
         log.info('service worker 安装成功')
       })
-      .catch(function (err) {
-        /* eslint-disable no-console */
-        log.error(err)
-        /* eslint-enable no-console */
-      })
+      .catch(log.error)
   }
 }
