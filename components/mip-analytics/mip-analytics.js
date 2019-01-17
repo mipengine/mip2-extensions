@@ -5,7 +5,7 @@
 
 /* global MIP, Image */
 
-const {util, performance} = MIP
+const { util, performance } = MIP
 
 /**
  * mip performance 上报的性能数据
@@ -58,7 +58,7 @@ function isDomReady (data) {
  */
 function clickHandle (triggers, eventName) {
   triggers.forEach(el => {
-    let ancestors = el.tag ? document.querySelectorAll(el.selector) : [document]
+    let ancestors = el.tag ? [...document.querySelectorAll(el.selector)] : [document]
     let eventTag = el.tag || el.selector
 
     ancestors.forEach(dom => util.event.delegate(
@@ -75,7 +75,7 @@ function clickHandle (triggers, eventName) {
  * 清除所有的 setInterval
  */
 function clearAllTimer () {
-  timers.forEach(el => clearInterval(el))
+  timers.forEach(timerId => clearInterval(timerId))
 }
 
 /**
