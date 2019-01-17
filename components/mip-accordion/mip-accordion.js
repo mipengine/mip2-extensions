@@ -7,9 +7,8 @@
 
 import './mip-accordion.less'
 
-const {CustomElement, util} = MIP
-const {jsonParse} = util
-const localurl = location.href
+const { CustomElement, util } = MIP
+const { jsonParse } = util
 
 /**
  * 表示展开状态的 DOM 属性 key
@@ -120,10 +119,7 @@ function heightAni (opt) {
     return
   }
 
-  let transitionTime = opt.transitionTime === undefined || isNaN(opt.transitionTime)
-    ? 0.24
-    : Math.min(parseFloat(opt.transitionTime), 1)
-
+  let transitionTime = isNaN(opt.transitionTime) ? 0.24 : Math.min(parseFloat(opt.transitionTime), 1)
   let oriHeight = (opt.oriHeight !== undefined ? opt.oriHeight : getComputedStyle(element).height)
   let tarHeight
   let cbFun = opt.cbFun || function () {}
@@ -188,7 +184,7 @@ export default class MIPAccordion extends CustomElement {
     let type = element.getAttribute('type') || 'automatic'
     let sections = this.sections = element.querySelectorAll('section')
     let sessionId = this.sessionId = element.getAttribute('sessions-key')
-    let sessionKey = this.sessionKey = `MIP-${sessionId}-${localurl}`
+    let sessionKey = this.sessionKey = `MIP-${sessionId}-${location.href}`
     let currentState = getSession.apply(this)
 
     element.setAttribute('role', 'tablist')
@@ -257,9 +253,7 @@ export default class MIPAccordion extends CustomElement {
     let sessionKey = this.sessionKey
     let sections = this.sections
     let aniTimeAttr = element.getAttribute('animatetime')
-    let aniTime = aniTimeAttr === undefined || isNaN(aniTimeAttr)
-      ? 0.24
-      : Math.min(parseFloat(aniTimeAttr, 10), 1)
+    let aniTime = isNaN(aniTimeAttr) ? 0.24 : Math.min(parseFloat(aniTimeAttr, 10), 1)
     let accordionHeaders = element.querySelectorAll(`.${MIP_ACCORDION_HEADER_CLASS}`)
 
     accordionHeaders.forEach(accordionHeader => {
@@ -280,12 +274,12 @@ export default class MIPAccordion extends CustomElement {
           })
 
           sections.forEach(section => {
-            let $showMore = section.querySelector('.show-more')
-            let $showLess = section.querySelector('.show-less')
+            let showMore = section.querySelector('.show-more')
+            let showLess = section.querySelector('.show-less')
             section.classList.remove(EXPANDED_ATTRIBUTE)
-            if ($showMore && $showLess) {
-              util.css($showMore, 'display', 'block')
-              util.css($showLess, 'display', 'none')
+            if (showMore && showLess) {
+              util.css(showMore, 'display', 'block')
+              util.css(showLess, 'display', 'none')
             }
           })
 
@@ -313,12 +307,12 @@ export default class MIPAccordion extends CustomElement {
           targetContent.setAttribute(ARIA_EXPANDED_ATTRIBUTE, OPEN_STATUS)
 
           sections.forEach(section => {
-            let $showMore = section.querySelector('.show-more')
-            let $showLess = section.querySelector('.show-less')
+            let showMore = section.querySelector('.show-more')
+            let showLess = section.querySelector('.show-less')
             section.setAttribute(EXPANDED_ATTRIBUTE, OPEN_STATUS)
-            if ($showMore && $showLess) {
-              util.css($showLess, 'display', 'block')
-              util.css($showMore, 'display', 'none')
+            if (showMore && showLess) {
+              util.css(showLess, 'display', 'block')
+              util.css(showMore, 'display', 'none')
             }
           })
 
