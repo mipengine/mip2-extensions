@@ -3,14 +3,11 @@
  * @author Jenny_L(jiaojiaomao220@163.com), liwenqian(liwenqian@baidu.com)
  */
 import './mip-history.less'
-let { CustomElement } = MIP
+const { CustomElement, util } = MIP
+const log = util.log('mip-history')
 
 export default class MipHistory extends CustomElement {
   firstInviewCallback () {
-    this.init()
-  }
-
-  init () {
     const history = this.element.getAttribute('history')
     if (!history) {
       return
@@ -23,23 +20,17 @@ export default class MipHistory extends CustomElement {
       case 'go':
         const step = historyArr[1]
         if (step) {
-          this.element.addEventListener('click', () => {
-            window.history.go(step - 0)
-          }, false)
+          this.element.addEventListener('click', () => window.history.go(step - 0))
         }
         else {
-          console.warn('history.go() 需要填写第二个参数')
+          log.warn('history.go() 需要填写第二个参数')
         }
         break
       case 'back':
-        this.element.addEventListener('click', () => {
-          window.history.back()
-        }, false)
+        this.element.addEventListener('click', () => window.history.back())
         break
       case 'forward':
-        this.element.addEventListener('click', () => {
-          window.history.forward()
-        }, false)
+        this.element.addEventListener('click', () => window.history.forward())
         break
     }
   }
