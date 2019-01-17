@@ -1,4 +1,5 @@
-const {CustomElement} = MIP
+const {CustomElement, util} = MIP
+const log = util.log('mip-bridge-baidu')
 
 export default class MipBridgeBaidu extends CustomElement {
   build () {
@@ -27,7 +28,7 @@ export default class MipBridgeBaidu extends CustomElement {
 
     if (element.hasAttribute('siteid')) {
       siteId = siteId || element.getAttribute('siteid')
-      console.warn('[mip-bridge-baidu] siteId 属性将被废弃，请使用 site-id 代替。')
+      log.warn('siteId 属性将被废弃，请使用 site-id 代替。')
     }
 
     if (siteId) {
