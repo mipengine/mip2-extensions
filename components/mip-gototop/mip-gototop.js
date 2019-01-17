@@ -1,10 +1,8 @@
 import './mip-gototop.less'
 
-let {
-  CustomElement,
-  viewport
-} = MIP
+const { CustomElement, viewport } = MIP
 const requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
+const MIP_GOTOTOP_SHOW_CLS = 'mip-gototop-show'
 
 export default class MIPGoToTop extends CustomElement {
   constructor (...args) {
@@ -38,23 +36,19 @@ export default class MIPGoToTop extends CustomElement {
     let el = this.element
     let timer
 
-    el.addEventListener('click', e => {
-      this.scrollToTop()
-    }, false)
+    el.addEventListener('click', this.scrollToTop)
 
     // 实时获取滚动高度
     viewport.on('scroll', () => {
       this.scrollTop = viewport.getScrollTop()
       if (this.scrollTop >= this.threshold) {
-        el.classList.add('mip-gototop-show')
+        el.classList.add(MIP_GOTOTOP_SHOW_CLS)
         if (this.delay) {
           clearTimeout(timer)
-          timer = setTimeout(() => {
-            el.classList.remove('mip-gototop-show')
-          }, this.delay)
+          timer = setTimeout(() => el.classList.remove(MIP_GOTOTOP_SHOW_CLS), this.delay)
         }
       } else {
-        el.classList.remove('mip-gototop-show')
+        el.classList.remove(MIP_GOTOTOP_SHOW_CLS)
       }
     })
   }
