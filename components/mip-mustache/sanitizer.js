@@ -148,6 +148,7 @@ function isValidAttr (tagName, attrName, attrValue) {
 
 /**
  * 对 html 进行检查，过滤不合法内容
+ *
  * @param {string} html 模板字符串
  */
 export default function sanitize (html) {
