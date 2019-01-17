@@ -21,8 +21,7 @@ export default class MipHistory extends CustomElement {
         const step = historyArr[1]
         if (step) {
           this.element.addEventListener('click', () => window.history.go(step - 0))
-        }
-        else {
+        } else {
           log.warn('history.go() 需要填写第二个参数')
         }
         break
