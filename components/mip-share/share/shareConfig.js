@@ -265,7 +265,14 @@ function sendErrorLog (evt, msg) {
   })
 }
 
-function shareHandle (options, success, fail) {
+/**
+ * 处理分享具体操作
+ *
+ * @param {?Object}  options         分享的归置后的配置信息
+ * @param {Function} successcallback 分享成功的回调
+ * @param {Function} failCallback    分享失败后的回调
+ */
+function shareHandle (options, successcallback, failCallback) {
   let debug = !!options.debug
 
   if (IS_BD_BOX) {
@@ -290,8 +297,8 @@ function shareHandle (options, success, fail) {
       }
     }
 
-    window['__BdboxShare_success__'] = success || console.log
-    window['__BdboxShare_fail__'] = fail || console.log
+    window['__BdboxShare_success__'] = successcallback || console.log
+    window['__BdboxShare_fail__'] = failCallback || console.log
     window.BoxShareData = {
       options: data,
       successcallback: '__BdboxShare_success__',
@@ -334,10 +341,10 @@ function shareHandle (options, success, fail) {
             link: options.linkUrl,
             imgUrl: options.iconUrl,
             success () {
-              success && success()
+              successcallback && successcallback()
             },
             cancel () {
-              fail && fail()
+              failCallback && failCallback()
             }
           }
           wx.ready(() => {
@@ -432,14 +439,14 @@ function initConfig (options, success, fail) {
     options.content = options.content.slice(0, 50) + '...'
   }
 
-  let _isGetImgCalled = false
+  let isGetImgCalled = false
 
   if (!options.iconUrl) {
     getShareImg(result => {
-      if (_isGetImgCalled) {
+      if (isGetImgCalled) {
         return
       }
-      _isGetImgCalled = true
+      isGetImgCalled = true
       options.iconUrl = result
       shareHandle(options, success, fail)
     }, options.iconUrlDefault)
@@ -451,10 +458,9 @@ function initConfig (options, success, fail) {
 /**
  * 配置信息
  */
-let sealConfig = {
+const sealConfig = {
   init () {
-    let _arguments = arguments
-    initConfig.apply(this, _arguments)
+    initConfig.apply(this, arguments)
   },
 
   update (options) {
