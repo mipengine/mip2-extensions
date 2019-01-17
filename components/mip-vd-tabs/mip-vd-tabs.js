@@ -55,6 +55,9 @@ export default class MIPVdTabs extends CustomElement {
     })
   }
 
+  /**
+   * 生成通用 Tab
+   */
   generateCommonTab () {
     let el = this.element
     let $el = $(el)
@@ -111,9 +114,9 @@ export default class MIPVdTabs extends CustomElement {
     }
 
     new Tab($el, {
-      allowScroll: allowScroll,
+      allowScroll,
       current: parseInt($el.attr(CURRENT), 10) || 1,
-      toggleMore: toggleMore,
+      toggleMore,
       toggleLabel: $el.attr('toggle-label') || '请选择',
       currentClass: SELECTED_CLS,
       navWrapperClass: NAV_CLS,
@@ -127,6 +130,13 @@ export default class MIPVdTabs extends CustomElement {
     })
   }
 
+  /**
+   * 生成剧集选择下拉列表
+   *
+   * @param {string} linkTpl 链接模板
+   *
+   * @returns {string} wrapper 下拉列表 dom 结构
+   */
   // 生成剧集选择下拉列表
   generateEpisodeDown (linkTpl) {
     let $el = $(this.element)
@@ -141,8 +151,8 @@ export default class MIPVdTabs extends CustomElement {
       let from = pageSize * i + 1
       let to = Math.min(totalNum, pageSize * (i + 1))
       tabList.push({
-        from: from,
-        to: to,
+        from,
+        to,
         text: '' + from + (from < to ? ' - ' + to : '')
       })
     }
@@ -151,19 +161,19 @@ export default class MIPVdTabs extends CustomElement {
     wrapper.append(
       tabList.map((v, index) => {
         let epFragment = '<div class="' +
-                  CONTENT_CLS +
-                  ' mip-vd-tabs-episode-content" ' +
-                  (index === tabCurNum ? '' : 'style="display:none;" ') +
-                  ' >'
+          CONTENT_CLS +
+          ' mip-vd-tabs-episode-content" ' +
+          (index === tabCurNum ? '' : 'style="display:none;" ') +
+          ' >'
         for (let j = v.from; j <= v.to; j++) {
           let selectedClass = j === currentNum ? 'mip-vd-tabs-episode-item-selected' : ''
           let link = (linkTpl ? ' href="' + linkTpl.replace(TPL_REG, j) + '"' : '')
           epFragment = epFragment +
-                      '<span class="mip-vd-tabs-episode-item ' +
-                      selectedClass + '"' +
-                      link + '>' +
-                      j +
-                      '</span>'
+            '<span class="mip-vd-tabs-episode-item ' +
+            selectedClass + '"' +
+            link + '>' +
+            j +
+            '</span>'
         }
         epFragment += '</div>'
         return epFragment
@@ -202,6 +212,11 @@ export default class MIPVdTabs extends CustomElement {
     return wrapper
   }
 
+  /**
+   * 生成 wrapper
+   *
+   * @returns {$} wrapper 结构
+   */
   generateWrapper () {
     let $el = $(this.element)
     let $result = null
@@ -209,18 +224,24 @@ export default class MIPVdTabs extends CustomElement {
     let totalNum = parseInt($el.attr('total'), 10) || 1
     if (totalNum > 4) {
       $result = $('<div class="' + VIEW_CLS + '">' +
-            '<ul class="' + NAV_CLS + '"></ul>' +
-            '</div>'
+        '<ul class="' + NAV_CLS + '"></ul>' +
+        '</div>'
       )
     } else {
       $result = $('<div class="mip-vd-tabs-row-tile">' +
-            '<ul class="' + NAV_CLS + '"></ul>' +
-            '</div>'
+        '<ul class="' + NAV_CLS + '"></ul>' +
+        '</div>'
       )
     }
     return $result
   }
 
+  /**
+   * 生成 Toggle 结构
+   *
+   * @param {$} $result wrapper
+   * @returns {$} toggle 结构
+   */
   generateToggle ($result) {
     let $el = $(this.element)
     let totalNum = parseInt($el.attr('total'), 10) || 1
@@ -229,11 +250,21 @@ export default class MIPVdTabs extends CustomElement {
     }
 
     $result.append('<div class="' + TOGGLE_CLS + '">' +
-        '<img src=' + ICON_SRC + '>' +
-        '</div>')
+      '<img src=' + ICON_SRC + '>' +
+      '</div>')
     return $result
   }
 
+  /**
+   * 生成剧情展开结构
+   *
+   * @param {$} $result wrapper
+   * @param {string} total 剧集总数
+   * @param {string} current 当前已选标签页
+   * @param {string} textTpl 显示在标签页上的剧集文案
+   * @param {string} linkTpl 标签页和下拉菜单里的剧集跳转链接
+   * @param {string} headTitle 标签页和下拉菜单里的剧集跳转新页面的头部标题
+   */
   generateEpisode ($result, total, current, textTpl, linkTpl, headTitle) {
     let $el = $(this.element)
 
@@ -246,11 +277,11 @@ export default class MIPVdTabs extends CustomElement {
       i <= r;
       i++) {
       html = html +
-            '<a class="' + ITEM_CLS + ' ' +
-            (i === currentNum ? SELECTED_CLS : '') + '" ' +
-            (linkTpl ? ' href="' + linkTpl.replace(TPL_REG, i) + '"' : '') + '>' +
-            tpl.replace(TPL_REG, '' + i) +
-            '</a>'
+        '<a class="' + ITEM_CLS + ' ' +
+        (i === currentNum ? SELECTED_CLS : '') + '" ' +
+        (linkTpl ? ' href="' + linkTpl.replace(TPL_REG, i) + '"' : '') + '>' +
+        tpl.replace(TPL_REG, '' + i) +
+        '</a>'
     }
 
     $result.find('.' + NAV_CLS).append(html)
@@ -267,75 +298,70 @@ export default class MIPVdTabs extends CustomElement {
       logClass: 'mip-vd-tabs-log',
       toggleClass: TOGGLE_CLS,
       toggleLabel: $el.attr('toggle-label') || '请选择'
-    });
+    })
 
     // override toggle-more
-    (function register (ptr) {
-      let _this = tab
-      let $navLayer = $('<div class="mip-vd-tabs-nav-layer"><p>' + _this.toggleLabel + '</p></div>')
-      let $navLayerUl = $('<ul class="mip-vd-tabs-nav-layer-ul"></ul>')
-      let $mask = $('<div class="mip-vd-tabs-mask"></div>')
+    let $navLayer = $('<div class="mip-vd-tabs-nav-layer"><p>' + tab.toggleLabel + '</p></div>')
+    let $navLayerUl = $('<ul class="mip-vd-tabs-nav-layer-ul"></ul>')
+    let $mask = $('<div class="mip-vd-tabs-mask"></div>')
 
-      _this.toggleState = 0 // 展开状态 0-收起,1-展开
+    tab.toggleState = 0 // 展开状态 0-收起,1-展开
 
-      // 事件代理
-      $navLayerUl.on('click', '.mip-vd-tabs-episode-item ', function () {
-        toggleUp()
+    // 事件代理
+    $navLayerUl.on('click', '.mip-vd-tabs-episode-item ', () => {
+      toggleUp()
+    })
+
+    $mask.on('click', () => {
+      toggleUp()
+    }).on('touchmove', e => {
+      e.preventDefault()
+    })
+
+    tab.toggle.on('click', () => {
+      tab.toggleState === 0 ? toggleDown.call(this) : toggleUp.call(this)
+    })
+
+    /**
+     * 收起剧集
+     */
+    function toggleUp () {
+      $navLayerUl.empty()
+      $navLayer.hide()
+      $mask.hide()
+      $el
+        .find('.mip-vd-tabs-nav-toggle,.mip-vd-tabs-scroll-touch')
+        .css({'position': '', 'top': ''})
+      $el
+        .find('.mip-vd-tabs-nav-layer')
+        .css({'position': '', 'border-top': '', 'top': ''})
+      tab.toggle.css({
+        '-webkit-transform': 'scaleY(1)',
+        'transform': 'scaleY(1)'
       })
+      tab.toggleState = 0
+    }
 
-      $mask.on('click', function () {
-        toggleUp()
-      }).on('touchmove', function (e) {
-        e.preventDefault()
+    /**
+     * 展开剧集
+     */
+    function toggleDown () {
+      $navLayerUl.html(this.generateEpisodeDown(linkTpl))
+      $navLayer.append($navLayerUl)
+      $el.append($mask.show())
+      tab.view.after($navLayer.show())
+      $el
+        .find('.mip-vd-tabs-scroll-touch,.mip-vd-tabs-nav-toggle')
+        .css({'position': 'fixed', 'top': '1px'})
+      $el
+        .find('.mip-vd-tabs-nav-layer')
+        .css({'position': 'fixed', 'border-top': '1px solid #ccc', 'top': '0'})
+      tab.toggle.css({
+        '-webkit-transform': 'scaleY(1)',
+        'transform': 'scaleY(-1)'
       })
-
-      _this.toggle.on('click', function () {
-        if (_this.toggleState === 0) {
-          // 点击时为收起
-          toggleDown()
-        } else {
-          // 点击时为展开
-          toggleUp()
-        }
-      })
-
-      // 收起
-      function toggleUp () {
-        $navLayerUl.empty()
-        $navLayer.hide()
-        $mask.hide()
-        $el
-          .find('.mip-vd-tabs-nav-toggle,.mip-vd-tabs-scroll-touch')
-          .css({'position': '', 'top': ''})
-        $el
-          .find('.mip-vd-tabs-nav-layer')
-          .css({'position': '', 'border-top': '', 'top': ''})
-        _this.toggle.css({
-          '-webkit-transform': 'scaleY(1)',
-          'transform': 'scaleY(1)'
-        })
-        _this.toggleState = 0
-      }
-
-      // 展开
-      function toggleDown () {
-        $navLayerUl.html(ptr.generateEpisodeDown(linkTpl))
-        $navLayer.append($navLayerUl)
-        $el.append($mask.show())
-        _this.view.after($navLayer.show())
-        $el
-          .find('.mip-vd-tabs-scroll-touch,.mip-vd-tabs-nav-toggle')
-          .css({'position': 'fixed', 'top': '1px'})
-        $el
-          .find('.mip-vd-tabs-nav-layer')
-          .css({'position': 'fixed', 'border-top': '1px solid #ccc', 'top': '0'})
-        _this.toggle.css({
-          '-webkit-transform': 'scaleY(1)',
-          'transform': 'scaleY(-1)'
-        })
-        _this.toggleState = 1
-      }
-    })(this)
+      tab.toggleState = 1
+    }
 
     $el.delegate('.' + ITEM_CLS + ', .mip-vd-tabs-episode-item', 'click', function (ev) {
       ev.preventDefault()

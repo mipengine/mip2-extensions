@@ -1,4 +1,10 @@
 mip-vd-tabs {
+  // 去掉 ios 点击 黑影
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent;
+  }
+
   &.mip-vd-tabs {
     position: relative;
   }
