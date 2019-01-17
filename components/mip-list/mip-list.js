@@ -3,10 +3,10 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
-const { CustomElement, templates } = MIP
+const { CustomElement, templates, util } = MIP
 const { fetchJsonp } = window
 
-const log = MIP.util.log('mip-list')
+const log = util.log('mip-list')
 
 export default class MIPList extends CustomElement {
   constructor (...args) {
@@ -60,7 +60,7 @@ export default class MIPList extends CustomElement {
     // 同步配置数据
     if (this.has('synchronous-data')) {
       let script = element.querySelector('script[type="application/json"]')
-      let data = script ? MIP.util.jsonParse(script.textContent.toString()) : null
+      let data = script ? util.jsonParse(script.textContent.toString()) : null
       this.renderTemplate(data)
       return
     }
