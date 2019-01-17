@@ -5,10 +5,25 @@
 
 /* global MIP */
 
-const {viewer, util} = MIP
-const {Gesture, fn, jsonParse} = util
+const { viewer, util, CustomElement } = MIP
+const { Gesture, fn, jsonParse } = util
+const log = util.log('mip-stats-baidu')
 
-export default class MIPStatsBaidu extends MIP.CustomElement {
+/**
+ * 绑定交互式的百度统计的属性
+ *
+ * @type {string}
+ */
+const DATA_STATS_BAIDU_OBJ_ATTR = 'data-stats-baidu-obj'
+
+/**
+ * 标识 dom 是不是已经被绑定上事件的属性
+ *
+ * @type {string}
+ */
+const DATA_STATS_FALG = 'data-stats-flag'
+
+export default class MIPStatsBaidu extends CustomElement {
   /**
    * 渲染组件
    */
@@ -16,6 +31,7 @@ export default class MIPStatsBaidu extends MIP.CustomElement {
     let elem = this.element
     let config = getStatsBaiduConfig(elem)
     let token = config.token
+    let conf = config.conf
 
     // 检测token是否存在
     if (token) {
@@ -29,8 +45,7 @@ export default class MIPStatsBaidu extends MIP.CustomElement {
       if (viewer.isIframed) {
         setReferrer()
       }
-      if (config && Array.isArray(config.conf) && config.conf.length) {
-        let conf = config.conf
+      if (conf && Array.isArray(conf) && conf.length) {
         for (let i = 0; i < conf.length; i++) {
           window._hmt.push(conf[i])
         }
@@ -39,10 +54,10 @@ export default class MIPStatsBaidu extends MIP.CustomElement {
       bindEle()
 
       let hm = document.createElement('script')
-      hm.src = 'https://hm.baidu.com/hm.js?' + token
+      hm.src = `https://hm.baidu.com/hm.js?${token}`
       elem.appendChild(hm)
     } else {
-      console.warn('请在配置中提供 token 字段'); // eslint-disable-line
+      log.warn(elem, '请在配置中提供 token 字段'); // eslint-disable-line
     }
   }
 }
@@ -56,6 +71,7 @@ export default class MIPStatsBaidu extends MIP.CustomElement {
 function getStatsBaiduConfig (el) {
   let config = {}
   let setconfig = el.getAttribute('setconfig')
+
   try {
     let script = el.querySelector('script[type="application/json"]')
     if (script) {
@@ -63,12 +79,12 @@ function getStatsBaiduConfig (el) {
       if (JSON.stringify(textContent) !== '{}') {
         config.token = textContent.token
         util.fn.del(textContent, 'token')
-        config.conf = objToArray(textContent)
+        config.conf = objectToArray(textContent)
       }
       return config
     }
   } catch (e) {
-    console.warn('配置数据不是合法的 JSON', e); // eslint-disable-line
+    log.warn(el, '配置数据不是合法的 JSON', e)
   }
   return {
     token: el.getAttribute('token'),
@@ -78,15 +94,18 @@ function getStatsBaiduConfig (el) {
 
 /**
  * 将 JSON Object 转换成数组
+ * example: {a: [1, 3, 5], b: [2, 4]}  => [['a', 1, 2, 3], ['b', 2, 4]]
  *
  * @param   {Object} jsonObj  JSON Object 的数据
  * @returns {Array<Object>}   转换成的数组
  */
-function objToArray (jsonObj) {
+function objectToArray (jsonObj) {
   let outConfigArray = []
+
   if (!jsonObj) {
     return
   }
+
   Object.keys(jsonObj).forEach(key => {
     if (Array.isArray(jsonObj[key])) {
       jsonObj[key].unshift(key)
@@ -101,7 +120,7 @@ function objToArray (jsonObj) {
  * 事件触发
  */
 function eventHandler () {
-  let tempData = this.getAttribute('data-stats-baidu-obj')
+  let tempData = this.getAttribute(DATA_STATS_BAIDU_OBJ_ATTR)
   let statusJson
 
   if (!tempData) {
@@ -110,7 +129,7 @@ function eventHandler () {
   try {
     statusJson = jsonParse(decodeURIComponent(tempData))
   } catch (e) {
-    return console.warn('事件追踪 data-stats-baidu-obj 数据不是合法的 JSON 数据')
+    return log.warn(this.element, `事件追踪 ${DATA_STATS_BAIDU_OBJ_ATTR} 数据不是合法的 JSON 数据`)
   }
   if (!statusJson.data) {
     return
@@ -127,7 +146,7 @@ function eventHandler () {
  * @example (不需要处理) ["_trackPageview", "/mip-stats/sheji"]
  * @example (需要处理) "[_trackPageview, /mip-stats/sheji]"
  *
- * @returns {Object} ["_trackPageview", "/mip-stats/sheji"]
+ * @returns {?Array} ["_trackPageview", "/mip-stats/sheji"]
  */
 function buildArray (arrayStr) {
   if (!arrayStr) {
@@ -161,7 +180,7 @@ function bindEle () {
   let now = Date.now()
   let intervalTimer = setInterval(() => {
     // 获取所有需要触发的 DOM
-    bindEleHandler(document.querySelectorAll('*[data-stats-baidu-obj]'))
+    bindEleHandler(document.querySelectorAll(`*[${DATA_STATS_BAIDU_OBJ_ATTR}]`))
     // 由于存在异步渲染的情况，所以需要进行一段时间的轮询确保点击事件都能绑定上
     if (Date.now() - now >= 8000) {
       clearInterval(intervalTimer)
@@ -177,8 +196,7 @@ function bindEle () {
 function bindEleHandler (tagBox) {
   for (let index = 0; index < tagBox.length; index++) {
     let tag = tagBox[index]
-    let DATA_STATS_FALG = 'data-stats-flag'
-    let statusData = tag.getAttribute('data-stats-baidu-obj')
+    let statusData = tag.getAttribute(DATA_STATS_BAIDU_OBJ_ATTR)
     let hasBindFlag = tag.hasAttribute(DATA_STATS_FALG)
 
     // 检测 statusData 是否存在
@@ -189,7 +207,7 @@ function bindEleHandler (tagBox) {
     try {
       statusData = jsonParse(decodeURIComponent(statusData))
     } catch (e) {
-      console.warn('事件追踪 data-stats-baidu-obj 数据不是合法的 JSON 数据')
+      log.warn(tagBox, `事件追踪 ${DATA_STATS_BAIDU_OBJ_ATTR} 数据不是合法的 JSON 数据`)
       continue
     }
 
