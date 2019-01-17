@@ -25,6 +25,7 @@ let isReverse = false // false = 正序，从小到大，默认情况；true = �
 let lastPage
 
 // 以下字段isCatFetch=true时才有（根据RD反馈，线上其实不存在在HTML里面配置目录的书了，所以应该都走fetch了）
+let isSplitPage
 // 记录首尾章节的信息（后端返回的对象）
 let firstChapter
 let latestChapter
@@ -119,7 +120,7 @@ class Catalog {
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
     let catalogs = data.data.catalog.chapters
     if (!isAppend) {
-      isFirstChapterLoaded = isLatestChapterLoaded = false
+      isFirstChapterLoaded = isLatestChapterLoaded = !isSplitPage
       firstChapter = data.data.catalog.firstChapter
       latestChapter = data.data.catalog.latestChapter
       this.categoryList = catalogs.concat([])
@@ -128,7 +129,7 @@ class Catalog {
     } else {
       this.categoryList = this.categoryList.concat(catalogs)
     }
-    if (catalogs && catalogs.length !== 0) {
+    if (isSplitPage && catalogs && catalogs.length !== 0) {
       if (catalogs[0].id === firstChapter.id) {
         isFirstChapterLoaded = true
       }
@@ -200,10 +201,12 @@ class Catalog {
       // $catWrapper.scrollTop = catalog[catLocation.section - 1].offsetTop
     }
     this.reverse($contentTop, $catalogContent)
-    if (!isAppend) {
-      this.bindCatalogScroll($catWrapper)
-    } else {
-      lastScrollTop = $catWrapper.scrollTop
+    if (isSplitPage) {
+      if (!isAppend) {
+        this.bindCatalogScroll($catWrapper)
+      } else {
+        lastScrollTop = $catWrapper.scrollTop
+      }
     }
   }
 
@@ -271,6 +274,9 @@ class Catalog {
       'originUrl=' + encodeURIComponent(url),
       'type=' + type
     ]
+    if (isSplitPage) {
+      params.push('forceSplit=true')
+    }
 
     return MIP.sandbox.fetchJsonp(CATALOG_URL + params.join('&'), {
       jsonpCallback: 'callback'
@@ -341,6 +347,7 @@ class Catalog {
       this.isCatFetch = true
       this.loadCategory('middle')
         .then(data => {
+          isSplitPage = data.data.catalog.isSplitPage
           this.renderCatalogCallBack(data)
         }).catch(err => {
           let reloadBtn = this.$catalogSidebar.querySelector('.reloadBtn')
@@ -490,16 +497,28 @@ class Catalog {
       // isReverse = false时，默认 asc。点击后改为 desc
       let type = !isReverse ? 'desc' : 'asc'
       reverseName.innerHTML = !isReverse ? ' 倒序' : ' 正序'
-      this.loadCategory(type).then(data => {
-        isReverse = !isReverse
-        this.renderCatalogCallBack(data)
-        // 高亮但不定位
-        let currentPage = this.getCurrentPage()
-        let $activeCatalog = this.$catalogSidebar.querySelector(`.catalog-page[data-chapter-id="${currentPage.chapter}"]`)
-        if ($activeCatalog) {
-          $activeCatalog.querySelector('a').classList.add('active')
+      if (isSplitPage) {
+        this.loadCategory(type).then(data => {
+          isReverse = !isReverse
+          this.renderCatalogCallBack(data)
+          // 高亮但不定位
+          let currentPage = this.getCurrentPage()
+          let $activeCatalog = this.$catalogSidebar.querySelector(`.catalog-page[data-chapter-id="${currentPage.chapter}"]`)
+          if ($activeCatalog) {
+            $activeCatalog.querySelector('a').classList.add('active')
+          }
+        })
+      } else {
+        let $refCatalog
+        let $catalogs = $catalogContent.children
+        for (let i = 0; i < $catalogs.length; i++) {
+          let $node = $catalogs[i]
+          if (i !== 0) {
+            $catalogContent.insertBefore($node, $refCatalog)
+          }
+          $refCatalog = $node
         }
-      })
+      }
     }
     reverse.addEventListener('click', reverseHandler)
   }
@@ -617,6 +636,7 @@ class Catalog {
         util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
           display: 'none'
         })
+        isSplitPage = data.data.catalog.isSplitPage
         this.renderCatalogCallBack(data, {
           isReload: true
         })
