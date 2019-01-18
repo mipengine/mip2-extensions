@@ -65,7 +65,6 @@ export default class MIPAdEcom extends CustomElement {
    * build 钩子，触发渲染. 广告需要尽早执行所以用 build
    */
   build () {
-    let me = this
     let ele = this.element
     let checkElement = () => {
       if (dom.getConfigScriptElement(ele)) {
@@ -76,7 +75,7 @@ export default class MIPAdEcom extends CustomElement {
         if (!this.isShowCustom()) {
           return
         }
-        return this.fetchData(this.commonUrl, this.render.bind(me), ele)
+        return this.fetchData(this.commonUrl, this.render.bind(this), ele)
       }
       return logger.warn(ele, '获取不到配置')
     }
