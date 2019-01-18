@@ -440,8 +440,6 @@ export default class Share {
    * 初始化分享组件
    */
   init () {
-    let me = this
-
     /**
      * 分享入口配置列表
      *
@@ -449,7 +447,7 @@ export default class Share {
      */
     let list = []
 
-    me.isRender = false // 标记当前渲染状态
+    this.isRender = false // 标记当前渲染状态
 
     if (IS_ZBIOS || IS_UC || IS_QQ || IS_WECHAT) {
       list.push(
@@ -469,7 +467,7 @@ export default class Share {
       list.push(MORE_CONFIG)
     }
 
-    me.list = list = list.concat(me.opt.custom)
+    this.list = list = list.concat(this.opt.custom)
 
     let str = ''
     if (list.length > 0) {
@@ -497,26 +495,25 @@ export default class Share {
       }
     }
 
-    let domShareList = me.domShareList = document.createElement('div')
+    let domShareList = this.domShareList = document.createElement('div')
     domShareList.classList.add('c-share-list')
     domShareList.innerHTML = str
 
-    me.bindEvent()
+    this.bindEvent()
   }
 
   /**
    * 绑定分享按钮点击事件
    */
   bindEvent () {
-    let me = this
     let onAioLoaded = () => {
       // key = ['pyq', 'wxfriend', 'qqfriend', 'qzone', 'sinaweibo', 'more'];
-      let shareBtns = me.domShareList.querySelectorAll('.c-share-btn')
+      let shareBtns = this.domShareList.querySelectorAll('.c-share-btn')
 
       ;[...shareBtns].forEach((shareBtn, index) => {
-        let config = me.list[index]
+        let config = this.list[index]
         config && shareBtn.addEventListener('click', () => {
-          config.cb(me.opt)
+          config.cb(this.opt)
         })
       })
     }
@@ -540,23 +537,21 @@ export default class Share {
    * @param {?Object}     renderOpts 渲染配置
    */
   render (dom, renderOpts = {}) {
-    let me = this
-
-    // $dom 为必选
+    // dom 为必选
     if (!dom) {
       return
     }
 
     // add 自定义 classname
     if (renderOpts && renderOpts.customClassName) {
-      me.domShareList.addClass(renderOpts.customClassName)
+      this.domShareList.addClass(renderOpts.customClassName)
     }
 
     // 插入用户dom
-    dom.appendChild(me.domShareList)
+    dom.appendChild(this.domShareList)
 
     // 标记dom已经被插入页面
-    me.isRender = true
+    this.isRender = true
 
     if (renderOpts && typeof renderOpts.onRender === 'function') {
       renderOpts.onRender()

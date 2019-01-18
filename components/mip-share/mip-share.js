@@ -22,8 +22,7 @@ export default class MIPShare extends CustomElement {
    * 渲染组件
    */
   build () {
-    let me = this
-    let element = me.element
+    let element = this.element
     let share = new Share({
       title: element.getAttribute('title') || document.title,
       url: element.getAttribute('url') || location.href,
@@ -35,6 +34,6 @@ export default class MIPShare extends CustomElement {
     share.render(element)
 
     let shareListDom = element.querySelector('.c-share-list')
-    shareListDom && me.applyFillContent(shareListDom)
+    shareListDom && this.applyFillContent(shareListDom)
   }
 }
