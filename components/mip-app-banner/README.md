@@ -28,19 +28,29 @@
 ### layout
 
 说明：组件布局，只能设置值为 `nodisplay`
+
 必选项：是
+
 类型：字符串
+
 取值范围：`nodisplay`
+
 单位：无
+
 默认值：`nodisplay`
 
 ### 子节点 `[open-button]`
 
 说明：调起 App 的按钮，必须带有 `open-button` 属性
+
 必选项：是
+
 类型：HTML 节点
+
 取值范围：无
+
 单位：无
+
 默认值：`<button open-button>`
 
 ## 浏览器兼容性
