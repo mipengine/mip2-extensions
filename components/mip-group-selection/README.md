@@ -6,7 +6,7 @@ mip-group-selection 分组选择组件，可用于城市分组，英文名分组
 ----|----
 类型|通用
 支持布局|responsive,fixed-height,fill,container,fixed
-所需脚本|https://c.mipcdn.com/static/v2/mip-group-selection/mip-group-selection.js<br/> https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-group-selection/mip-group-selection.js<br/>https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js
 
 ## 示例
 
@@ -101,7 +101,7 @@ mip-group-selection 分组选择组件，可用于城市分组，英文名分组
     </template>
   </div>
 </mip-group-selection>
-<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
 ```
 
 ### 基本用法
@@ -136,7 +136,7 @@ mip-group-selection 分组选择组件，可用于城市分组，英文名分组
     </template>
   </div>
 </mip-group-selection>
-<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
 ```
 
 ### 配合数据绑定
@@ -243,11 +243,11 @@ mip-group-selection 分组选择组件，可用于城市分组，英文名分组
     </template>
   </div>
 </mip-group-selection>
-<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
 ```
 
 ### 配合事件绑定
-当用户选择某个元素时，分组选择组件会抛出名为 `selected` 的事件(event)，使用组件[事件通信机制](https://www.mipengine.org/doc/3-widget/6-help/3-mip-normal.html)可以监听这个事件，并与其他组件/数据交互（action）。
+当用户选择某个元素时，分组选择组件会抛出名为 `selected` 的事件(event)，使用组件[事件通信机制](https://www.mipengine.org/v2/docs/interactive-mip/event-and-action.html)可以监听这个事件，并与其他组件/数据交互（action）。
 
 如下方示例，当分组选择组件`mip-group-selection`中`selected`事件(event)被触发时，调用 id 为`mytoggle1`组件的`toggle`作为响应（action）。
 
@@ -266,8 +266,8 @@ mip-group-selection 分组选择组件，可用于城市分组，英文名分组
 </mip-fixed>
 <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
 <script src="/mip-group-selection/mip-group-selection.js"></script>
-<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
-<script src="https://c.mipcdn.com/static/v1/mip-toggle/mip-toggle.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-toggle/mip-toggle.js"></script>
 ```
 
 ## 属性说明
