@@ -435,42 +435,58 @@
 ### layout, class
 
 说明：组件布局，建议使用，避免实验初始化时页面抖动
+
 必选项：否
+
 类型：字符串
+
 取值：`layout="nodisplay" class="mip-hidden"`
 
 ### 实验名
 
 说明：示例中 `button-color` 处，注意和 CSS 中的 `mip-x-[button-color]` 对应
+
 必选项：是
+
 类型：字符串
 
 ### descri
 
 说明：实验描述，不参与实验分组计算
+
 必选项：否
+
 类型：字符串
 
 ### variants
 
 说明：实验分组配置。填写 key-value 组成的对象。key 对应 CSS 中的属性选择器，value 对应分组流量。如果 value 填写 30，则有 30% 的流量进入该分组
+
 必选项：是
+
 类型：JSON 对象
 
 ### sticky
 
 说明：实验分组配置。填写 key-value 组成的对象。key 对应 CSS 中的属性选择器，value  对应分组流量。如果 value 填写 30，则有 30% 的流量进入该分组
+
 必选项：否
+
 类型：布尔值
+
 默认值：true
+
 取值：true, false
 
 ### baidu-stats
 
 说明：实验分组统计配置。具体配置方法，请参考本文【6. 与百度统计配合使用】
+
 必选项：否
+
 类型：数组
 
 ## 注意事项
+
 1. `<application/json>` 为实验分组配置，要求填写合法的JSON对象。开发时请注意控制台是否有报错。
 2. 如果使用百度统计，请保证 `mip-stats-baidu.js` 在 `mip-experiment.js` 之前引入。
