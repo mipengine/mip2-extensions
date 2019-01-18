@@ -24,11 +24,11 @@
     <script type="application/json">
       {
         "hosts" : {
-          "className1" : "https://m.baidu.com/div1?",
-          "disp" : "https://m.baidu.com/${disp}?",
-          "className2" : "https://m.baidu.com/_${div2}.gif?"
+          "className1" : "https://some-log-host.com/some-log-path/div1?",
+          "disp" : "https://some-log-host.com/${disp}?",
+          "className2" : "https://some-log-host.com/_${div2}.gif?"
         },
-  
+
         "setting" : {
           "click" : [
             {
@@ -43,7 +43,7 @@
                 }
               }
             },
-  
+
             {
               "selector" : ".className2",
               "host" : "className2",
@@ -55,7 +55,7 @@
                 }
               }
             },
-  
+
             {
               "selector" : ".className3",
               "host" : "className3",
@@ -65,7 +65,7 @@
               }
             }
           ],
-  
+
           "disp" : [
             {
               "host" : "disp",
@@ -81,7 +81,7 @@
             }
           ],
 
-          "timerxx" : [
+          "timer" : [
             {
               "host" : "className2",
               "queryString" : {
