@@ -10,7 +10,7 @@ const { CustomElement, util, viewer } = MIP
 const { platform } = util
 const { fetchJsonp } = MIP.sandbox
 const log = util.log('mip-app-banner')
-const MIP_HIDDEN_CLS = 'mip-hidden'
+const MIP_HIDDEN_CLASS = 'mip-hidden'
 
 // app 调起
 let openButton = {
@@ -59,7 +59,7 @@ let dismissButton = {
   },
   onClick () {
     ls.setSotrage(this.element.id)
-    this.element.classList.add(MIP_HIDDEN_CLS)
+    this.element.classList.add(MIP_HIDDEN_CLASS)
   }
 }
 // banner 初始化
@@ -71,7 +71,7 @@ let preProcess = {
     if (this.isDismissed(element.id)) {
       return false
     }
-    element.classList.remove(MIP_HIDDEN_CLS)
+    element.classList.remove(MIP_HIDDEN_CLASS)
     dismissButton.add(element)
     return true
   }
@@ -134,11 +134,11 @@ export default class MIPAppBanner extends CustomElement {
     let isChromeAndroid = platform.isAndroid() && platform.isChrome()
 
     if (MIP.standalone && isChromeAndroid) {
-      el.classList.add(MIP_HIDDEN_CLS)
+      el.classList.add(MIP_HIDDEN_CLASS)
       return
     }
     if (platform.isAndroid() && !manifestLink) {
-      el.classList.add(MIP_HIDDEN_CLS)
+      el.classList.add(MIP_HIDDEN_CLASS)
       return
     }
     let manifestHref = manifestLink.getAttribute('href')
@@ -150,7 +150,7 @@ export default class MIPAppBanner extends CustomElement {
     }).then(data => {
       let apps = data.related_applications
       if (!apps) {
-        el.classList.add(MIP_HIDDEN_CLS)
+        el.classList.add(MIP_HIDDEN_CLASS)
         return
       }
       for (let i = 0; i < apps.length; i++) {
@@ -168,7 +168,7 @@ export default class MIPAppBanner extends CustomElement {
     // 覆盖 nodisplay 的 display: 'none'
     util.css(this.element, { display: '' })
     // 通过 mip-hidden 控制显示和隐藏
-    this.element.classList.add(MIP_HIDDEN_CLS)
+    this.element.classList.add(MIP_HIDDEN_CLASS)
     if (platform.isIOS()) {
       this.iosAppBanner()
     } else {
