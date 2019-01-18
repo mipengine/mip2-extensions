@@ -216,13 +216,13 @@ export default class MIPMap extends CustomElement {
       window.BMap._insertScript = new Promise(resolve => {
         window._initBaiduMap = () => {
           resolve(window.BMap)
-          window.document.body.removeChild($script)
+          window.document.body.removeChild(script)
           window.BMap._insertScript = null
           window._initBaiduMap = null
         }
-        let $script = document.createElement('script')
-        window.document.body.appendChild($script)
-        $script.src = `https://api.map.baidu.com/api?v=2.0&ak=${this.ak}&callback=_initBaiduMap`
+        let script = document.createElement('script')
+        window.document.body.appendChild(script)
+        script.src = `https://api.map.baidu.com/api?v=2.0&ak=${this.ak}&callback=_initBaiduMap`
       })
       return window.BMap._insertScript
     } else if (!window.BMap._insertScript) {
