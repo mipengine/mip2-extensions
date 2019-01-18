@@ -32,8 +32,8 @@ let params = {
   title: '',
   frsrcid: getHashData('srcid'),
   originalUrl: getSubString(location.pathname, REGEXS.regHttps) ||
-          getSubString(location.pathname, REGEXS.regHttp) ||
-          location.href
+    getSubString(location.pathname, REGEXS.regHttp) ||
+    location.href
 }
 
 /**
@@ -123,7 +123,6 @@ const CONFIG = {
  * @returns {string} value
  */
 function getHashData (key) {
-  let MIP = window.MIP || {}
   return MIP && MIP.hash && MIP.hash.get ? MIP.hash.get(key) : ''
 }
 

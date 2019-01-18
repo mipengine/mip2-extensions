@@ -5,7 +5,7 @@
 import dom from './dom'
 import data from './data'
 
-const {util, viewer} = MIP
+const {util, standalone} = MIP
 const logger = util.log('mip-custom')
 
 /**
@@ -111,16 +111,14 @@ function getSourceId () {
  * @returns {boolean} inMipShell 是否在mip-shell中
  */
 function inMipShell (element) {
-  let inMipShell = true
-  // 非结果页进入，不是mip-shell
-  if (!viewer.isIframed) {
-    inMipShell = false
+  // 非结果页进入，不是mip-shell，非百度、cache，不在mip-shell中
+  if (standalone ||
+    !(data.REGEXS.domain.test(window.document.referrer) ||
+    util.fn.isCacheUrl(location.href))
+  ) {
+    return false
   }
-  // 非百度、cache不在mip-shell中
-  if (!(data.REGEXS.domain.test(window.document.referrer) || util.fn.isCacheUrl(location.href))) {
-    inMipShell = false
-  }
-  return inMipShell
+  return true
 }
 
 /**

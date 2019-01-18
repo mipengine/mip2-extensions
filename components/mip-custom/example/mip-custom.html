@@ -1,20 +1,37 @@
 <!DOCTYPE html>
-<html lang="zh-cn" mip>
+<html mip>
 
 <head>
-  <meta charset="UTF-8">
-  <title>MIP page</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1" />
+  <title>title</title>
+  <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
+  <link rel="canonical" href="对应的 h5 页面 url">
 </head>
 
 <body>
-  <div>请使用代理测试</div>
-
+  <h2>定制化MIP示例写法，涉及具体业务，示例不会正常显示，测试请代理线上</h2>
+  <!-- 顶部定制化内容区域，可自由放置 -->
+  <mip-custom position="top" source-type="med_tag">
+    <script type="application/json">
+      {
+        "accid": "e2217bab684fbb898dccf04b",
+        "title": "%E8%BF%99%E9%87%8C%E6%98%AF%E6%A0%87%E9%A2%98"
+      }
+    </script>
+  </mip-custom>
+  <!-- 底部定制化内容区域，必须放在内容的下方、`script`标签的上方 -->
+  <mip-custom>
+    <script type="application/json">
+      {
+        "accid": "e2217bab684fbb898dccf04b",
+        "title": "%E8%BF%99%E9%87%8C%E6%98%AF%E6%A0%87%E9%A2%98"
+      }
+    </script>
+  </mip-custom>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-  <script src="https://mipcache.bdstatic.com/static/v2/mip-mustache/mip-mustache.js"></script>
-  <script src="/mip-custom/mip-custom.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-custom/mip-custom.js"></script>
 </body>
 
 </html>

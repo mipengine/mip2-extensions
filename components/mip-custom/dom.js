@@ -10,7 +10,7 @@ import dataProcessor from './data'
  * util 引入工具类 templates 模板库
  * @type {Object}
  */
-const {util, templates, viewer} = MIP
+const { util, templates, viewer } = MIP
 
 /**
  * fixedElement 引入 fixed 元素类
@@ -57,10 +57,10 @@ function moveToFixedLayer (element, customNode, container) {
 
   // 存在悬浮时, 设置距离 top/bottom 的距离
   if (customNode.hasAttribute('top') && top) {
-    util.css(fixedParent, {top})
+    util.css(fixedParent, { top })
   }
   if (customNode.hasAttribute('bottom') && bottom) {
-    util.css(fixedParent, {bottom})
+    util.css(fixedParent, { bottom })
   }
   fixedParent.setAttribute('type', type)
   fixedParent.appendChild(customNode)
@@ -143,7 +143,7 @@ function createCustomNode (html, customTag) {
 
   tagandAttrs.forEach(item => {
     let attrs = item.split('=')
-    attrs[0] && attrs[1] && node.setAttribute(attrs[0], attrs[1].replace(/"/ig, ''))
+    attrs[0] && attrs[1] && node.setAttribute(attrs[0], attrs[1].replace(/"/g, ''))
   })
 
   node.appendChild(createTemplateNode(html))
