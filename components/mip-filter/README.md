@@ -1,10 +1,10 @@
-# `mip-filter` 筛选组件
+# mip-filter
 
 筛选组件，自适应 PC 端和移动端宽度。可参考 https://www.mipengine.org/timeline.html。
 
 标题|内容
 ----|----
-类型|通用
+类型|动态内容
 支持布局|responsive, fixed-height, fill, container, fixed
 所需脚本|https://c.mipcdn.com/static/v2/mip-filter/mip-filter.js
 
@@ -64,6 +64,7 @@
 ```
 
 ### 自定义筛选文字
+
 通过 `mip-filter-filterText` 指定筛选文字。示例中，`mip-filter-filterText="您已经选择："`。
 
 ```html
@@ -106,21 +107,30 @@
 
 ### mip-filter-filterWrap
 
-说明：筛选按钮 DOM  
-必选项：是  
-类型：字符串  
+说明：筛选按钮 DOM
+
+必选项：是
+
+类型：字符串
+
 取值：CSS Selector，如`".box"`
 
 ### mip-filter-itemWrap
 
-说明：筛选项 DOM  
-必选项：是  
-类型：字符串  
+说明：筛选项 DOM
+
+必选项：是
+
+类型：字符串
+
 取值：CSS Selector，如`".box"`
 
 ### mip-filter-filterText
 
-说明：筛选链接时，前面的文字。可以不填  
+说明：筛选链接时，前面的文字。可以不填
+
 必选项：否
-类型：字符串  
-取值：例如“筛选：”， “已选择”，“”  
+
+类型：字符串
+
+取值：例如“筛选：”， “已选择”，“”
