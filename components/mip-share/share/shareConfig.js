@@ -245,7 +245,6 @@ function shareHandle (options, successcallback, failCallback) {
     let bdbox = options.bdbox || {}
     if (!bdbox.source) {
       sendErrorLog('no_bdbox_source', location.href)
-      if (debug) {}
       return
     }
 
@@ -292,7 +291,7 @@ function shareHandle (options, successcallback, failCallback) {
 
         if (IS_WX) {
           wx.config({
-            debug: debug,
+            debug,
             jsApiList: options.wx.jsApiList,
             appId: data.appId,
             nonceStr: data.nonceStr,
@@ -352,15 +351,8 @@ function initConfig (options, success, fail) {
   }
 
   globalOptions = options
-  let debug = !!options.debug
 
-  if (IS_WX && !wx) {
-    if (debug) {}
-    return
-  }
-
-  if (IS_QQ && !window.setShareInfo) {
-    if (debug) {}
+  if ((IS_WX && !wx) || (IS_QQ && !window.setShareInfo)) {
     return
   }
 
