@@ -17,8 +17,9 @@
   <script type="application/json">
     {
       "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
-      "hide-map": false,
-      "get-position": true,
+      "hideMap": false,
+      "getPosition": false,
+      "dataOnlyGetSdk": false,
       "location": {
         "province": "北京",
         "city": "北京市",
@@ -72,8 +73,11 @@
     },
     "controls": {
       "NavigationControl": {
+        "showZoomInfo": true,
+        "enableGeolocation": true
       },
       "MapTypeControl": {
+        "type": "BMAP_MAPTYPE_CONTROL_DROPDOWN"
       }
     },
     "info": {
@@ -91,25 +95,34 @@
 
 地图定位后，点击定位点会出现具体弹层，弹层的各个参数都是可配置的，弹层内容可以通过 `content` 参数来设置，`content` 的值为 HTML 类型，其他参数可参考百度地图提供的[弹层文档](http://lbsyun.baidu.com/cms/jsapi/reference/jsapi_reference.html#a3b8)。
 
-### data-only-get-sdk
+### dataOnlyGetSdk
 
 说明：是否只加载地图 SDK
+
 必填：否
+
 格式：Boolean
+
 默认：false
 
-### hide-map
+### hideMap
 
 说明：是否隐藏地图
+
 必填：否
+
 格式：Boolean
+
 默认：false
 
-### get-position
+### getPosition
 
 说明：是否自动定位
+
 必填：否
+
 格式：Boolean
+
 默认：false
 
 ## 触发事件
@@ -144,6 +157,7 @@
 }
 ```
 ### getPositionFailed
+
 定位失败
 
 ### searchLocalFailed
