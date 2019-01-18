@@ -18,15 +18,33 @@ mip-stats-cnzz 用于友盟（CNZZ）统计投放。
 
 ### token
 
-token 为站长的站点在友盟 [CNZZ](http://open.cnzz.com) 上接入申请的唯一 ID。
+说明：token 为站长的站点在友盟 [CNZZ](http://open.cnzz.com) 上接入申请的唯一 ID。
+
+必选项：是
+
+类型：`string`
+
+默认值：无
 
 ### nodes
 
-CNZZ 组件中，官方提供的是 s11 节点，但如果该节点不能满足需求时，开发者可以通过 nodes 参数自行配置节点，以节点号书写，多个节点之间通过逗号分隔，统计时将随机选择配置的节点。
+说明：CNZZ 组件中，官方提供的是 s11 节点，但如果该节点不能满足需求时，开发者可以通过 nodes 参数自行配置节点，以节点号书写，多个节点之间通过逗号分隔，如 `1,2,3,4`，统计时将随机选择配置的节点。
+
+必选项：否
+
+类型：`string`
+
+默认值：11
 
 ### setconfig
 
-setconfig 用于一些全局变量的配置，如 `[_setAutoPageview, true]`，具体参照 [CNZZ API 列表](http://open.cnzz.com/a/api/apilist/)。
+说明：setconfig 用于一些全局变量的配置，如 `[_setAutoPageview, true]`，具体参照 [CNZZ API 列表](http://open.cnzz.com/a/api/apilist/)。
+
+必选项：否
+
+类型：`string`
+
+默认值：''
 
 ## CNZZ 统计事件追踪
 
