@@ -5,11 +5,9 @@
 
 /* global MIP, fetch */
 
-let {
-  CustomElement,
-  util,
-  viewport
-} = MIP
+const { CustomElement, util, viewport } = MIP
+
+const logger = util.log('mip-viz-echarts')
 
 export default class MipVizEcharts extends CustomElement {
   constructor (element) {
@@ -120,15 +118,14 @@ export default class MipVizEcharts extends CustomElement {
    * layout 渲染完成之后执行的回调
    */
   async layoutCallback () {
-    let me = this
-    me.initialize()
+    this.initialize()
     try {
       await import('./echarts.common.min')
-      await me.loadData()
-      me.measuredBox()
-      me.renderGraph()
+      await this.loadData()
+      this.measuredBox()
+      this.renderGraph()
     } catch (err) {
-      console.error(me.getName() + ': ', err)
+      console.error(this.getName() + ': ', err)
     }
   }
 
@@ -136,18 +133,16 @@ export default class MipVizEcharts extends CustomElement {
    * 组件初始化
    */
   initialize () {
-    let me = this
-    me.container = this.element.ownerDocument.createElement('div')
-    me.applyFillContent(me.container, true)
-    me.element.appendChild(me.container)
+    this.container = this.element.ownerDocument.createElement('div')
+    this.applyFillContent(this.container, true)
+    this.element.appendChild(this.container)
   }
 
   /**
    * 计算图表容器的宽高
    */
   measuredBox () {
-    let me = this
-    let box = me.element
+    let box = this.element
     let boxMeasuredWidth = box.clientWidth
     let boxMeasuredHeight = box.clientHeight
     let boxWidth = box.getAttribute('width')
@@ -155,52 +150,54 @@ export default class MipVizEcharts extends CustomElement {
 
     // 处理隐藏的 layout 的情况
     if (!boxMeasuredWidth) {
-      boxMeasuredWidth = me.useDataWidth ? me.dataWidth : viewport.getWidth()
+      boxMeasuredWidth = this.useDataWidth ? this.dataWidth : viewport.getWidth()
     }
     if (!boxMeasuredHeight) {
-      boxMeasuredHeight = me.useDataHeight ? me.dataHeight : (boxMeasuredWidth * boxHeight / boxWidth)
+      boxMeasuredHeight = this.useDataHeight
+        ? this.dataHeight
+        : (boxMeasuredWidth * boxHeight / boxWidth)
     }
 
-    me.measuredHeight = boxMeasuredHeight
-    me.measuredWidth = boxMeasuredWidth
+    this.measuredHeight = boxMeasuredHeight
+    this.measuredWidth = boxMeasuredWidth
   }
 
   /**
    * 组件初始化渲染
    */
   build () {
-    let me = this
-    me.inlineData = me.getInlineData()
-    me.src = me.element.getAttribute('src')
-    me.useDataWidth = me.element.hasAttribute('use-data-width')
-    me.useDataHeight = me.element.hasAttribute('use-data-height')
+    this.inlineData = this.getInlineData()
+    this.src = this.element.getAttribute('src')
+    this.useDataWidth = this.element.hasAttribute('use-data-width')
+    this.useDataHeight = this.element.hasAttribute('use-data-height')
   }
 
   /**
    * 载入图表数据，本地载入和远程载入
    */
   async loadData () {
-    let me = this
     let data
-    if (me.inlineData) {
+    let element = this.element
+
+    if (this.inlineData) {
       try {
-        data = util.jsonParse(me.inlineData)
+        data = util.jsonParse(this.inlineData)
       } catch (e) {
-        console.error(me.getName() + ': 解析数据出错')
+        logger.error(element, '解析数据出错')
       }
     } else {
       try {
-        let fetchData = await fetch(me.src)
+        let fetchData = await fetch(this.src)
         data = await fetchData.json()
       } catch (err) {
-        console.error(me.getName() + ': 请求数据出错')
+        logger.error(element, '请求数据出错')
       }
     }
 
-    me.data = data.data || {}
-    me.padding = data.padding
-    me.dataWidth = data.width || me.dataWidth
-    me.dataHeight = data.height || me.dataHeight
+    this.data = data.data || {}
+    this.padding = data.padding
+    this.dataWidth = data.width || this.dataWidth
+    this.dataHeight = data.height || this.dataHeight
   }
 
   /**
@@ -219,7 +216,7 @@ export default class MipVizEcharts extends CustomElement {
   /**
    * 处理留白的配置数据
    *
-   * @param {string} widthOrHeight 指定宽还是高
+   * @param   {string} widthOrHeight 指定宽还是高
    * @returns {number} 宽度或者高度留白的数值
    */
   getDataPadding (widthOrHeight) {
@@ -244,30 +241,19 @@ export default class MipVizEcharts extends CustomElement {
    * 渲染图表
    */
   renderGraph () {
-    let me = this
-    if (me.useDataWidth) {
-      me.measuredWidth = me.dataWidth
+    if (this.useDataWidth) {
+      this.measuredWidth = this.dataWidth
     }
-    if (me.useDataHeight) {
-      me.measuredHeight = me.dataHeight
+    if (this.useDataHeight) {
+      this.measuredHeight = this.dataHeight
     }
 
-    let width = me.measuredWidth - me.getDataPadding('width')
-    let height = me.measuredHeight - me.getDataPadding('height')
+    let width = this.measuredWidth - this.getDataPadding('width')
+    let height = this.measuredHeight - this.getDataPadding('height')
 
-    me.echarts = window.echarts
-    me.chart = me.echarts.init(me.container)
-    me.chart.setOption(me.data)
-    me.chart.resize({width, height, silent: true})
-  }
-
-  /**
-   * 获取当前组件的名称，用来标识 log
-   *
-   * @returns {string} 组件的名称
-   */
-  getName () {
-    return 'mip-viz-echarts ' +
-      (this.element.getAttribute('id') || '<unknown id>')
+    this.echarts = window.echarts
+    this.chart = this.echarts.init(this.container)
+    this.chart.setOption(this.data)
+    this.chart.resize({width, height, silent: true})
   }
 }
