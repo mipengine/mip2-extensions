@@ -221,12 +221,11 @@ export default class MipVizEcharts extends CustomElement {
    */
   getDataPadding (widthOrHeight) {
     let p = this.padding
-    if (!p) {
-      return 0
-    }
+
     if (typeof p === 'number') {
       return p
     }
+
     if (typeof p === 'object') {
       if (widthOrHeight === 'width') {
         return (p.left || 0) + (p.right || 0)
@@ -234,6 +233,7 @@ export default class MipVizEcharts extends CustomElement {
         return (p.top || 0) + (p.bottom || 0)
       }
     }
+
     return 0
   }
 
