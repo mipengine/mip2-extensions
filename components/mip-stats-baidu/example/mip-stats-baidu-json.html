@@ -11,11 +11,15 @@
     </style>
   </head>
   <body>
+    <!--注意：请使用 encodeURIComponent 处理 data-stats-baidu-obj 数据 -->
+    <div data-stats-baidu-obj='{"type":"click","data":["_trackEvent","some_desc_for_this_button","click"]}'>
+      点击发送请求
+    </div>
     <div>
-      <mip-stats-baidu token="dsfsfsfdf" setconfig='sfsd'>
+      <mip-stats-baidu>
         <script type="application/json">
           {
-            "token": "40950d4a876727eb62bc3905b2b28f7f",
+            "token": "af2e5b8ba47c0aa572a91195b1f7ff3e",
             "_setCustomVar": [1, "login", "1", 2],
             "_setAutoPageview": [true]
           }
