@@ -19,19 +19,15 @@
 
 # mip-mustache 部分
 
-mip-mustache 模板引擎
-
-| 标题     | 内容                                                        |
-| -------- | ----------------------------------------------------------- |
-| 类型     | 通用                                                        |
-| 支持布局 | 不使用布局                                                  |
-| 所需脚本 | https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js |
-
-## 说明
-
-mip-mustache 是 MIP 封装了 Mustache.js 而形成的模板，以此来对用户提供模板功能
+mip-mustache 模板引擎，mip-mustache 是 MIP 封装了 Mustache.js 而形成的模板，以此来对用户提供模板功能
 
 入口文件中 `MIP.registerTemplate('mip-mustache', Mustache)` 是注册的作用，模板注册和普通组件注册是不一样的，需要手动调用注册函数，注册名就是下述 template 中 type 字段的值
+
+标题|内容                                                        
+---|---
+类型|通用
+支持布局|不使用布局
+所需脚本|https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js
 
 ## Mustache 语法
 
