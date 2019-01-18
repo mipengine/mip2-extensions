@@ -14,13 +14,13 @@
 
 ## 使用方式
 
-开发者在使用 `<mip-access`> 组件实现页面内容访问权限控制时，需要通过脚本引入、表达式书写、参数配置等几个步骤，以下分别对这几步做详细讲解：
+开发者在使用 `mip-access` 组件实现页面内容访问权限控制时，需要通过脚本引入、表达式书写、参数配置等几个步骤，以下分别对这几步做详细讲解：
 
 ### 1. 脚本引入
 
 ```
-<script type="text/javascript" src="https://c.mipcdn.com/static/v1/mip.js"></script>
-<script type="text/javascript" src="https://c.mipcdn.com/static/v1/mip-access/mip-access.js"></script>
+<script type="text/javascript" src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script type="text/javascript" src="https://c.mipcdn.com/static/v2/mip-access/mip-access.js"></script>
 ```
 
 ### 2. 表达式书写
@@ -34,7 +34,7 @@
 <div mip-access="access OR subscriber">展示元素</div>
 ```
 
-表达式中可以使用的运算符在 [access-expr-impl.jison](https://github.com/mipengine/mip-extensions/blob/master/src/mip-access/mip-access-expr-impl.jison) 中全部列举，其中主要运算符如下：
+表达式中可以使用的运算符在 [access-expr-impl.jison](https://github.com/mipengine/mip2-extensions/blob/master/src/mip-access/mip-access-expr-impl.jison) 中全部列举，其中主要运算符如下：
 
 #### 逻辑运算符
 
@@ -60,15 +60,15 @@ NOT|“非”运算|NOT A
 
 ```
 <script id="mip-access" type="application/json">
-{
-    "authorization": "https://publisher.com/mip-access/api/mip-authorization.json?rid=READER_ID&url=CANONICAL_URL",
-    "pingback": "https://publisher.com/mip-access/api/mip-pingback?rid=READER_ID",
-    "login": "https://publisher.com/mip-access/login/?rid=READER_ID&url=CANONICAL_URL",
-    "authorizationFallbackResponse": {
-        "error": true,
-        "access": false
+    {
+        "authorization": "https://publisher.com/mip-access/api/mip-authorization.json?rid=READER_ID&url=CANONICAL_URL",
+        "pingback": "https://publisher.com/mip-access/api/mip-pingback?rid=READER_ID",
+        "login": "https://publisher.com/mip-access/login/?rid=READER_ID&url=CANONICAL_URL",
+        "authorizationFallbackResponse": {
+            "error": true,
+            "access": false
+        }
     }
-}
 </script>
 ```
 
@@ -102,8 +102,8 @@ NOT|“非”运算|NOT A
 
 ```
 "login": {
-     "login": "https://publisher.com/login.html?rid={READER_ID}",
-     "logout": "https://publisher.com/logout.html?rid={READER_ID}"
+    "login": "https://publisher.com/login.html?rid={READER_ID}",
+    "logout": "https://publisher.com/logout.html?rid={READER_ID}"
 }
 ```
 

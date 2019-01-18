@@ -66,7 +66,7 @@ class Login {
     let logoutUrl = this._loginMap.logout
     fetch(logoutUrl, {
       credentials: 'include'
-    }).then(function (res) {
+    }).then((res) => {
       if (res.ok) {
         window.location.reload()
       }

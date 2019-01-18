@@ -145,16 +145,13 @@ class Access {
   _applyAuthorization () {
     fetch(this._authorization, {
       credentials: 'include'
-    }).then((res) => {
-      if (res.ok) {
-        res.text().then((data) => {
-          this._authorizationFallback = JSON.parse(data)
-          this._applyAuthorizationToElement()
-        })
-      } else {
+    })
+      .then(res => res.json())
+      .then(data => {
+        this._authorizationFallback = JSON.parse(data)
         this._applyAuthorizationToElement()
-      }
-    }).catch(() => this._applyAuthorizationToElement())
+      })
+      .catch(() => this._applyAuthorizationToElement())
   }
 
   _applyAuthorizationToElement () {
