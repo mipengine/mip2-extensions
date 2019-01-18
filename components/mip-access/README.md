@@ -60,15 +60,15 @@ NOT|“非”运算|NOT A
 
 ```
 <script id="mip-access" type="application/json">
-    {
-        "authorization": "https://publisher.com/mip-access/api/mip-authorization.json?rid=READER_ID&url=CANONICAL_URL",
-        "pingback": "https://publisher.com/mip-access/api/mip-pingback?rid=READER_ID",
-        "login": "https://publisher.com/mip-access/login/?rid=READER_ID&url=CANONICAL_URL",
-        "authorizationFallbackResponse": {
-            "error": true,
-            "access": false
-        }
+  {
+    "authorization": "https://publisher.com/mip-access/api/mip-authorization.json?rid=READER_ID&url=CANONICAL_URL",
+    "pingback": "https://publisher.com/mip-access/api/mip-pingback?rid=READER_ID",
+    "login": "https://publisher.com/mip-access/login/?rid=READER_ID&url=CANONICAL_URL",
+    "authorizationFallbackResponse": {
+      "error": true,
+      "access": false
     }
+  }
 </script>
 ```
 
@@ -81,8 +81,8 @@ NOT|“非”运算|NOT A
 ```
 <!-- authorization 接口返回的数据 -->
 {
-    login: true,
-    access: false
+  login: true,
+  access: false
 }
 
 <!-- 表达式书写，以下表达式解析为 false，元素不展示 -->
@@ -102,8 +102,8 @@ NOT|“非”运算|NOT A
 
 ```
 "login": {
-    "login": "https://publisher.com/login.html?rid={READER_ID}",
-    "logout": "https://publisher.com/logout.html?rid={READER_ID}"
+  "login": "https://publisher.com/login.html?rid={READER_ID}",
+  "logout": "https://publisher.com/logout.html?rid={READER_ID}"
 }
 ```
 
@@ -114,8 +114,8 @@ NOT|“非”运算|NOT A
 ```
 <!-- 备用数据 -->
 "authorizationFallbackResponse": {
-    "error": true,
-    "access": false
+  "error": true,
+  "access": false
 }
 <!-- 表达式书写，以下表达式解析为 false，元素不展现 -->
 <div mip-access="error AND access">展示元素</div>
@@ -133,7 +133,7 @@ authorization 接口请求超时时间，默认为 3s。
 <!-- 设置的 URL -->
 https://path/to/your/host/?rid=READER_ID&url=SOURCE_URL"
 <!-- 解析后的 URL -->
-https://path/to/your/host/?rid=mip-142313cb090fa43b7ebecee9089f15b0&url=https%3A%2F%2Fwww.mipengine.org%2F"
+https://path/to/your/host/?rid=mip-142313cb090fa43b7ebecee9089f15b0&url=https%3A%2F%2Fpath%2Fto%2Fyour%2Fhost%2F"
 ```
 
 具体可使用的参数如下：
@@ -155,18 +155,28 @@ https://path/to/your/host/?rid=mip-142313cb090fa43b7ebecee9089f15b0&url=https%3A
 
 ### mip-access
 
-说明：控制 DOM 元素展示或隐藏的计算表达式      
-必选项：是   
-类型：字符串   
-单位：无   
-取值：无   
+说明：控制 DOM 元素展示或隐藏的计算表达式
+
+必选项：是
+
+类型：字符串
+
+单位：无
+
+取值：无
+
 默认值：无
 
 ### mip-access-hide
 
-说明：DOM 元素在表达式计算完成之前默认是展现的，如果在这段时间里希望隐藏元素，则通过设置该属性即可   
-必选项：否   
-类型：字符串   
-单位：无   
-取值：无   
+说明：DOM 元素在表达式计算完成之前默认是展现的，如果在这段时间里希望隐藏元素，则通过设置该属性即可
+
+必选项：否
+
+类型：字符串
+
+单位：无
+
+取值：无
+
 默认值：无
