@@ -1,7 +1,7 @@
 import './mip-gototop.less'
 
-const { CustomElement, viewport } = MIP
-const requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
+const { CustomElement, util, viewport } = MIP
+const { raf } = util.fn
 const MIP_GOTOTOP_SHOW_CLS = 'mip-gototop-show'
 
 export default class MIPGoToTop extends CustomElement {
@@ -16,20 +16,15 @@ export default class MIPGoToTop extends CustomElement {
    * 滚动至顶部
    */
   scrollToTop () {
-    // 直接降级 不做polyfill
-    if (!requestAnimationFrame) {
-      return viewport.setScrollTop(0)
-    }
-
     // 每次滚动步长
     let step = Math.max(this.scrollTop / 10, 20)
     let goToTop = () => {
       viewport.setScrollTop(this.scrollTop - step)
       if (this.scrollTop > 0) {
-        requestAnimationFrame(goToTop)
+        raf(goToTop)
       }
     }
-    requestAnimationFrame(goToTop)
+    raf(goToTop)
   }
 
   build () {
