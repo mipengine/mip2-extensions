@@ -23,7 +23,7 @@ export default class MIPShare extends CustomElement {
    */
   build () {
     let me = this
-    // 暂时先这样引入 zepto 和 aio 吧
+    // 暂时先这样引入 zepto
     window.require(['zepto'], $ => {
       let element = me.element
 

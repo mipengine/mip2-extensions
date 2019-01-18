@@ -6,8 +6,8 @@
 
 /* globals MIP, Box, ucweb, browser, ucbrowser, $ */
 
-import detect from './detect'
 import ShareConfig from './shareConfig'
+import { getOS, getBrowser } from './detect'
 
 const { util, viewer } = MIP
 const { platform } = util
@@ -30,14 +30,14 @@ const DEFAULT_OPTIONS = {
  *
  * @type {Object}
  */
-const CURRENT_OS = detect.getOS()
+const CURRENT_OS = getOS()
 
 /**
  * 当前设备的浏览器信息
  *
  * @type {Object}
  */
-const CURRENT_BROWSER = detect.getBrowser()
+const CURRENT_BROWSER = getBrowser()
 
 /**
  * 是否是手机百度环境
@@ -77,23 +77,21 @@ const WX_PYQ_SHARE_CONFIG = {
   icon: '//m.baidu.com/se/static/pmd/pmd/share/images/pyq.png',
   title: '朋友圈',
   cb: (() => {
-    let fn
     if (IS_ZBIOS) {
       // 手百调起逻辑
-      fn = opt => {
+      return opt => {
         opt.mediaType = 'weixin_timeline'
         baiduShare(opt, false)
       }
     } else if (IS_UC) {
       // UC 浏览器调起分享逻辑
-      fn = opt => ucShare('pyq', opt)
+      return opt => ucShare('pyq', opt)
     } else if (IS_QQ) {
       // QQ 浏览器调起分享逻辑
-      fn = opt => qqShare('pyq', opt)
+      return opt => qqShare('pyq', opt)
     } else if (IS_WECHAT) {
-      fn = wechatTips
+      return wechatTips
     }
-    return fn
   })()
 }
 
@@ -107,20 +105,18 @@ const WX_FRIEND_SHARE_CONFIG = {
   icon: '//m.baidu.com/se/static/pmd/pmd/share/images/wxfriend.png',
   title: '微信好友',
   cb: (() => {
-    let fn
     if (IS_ZBIOS) {
-      fn = opt => {
+      return opt => {
         opt.mediaType = 'weixin_friend'
         baiduShare(opt, false)
       }
     } else if (IS_UC) {
-      fn = opt => ucShare('wxfriend', opt)
+      return opt => ucShare('wxfriend', opt)
     } else if (IS_QQ) {
-      fn = opt => qqShare('wxfriend', opt)
+      return opt => qqShare('wxfriend', opt)
     } else if (IS_WECHAT) {
-      fn = wechatTips
+      return wechatTips
     }
-    return fn
   })()
 }
 
@@ -134,18 +130,16 @@ const QQ_FRIEND_SHARE_CONFIG = {
   icon: '//m.baidu.com/se/static/pmd/pmd/share/images/qqfriend.png',
   title: 'QQ好友',
   cb: (() => {
-    let fn
     if (IS_ZBIOS) {
-      fn = opt => {
+      return opt => {
         opt.mediaType = 'qqfriend'
         baiduShare(opt, false)
       }
     } else if (IS_UC) {
-      fn = opt => ucShare('qqfriend', opt)
+      return opt => ucShare('qqfriend', opt)
     } else if (IS_QQ) {
-      fn = opt => qqShare('qqfriend', opt)
+      return opt => qqShare('qqfriend', opt)
     }
-    return fn
   })()
 }
 
@@ -159,27 +153,24 @@ const QZONE_SHARE_CONFIG = {
   icon: '//m.baidu.com/se/static/pmd/pmd/share/images/qzone.png',
   title: 'QQ空间',
   cb: (() => {
-    let fn
     if (IS_ZBIOS) {
-      fn = opt => {
+      return opt => {
         opt.mediaType = 'qqdenglu'
         baiduShare(opt, false)
       }
     } else if (IS_UC && CURRENT_OS.name === 'ios') {
-      fn = opt => ucShare('qzone', opt)
+      return opt => ucShare('qzone', opt)
     } else if (IS_QQ) {
-      fn = opt => qqShare('qzone', opt)
-    } else {
-      fn = opt => {
-        let optUrl = encodeURIComponent(opt.url)
-        let successUrl = encodeURIComponent(window.location.href)
-        let shareContent = opt.content
-        let shareTitle = opt.title
-        let sharePics = encodeURIComponent(opt.iconUrl)
-        window.open(`http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${optUrl}&successurl=${successUrl}&summary=${shareContent}&title=${shareTitle}&pics=${sharePics}`)
-      }
+      return opt => qqShare('qzone', opt)
     }
-    return fn
+    return opt => {
+      let optUrl = encodeURIComponent(opt.url)
+      let successUrl = encodeURIComponent(window.location.href)
+      let shareContent = opt.content
+      let shareTitle = opt.title
+      let sharePics = encodeURIComponent(opt.iconUrl)
+      window.open(`http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${optUrl}&successurl=${successUrl}&summary=${shareContent}&title=${shareTitle}&pics=${sharePics}`)
+    }
   })()
 }
 
@@ -193,25 +184,22 @@ const SINA_WEIBO_SHARE_CONFIG = {
   icon: '//m.baidu.com/se/static/pmd/pmd/share/images/sinaweibo.png',
   title: '新浪微博',
   cb: (() => {
-    let fn
     if (IS_ZBIOS) {
       // 手百调起逻辑
-      fn = opt => {
+      return opt => {
         opt.mediaType = 'sinaweibo'
         baiduShare(opt, false)
       }
     } else if (IS_UC) {
-      fn = opt => ucShare('sinaweibo', opt)
+      return opt => ucShare('sinaweibo', opt)
     } else if (IS_QQ) {
-      fn = opt => qqShare('sinaweibo', opt)
-    } else {
-      fn = opt => {
-        let shareUrl = encodeURIComponent(opt.url)
-        let shareTitle = encodeURIComponent(opt.title)
-        window.open(`http://v.t.sina.com.cn/share/share.php?url=${shareUrl}&title=${shareTitle}`)
-      }
+      return opt => qqShare('sinaweibo', opt)
     }
-    return fn
+    return opt => {
+      let shareUrl = encodeURIComponent(opt.url)
+      let shareTitle = encodeURIComponent(opt.title)
+      window.open(`http://v.t.sina.com.cn/share/share.php?url=${shareUrl}&title=${shareTitle}`)
+    }
   })()
 }
 
@@ -225,18 +213,16 @@ const MORE_CONFIG = {
   icon: '//m.baidu.com/se/static/pmd/pmd/share/images/more.png',
   title: '更多',
   cb: (() => {
-    let fn
     if (IS_ZBIOS) {
-      fn = opt => {
+      return opt => {
         opt.mediaType = 'all'
         baiduShare(opt, false)
       }
     } else if (IS_UC) {
-      fn = opt => ucShare('', opt)
+      return opt => ucShare('', opt)
     } else if (IS_QQ) {
-      fn = opt => qqShare('', opt)
+      return opt => qqShare('', opt)
     }
-    return fn
   })()
 }
 
@@ -262,6 +248,7 @@ function baiduShare (cfg, encode) {
   window.onSuccess = () => {}
 
   let url = encodeURIComponent(cfg.url)
+  let confJsonStr = JSON.stringify(cfg)
 
   if (encode) {
     cfg.url = url
@@ -270,13 +257,13 @@ function baiduShare (cfg, encode) {
 
   if (Box.os.android) {
     Box.android.invokeApp('Bdbox_android_utils', 'callShare', [
-      JSON.stringify(cfg),
+      confJsonStr,
       window.successFnName || 'console.log',
       window.errorFnName || 'console.log'
     ])
   } else {
     Box.ios.invokeApp('callShare', {
-      options: encodeURIComponent(JSON.stringify(cfg)),
+      options: encodeURIComponent(confJsonStr),
       errorcallback: 'onFail',
       successcallback: 'onSuccess'
     })
@@ -482,6 +469,7 @@ export default class Share {
       str += '<div class="c-share-list">'
       let num = list.length
       let lines = Math.ceil(num / 4)
+
       for (let j = 0; j < lines; j++) {
         str += '<div class="c-row c-gap-bottom">'
         for (let i = 0; i < 4; i++) {
@@ -489,15 +477,14 @@ export default class Share {
           let obj = list[index]
 
           if (obj) {
-            str += '<div class="c-span3 c-share-btn c-share-btn-' + obj.key + '">'
+            str += `<div class="c-span3 c-share-btn c-share-btn-${obj.key}">`
             str += '<div class="c-img c-img-s">'
-            str += '<img src="' + obj.icon + '" />'
+            str += `<img src="${obj.icon}" />`
             str += '</div>'
-            str += '<div class="c-line-clamp1">' + obj.title + '</div>'
+            str += `<div class="c-line-clamp1">${obj.title}</div>`
           } else {
             str += '<div class="c-span3 c-share-btn">'
           }
-
           str += '</div>'
         }
         str += '</div>'
@@ -515,7 +502,7 @@ export default class Share {
    */
   bindEvent () {
     let me = this
-    let doBind = () => {
+    let onAioLoaded = () => {
       // key = ['pyq', 'wxfriend', 'qqfriend', 'qzone', 'sinaweibo', 'more'];
       me.$domShareList.find('.c-share-btn').each(function (i) {
         let config = me.list[i]
@@ -524,15 +511,16 @@ export default class Share {
         })
       })
     }
+
     if (IS_ZBIOS && !document.head.querySelector('#bd-box-sdk')) {
       let aioScript = document.createElement('script')
       aioScript.src = '//s.bdstatic.com/common/openjs/aio.js?t=1547785394212'
       aioScript.id = 'bd-box-sdk'
       aioScript.async = true
-      aioScript.onload = () => doBind()
+      aioScript.onload = () => onAioLoaded()
       document.head.appendChild(aioScript)
     } else {
-      doBind()
+      onAioLoaded()
     }
   }
 

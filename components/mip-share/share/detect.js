@@ -10,14 +10,15 @@
  */
 const USER_AGENT = navigator.userAgent.toLowerCase()
 
-let $ = window.$
+// 诡异：这个地方必须从 window 引入一个 $, 否则拿不到 $
+const $ = window.$
 
 /**
  * 获取操作系统版本信息
  *
  * @returns {Object} 操作系统的名称和版本信息
  */
-function getOS () {
+export function getOS () {
   if (!USER_AGENT) {
     return
   }
@@ -43,7 +44,7 @@ function getOS () {
  *
  * @returns {Object} 浏览器的名称和版本信息
  */
-function getBrowser () {
+export function getBrowser () {
   if (!USER_AGENT) {
     return
   }
@@ -90,5 +91,3 @@ function getBrowser () {
 
   return { name, version }
 }
-
-export default {getOS, getBrowser}

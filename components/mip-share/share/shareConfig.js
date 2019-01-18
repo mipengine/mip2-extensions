@@ -81,14 +81,9 @@ let globalOptions
  * @param {Function} fn   回调
  */
 function objForEach (obj, fn) {
-  let key
-  let result
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      result = fn.call(obj, key, obj[key])
-      if (result === false) {
-        break
-      }
+  for (let key of Object.keys(obj)) {
+    if (!fn.call(obj, key, obj[key])) {
+      break
     }
   }
 }
@@ -96,13 +91,12 @@ function objForEach (obj, fn) {
 /**
  * 将对象转换成 query 拼接串
  *
- * @param {Object} obj 待处理的对象
+ * @param   {Object} obj 待处理的对象
+ * @returns {string}     拼接好的 URL 参数
  */
 function objToQuery (obj) {
   let arr = []
-  for (let i in obj) {
-    arr.push(i + '=' + obj[i])
-  }
+  Object.keys(obj).forEach(key => arr.push(key + '=' + encodeURIComponent(obj[key])))
   return arr.join('&')
 }
 
@@ -204,18 +198,13 @@ function getText (elem) {
  */
 function getShareImg (callback, defaultUrl) {
   let imgsOfPage = document.getElementsByTagName('img')
-  let index
-  let item
   let length = imgsOfPage.length
 
-  length = length <= 10 ? length : 10
-  for (index = 0; index < length; index++) {
-    item = imgsOfPage[index];
-    (function (src) {
-      let newImg = document.createElement('img')
-      newImg.src = src
-      newImg.onload = () => (newImg.width > 290 && newImg.height > 290 && callback(newImg.src))
-    })(item.src)
+  for (let index = 0; index < (length <= 10 ? length : 10); index++) {
+    let item = imgsOfPage[index]
+    let newImg = document.createElement('img')
+    newImg.src = item.src
+    newImg.onload = () => (newImg.width > 290 && newImg.height > 290 && callback(newImg.src))
   }
 
   setTimeout(() => callback(defaultUrl), 1e3)
@@ -247,7 +236,7 @@ function sendErrorLog (evt, msg) {
       content: {
         page_id: pageId,
         logtype: 3,
-        type: 'c_' + evt,
+        type: `c_${evt}`,
         msg: msg
       }
     }
@@ -310,6 +299,7 @@ function shareHandle (options, successcallback, failCallback) {
     options.wx.appId = options.wx.appId || 'wxadc1a0c6b9096e89'
     options.wx.jsApiList = options.wx.jsApiList || []
     options.wx.jsApiList = options.wx.jsApiList.concat(['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'])
+
     loadJS({
       url: PROTOCAL + options.wx.api,
       data: {
@@ -319,9 +309,7 @@ function shareHandle (options, successcallback, failCallback) {
       },
       success (res) {
         if (!res.errno) {
-          sendErrorLog('wx_gettoken_err', location.href)
-          if (debug) {}
-          return
+          return sendErrorLog('wx_gettoken_err', location.href)
         }
 
         let data = res.data || {}
