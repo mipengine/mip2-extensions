@@ -12,7 +12,7 @@ export default class MipHistory extends CustomElement {
     if (!history) {
       return
     }
-    
+
     const historyArr = history.split(',')
     const func = historyArr[0]
 
