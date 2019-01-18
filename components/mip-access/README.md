@@ -131,9 +131,9 @@ authorization 接口请求超时时间，默认为 3s。
 
 ```
 <!-- 设置的 URL -->
-https://www.mipengine.org/?rid=READER_ID&url=SOURCE_URL"
+https://path/to/your/host/?rid=READER_ID&url=SOURCE_URL"
 <!-- 解析后的 URL -->
-https://www.mipengine.org/?rid=mip-142313cb090fa43b7ebecee9089f15b0&url=https%3A%2F%2Fwww.mipengine.org%2F"
+https://path/to/your/host/?rid=mip-142313cb090fa43b7ebecee9089f15b0&url=https%3A%2F%2Fwww.mipengine.org%2F"
 ```
 
 具体可使用的参数如下：
