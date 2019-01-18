@@ -53,26 +53,34 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 ### token
 
-说明：`token`，从百度统计代码中截取  
-必填：是  
-格式：字符串  
+说明：`token`，从百度统计代码中截取
+
+必填：是
+
+格式：字符串
 
 ### _setCustomVar
 
-说明：指定一个自定义变量，用于追踪用户使用行为等。参考([百度统计 API:_setCustomVar](http://tongji.baidu.com/open/api/more?p=ref_setCustomVar))  
-必填：否  
-格式：数组  
+说明：指定一个自定义变量，用于追踪用户使用行为等。参考([百度统计 API:_setCustomVar](http://tongji.baidu.com/open/api/more?p=ref_setCustomVar))
+
+必填：否
+
+格式：数组
 
 ### _setAutoPageview
 
-说明：用户访问一个安装了百度统计代码的页面时，代码会自动发送该页面的 PV 统计请求，如果不希望自动统计该页面的 PV，就可以使用本接口。主要用于 `iframe` 嵌套页面等情况。参考([百度统计 API:_setAutoPageview](http://tongji.baidu.com/open/api/more?p=ref_setAutoPageview))  
-必填：否  
-格式：数组  
+说明：用户访问一个安装了百度统计代码的页面时，代码会自动发送该页面的 PV 统计请求，如果不希望自动统计该页面的 PV，就可以使用本接口。主要用于 `iframe` 嵌套页面等情况。参考([百度统计 API:_setAutoPageview](http://tongji.baidu.com/open/api/more?p=ref_setAutoPageview))
+
+必填：否
+
+格式：数组
 
 ### _trackPageview
 
-说明：用于发送某个指定 URL 的 PV 统计请求，通常用于 AJAX 页面的 PV 统计。参考([百度统计 API:_trackPageview](http://tongji.baidu.com/open/api/more?p=ref_trackPageview))  
-必填：否  
+说明：用于发送某个指定 URL 的 PV 统计请求，通常用于 AJAX 页面的 PV 统计。参考([百度统计 API:_trackPageview](http://tongji.baidu.com/open/api/more?p=ref_trackPageview))
+
+必填：否
+
 格式：数组
 
 ### 事件追踪属性
@@ -81,14 +89,18 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 #### type
 
-说明：对应的触发事件(load 加载触发/click 点击触发/mouseup 触发)  
-必填：是  
-格式：字符串数组  
+说明：对应的触发事件(load 加载触发/click 点击触发/mouseup 触发)
+
+必填：是
+
+格式：字符串数组
 
 #### data
 
-说明：用于事件追踪数据传递，参考([百度统计 API](http://tongji.baidu.com/open/api/))  
-必填：是  
+说明：用于事件追踪数据传递，参考([百度统计 API](http://tongji.baidu.com/open/api/))
+
+必填：是
+
 格式：字符串
 
 备注：`_setAccount` 无需设置，`token` 合法会自动执行 `_hmt.push(['_setAccount',token])`
@@ -109,7 +121,6 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 ```html
 <mip-stats-baidu token="02890d4a309827eb62bc3335b2b28f7f"></mip-stats-baidu>
-
 ```
 
 ### 属性传入事件追踪属性
@@ -126,14 +137,18 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 ### token
 
-说明：`token`，从百度统计代码中截取  
-必填：是  
+说明：`token`，从百度统计代码中截取
+
+必填：是
+
 格式：字符串
 
 ### setconfig
 
-说明：用于对整个页面统计的操作.如(`_setAutoPageview`, `_setCustomVar`)  
-必填：否  
+说明：用于对整个页面统计的操作.如(`_setAutoPageview`, `_setCustomVar`)
+
+必填：否
+
 格式：字符串
 
 ### 备注
@@ -146,14 +161,18 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 #### type
 
-说明：对应的触发事件(load 加载触发/click 点击触发)  
-必填：是  
+说明：对应的触发事件(load 加载触发/click 点击触发)
+
+必填：是
+
 格式：字符串数组
 
 #### data
 
-说明：用于事件追踪数据传递参考([百度统计 API](http://tongji.baidu.com/open/api/))  
-必填：是  
+说明：用于事件追踪数据传递参考([百度统计 API](http://tongji.baidu.com/open/api/))
+
+必填：是
+
 格式：字符串
 
 #### data-stats-baidu-obj 双引号配置方法
@@ -166,7 +185,9 @@ hm.src = "https://hm.baidu.com/hm.js?02890d4a309827eb62bc3335b2b28f7f";
 
 // 处理配置方法
 encodeURIComponent(JSON.stringify({type: "click", data: ["_trackPageview", "/virtual/login"]}))
+```
 
-// 最终DOM配置效果
-data-stats-baidu-obj="%7B%22type%22%3A%22click%22%2C%22data%22%3A%5B%22_trackPageview%22%2C%22%2Fvirtual%2Flogin%22%5D%7D"
+```html
+<!-- 最终DOM配置效果 -->
+<div data-stats-baidu-obj="%7B%22type%22%3A%22click%22%2C%22data%22%3A%5B%22_trackPageview%22%2C%22%2Fvirtual%2Flogin%22%5D%7D"></div>
 ```
