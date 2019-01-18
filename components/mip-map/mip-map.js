@@ -10,14 +10,7 @@ const log = util.log('mip-map')
  * @returns {string} 拼接字符串
  */
 function traverseAndConcat (obj) {
-  let output = ''
-  Object.keys(obj).forEach(key => {
-    let val = obj[key]
-    if (val) {
-      output += val
-    }
-  })
-  return output
+  return Object.keys(obj).reduce((total, key) => total + obj[key], '')
 }
 
 export default class MIPMap extends CustomElement {
@@ -31,18 +24,38 @@ export default class MIPMap extends CustomElement {
     } catch (e) {
       log.warn(e)
     }
+    this.config = config
+
+    this.sanitize()
 
     this.ak = config.ak || ''
     this.location = config.location
     this.controls = config.controls
     this.info = config.info
-    this.getPosition = config['get-position'] === true
-    this.dataOnlyGetSdk = config['data-only-get-sdk'] === true
+    this.hideMap = (config.hasOwnProperty('hideMap') ? config['hideMap'] : config['hide-map']) === true
+    this.getPosition = (config.hasOwnProperty('getPosition') ? config['getPosition'] : config['get-position']) === true
+    this.dataOnlyGetSdk = (config.hasOwnProperty('dataOnlyGetSdk') ? config['dataOnlyGetSdk'] : config['data-only-get-sdk']) === true
 
     this.map = null
     this.point = {}
     this.marker = null
     this.currentMarker = null
+  }
+
+  /**
+   * 校验参数
+   *
+   */
+  sanitize () {
+    if (this.config.hasOwnProperty('hide-map')) {
+      log.warn('[Deprecated] hide-map 参数不允许再使用，请使用 \'hideMap\' 代替')
+    }
+    if (this.config.hasOwnProperty('get-position')) {
+      log.warn('[Deprecated] get-position 参数不允许再使用，请使用 \'getPosition\' 代替')
+    }
+    if (this.config.hasOwnProperty('data-only-get-sdk')) {
+      log.warn('Deprecated] data-only-get-sdk 参数不允许再使用，请使用 \'dataOnlyGetSdk\' 代替')
+    }
   }
 
   /**
@@ -179,7 +192,7 @@ export default class MIPMap extends CustomElement {
 
     // 初始化地图
     this.map = new BMap.Map('allmap')
-    this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 11)
+    this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 15)
 
     // 自动定位、或者手动定位
     this.getPosition ? this.getCurrentLocation() : this.searchLocation()
@@ -221,6 +234,7 @@ export default class MIPMap extends CustomElement {
   firstInviewCallback () {
     let wrapper = document.createElement('div')
     wrapper.id = 'allmap'
+    this.hideMap && wrapper.classList.add('hideMap')
     this.element.appendChild(wrapper)
 
     this.getMapJDK().then(this.resolveOptions.bind(this))
