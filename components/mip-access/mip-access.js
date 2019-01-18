@@ -150,7 +150,7 @@ class Access {
     })
       .then(res => res.json())
       .then(data => {
-        this._authorizationFallback = JSON.parse(data)
+        this._authorizationFallback = data
         this._applyAuthorizationToElement()
       })
       .catch(() => this._applyAuthorizationToElement())
