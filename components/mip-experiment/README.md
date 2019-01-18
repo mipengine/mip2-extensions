@@ -22,7 +22,7 @@
     color: black;
     display: block;
     margin: 10px;
-    padding: 20px
+    padding: 20px;
   }
 
   body[mip-x-button-color=yellow] .exp-btn1 {
@@ -30,11 +30,11 @@
   }
 
   body[mip-x-button-color=grey] .exp-btn1 {
-    background-color: #888888;
+    background-color: #888;
   }
 
   body[mip-x-button-color=blue] .exp-btn1 {
-    background-color: #3388ff;
+    background-color: #38f;
   }
 </style>
 <mip-experiment layout="nodisplay" class="mip-hidden">
@@ -67,8 +67,8 @@
     background-color: aquamarine;
     color: black;
     display: block;
-    margin:10px;
-    padding:20px;
+    margin: 10px;
+    padding: 20px;
   }
 
   body[mip-x-button-color2=yellow] .exp-btn2 {
@@ -76,11 +76,11 @@
   }
 
   body[mip-x-button-color2=grey] .exp-btn2 {
-    background-color: #888888;
+    background-color: #888;
   }
 
   body[mip-x-button-color2=blue] .exp-btn2 {
-    background-color: #3388ff;
+    background-color: #38f;
   }
 </style>
 <mip-experiment layout="nodisplay" class="mip-hidden">
@@ -120,11 +120,11 @@
   }
 
   body[mip-x-button-color3=grey] .exp-btn3 {
-    background-color: #888888;
+    background-color: #888;
   }
 
   body[mip-x-button-color3=blue] .exp-btn3 {
-    background-color: #3388ff;
+    background-color: #38f;
   }
 
   body[mip-x-font-color=black] .exp-btn3 {
@@ -134,7 +134,6 @@
   body[mip-x-font-color=white] .exp-btn3 {
     color: white;
   }
-
 </style>
 <mip-experiment layout="nodisplay" class="mip-hidden">
   <script type="application/json" for="mip-experiment">
@@ -211,10 +210,10 @@
 由于页面加载初期，并不确定会分流到哪个实验组，需要引用每个实验组内组件对应的JS脚本。
 
 ```html
-<script src="https://c.mipcdn.com/static/v1/mip-fixed/mip-fixed.js"></script>
-<script src="https://c.mipcdn.com/static/v1/mip-……/mip-…….js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-fixed/mip-fixed.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-……/mip-…….js"></script>
 <!-- mustache模板依赖 -->
-<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
 ```
 
 #### 真实示例
@@ -258,9 +257,9 @@
     </template>
   </div>
 </mip-experiment>
-<script src="https://c.mipcdn.com/static/v1/mip-anim/mip-anim.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-anim/mip-anim.js"></script>
 <!-- mustache模板依赖 -->
-<script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
 ```
 
 ### 调试：打印实验信息
@@ -381,7 +380,7 @@
   }
 
   body[mip-x-button-color6=grey] #btn01 {
-    background-color: #888888;
+    background-color: #888;
   }
 </style>
 <mip-stats-baidu>
@@ -412,7 +411,7 @@
   <p>每次刷新重新分组</p>
   <button id="btn01">修改背景色</button>
 </mip-experiment>
-<script src="https://c.mipcdn.com/static/v1/mip-stats-baidu/mip-stats-baidu.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-stats-baidu/mip-stats-baidu.js"></script>
 ```
 最后数据的产生格式为：
 
