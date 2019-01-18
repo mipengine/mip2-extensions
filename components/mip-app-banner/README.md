@@ -18,7 +18,7 @@
   <link rel="manifest" href="xxxx/manifest">
 </head>
 ...
-<mip-app-banner id="my-app-banner" layout="nodisplay">
+<mip-app-banner id="my-app-banner" layout="nodisplay", class="mip-hidden">
   <button open-button>打开app</button>
 </mip-app-banner>
 ```
@@ -51,6 +51,8 @@
 | 非结果页打开 | 不支持，屏蔽     | 不支持，屏蔽    | 浏览器 banner    | 支持     |
 
 ## 注意事项
+
+- 组件需要有 `mip-hidden` class，否则会有闪动问题
 
 - 在引用组件的页面头部 head 标签中需要加两个标签
   - iOS 使用：`<meta name="apple-itunes-app" content="app-id=app的id, app-argument=medium://xxxx">`。
