@@ -2,6 +2,7 @@ import './mip-semi-fixed.less'
 
 const {CustomElement, util, viewport, viewer} = MIP
 const {fixedElement} = viewer
+const {warn, error} = util.log('mip-semi-fixed')
 
 /**
  * 默认 fixed top 的距离
@@ -15,14 +16,15 @@ const STATUS_SCROLL = 'mip-semi-fixed-scrollStatus'
  * 获取 fixed class name
  * FIXME: 这里应该返回数组，直接使用字符串不严谨
  *
- * @param {string} class name string
+ * @param {HTMLElement} element 自定义元素 dom 节点
+ * @returns {string} class 字符串
  */
 function getFixedClassNames (element) {
   let fixedClassNames = element.getAttribute('fixed-class-names')
 
   if (!fixedClassNames) {
     fixedClassNames = element.getAttribute('fixedClassNames')
-    fixedClassNames && console.warn('[Deprecated] fixedClassNames 写法即将废弃，请使用 fixed-class-names')
+    fixedClassNames && warn('[Deprecated] fixedClassNames 写法即将废弃，请使用 fixed-class-names')
   }
 
   return fixedClassNames
@@ -39,7 +41,7 @@ export default class MipSemiFixed extends CustomElement {
 
     this.container = element.querySelector('div[mip-semi-fixed-container]')
     if (!this.container) {
-      console.error('必须有 <div mip-semi-fixed-container> 子节点')
+      error('必须有 <div mip-semi-fixed-container> 子节点')
       return
     }
 
@@ -60,7 +62,7 @@ export default class MipSemiFixed extends CustomElement {
           opacity: 0
         })
       } catch (e) {
-        console.error(e)
+        error(e)
       }
 
       viewport.on('scroll', () => this.onIframeScroll(viewport))

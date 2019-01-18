@@ -49,19 +49,29 @@
 ### threshold
 
 说明：元素 `fixed` 状态时距离页面顶部的距离
+
 必选项：否
+
 类型：整数
+
 取值范围：无
+
 单位：无
+
 默认值：0
 
 ### fixed-class-names
 
 说明：元素 `fixed` 状态时需要添加的类, 多个 class 之间使用空格分隔
+
 必选项：否
+
 类型：字符串
+
 取值范围：无
+
 单位：无
+
 默认值：''
 
 [warn] `fixedClassNames` 写法即将废弃，请使用 `fixed-class-names`
@@ -71,8 +81,13 @@
 ### div[mip-semi-fixed-container]
 
 说明：所有 HTML 需要放在这个节点中
+
 必选项：是
+
 类型：DOM 节点
+
 取值范围：无
+
 单位：无
+
 默认值：div[mip-semi-fixed-container]
