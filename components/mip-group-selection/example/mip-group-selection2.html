@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
     <style mip-custom>
     /* 自定义样式 */
+    .selected-p {
+      white-space: pre-line;
+      line-height: 2;
+    }
     </style>
   </head>
   <body>
@@ -98,7 +102,7 @@
                 <div class="mip-group-selection-group mip-group-selection-part-letter">
                   <div class="mip-group-selection-title" data-anchor="{{key}}">{{key}}</div>
                   {{#cities}}
-                    <a class="mip-group-selection-item" href="#" data-code="{{code}}" data-pinyin="{{pinyin}}">{{city}}</a>
+                    <a class="mip-group-selection-item" href="#" data-code="{{code}}" data-pinyin="{{pinyin}}" data-city="{{city}}">{{city}}</a>
                   {{/cities}}
                 </div>
               {{/list}}

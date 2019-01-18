@@ -53,7 +53,7 @@ export default class MIPGroupSelection extends CustomElement {
   }
 
   /**
-   * 修改最下方分组的样式，增加marginBottom, 保证滚动后分组标题可以在页面最上方
+   * 修改最下方分组的样式，增加 marginBottom, 保证滚动后分组标题可以在页面最上方
    */
   modifyMarginBottom () {
     let lastGroup = this.element.querySelector('.mip-city-selection-wrapper .mip-group-selection-content').lastElementChild
@@ -69,8 +69,6 @@ export default class MIPGroupSelection extends CustomElement {
       let targetAnchor = button.dataset.targetAnchor
       // 滚动待选列表到指定分组
       this.scrollToAnchor(targetAnchor)
-      // 显示提示词
-      this.showAnchorTip(targetAnchor)
     })
   }
 
@@ -87,12 +85,8 @@ export default class MIPGroupSelection extends CustomElement {
         top: anchorElement.getBoundingClientRect().top - 10
       })
     } catch (e) {}
-    // 兜底效果，再scroll一次
+    // 兜底效果，再 scroll 一次
     window.scrollBy(0, anchorElement.getBoundingClientRect().top - 10)
-  }
-
-  showAnchorTip () {
-
   }
 
   /**
@@ -103,7 +97,6 @@ export default class MIPGroupSelection extends CustomElement {
     util.event.delegate(this.element, '.mip-group-selection-item', 'click', e => {
       let itemData = e.target && e.target.dataset
       e.data = itemData
-      /* globals MIP */
       MIP.setData(e.data)
       viewer.eventAction.execute('selected', this.element, e)
     })
@@ -120,7 +113,7 @@ export default class MIPGroupSelection extends CustomElement {
       return templates.render(el, data)
     }).then(html => {
       this.renderHtml(html)
-      // 修改最下方分组的样式，增加marginBottom, 保证滚动后分组标题可以在页面最上方
+      // 修改最下方分组的样式，增加 marginBottom, 保证滚动后分组标题可以在页面最上方
       this.modifyMarginBottom()
       // 绑定侧边栏快捷选择事件
       this.bindSidebarClickEvent()
