@@ -23,23 +23,18 @@ export default class MIPShare extends CustomElement {
    */
   build () {
     let me = this
+    let element = me.element
+    let share = new Share({
+      title: element.getAttribute('title') || document.title,
+      url: element.getAttribute('url') || location.href,
+      content: element.getAttribute('content') || '',
+      iconUrl: element.getAttribute('icon') || '//m.baidu.com/se/static/pmd/pmd/share/images/bdu.jpg',
+      wechatAPI: element.getAttribute('wechatAPI') || BAIDUAPI
+    }, element)
 
-    // 暂时先这样引入 zepto
-    window.require(['zepto'], $ => {
-      let element = me.element
-      let share = new Share({
-        title: element.getAttribute('title') || document.title,
-        url: element.getAttribute('url') || location.href,
-        content: element.getAttribute('content') || '',
-        iconUrl: element.getAttribute('icon') || '//m.baidu.com/se/static/pmd/pmd/share/images/bdu.jpg',
-        wechatAPI: element.getAttribute('wechatAPI') || BAIDUAPI
-      }, $(element))
+    share.render(element)
 
-      share.render(element)
-
-      let $elem = $(element).children().not('mip-i-space')[0]
-
-      $elem && me.applyFillContent($elem)
-    })
+    let shareListDom = element.querySelector('.c-share-list')
+    shareListDom && me.applyFillContent(shareListDom)
   }
 }

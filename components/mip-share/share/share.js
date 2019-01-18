@@ -4,13 +4,19 @@
  * @description UC & QQ share based on https://github.com/JefferyWang/nativeShare.js
  */
 
-/* globals MIP, Box, ucweb, browser, ucbrowser, $ */
+/* globals MIP, Box, ucweb, browser, ucbrowser */
 
 import ShareConfig from './shareConfig'
-import { getOS, getBrowser } from './detect'
 
 const { util, viewer } = MIP
 const { platform } = util
+
+/**
+ * 微信分享 tips 类名
+ *
+ * @type {string}
+ */
+const WECHAT_SHARE_TIPS_CLS = 'c-share-wechat-tips'
 
 /**
  * 分享组件的默认配置
@@ -30,35 +36,28 @@ const DEFAULT_OPTIONS = {
  *
  * @type {Object}
  */
-const CURRENT_OS = getOS()
-
-/**
- * 当前设备的浏览器信息
- *
- * @type {Object}
- */
-const CURRENT_BROWSER = getBrowser()
+const CURRENT_OS = platform.isIOS() ? 'ios' : 'android'
 
 /**
  * 是否是手机百度环境
  *
  * @type {boolean}
  */
-const IS_ZBIOS = CURRENT_BROWSER.name === 'zbios'
+const IS_ZBIOS = platform.isBaiduApp()
 
 /**
  * 是否是 UC 浏览器
  *
  * @type {boolean}
  */
-const IS_UC = CURRENT_BROWSER.name === 'uc'
+const IS_UC = platform.isUc()
 
 /**
  * 是否是 QQ 浏览器
  *
  * @type {boolean}
  */
-const IS_QQ = platform.isQQ() && CURRENT_BROWSER.version && CURRENT_BROWSER.version > '5.4'
+const IS_QQ = platform.isQQ()
 
 /**
  * 是否是微信环境
@@ -340,7 +339,7 @@ function qqShare (targetAppName, opt) {
           this.readyState === 'complete') && resolve()
       }
       script.src = '//jsapi.qq.com/get?api=app.share'
-      $('head').append(script)
+      document.head.appendChild(script)
     }
   })
 
@@ -376,18 +375,22 @@ let globalWxShareTimer
  * 微信显示分享提示浮层
  */
 function wechatTips () {
-  if ($('.c-share-wechat-tips').length) {
-    $('.c-share-wechat-tips').show()
+  let wechatTips = [...document.querySelectorAll(`.${WECHAT_SHARE_TIPS_CLS}`)]
+  if (wechatTips.length) {
+    wechatTips.forEach(dom => util.css(dom, 'display', 'block'))
   } else {
-    $(document.body).append('<div class="c-share-wechat-tips"></div>')
-    $('.c-share-wechat-tips').on('click', function () {
-      $(this).hide()
+    let wechatTipsDom = document.createElement('div')
+    wechatTipsDom.classList.add(WECHAT_SHARE_TIPS_CLS)
+    document.body.appendChild(wechatTipsDom)
+
+    document.querySelectorAll(`.${WECHAT_SHARE_TIPS_CLS}`).addEventListener('click', function () {
+      util.css(this, 'display', 'none')
       clearTimeout(globalWxShareTimer)
     })
   }
 
   globalWxShareTimer = setTimeout(() => {
-    $('.c-share-wechat-tips').hide()
+    wechatTips.forEach(dom => util.css(dom, 'display', 'none'))
     clearTimeout(globalWxShareTimer)
   }, 2000)
 }
@@ -466,7 +469,6 @@ export default class Share {
 
     let str = ''
     if (list.length > 0) {
-      str += '<div class="c-share-list">'
       let num = list.length
       let lines = Math.ceil(num / 4)
 
@@ -489,10 +491,11 @@ export default class Share {
         }
         str += '</div>'
       }
-      str += '</div>'
     }
 
-    me.$domShareList = $(str)
+    let domShareList = me.domShareList = document.createElement('div')
+    domShareList.classList.add('c-share-list')
+    domShareList.innerHTML = str
 
     me.bindEvent()
   }
@@ -504,9 +507,11 @@ export default class Share {
     let me = this
     let onAioLoaded = () => {
       // key = ['pyq', 'wxfriend', 'qqfriend', 'qzone', 'sinaweibo', 'more'];
-      me.$domShareList.find('.c-share-btn').each(function (i) {
-        let config = me.list[i]
-        config && $(this).on('click', () => {
+      let shareBtns = me.domShareList.querySelectorAll('.c-share-btn')
+
+      ;[...shareBtns].forEach((shareBtn, index) => {
+        let config = me.list[index]
+        config && shareBtn.addEventListener('click', () => {
           config.cb(me.opt)
         })
       })
@@ -527,26 +532,24 @@ export default class Share {
   /**
    * 将分享 list dom 插入用户选定的 dom 中
    *
-   * @param {HTMLElement} $dom       指定的 DOM 元素
+   * @param {HTMLElement} dom        指定的 DOM 元素
    * @param {?Object}     renderOpts 渲染配置
    */
-  render ($dom, renderOpts = {}) {
+  render (dom, renderOpts = {}) {
     let me = this
 
     // $dom 为必选
-    if (!($dom && $($dom).length)) {
+    if (!dom) {
       return
     }
 
-    let $customDom = $($dom)
-
     // add 自定义 classname
     if (renderOpts && renderOpts.customClassName) {
-      me.$domShareList.addClass(renderOpts.customClassName)
+      me.domShareList.addClass(renderOpts.customClassName)
     }
 
     // 插入用户dom
-    $customDom.append(me.$domShareList)
+    dom.appendChild(me.domShareList)
 
     // 标记dom已经被插入页面
     me.isRender = true
