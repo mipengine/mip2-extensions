@@ -271,10 +271,14 @@ mip-group-selection 分组选择组件，可用于城市分组，英文名分组
 ```
 
 ## 属性说明
+
 ### data-src
+
 说明：用于指向远程数据地址，异步加载并渲染。指明`data-src`后，配置在`<script type="application/json">`本地的数据不再生效。
+
 使用限制：异步加载数据属于前后端交互请求。由于 MIP-Cache 为 HTTPs 环境，`data-src` 要求支持 HTTPs.
 
 
 ## 注意事项
+
 - mip-group-selection 分组选择组件依赖`mip-fixed`，`mip-mustache`，必须引用对应的 javascript 脚本。
