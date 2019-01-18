@@ -2,6 +2,8 @@ import md5 from './mip-access-md5'
 import LoginModule from './mip-login'
 import evaluateAccessExpr from './mip-access-expr'
 
+import './mip-access.less'
+
 const {viewer, util} = MIP
 const {fn} = util
 
