@@ -1,6 +1,6 @@
 # mip-access
 
-`<mip-access>` 能够根据用户访问页面的情况，协同开发者配置接口返回的数据，对页面内容进行访问权限控制，如文章最多能够访问 n 篇，超过之后不能直接访问，需要通过一些策略，如登陆、付费后才能继续。
+`mip-access` 能够根据用户访问页面的情况，协同开发者配置接口返回的数据，对页面内容进行访问权限控制，如文章最多能够访问 n 篇，超过之后不能直接访问，需要通过一些策略，如登陆、付费后才能继续。
 
 标题|内容
 ----|----
@@ -56,10 +56,10 @@ NOT|“非”运算|NOT A
 \>=|大于等于|A >= B
 
 ### 3. 参数配置
-`<mip-access>` 使用时需要配置一些参数才能够进行使用，这些参数配置在 `<script id="mip-access" type="application/json"></script>`，如：
+`<mip-access>` 使用时需要配置一些参数才能够进行使用，这些参数配置在 `<script mip-access type="application/json"></script>`，如：
 
 ```
-<script id="mip-access" type="application/json">
+<script mip-access type="application/json">
   {
     "authorization": "https://publisher.com/mip-access/api/mip-authorization.json?rid=READER_ID&url=CANONICAL_URL",
     "pingback": "https://publisher.com/mip-access/api/mip-pingback?rid=READER_ID",
@@ -98,13 +98,19 @@ NOT|“非”运算|NOT A
 是否需要在页面表达式解析完成后发出 pingback 请求，设置为 true 则是不需要。
 
 #### login
-登陆相关接口，可以是一个字符串，用于配置登录页面地址。也可以是一个对象，其中配置登录和登出的页面地址，如:
+登录相关接口，可以是一个字符串，用于配置登录页面地址。也可以是一个对象，其中配置登录和登出的页面地址，如:
 
 ```
 "login": {
   "login": "https://publisher.com/login.html?rid={READER_ID}",
   "logout": "https://publisher.com/logout.html?rid={READER_ID}"
 }
+```
+
+登录和注销由 `on="tap:mip-access.login"` 和 `on="tap:mip-access.logout"` 触发：
+```html
+<a on="tap:mip-access.login">Login</a>
+<a on="tap:mip-access.logout">Logout</a>
 ```
 
 #### authorizationFallbackResponse
@@ -127,7 +133,7 @@ authorization 接口请求超时时间，默认为 3s。
 
 ### URL 参数
 
-`<mip-access>` 同样为 URL 定制了一些常量，可以允许开发者直接在 URL 中进行使用，如：
+`mip-access` 同样为 URL 定制了一些常量，可以允许开发者直接在 URL 中进行使用，如：
 
 ```
 <!-- 设置的 URL -->
@@ -149,7 +155,7 @@ https://path/to/your/host/?rid=mip-142313cb090fa43b7ebecee9089f15b0&url=https%3A
 
 - 请求如何配置？
 
-    `<mip-access>` 中所有接口的请求都依据 [cors](https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API/Using_Fetch) 方案，需要后端配置 `Access-Control-Allow-origin` 为允许的 origin，其中包括 `mipcache.bdstatic.com` 、 `*.mipcdn.com` 和 站点自身 URL origin。
+    `mip-access` 中所有接口的请求都依据 [cors](https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API/Using_Fetch) 方案，需要后端配置 `Access-Control-Allow-origin` 为允许的 origin，其中包括 `mipcache.bdstatic.com` 、 `*.mipcdn.com` 和 站点自身 URL origin。
 
 ## 属性
 
