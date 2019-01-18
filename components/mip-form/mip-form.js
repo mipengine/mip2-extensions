@@ -9,66 +9,63 @@ import './mip-form.less'
 let { CustomElement, util } = MIP
 
 export default class MipForm extends CustomElement {
-  // 提前渲染
   prerenderAllowed () {
     return true
   }
 
-  // 插入文档时执行
   build () {
-    let element = this.element
-    let addClearBtn = element.hasAttribute('clear')
+    let addClearBtn = this.element.hasAttribute('clear')
     let form = new Form()
-    form.createDom(element)
+    form.createDom(this.element)
 
     if (addClearBtn) {
-      let clearArr = ['text', 'input', 'datetime', 'email', 'number', 'search', 'tel', 'url']
-      let clearList = clearArr.map(clear => `input[type=${clear}]`).join(',')
-      // clearItems为类数组对象
-      let clearItems = element.querySelectorAll(clearList)
+      this.addClearButton()
+    }
+    form.initMessageEvents(this.element)
+  }
 
-      if (!clearItems.length) {
-        return
-      }
+  addClearButton () {
+    const clearArr = ['text', 'input', 'datetime', 'email', 'number', 'search', 'tel', 'url']
+    const clearList = clearArr.map(clear => `input[type=${clear}]`).join(',')
+    const clearItems = this.element.querySelectorAll(clearList)
 
-      let cross = document.createElement('div')
-      cross.id = 'mip-form-cross'
-      this.cross = cross
-
-      for (let clearItem of clearItems) {
-        let height = clearItem.offsetHeight
-        clearItem.addEventListener('focus', function () {
-          let self = this
-          cross.setAttribute('name', self.getAttribute('name'))
-          util.css(cross, {
-            top: self.offsetTop + (height - 16) / 2 - 8 + 'px',
-            left: self.offsetWidth - 32 + 'px'
-          })
-          self.parentNode.appendChild(cross)
-          if (self.value !== '') {
-            util.css(cross, {display: 'block'})
-          } else {
-            util.css(cross, {display: 'none'})
-            self.addEventListener('input', function () {
-              if (util && util.platform && util.platform.isAndroid() && self.type === 'search') {
-                // andriod type=search自带清空按钮, 不显示清空
-                return
-              }
-              util.css(cross, {display: (self.value !== '' ? 'block' : 'none')})
-            })
-          }
-        }, false)
-        // 点击提交时，如果报错信息展示，则隐藏清空按钮
-        clearItem.addEventListener('blur', function () {
-          util.css(cross, {display: 'none'})
-        }, false)
-      }
-      cross.addEventListener('touchstart', this.clear, false)
-      cross.addEventListener('mousedown', this.clear, false)
-      cross.addEventListener('click', this.clear, false)
+    if (!clearItems.length) {
+      return
     }
 
-    form.initMessageEvents(element)
+    let cross = document.createElement('div')
+    cross.id = 'mip-form-cross'
+
+    for (let clearItem of clearItems) {
+      const itemHeight = clearItem.offsetHeight
+      clearItem.addEventListener('focus', function () {
+        cross.setAttribute('name', this.getAttribute('name'))
+        util.css(cross, {
+          top: this.offsetTop + (itemHeight - 16) / 2 - 8 + 'px',
+          left: this.offsetWidth - 32 + 'px'
+        })
+        this.parentNode.appendChild(cross)
+        if (this.value !== '') {
+          util.css(cross, {display: 'block'})
+        } else {
+          util.css(cross, {display: 'none'})
+          this.addEventListener('input', function () {
+            // andriod type=search自带清空按钮, 不显示清空
+            if (util && util.platform && util.platform.isAndroid() && this.type === 'search') {
+              return
+            }
+            util.css(cross, {display: (this.value !== '' ? 'block' : 'none')})
+          })
+        }
+      }, false)
+      // 点击提交时，如果报错信息展示，则隐藏清空按钮
+      clearItem.addEventListener('blur', () => {
+        util.css(cross, {display: 'none'})
+      }, false)
+    }
+    cross.addEventListener('touchstart', this.clear, false)
+    cross.addEventListener('mousedown', this.clear, false)
+    cross.addEventListener('click', this.clear, false)
   }
 
   clear (e) {
