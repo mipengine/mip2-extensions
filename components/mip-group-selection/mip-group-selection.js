@@ -17,20 +17,18 @@ export default class MIPGroupSelection extends CustomElement {
    * @returns {Object} Promise
    */
   async getData () {
-    let groupData
     if (this.dataUrl) {
-      let res = await fetch(this.dataUrl, { credentials: 'include' })
-      if (res.ok) {
-        try {
-          groupData = await res.json()
-        } catch (e) {
-          return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
+      try {
+        let res = await fetch(this.dataUrl, { credentials: 'include' })
+        if (res.ok) {
+          return res.json()
         }
-        return groupData
+        return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
+      } catch (e) {
+        return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
       }
-      return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
     }
-    groupData = this.element.querySelector('script[type="application/json"]')
+    let groupData = this.element.querySelector('script[type="application/json"]')
     if (groupData) {
       try {
         groupData = util.jsonParse(groupData.textContent)
