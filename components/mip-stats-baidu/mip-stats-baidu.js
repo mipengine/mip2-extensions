@@ -1,267 +1,306 @@
 /**
- * @file mip-stats-baidu.js 百度统计组件
- * @author wangqizheng
+ * @file 百度统计组件
+ * @author mj(zoumiaojiang@gmail.com)
  */
 
-let { CustomElement, util, viewer } = MIP
-let { hash, fn, jsonParse } = util
+/* global MIP */
 
-export default class MipStatsBaidu extends CustomElement {
-  constructor (...args) {
-    // 继承父类属性、方法
-    super(...args)
+const { viewer, util, CustomElement } = MIP
+const { Gesture, fn, jsonParse } = util
+const logger = util.log('mip-stats-baidu')
 
-    // 获取参数
-    this.config = this.getConfig()
-  }
+/**
+ * 绑定交互式的百度统计的属性
+ *
+ * @type {string}
+ */
+const DATA_STATS_BAIDU_OBJ_ATTR = 'data-stats-baidu-obj'
 
-  // 提前渲染
-  prerenderAllowed () {
-    return true
-  }
+/**
+ * 标识 dom 是不是已经被绑定上事件的属性
+ *
+ * @type {string}
+ */
+const DATA_STATS_FALG = 'data-stats-flag'
 
-  connectedCallback () {
-    let { element, config } = this
-
-    if (!config) {
-      return
-    }
-
-    // 获取token 自定义事件
-    let { token, evConf } = config
-
-    if (!token) {
-      return console.warn('token is unavailable')
-    }
-
-    window._hmt = window._hmt || []
-    window._hmt.push([
-      '_setAccount',
-      token
-    ])
-
-    // 解决来自百度搜索，内外域名不一致问题
-    if (viewer.isIframed) {
-      bdSearchCase()
-    }
-
-    // !!! 为什么初始化实例就开始发送事件？除了load，应该都是手动触发啊
-    // 这里存疑，暂时不改他的逻辑
-    for (let item of evConf) {
-      window._hmt.push(item)
-    }
-
-    // 绑定事件
-    this.bindEle()
-
-    let hm = document.createElement('script')
-    hm.src = `https://hm.baidu.com/hm.js?${token}`
-    element.appendChild(hm)
-  }
-
+export default class MIPStatsBaidu extends CustomElement {
   /**
-   * 获取配置信息
-   *
-   * @returns {Object} config 配置对象
+   * 渲染组件
    */
-  getConfig () {
-    let { element } = this
+  build () {
+    let elem = this.element
+    let config = getStatsBaiduConfig(elem)
+    let token = config.token
+    let conf = config.conf
 
-    let config = {}
-    let setconfig = element.getAttribute('setconfig')
+    // 检测token是否存在
+    if (token) {
+      window._hmt = window._hmt || []
+      window._hmt.push([
+        '_setAccount',
+        token
+      ])
 
-    try {
-      let configContent = element.querySelector('script[type="application/json"]').textContent
-
-      if (configContent) {
-        let configData = jsonParse(configContent)
-        config.token = configData.token
-        config.evConf = objToArray(configData)
-
-        return config
+      // 如果是在iframe内部，则单独处理referrer，因为referrer统计不对
+      if (viewer.isIframed) {
+        setReferrer()
       }
-    } catch (e) {
-      console.warn('json is illegal')
-      console.warn(e)
-    }
-
-    return {
-      token: element.getAttribute('token'),
-      evConf: setconfig ? [...getConfigArr(decodeURIComponent(setconfig))] : []
-    }
-  }
-
-  // 绑定事件追踪
-  bindEle () {
-    // 获取所有需要触发的dom
-    let tagBox = document.querySelectorAll('*[data-stats-baidu-obj]')
-
-    for (let node of tagBox.values()) {
-      let statusData = node.getAttribute('data-stats-baidu-obj')
-
-      // 检测statusData是否存在
-      if (!statusData) {
-        continue
+      if (conf && Array.isArray(conf) && conf.length) {
+        for (let i = 0; i < conf.length; i++) {
+          window._hmt.push(conf[i])
+        }
       }
 
-      try {
-        statusData = jsonParse(decodeURIComponent(statusData))
-      } catch (e) {
-        console.warn('事件追踪data-stats-baidu-obj数据不正确')
-        continue
-      }
+      bindEle()
 
-      let { type, data } = statusData
-
-      let isLegalType = ['click', 'mouseup', 'load'].indexOf(type) !== '-1'
-      let isLoaded = node.classList.contains('mip-stats-eventload')
-
-      // 检测传递数据是否存在
-      if (!data || !isLegalType || isLoaded) {
-        continue
-      }
-
-      // 格式化数据
-      let formatData = getConfigArr(data)
-
-      node.classList.add('mip-stats-eventload')
-
-      if (type === 'load') {
-        window._hmt.push(formatData)
-      } else if (type === 'click' &&
-              node.hasAttribute('on') &&
-              node.getAttribute('on').match('tap:') &&
-              fn.hasTouch()) {
-        let gesture = new util.Gesture(node)
-        gesture.on('tap', eventHandler)
-      } else {
-        node.addEventListener(type, eventHandler, false)
-      }
+      let hm = document.createElement('script')
+      hm.src = `https://hm.baidu.com/hm.js?${token}`
+      elem.appendChild(hm)
+    } else {
+      logger.warn(elem, '请在配置中提供 token 字段'); // eslint-disable-line
     }
   }
 }
 
 /**
- * 对象转数组
+ * 从组件中的 type 为 "application/json" 的 script 标签中获取 JSON 数据
  *
- * @param {Object} configObj 配置对象
- * @returns {Object} 配置对象数组
+ * @param   {HTMLElement}  el  mip-stats-baidu 的 DOM 元素
+ * @returns {Object}           百度统计的配置信息
  */
-function objToArray (configObj) {
+function getStatsBaiduConfig (el) {
+  let config = {}
+  let setconfig = el.getAttribute('setconfig')
+
+  try {
+    let script = el.querySelector('script[type="application/json"]')
+    if (script) {
+      let textContent = jsonParse(script.textContent)
+      if (JSON.stringify(textContent) !== '{}') {
+        config.token = textContent.token
+        util.fn.del(textContent, 'token')
+        config.conf = objectToArray(textContent)
+      }
+      return config
+    }
+  } catch (e) {
+    logger.warn(el, '配置数据不是合法的 JSON', e)
+  }
+  return {
+    token: el.getAttribute('token'),
+    conf: setconfig ? new Array(buildArray(decodeURIComponent(setconfig))) : null
+  }
+}
+
+/**
+ * 将 JSON Object 转换成数组
+ * example: {a: [1, 3, 5], b: [2, 4]}  => [['a', 1, 2, 3], ['b', 2, 4]]
+ *
+ * @param   {Object} jsonObj  JSON Object 的数据
+ * @returns {Array<Object>}   转换成的数组
+ */
+function objectToArray (jsonObj) {
   let outConfigArray = []
 
-  if (!configObj) {
+  if (!jsonObj) {
     return
   }
 
-  for (let [key, item] of Object.entries(configObj)) {
-    if (!Array.isArray(item)) {
-      continue
+  Object.keys(jsonObj).forEach(key => {
+    if (Array.isArray(jsonObj[key])) {
+      jsonObj[key].unshift(key)
+      outConfigArray.push(jsonObj[key])
     }
-    outConfigArray.push([key, ...item])
-  }
+  })
 
   return outConfigArray
 }
 
 /**
+ * 事件触发
+ */
+function eventHandler () {
+  let tempData = this.getAttribute(DATA_STATS_BAIDU_OBJ_ATTR)
+  let statusJson
+
+  if (!tempData) {
+    return
+  }
+  try {
+    statusJson = jsonParse(decodeURIComponent(tempData))
+  } catch (e) {
+    return logger.warn(this, `事件追踪 ${DATA_STATS_BAIDU_OBJ_ATTR} 数据不是合法的 JSON 数据`)
+  }
+  if (!statusJson.data) {
+    return
+  }
+
+  let attrData = buildArray(statusJson.data)
+  window._hmt.push(attrData)
+}
+
+/**
  * 数据换转 兼容两种格式
  *
- * @param {string} configItem 百度统计用户配置
+ * @param   {string} arrayStr 百度统计用户配置数据
  * @example (不需要处理) ["_trackPageview", "/mip-stats/sheji"]
  * @example (需要处理) "[_trackPageview, /mip-stats/sheji]"
  *
- * @returns {Object} ["_trackPageview", "/mip-stats/sheji"]
+ * @returns {?Array} ["_trackPageview", "/mip-stats/sheji"]
  */
-function getConfigArr (configItem) {
-  if (!configItem) {
+function buildArray (arrayStr) {
+  if (!arrayStr) {
     return
   }
 
   // (不需要处理) ["_trackPageview", "/mip-stats/sheji"]
-  if (typeof configItem === 'object') {
-    return configItem
+  if (typeof arrayStr === 'object') {
+    return arrayStr
   }
 
-  // 字符串转数组
-  let itemArr = configItem.slice(1, configItem.length - 1).split(',')
-  let configArr = []
+  let strArr = arrayStr.slice(1, arrayStr.length - 1).split(',')
+  let newArray = []
 
-  for (let item of itemArr) {
-    let arrItem = item.replace(/(^\s*)|(\s*$)/g, '').replace(/'/g, '')
-    arrItem = arrItem === 'false' || arrItem === 'true' ? Boolean(arrItem) : arrItem
-    configArr.push(arrItem)
+  for (let index = 0; index < strArr.length; index++) {
+    let item = strArr[index].replace(/(^\s*)|(\s*$)/g, '').replace(/'/g, '')
+    if (item === 'false' || item === 'true') {
+      item = Boolean(item)
+    }
+
+    newArray.push(item)
   }
 
-  return configArr
+  return newArray
 }
 
 /**
- * 触发事件
+ * 绑定事件追踪
  */
-function eventHandler () {
-  let statusData = this.getAttribute('data-stats-baidu-obj')
-  let statusJson = jsonParse(decodeURIComponent(statusData))
-  let eventData = getConfigArr(statusJson.data)
-  window._hmt.push(eventData)
+function bindEle () {
+  let now = Date.now()
+  let intervalTimer = setInterval(() => {
+    // 获取所有需要触发的 DOM
+    bindEleHandler(document.querySelectorAll(`*[${DATA_STATS_BAIDU_OBJ_ATTR}]`))
+    // 由于存在异步渲染的情况，所以需要进行一段时间的轮询确保点击事件都能绑定上
+    if (Date.now() - now >= 8000) {
+      clearInterval(intervalTimer)
+    }
+  }, 100)
 }
 
 /**
- * 解决来自百度搜索，内外域名不一致问题
+ * 处理点击统计的 DOM 列表
+ *
+ * @param {Array<HTMLElement>} tagBoxs 需要记录点击统计的 DOM 元素列表
  */
-function bdSearchCase () {
+function bindEleHandler (tagBoxs) {
+  for (let index = 0; index < tagBoxs.length; index++) {
+    let target = tagBoxs[index]
+    let statusData = target.getAttribute(DATA_STATS_BAIDU_OBJ_ATTR)
+    let hasBindFlag = target.hasAttribute(DATA_STATS_FALG)
+
+    // 检测 statusData 是否存在
+    if (!statusData || hasBindFlag) {
+      continue
+    }
+
+    try {
+      statusData = jsonParse(decodeURIComponent(statusData))
+    } catch (e) {
+      logger.warn(target, `事件追踪 ${DATA_STATS_BAIDU_OBJ_ATTR} 数据不是合法的 JSON 数据`)
+      continue
+    }
+
+    let eventType = statusData.type
+
+    // 检测传递数据是否存在
+    if (!statusData.data) {
+      continue
+    }
+
+    // 格式化数据
+    let data = buildArray(statusData.data)
+
+    if (eventType !== 'click' && eventType !== 'mouseup' && eventType !== 'load') {
+      // 事件限制到 click, mouseup, load(直接触发)
+      continue
+    }
+
+    if (target.classList.contains('mip-stats-eventload')) {
+      continue
+    }
+
+    target.classList.add('mip-stats-eventload')
+
+    if (eventType === 'load') {
+      window._hmt.push(data)
+    } else if (eventType === 'click' &&
+      target.hasAttribute('on') &&
+      target.getAttribute('on').match('tap:') &&
+      fn.hasTouch()
+    ) {
+      /**
+       * 解决 on=tap: 和 click 冲突短线方案
+       * @TODO 这个为短线方案
+       */
+      let gesture = new Gesture(target)
+      gesture.on('tap', eventHandler)
+    } else {
+      target.addEventListener(eventType, eventHandler, false)
+    }
+
+    target.setAttribute(DATA_STATS_FALG, '1')
+  }
+}
+
+/**
+ * 通过百度统计 API 设置新的 referrer
+ * 因为在 iframe 中，统计到的 referrer 不对，所以需要转换 referrer
+ */
+function setReferrer () {
   let originUrl = ''
-  let hashObj = {}
+  let params = {}
+  let hashWord = MIP.hash.get('word') || ''
+  let hashEqid = MIP.hash.get('eqid') || ''
+  let hashQuery = MIP.hash.get('q') || ''
+  let from = MIP.hash.get('from') || ''
 
-  let hashWord = hash.get('word') || ''
-  let hashEqid = hash.get('eqid') || ''
-  let hashFrom = hash.get('from') || ''
-
-  if (isMatch(hashFrom, 'result') && (hashWord || hashEqid) && document.referrer) {
-    hashObj.url = ''
-    hashObj.eqid = hashEqid
-    hashObj.word = hashWord
-    originUrl = document.referrer
+  if (from === 'result') {
+    // 百度搜索查询参数
+    if (hashWord || hashEqid) {
+      params.eqid = hashEqid
+      params.word = hashWord
+    }
+    // 神马搜索查询参数
+    if (hashQuery) {
+      params.q = hashQuery
+    }
+    if (document.referrer) {
+      params.url = ''
+      originUrl = document.referrer
+    }
   } else {
-    hashObj.url = ''
+    let location = window.location
+    params.url = ''
     originUrl = location.origin + location.pathname + location.search
   }
-  window._hmt.push(['_setReferrerOverride', makeReferrer(originUrl, hashObj)])
+  window._hmt.push(['_setReferrerOverride', buildReferrer(originUrl, params)])
 }
 
 /**
- * 验证是否来自结果页
+ * 生成百度统计 _setReferrerOverride 对应的 referrer
  *
- * @param {string} from mipService 哈希标识
- * @param {string} targetFrom 哈希值
- * @returns {boolean} 是或否
+ * @param   {string} url       需要被添加参数的 url
+ * @param   {Object} params    参数对象
+ * @returns {string}           拼装后的 url
  */
-function isMatch (from, targetFrom) {
-  if (from && targetFrom && from === targetFrom) {
-    return true
-  }
-  return false
-}
-
-/**
- * 生成百度统计_setReferrerOverride对应的referrer
- *
- * @param {string} url 需要被添加参数的 url
- * @param {Object} hashObj 参数对象
- * @returns {string} 拼装后的 url
- */
-function makeReferrer (url, hashObj) {
-  let referrer = ''
+function buildReferrer (url, params) {
   let conjMark = url.indexOf('?') < 0 ? '?' : '&'
   let urlData = ''
-  for (let key in hashObj) {
-    urlData += '&' + key + '=' + hashObj[key]
-  }
+
+  Object.keys(params).forEach(key => (urlData += '&' + key + '=' + params[key]))
   urlData = urlData.slice(1)
-  if (url.indexOf('#') < 0 && urlData) {
-    referrer = url + conjMark + urlData
-  } else {
-    referrer = url.replace('#', conjMark + urlData + '#')
-  }
-  return referrer
+  return url.indexOf('#') < 0 && urlData
+    ? (url + conjMark + urlData)
+    : url.replace('#', conjMark + urlData + '#')
 }
