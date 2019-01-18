@@ -333,7 +333,7 @@ function qqShare (targetAppName, opt) {
        */
       let script = document.createElement('script')
       script.type = 'text/javascript'
-      script.onload = script.onreadystatechange = () => {
+      script.onload = script.onreadystatechange = function () {
         (!this.readyState ||
           this.readyState === 'loaded' ||
           this.readyState === 'complete') && resolve()
