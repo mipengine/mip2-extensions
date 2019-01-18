@@ -125,7 +125,7 @@ export default class MipVizEcharts extends CustomElement {
       this.measuredBox()
       this.renderGraph()
     } catch (err) {
-      console.error(this.getName() + ': ', err)
+      logger.warn(this.element, err)
     }
   }
 
@@ -183,14 +183,14 @@ export default class MipVizEcharts extends CustomElement {
       try {
         data = util.jsonParse(this.inlineData)
       } catch (e) {
-        logger.error(element, '解析数据出错')
+        logger.warn(element, '解析数据出错')
       }
     } else {
       try {
         let fetchData = await fetch(this.src)
         data = await fetchData.json()
       } catch (err) {
-        logger.error(element, '请求数据出错')
+        logger.warn(element, '请求数据出错')
       }
     }
 
