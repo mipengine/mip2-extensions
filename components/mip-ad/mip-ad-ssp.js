@@ -19,15 +19,15 @@ export default function render (el) {
   el.appendChild(sspDiv)
 
   let sspScript = document.createElement('script')
-  sspScript.innerText = '(function(){var c="//cpu.baidu.com";' +
-    'var a=function(){var e=document.createElement("script");e.id="cpu-block-entry";' +
-    'e.src=c+"/js/cb.js";document.head.appendChild(e)};' +
-    'var b=function(g){var h={msg:g.toString()||"no err msg",line:g.lineno||-1};' +
-    'var f=document.createElement("img");f.src=c+"/msg?m=block&e="+' +
-    'encodeURIComponent(JSON.stringify(h))};' +
-    'try{window.feedsbycpu=window.feedsbycpu||[];' +
-    'window.feedsbycpu.push({siteId:"' + siteId +
-    '",blockId:"' + blockId + '",display:"auto"});' +
-    'document.getElementById("cpu-block-entry")||a()}catch(d){b(d)}})();'
+  sspScript.innerText = `(function(){var c="//cpu.baidu.com";
+    var a=function(){var e=document.createElement("script");e.id="cpu-block-entry";
+    e.src=c+"/js/cb.js";document.head.appendChild(e)};' +
+    var b=function(g){var h={msg:g.toString()||"no err msg",line:g.lineno||-1};
+    var f=document.createElement("img");f.src=c+"/msg?m=block&e="+
+    encodeURIComponent(JSON.stringify(h))};
+    try{window.feedsbycpu=window.feedsbycpu||[];
+    window.feedsbycpu.push({siteId:"${siteId}
+    ",blockId:"${blockId}",display:"auto"});
+    document.getElementById("cpu-block-entry")||a()}catch(d){b(d)}})();`
   el.appendChild(sspScript)
 }
