@@ -376,16 +376,20 @@ let globalWxShareTimer
  */
 function wechatTips () {
   let wechatTips = [...document.querySelectorAll(`.${WECHAT_SHARE_TIPS_CLS}`)]
+
   if (wechatTips.length) {
     wechatTips.forEach(dom => util.css(dom, 'display', 'block'))
   } else {
     let wechatTipsDom = document.createElement('div')
     wechatTipsDom.classList.add(WECHAT_SHARE_TIPS_CLS)
     document.body.appendChild(wechatTipsDom)
+    wechatTips = document.querySelectorAll(`.${WECHAT_SHARE_TIPS_CLS}`)
 
-    document.querySelectorAll(`.${WECHAT_SHARE_TIPS_CLS}`).addEventListener('click', function () {
-      util.css(this, 'display', 'none')
-      clearTimeout(globalWxShareTimer)
+    ;[...wechatTips].forEach(dom => {
+      dom.addEventListener('click', () => {
+        util.css(dom, 'display', 'none')
+        clearTimeout(globalWxShareTimer)
+      })
     })
   }
 
