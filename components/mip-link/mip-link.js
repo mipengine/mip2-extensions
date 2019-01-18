@@ -1,5 +1,5 @@
 const { CustomElement, util } = MIP
-
+const log = util.log('mip-link')
 const STYLE_ATTRS = [
   'display',
   'font-size',
@@ -30,6 +30,8 @@ export default class MIPLink extends CustomElement {
   }
 
   build () {
+    log.warn('由于 <mip-link> 不利于搜索引擎识别，请使用 <a>，使用方法见文档：https://www.mipengine.org/v2/components/dynamic-content/mip-link.html')
+
     let el = this.element
     el.setAttribute('pageType', this.isNoCache() ? 2 : 1)
 
@@ -39,9 +41,7 @@ export default class MIPLink extends CustomElement {
     tagA.setAttribute('mip-link', '')
 
     // 子元素添加到 a 标签下面
-    for (let child of [...el.childNodes]) {
-      tagA.appendChild(child)
-    }
+    ;[...el.childNodes].forEach(child => tagA.appendChild(child))
     el.appendChild(tagA)
 
     util.css(tagA, {
