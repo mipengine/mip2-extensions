@@ -24,7 +24,7 @@ export default class MipForm extends CustomElement {
     form.initMessageEvents(this.element)
   }
 
-  addClearButton() {
+  addClearButton () {
     const clearArr = ['text', 'input', 'datetime', 'email', 'number', 'search', 'tel', 'url']
     const clearList = clearArr.map(clear => `input[type=${clear}]`).join(',')
     const clearItems = this.element.querySelectorAll(clearList)

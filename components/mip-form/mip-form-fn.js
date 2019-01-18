@@ -3,7 +3,7 @@
  * @author duxiaonan@baidu.com (duxiaonan)
  */
 
-let {
+const {
   util,
   viewer,
   templates
@@ -93,11 +93,10 @@ export default class Form {
 
     // 在SF环境下使用mibm-jumplink，跳转显示原链接。 http-GET请求交给外层跳转
     if (!MIP.standalone && isHttp && isGetMethod) {
-      const jumpUrl = getJumpUrl(jumpUrlParams)
+      const jumpUrl = this.getJumpUrl(jumpUrlParams)
       viewer.sendMessage('mibm-jumplink', {
         url: jumpUrl
       })
-      return
     } else if (this.requestUrl) {
       this.fetchUrl(this.requestUrl)
     } else {
@@ -109,7 +108,8 @@ export default class Form {
   /**
    * 校验输入符合规则
    *
-   * @param {HTMLElement} inputElement
+   * @param {HTMLElement} inputElement input Dom
+   * @param {string} value 需要校验的值
    * @returns {boolean} validate success
    */
   validateInput (inputElement, value) {
@@ -137,7 +137,7 @@ export default class Form {
   /**
    * 获取 SF 环境 http 跳转 URL
    *
-   * @param {string} urlParams
+   * @param {string} urlParams URL 参数
    * @returns {string} jumpUrl
    */
   getJumpUrl (urlParams) {
@@ -147,7 +147,7 @@ export default class Form {
       jumpUrl = this.url + urlParams
     } else {
       // eg. getUrl == 'http://www.mipengine.org'
-      valueJson = valueJson.substring(1)
+      urlParams = urlParams.substring(1)
       jumpUrl = this.url + '?' + urlParams
     }
     return jumpUrl
@@ -205,8 +205,7 @@ export default class Form {
         }).catch((err) => {
           this.fetchReject(err)
         })
-      }
-      else {
+      } else {
         this.submitErrorHandle()
         this.fetchReject({})
       }
@@ -243,7 +242,7 @@ export default class Form {
    * 处理模板渲染
    *
    * @param {HTMLElement} element 渲染后模板父节点
-   * @return {HTMLElement} target 新建DOM节点
+   * @returns {HTMLElement} target 新建DOM节点
    */
   tempHTML (element = document) {
     let target = element.querySelector('[mip-mustache-rendered]')
