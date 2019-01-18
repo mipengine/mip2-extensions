@@ -75,32 +75,6 @@ const DEFAULT_ICON = 'https://b.bdstatic.com/searchbox/icms/searchbox/img/po/act
 let globalOptions
 
 /**
- * 遍历对象
- *
- * @param {Object}   obj  需要遍历的对象
- * @param {Function} fn   回调
- */
-function objForEach (obj, fn) {
-  for (let key of Object.keys(obj)) {
-    if (!fn.call(obj, key, obj[key])) {
-      break
-    }
-  }
-}
-
-/**
- * 将对象转换成 query 拼接串
- *
- * @param   {Object} obj 待处理的对象
- * @returns {string}     拼接好的 URL 参数
- */
-function objToQuery (obj) {
-  let arr = []
-  Object.keys(obj).forEach(key => arr.push(key + '=' + encodeURIComponent(obj[key])))
-  return arr.join('&')
-}
-
-/**
  * 加载 JS
  *
  * @param {?Object} opts 配置的参数
@@ -121,7 +95,9 @@ function loadJS (opts) {
   script.type = 'text/javascript'
 
   if (typeof data === 'object') {
-    data = objToQuery(data)
+    let tmpArr = []
+    Object.keys(data).forEach(key => tmpArr.push(key + '=' + encodeURIComponent(data[key])))
+    data = tmpArr.join('&')
   }
   if (data) {
     url += (url.indexOf('?') === -1 ? '?' : '&') + data
@@ -456,11 +432,7 @@ const sealConfig = {
       return
     }
 
-    objForEach(globalOptions, (key, val) => {
-      if (options[key] == null) {
-        options[key] = val
-      }
-    })
+    options = Object.assign({}, globalOptions, options)
 
     if (IS_WX) {
       if (wx) {
