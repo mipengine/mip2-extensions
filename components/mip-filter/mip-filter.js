@@ -120,7 +120,7 @@ class Filter {
   /**
    * 修改 url hash
    *
-   * @param {string} setValue
+   * @param {string} setValue filter value
    */
   setHash (setValue) {
     let hasTreeKeys = Object.keys(hash.hashTree)
@@ -181,7 +181,7 @@ class Filter {
   /**
    * 筛选功能
    *
-   * @param {string} selectedFilter
+   * @param {string} selectedFilter 用户点击的筛选项
    */
   applyFilter (selectedFilter) {
     const filterItems = this.itemWrap.querySelectorAll('.filter-item')
