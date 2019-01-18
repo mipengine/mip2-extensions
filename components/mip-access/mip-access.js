@@ -126,14 +126,14 @@ class Access {
         switch (tagName) {
           case 'mip-img':
             elements[i].removeAttribute('src')
-            elements[i].classList.add('blur-bg')
+            elements[i].classList.add('blur-bg', 'mip-access-blur-bg')
             break
           case 'mip-video':
             elements[i].removeAttribute('src')
-            elements[i].classList.add('blur-bg')
+            elements[i].classList.add('blur-bg', 'mip-access-blur-bg')
             break
           default:
-            elements[i].classList.add('elide')
+            elements[i].classList.add('elide', 'mip-access-elide')
             break
         }
       } else {
@@ -165,13 +165,13 @@ class Access {
         }
         if (!on) {
           if (this._hideType) {
-            elements[i].classList.add('elide')
+            elements[i].classList.add('elide', 'mip-access-elide')
           } else {
             util.css(elements[i], 'display', 'none')
           }
         } else {
           if (this._hideType) {
-            elements[i].classList.remove('elide')
+            elements[i].classList.remove('elide', 'mip-access-elide')
           } else {
             let display = elements[i]._display
             display = display || 'block'
