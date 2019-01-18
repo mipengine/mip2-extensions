@@ -1,8 +1,8 @@
-# `mip-form`
+# mip-form
 
 标题|内容
 ----|----
-类型|
+类型|动态内容
 支持布局|responsive, fixed-height, fill, container, fixed
 所需脚本|https://c.mipcdn.com/static/v2/mip-form/mip-form.js
 
@@ -69,26 +69,31 @@
 ### method
 
 说明：表单提交方法
+
 必选项：是
 
 ### url
 
 说明：表单提交地址，必须是 http(s) 或 // 开头的地址
+
 必选项: 是
 
 ### validatetarget
 
 说明:  验证提示对应 tag，用于对应错误时的提示显示元素的查找
+
 必选项：否
 
 ### validatetype
 
 说明：验证类型, 用于支持简单的验证。目前提供 `must`, `email`, `phone`, `idcar`, `custom`。当类型为 `must` 时表示提交项不能为空，类型为 `custom` 时则需要填写 `validatereg` 实现自定义校验。
+
 必选项：否
 
 ### validatereg
 
 说明: 自定义验证，补充站长个性化的验证规则。如果 `validatetype` 为 `custom` 时需填写相应验证规则
+
 必选项：否
 
 ### clear
