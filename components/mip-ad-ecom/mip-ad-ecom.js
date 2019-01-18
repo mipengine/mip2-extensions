@@ -66,22 +66,22 @@ export default class MIPAdEcom extends CustomElement {
    */
   build () {
     let me = this
-    let ele = me.element
+    let ele = this.element
     let checkElement = () => {
       if (dom.getConfigScriptElement(ele)) {
         this.sourceType = ele.getAttribute('source-type') || ''
         // this.commonUrl = './mock.json'
         this.commonUrl = getUrl(ele)
         // 在一些情况下不展示定制化 MIP
-        if (!me.isShowCustom()) {
+        if (!this.isShowCustom()) {
           return
         }
-        return me.fetchData(me.commonUrl, me.render.bind(me), ele)
+        return this.fetchData(this.commonUrl, this.render.bind(me), ele)
       }
       return logger.warn(ele, '获取不到配置')
     }
 
-    me.placeholder = dom.addPlaceholder(ele)
+    this.placeholder = dom.addPlaceholder(ele)
 
     if (!checkElement()) {
       window.requestAnimationFrame(checkElement)
@@ -94,18 +94,17 @@ export default class MIPAdEcom extends CustomElement {
    * @returns {boolean} isShowCustom 是否展示定制化MIP
    */
   isShowCustom () {
-    let me = this
     let isShowCustom = true
 
     // 非结果页进入不展现定制化内容
     if (standalone ||
       // 非百度、cache 不展现定制化内容
-      !(me.regexs.domain.test(window.document.referrer) ||
+      !(this.regexs.domain.test(window.document.referrer) ||
       fn.isCacheUrl(location.href)) ||
       // 无异步 url 不展现定制化内容
-      !me.commonUrl
+      !this.commonUrl
     ) {
-      me.element.remove()
+      this.element.remove()
       isShowCustom = false
     }
 
@@ -165,7 +164,7 @@ export default class MIPAdEcom extends CustomElement {
     }
 
     let tLen = templates && templates.length
-    if (tLen && tLen > 0) {
+    if (tLen) {
       for (let i = 0; i < tLen; i++) {
         let singleTempData = templates[i]
         if (!singleTempData || !singleTempData.length) {
@@ -190,7 +189,6 @@ export default class MIPAdEcom extends CustomElement {
    * @param {HTMLElement} element 数据返回后需要渲染的element
    */
   fetchData (url, callback, element) {
-    let me = this
     if (!url) {
       return
     }
@@ -208,7 +206,7 @@ export default class MIPAdEcom extends CustomElement {
         callback && callback(data.data, element)
         let adContainers = [...document.querySelectorAll(`[${AD_CONTAINER}]`)]
         adContainers.forEach(item => item.classList.add('fadein'))
-        me.placeholder && dom.removePlaceholder(me.placeholder)
+        this.placeholder && dom.removePlaceholder(this.placeholder)
       }, err => {
         element.remove()
         logger.warn(err)
@@ -272,16 +270,15 @@ export default class MIPAdEcom extends CustomElement {
    * @param {Object} data 渲染匹配的数据
    */
   renderQueue (data) {
-    let me = this
-    let queue = me.getQueue()
+    let queue = this.getQueue()
     let tempQueue = queue && queue.tempQueue
 
     if (!data) {
       return
     }
     if (tempQueue && tempQueue.length > 0) {
-      tempQueue.forEach(item => me.render(me.getMatchData(item, data), item))
+      tempQueue.forEach(item => this.render(this.getMatchData(item, data), item))
     }
-    me.storeData(data)
+    this.storeData(data)
   }
 }

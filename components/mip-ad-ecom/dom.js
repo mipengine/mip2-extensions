@@ -27,11 +27,11 @@ let excr = 44
  * 所以对 util.css 结果进行处理, 返回整数
  *
  * @param   {HTMLElement} elem     dom 节点
- * @param   {string} style 获取样式
- * @returns {number} res 返回的数值
+ * @param   {string} cssProperty 获取样式
+ * @returns {number} 返回的数值
  */
-function getCss (elem, style) {
-  return parseInt(util.css(elem, style), 10) || 0
+function getCssPropertyValue (elem, cssProperty) {
+  return parseInt(util.css(elem, cssProperty), 10) || 0
 }
 
 /**
@@ -45,7 +45,7 @@ function getCss (elem, style) {
  * @param {HTMLElement} container style/script 节点的容器
  */
 function renderStyleOrScript (str, reg, tag, attr, container) {
-  let node = container.querySelector(tag + '[' + attr + ']') || document.createElement(tag)
+  let node = container.querySelector(`${tag}[${attr}]`) || document.createElement(tag)
   let substrs = str.match(reg)
 
   node.setAttribute(attr, '')
@@ -67,7 +67,7 @@ function renderStyleOrScript (str, reg, tag, attr, container) {
  *
  * @param   {string}  html 定制化组件 dom 字符串
  * @param   {number} id   template id
- * @returns {HTMLElement}     tpl  template 子节点
+ * @returns {HTMLElement}  template 子节点
  */
 function createTemplateNode (html, id) {
   let tpl = document.createElement('template')
@@ -135,12 +135,12 @@ function renderHtml (element, str, len, result, container) {
     if (res.element.hasAttribute('mip-fixed') &&
         res.element.parentNode.getAttribute('type') === 'bottom') {
       fixedElement.setPlaceholder()
-      let zIndex = getCss(res.element.parentNode, 'z-index')
+      let zIndex = getCssPropertyValue(res.element.parentNode, 'z-index')
 
       if (zIndex >= maxzIndex) {
         maxzIndex = zIndex
         // alert(getCss(res.element, 'height') - 10)
-        fixedElement.setPlaceholder(getCss(res.element, 'height') - excr)
+        fixedElement.setPlaceholder(getCssPropertyValue(res.element, 'height') - excr)
       }
     }
   })

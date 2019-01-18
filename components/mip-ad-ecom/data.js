@@ -3,6 +3,10 @@
  * @author mj(zoumiaojiang@gmail.cpm)
  */
 
+/* global MIP */
+
+let { hash } = MIP
+
 /**
  * 正则表达式管理 map
  *
@@ -69,8 +73,7 @@ const CONFIG = {
  * @returns {string}     value
  */
 function getHashData (key) {
-  let MIP = window.MIP || {}
-  return MIP && MIP.hash && MIP.hash.get ? MIP.hash.get(key) : ''
+  return hash.get(key) || ''
 }
 
 /**
@@ -94,12 +97,12 @@ function updatePaths (config) {
  *
  * @param   {string}  str 截取前字符串
  * @param   {RegExp}  reg 正则表达式
- * @param   {number} pos  位置
+ * @param   {number}  pos 位置
  * @returns {string}      截取后字符串
  */
-function getSubString (str, reg, pos) {
-  pos = pos ? 0 : 1
-  return str.match(reg) && str.match(reg)[pos] ? str.match(reg)[pos] : ''
+function getSubString (str, reg, pos = 1) {
+  let matchArr = str.match(reg)
+  return matchArr && matchArr[pos] ? matchArr[pos] : ''
 }
 
 export default {
