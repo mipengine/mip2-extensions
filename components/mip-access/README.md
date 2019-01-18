@@ -34,7 +34,7 @@
 <div mip-access="access OR subscriber">展示元素</div>
 ```
 
-表达式中可以使用的运算符在 [access-expr-impl.jison](https://github.com/mipengine/mip2-extensions/blob/master/src/mip-access/mip-access-expr-impl.jison) 中全部列举，其中主要运算符如下：
+表达式中可以使用的运算符在 [access-expr-impl.jison](https://github.com/mipengine/mip2-extensions/blob/master/src/mip-access/expr-impl.jison) 中全部列举，其中主要运算符如下：
 
 #### 逻辑运算符
 

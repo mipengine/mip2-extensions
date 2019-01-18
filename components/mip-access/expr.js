@@ -1,4 +1,4 @@
-import parser from './mip-access-expr-impl'
+import parser from './expr-impl'
 
 /**
  * Evaluates access expression.
