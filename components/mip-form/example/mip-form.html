@@ -11,7 +11,7 @@
     body {
       padding: 10px;
     }
-    p {
+    .mip-form-example p {
       text-align: left;
       font-size: 18px;
       margin-top: 20px;
@@ -21,30 +21,54 @@
     </style>
   </head>
   <body>
-    <p>基本使用</p>
-    <mip-form method="get" url="https://www.mipengine.org?we=123">
-      <input type="text" name="username" validatetarget="username" validatetype="must" placeholder="姓名">
-      <div target="username">姓名不能为空</div>
-      <input type="number" name="age" validatetarget="age" validatetype="must" placeholder="年龄">
-      <div target="age">年龄不能为空</div>
-      <input type="submit" value="提交">
-    </mip-form>
+    <div class="mip-form-example">
+      <p>基本使用</p>
+      <mip-form method="get" url="https://www.mipengine.org?we=123">
+        <input type="text" name="username" validatetarget="username" validatetype="must" placeholder="姓名">
+        <div target="username">姓名不能为空</div>
+        <input type="number" name="age" validatetarget="age" validatetype="must" placeholder="年龄">
+        <div target="age">年龄不能为空</div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
 
-    <p>加清空按钮</p>
-    <mip-form method="get" url="https://www.mipengine.org" clear>
-      <input type="text" name="username2" validatetarget="username2" validatetype="must" placeholder="姓名">
-      <div target="username2">姓名不能为空</div>
-      <input type="number" name="age2" validatetarget="age2" validatetype="must" placeholder="年龄">
-      <div target="age2">年龄不能为空</div>
-      <input type="submit" value="提交">
-    </mip-form>
+    <div class="mip-form-example">
+      <p>加清空按钮</p>
+      <mip-form method="get" url="https://www.mipengine.org" clear>
+        <input type="text" name="username2" validatetarget="username2" validatetype="must" placeholder="姓名">
+        <div target="username2">姓名不能为空</div>
+        <input type="number" name="age2" validatetarget="age2" validatetype="must" placeholder="年龄">
+        <div target="age2">年龄不能为空</div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
 
-    <p>自定义验证规则</p>
-    <mip-form method="get" url="https://www.mipengine.org">
-      <input type="text" name="customnumber" validatetarget="custom" validatetype="custom" validatereg="^[0-9]*$" placeholder="我是自定义验证规则数字">
-      <div class="mip-form-target" target="custom">请输入正确的数字</div>
-      <input type="submit" value="提交">
-    </mip-form>
+    <div class="mip-form-example">
+      <p>自定义验证规则</p>
+      <mip-form method="get" url="https://www.mipengine.org">
+        <input type="text" name="customnumber" validatetarget="custom" validatetype="custom" validatereg="^[0-9]*$" placeholder="我是自定义验证规则数字">
+        <div class="mip-form-target" target="custom">请输入正确的数字</div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
+
+    <div class="mip-form-example">
+      <p>页面数据刷新</p>
+      <mip-form fetch-url="http://yourdomain.com/path">
+        <input type="text" name="name" placeholder="姓名">
+          <div submit-success>
+            <template type="mip-mustache">
+              Success! Thanks for {{name}} trying the mip demo.
+            </template>
+          </div>
+          <div submit-error>
+            <template type="mip-mustache">
+              Error!.
+            </template>
+          </div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
 
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="/mip-form/mip-form.js"></script>
