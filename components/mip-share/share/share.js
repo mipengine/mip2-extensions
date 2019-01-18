@@ -258,29 +258,29 @@ function sendShareMessage (key, opt, app) {
  * @param {boolean} encode 是否是编码过的配置信息
  */
 function baiduShare (cfg, encode) {
-  window.require(['searchbox/openjs/aio'], () => {
-    window.onBaiduShareSuccess = () => {}
-    window.onBaiduShareFail = () => {}
+  window.onFail = () => {}
+  window.onSuccess = () => {}
 
-    if (encode) {
-      cfg.url = encodeURIComponent(cfg.url)
-      cfg.linkUrl = encodeURIComponent(cfg.url)
-    }
-    // 以这种方式 require 是为了避免过早加载 aio 组件
-    if (Box.os.android) {
-      Box.android.invokeApp('Bdbox_android_utils', 'callShare', [
-        JSON.stringify(cfg),
-        window.successFnName || 'console.log',
-        window.errorFnName || 'console.log'
-      ])
-    } else {
-      Box.ios.invokeApp('callShare', {
-        options: encodeURIComponent(JSON.stringify(cfg)),
-        errorcallback: 'onBaiduShareFail',
-        successcallback: 'onBaiduShareSuccess'
-      })
-    }
-  })
+  let url = encodeURIComponent(cfg.url)
+
+  if (encode) {
+    cfg.url = url
+    cfg.linkUrl = url
+  }
+
+  if (Box.os.android) {
+    Box.android.invokeApp('Bdbox_android_utils', 'callShare', [
+      JSON.stringify(cfg),
+      window.successFnName || 'console.log',
+      window.errorFnName || 'console.log'
+    ])
+  } else {
+    Box.ios.invokeApp('callShare', {
+      options: encodeURIComponent(JSON.stringify(cfg)),
+      errorcallback: 'onFail',
+      successcallback: 'onSuccess'
+    })
+  }
 }
 
 /**
@@ -515,12 +515,25 @@ export default class Share {
    */
   bindEvent () {
     let me = this
-
-    // key = ['pyq', 'wxfriend', 'qqfriend', 'qzone', 'sinaweibo', 'more'];
-    me.$domShareList.find('.c-share-btn').each(function (i) {
-      let config = me.list[i]
-      config && $(this).on('click', () => config.cb(me.opt))
-    })
+    let doBind = () => {
+      // key = ['pyq', 'wxfriend', 'qqfriend', 'qzone', 'sinaweibo', 'more'];
+      me.$domShareList.find('.c-share-btn').each(function (i) {
+        let config = me.list[i]
+        config && $(this).on('click', () => {
+          config.cb(me.opt)
+        })
+      })
+    }
+    if (IS_ZBIOS && !document.head.querySelector('#bd-box-sdk')) {
+      let aioScript = document.createElement('script')
+      aioScript.src = '//s.bdstatic.com/common/openjs/aio.js?t=1547785394212'
+      aioScript.id = 'bd-box-sdk'
+      aioScript.async = true
+      aioScript.onload = () => doBind()
+      document.head.appendChild(aioScript)
+    } else {
+      doBind()
+    }
   }
 
   /**
