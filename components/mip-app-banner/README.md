@@ -18,7 +18,7 @@
   <link rel="manifest" href="xxxx/manifest">
 </head>
 ...
-<mip-app-banner id="my-app-banner" layout="nodisplay", class="mip-hidden">
+<mip-app-banner id="my-app-banner" layout="nodisplay" class="mip-hidden">
   <button open-button>打开app</button>
 </mip-app-banner>
 ```
