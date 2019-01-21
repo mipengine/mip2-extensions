@@ -17,9 +17,9 @@
     }
     p {
       text-align: left;
-      font-size: 14px;
-      margin: 20px 0;
-      color: gray;
+      font-size: 18px;
+      margin-top: 20px;
+      color: green;
     }
     mip-img {
       margin: 10px auto;
@@ -27,15 +27,15 @@
   </style>
 </head>
 <body>
-<h1>百度联盟广告反屏蔽示例</h1>
-<p>网盟广告请求地址对域名有要求，必须是在网盟申请的 domain，而且网页的地址必须是 https://</p>
-<!-- domain="dup.lovedword.com" 为示例，需要填写在网盟申请的 domain -->
-<mip-ad
-  type="baidu-wm-ext"
-  domain="dup.lovedword.com"
-  token="3a1ec097f7cbf63edb0e7f98eff238f950e6ca0b29e67fe1103c">
-  <div id="3a1ec097f7cbf63edb0e7f98eff238f950e6ca0b29e67fe1103c"></div>
-</mip-ad>
+<mip-fixed type="top" >
+  <mip-ad
+    type="ad-ssp"
+    data-site-id="1118394"
+    data-block-id="2684"
+    layout="fixed-height"
+    height="75px"
+  ></mip-ad>
+</mip-fixed>
 
 <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
 <script src="/mip-ad/mip-ad.js"></script>

@@ -59,6 +59,7 @@ export default function render (el) {
     }
 
     !innerScriptDom && initAdBaidu(el, cproId, initJs())
+    el.querySelector('mip-i-space').remove()
   }
 }
 

@@ -12,20 +12,18 @@ export default function render (el) {
   let cpropsid = el.getAttribute('cpro_psid') || el.getAttribute('cpro-psid')
   let cpropswidth = el.getAttribute('cpro_pswidth') || el.getAttribute('cpro-pswidth') || 'auto'
   let cpropsheight = el.getAttribute('cpro_psheight') || el.getAttribute('cpro-pswidth') || '230'
-  let adLoaderScript = document.createElement('script')
-  let wrapperNode = document.createElement('div')
+  let scriptHtml = `var cpro_psid="${cpropsid}";var cpro_pswidth="${cpropswidth}";var cpro_psheight="${cpropsheight}";`
+  let innerScriptNode = document.createElement('script')
+  let adScriptLoaderNode = document.createElement('script')
 
-  window.cpro_psid = cpropsid
-  window.cpro_pswidth = cpropswidth
-  window.cpro_psheight = cpropsheight
+  innerScriptNode.innerHTML = scriptHtml
+  adScriptLoaderNode.id = 'MIP_ADQW_EMBED'
+  adScriptLoaderNode.src = '//su.bdimg.com/static/dspui/js/um_mip.js'
+  adScriptLoaderNode.onload = () => el.customElement.applyFillContent(container, true)
 
-  adLoaderScript.id = 'MIP_ADQW_EMBED'
-  adLoaderScript.src = '//su.bdimg.com/static/dspui/js/um_mip.js'
+  let container = document.createElement('div')
+  container.appendChild(innerScriptNode)
+  container.appendChild(adScriptLoaderNode)
 
-  if (!adLoaderScript) {
-    return
-  }
-
-  wrapperNode.appendChild(adLoaderScript)
-  adLoaderScript.onload = () => el.customElement.applyFillContent(wrapperNode, true)
+  el.appendChild(container)
 }
