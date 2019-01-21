@@ -90,13 +90,12 @@ export default class Tab {
 
     // 若tab横滑回调方法存在,执行回调
     if (typeof this.onTabScrollEnd === 'function') {
-      let me = this
-      me.tabScroll.on('scrollEnd', function () {
-        if (this.customFlag && this.customFlag.autoScroll) {
+      this.tabScroll.on('scrollEnd', () => {
+        if (this.tabScroll.customFlag && this.tabScroll.customFlag.autoScroll) {
           // 若为自动触发滑动，不执行回调
           return
         }
-        me.onTabScrollEnd(this)
+        this.onTabScrollEnd(this.tabScroll)
       })
     }
   }
@@ -110,13 +109,12 @@ export default class Tab {
 
     this.toggleState = 0 // 展开状态 0-收起,1-展开
 
-    let me = this
     // 事件代理
-    $navLayerUl.on('click', '.' + me.navClass, function () {
-      let $domThis = $(this)
+    $navLayerUl.on('click', '.' + this.navClass, e => {
+      let $domThis = $(e.target)
       // $(this).addClass(_this.currentClass);
-      me.navs.eq($domThis.attr('data-tid')).trigger('click')
-      toggleUp.call(me)
+      this.navs.eq($domThis.attr('data-tid')).trigger('click')
+      toggleUp.call(this)
     })
 
     this.toggle.on('click', () => this.toggleState === 0 ? toggleDown.call(this) : toggleUp.call(this))
@@ -158,32 +156,31 @@ export default class Tab {
       $v.addClass(this.logClass)
       $v.attr('data-tid', i)
 
-      let me = this
-      $v.on('click', function () {
-        let tid = parseInt($(this).attr('data-tid'))
-        if (tid === me.current) {
+      $v.on('click', () => {
+        let tid = parseInt($v.attr('data-tid'))
+        if (tid === this.current) {
           return
         }
 
-        me.last = me.current
-        me.current = tid
+        this.last = this.current
+        this.current = tid
 
-        me.hideTab(me.last)
-        me.showTab(me.current)
+        this.hideTab(this.last)
+        this.showTab(this.current)
 
-        if (me.onResetChange === fn) {
-          me.hideContent(me.last)
-          me.showContent(me.current)
+        if (this.onResetChange === fn) {
+          this.hideContent(this.last)
+          this.showContent(this.current)
 
           /* 添加异步处理事件，返回点击tab序号及内容框 */
-          me.onChange(me.current, me.conts[me.current])
+          this.onChange(this.current, this.conts[this.current])
         } else {
-          me.onResetChange(me.current)
+          this.onResetChange(this.current)
         }
 
         // 滑动对象存在,执行滑动并传递autoScroll标记用于scrollEnd事件判断
-        if (me.tabScroll) {
-          slideTo(me.current + 1, 1, $v, me.navs.length, true)
+        if (this.tabScroll) {
+          slideTo(this.current + 1, 1, $v, this.navs.length, true)
         };
       })
     })
