@@ -10,11 +10,10 @@ import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
 import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 
-// const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?' // online
-const CATALOG_URL = 'http://yq01-psdy-diaoyan1006.yq01.baidu.com:8948/novel/api/mipinfo?' // yongfei
+const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?' // online
+// const CATALOG_URL = 'http://yq01-psdy-fengchao003.yq01.baidu.com:8529/novel/api/mipinfo?' // yongfei
 const originUrl = MIP.util.getOriginalUrl()
-// const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=189169121&crid=100&fr=bdgfh&mip=1'
-
+// const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=685640121&crid=288&fr=bdgfh&mip=1&pg=3'
 let util = MIP.util
 let event = util.event
 
@@ -26,6 +25,7 @@ let lastPage
 
 // 以下字段isCatFetch=true时才有（根据RD反馈，线上其实不存在在HTML里面配置目录的书了，所以应该都走fetch了）
 let isSplitPage
+// let isSplitPage = true // DELETE ME
 // 记录首尾章节的信息（后端返回的对象）
 let firstChapter
 let latestChapter
@@ -350,6 +350,7 @@ class Catalog {
           isSplitPage = data.data.catalog.isSplitPage
           this.renderCatalogCallBack(data)
         }).catch(err => {
+          isFetchLoading = false
           let reloadBtn = this.$catalogSidebar.querySelector('.reloadBtn')
           reloadBtn.addEventListener('click', e => this.reload())
           this.catalogFailMessageEvent()
@@ -494,10 +495,10 @@ class Catalog {
       reverse.removeEventListener('click', reverseHandler)
     }
     reverseHandler = () => {
-      // isReverse = false时，默认 asc。点击后改为 desc
-      let type = !isReverse ? 'desc' : 'asc'
-      reverseName.innerHTML = !isReverse ? ' 倒序' : ' 正序'
       if (isSplitPage) {
+        // isReverse = false时，默认 asc。点击后改为 desc
+        let type = !isReverse ? 'desc' : 'asc'
+        reverseName.innerHTML = isReverse ? ' 倒序' : ' 正序'
         this.loadCategory(type).then(data => {
           isReverse = !isReverse
           this.renderCatalogCallBack(data)
@@ -518,6 +519,8 @@ class Catalog {
           }
           $refCatalog = $node
         }
+        isReverse = !isReverse
+        reverseName.innerHTML = !isReverse ? ' 倒序' : ' 正序'
       }
     }
     reverse.addEventListener('click', reverseHandler)
