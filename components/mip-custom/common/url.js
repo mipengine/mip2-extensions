@@ -8,7 +8,7 @@ import data from './data'
 import dom from './dom'
 
 // import tools
-const {util, viewer} = MIP
+const {util} = MIP
 
 /**
  * [getHashparams mip连接特殊情况，从 hash 中获取参数]
@@ -79,27 +79,6 @@ const getUserParams = el => {
 }
 
 /**
- * [inMipShell 判断是否在特定广告环境中]
- *
- * @returns {boolean} inMipShell 是否在mip-shell中
- */
-const inMipShell = () => {
-  let inMipShell = true
-
-  // 非结果页进入，不是mip-shell
-  if (!viewer.isIframed) {
-    inMipShell = false
-  }
-
-  // 非百度、cache不在mip-shell中
-  if (!(data.regexs.domain.test(window.document.referrer) || util.fn.isCacheUrl(location.href))) {
-    inMipShell = false
-  }
-
-  return inMipShell
-}
-
-/**
  * [getUrlParams 集合异步请求所需要的所有参数]
  *
  * @param  {HTMLElement}    el      mip-custom 组件节点
@@ -165,9 +144,8 @@ const get = (el, poi) => {
   }
 
   // 非mip-shell增加noshell参数
-  const mipShell = inMipShell(el)
-  if (!mipShell) {
-    // url += '&from=noshell'
+  if (MIP.standalone) {
+    url += '&from=noshell'
   }
   return url
 }

@@ -100,7 +100,7 @@ export default class MipCustom extends CustomElement {
     let errorData = {}
     // 性能日志
     let performance = {}
-    performance.fetchStart = new Date() - 0
+    performance.fetchStart = +new Date() - 0
 
     // fetch
     fetch(url, {

@@ -83,7 +83,7 @@ const sendLog = (API_URL, logdata = {}) => {
  * @param {Object} res         fetch的response
  */
 const setNetDurationLogs = (performance, errorData, res) => {
-  performance.responseEnd = new Date() - 0
+  performance.responseEnd = +new Date() - 0
   performance.duration = performance.responseEnd - performance.fetchStart
   errorData = {
     st: res.status,
@@ -126,7 +126,7 @@ const setPerformanceLogs = (performance, fetchData) => {
   if (random500 < 1) {
     // 性能日志：emptyTime-广告未显示时间
     // 渲染结束时间戳
-    performance.renderEnd = new Date() - 0
+    performance.renderEnd = +new Date() - 0
     // 页面空白毫秒数
     performance.emptyTime = performance.renderEnd - performance.fetchStart
     performance.frontendRender = performance.renderEnd - performance.responseEnd

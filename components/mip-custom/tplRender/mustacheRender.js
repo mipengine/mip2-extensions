@@ -13,7 +13,7 @@ import dom from '../common/dom'
 let {templates, viewer} = MIP
 let {fixedElement} = viewer
 
-const regexs = dataProcessor.regexs
+const REGEXS = dataProcessor.REGEXS
 
 export default class MustacheRender extends Render {
   /**
@@ -24,7 +24,7 @@ export default class MustacheRender extends Render {
   createTemplateNode () {
     let tpl = document.createElement('template')
     tpl.setAttribute('type', 'mip-mustache')
-    tpl.innerHTML = dataProcessor.subStr(this.html, regexs.innerHtml)
+    tpl.innerHTML = dataProcessor.subStr(this.html, REGEXS.innerHtml)
     return tpl
   }
 

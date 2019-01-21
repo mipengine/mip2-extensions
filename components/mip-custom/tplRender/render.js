@@ -8,7 +8,7 @@
 import dataProcessor from '../common/data'
 import dom from '../common/dom'
 
-const regexs = dataProcessor.regexs
+const REGEXS = dataProcessor.REGEXS
 
 export default class Render {
   constructor (args) {
@@ -30,13 +30,13 @@ export default class Render {
 
     if (this.str != null) {
       // style 处理
-      dom.renderStyleOrScript(this.str, regexs.style, 'style', 'mip-custom-css', document.head)
+      dom.renderStyleOrScript(this.str, REGEXS.style, 'style', 'mip-custom-css', document.head)
       // tpl 处理
       this.renderNode()
       // baseUI 处理
       this.renderBaseUI()
       // script 处理
-      dom.renderStyleOrScript(this.str, regexs.script, 'script', this.customTag, document.body)
+      dom.renderStyleOrScript(this.str, REGEXS.script, 'script', this.customTag, document.body)
     }
   }
 
@@ -81,8 +81,8 @@ export default class Render {
   *
   */
   creatTag () {
-    this.html = this.str.replace(regexs.script, '').replace(regexs.style, '')
-    let customTag = (new RegExp(regexs.tag, 'g')).exec(this.html)
+    this.html = this.str.replace(REGEXS.script, '').replace(REGEXS.style, '')
+    let customTag = (new RegExp(REGEXS.tag, 'g')).exec(this.html)
     this.customTag = customTag && customTag[1] ? customTag[1] : null
     this.customNode = dom.createCustomNode(this.html, this.customTag)
     this.customNode.appendChild(this.createTemplateNode())

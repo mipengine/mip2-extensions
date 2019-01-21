@@ -13,8 +13,7 @@
  */
 const getSubString = (str, reg, pos) => {
   pos = pos ? 0 : 1
-  let res = str.match(reg) && str.match(reg)[pos] ? str.match(reg)[pos] : ''
-  return res
+  return str.match(reg) && str.match(reg)[pos] ? str.match(reg)[pos] : ''
 }
 
 /**
@@ -24,7 +23,6 @@ const getSubString = (str, reg, pos) => {
  * @returns {string}     value
  */
 const getHashData = key => {
-  let MIP = window.MIP || {}
   return MIP && MIP.hash && MIP.hash.get ? MIP.hash.get(key) : ''
 }
 
@@ -48,11 +46,11 @@ const addPaths = config => {
 }
 
 /**
- * [regexs 正则表达式]
+ * [REGEXS 正则表达式]
  * @type {Object}
  */
 /* eslint-disable no-useless-escape */
-const regexs = {
+const REGEXS = {
   html: /<mip-\S*>(.*)<\/mip-\S*></,
   script: /<script[^>]*>(.*?)<\/script>/g,
   style: /<style[^>]*>(.*?)<\/style>/g,
@@ -73,8 +71,8 @@ let params = {
   logid: '',
   query: '',
   title: '',
-  originalUrl: getSubString(location.pathname, regexs.regHttps) ||
-    getSubString(location.pathname, regexs.regHttp) ||
+  originalUrl: getSubString(location.pathname, REGEXS.regHttps) ||
+    getSubString(location.pathname, REGEXS.regHttp) ||
     location.href
 }
 
@@ -104,7 +102,7 @@ let performanceData = {
     lid: getHashData('lid'),
     info: {},
     group: 'common',
-    ts: new Date() - 0
+    ts: +new Date() - 0
   }
 }
 
@@ -134,7 +132,7 @@ let logData = {
 export default {
   domain: 'https://mipengine.baidu.com/',
   ajaxUrl: 'https://mipengine.baidu.com/common?',
-  regexs,
+  REGEXS,
   params,
   config,
   performanceData,

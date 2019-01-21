@@ -11,7 +11,7 @@ import dataProcessor from './data'
 let {util, viewer} = MIP
 let {fixedElement} = viewer
 
-const regexs = dataProcessor.regexs
+const REGEXS = dataProcessor.REGEXS
 
 /**
  * [getConfigScriptElement 获取页面配置的content内容]
@@ -94,7 +94,7 @@ const proxyLink = (el, fixedLayer) => {
 */
 const createCustomNode = (html, customTag) => {
   let node = document.createElement(customTag)
-  let tagandAttrs = dataProcessor.subStr(html, regexs.tagandAttr).split(' ')
+  let tagandAttrs = dataProcessor.subStr(html, REGEXS.tagandAttr).split(' ')
 
   for (let i = 0; i < tagandAttrs.length; i++) {
     let attrs = tagandAttrs[i].split('=')

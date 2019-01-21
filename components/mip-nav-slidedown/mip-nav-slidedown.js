@@ -48,7 +48,7 @@ export default class MipNavSlidedown extends CustomElement {
   bindEvents () {
     this.element.querySelector('.navbar-header .navbar-toggle').addEventListener('click', this.navClickHandler, false)
     let $closeBtn = this.element.querySelector('#navbar-wise-close-btn')
-    if ($closeBtn.length > 0) {
+    if ($closeBtn) {
       this.addHoverClass($closeBtn)
       $closeBtn.addEventListener('click', this.navClickHandler, false)
       $closeBtn.addEventListener('touchend', this.navClickHandler, false)

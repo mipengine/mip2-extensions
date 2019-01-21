@@ -23,7 +23,7 @@ import Strategy from './ad/strategyControl'
 import {initAdByCache} from './ad/strategyCompute'
 import {getJsonld, scrollBoundary, getCurrentWindow, getNovelInstanceId} from './common/util'
 import state from './common/state'
-import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink} from './common/log' // 日志
+import {sendWebbLog, sendTCLog, sendWebbLogCommon, sendWebbLogLink, showAdLog, sendRootLog, sendReadTypePvTcLog} from './common/log' // 日志
 import Prerender from './feature/prerender'
 
 let novelEvents = new NovelEvents()
@@ -31,7 +31,6 @@ let prerender = new Prerender()
 let strategy = new Strategy()
 let util = MIP.util
 let flag = new Flag()
-let scroll = new Scroll()
 
 export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   // 继承基类 shell, 扩展小说shell
@@ -43,48 +42,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 阅读器内部预渲染开关
     this.isReaderPrerender = false
   }
-  /**
-   * 由于广告加载完成时才改变渲染完成字段，所以观察者模式监听广告渲染是否成功字段 window.MIP.adShow
-   *
-   * @param {string} pageType 页面类型 page detail catalog ...
-   * @param {string} site 区分站点  目前只有 zongheng iqiyi
-   */
-  showAdLog (pageType, site) {
-    let old
-    /**
-     * 观察者模式监听变量变化，变量变化执行函数
-     *
-     * @param {string} oldVal 改变前的值
-     * @param {string} newVal 改变后的值
-    */
-    function observer (oldVal, newVal) {
-      if ((newVal === true) && (pageType !== 'detail')) {
-        sendTCLog('interaction', {
-          type: 'o',
-          action: 'adShow'
-        }, {
-          show: 'adShow',
-          hasAd: true,
-          site: site
-        })
-        // 广告渲染是否成功字段，成功true，默认false，为监控show值改变，打点后置为false
-        window.MIP.adShow = false
-      }
-    }
-    // 观察者模式监听广告渲染是否成功字段，定义广告show属性及其set和get方法
-    Object.defineProperty(window.MIP, 'adShow', {
-      enumerable: true,
-      configurable: true,
-      get: function () {
-        return old
-      },
-      set: function (val) {
-        // 调用变量改变时处理函数
-        observer(old, val)
-        old = val
-      }
-    })
-  }
+
   // 通过小说JS给dom添加预渲染字段
   connectedCallback () {
     // 从结果页进入小说阅读页加上预渲染的标识prerender，但是内部的每页不能加，会影响翻页内的预渲染
@@ -96,6 +54,17 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     }
     // 页面初始化的时候获取缓存的主题色和字体大小修改整个页面的样式
     this.initPageLayout()
+
+    // 判断页面类型，发送tc日志，记录 无限下拉abtest pv
+    let routes = JSON.parse(this.element.querySelector('script').innerText)
+    let pageType = routes.routes[0].meta.pageType
+    if (flag.isNovelShell(pageType) && flag.isBkid()) {
+      if (flag.isSids()) {
+        sendReadTypePvTcLog('unlimitedPulldown')
+      } else {
+        sendReadTypePvTcLog('switchPage')
+      }
+    }
   }
 
   /**
@@ -150,12 +119,12 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     } catch (e) {
       throw new Error('mip-shell-xiaoshuo配置错误，请检查头部 application/ld+json mipShellConfig')
     }
-
     // 小流量下走无限下拉逻辑
     // 判断当前页是阅读页走无限下拉逻辑
     if (flag.isNovelShell(pageType) && flag.isUnlimitedPulldownSids()) {
+      let scroll = new Scroll()
       scroll.init() // 初始化阅读器样式
-      scroll.start()
+      setTimeout(scroll.start.bind(scroll), 0)
       // 清除首屏阅读器内上一页、下一页和目录按钮
       let page = document.querySelector('.navigator')
       page.style.display = 'none'
@@ -171,7 +140,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       // 加大title和文本之间的行间距
       let title = reader.querySelector('.title') || ''
       if (title) {
-        title.style.margin = '1.5rem 0'
+        title.style.margin = '73px 0 21px'
       }
     }
   }
@@ -183,42 +152,17 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 初始化所有内置对象
     // 创建模式切换（背景色切换）
     // 判断是否支持预渲染
-    if (this.currentPageMeta.header.title.indexOf('雪中悍刀行') !== -1 && String(navigator.userAgent).indexOf('iPhone OS 8') === -1) {
-      this.isReaderPrerender = true
+    if (flag.isPrerender(this.currentPageMeta.pageType)) {
+      __setConfig()
+      prerender.resetNavigatorBtn()
     }
-    if (this.isReaderPrerender) {
-      if (this.currentPageMeta.pageType === 'page') {
-        __setConfig()
-        prerender.resetNavigatorBtn()
-      }
-    }
-    const {isRootPage, novelInstance, originalUrl} = state(window)
-    const pageType = novelInstance.currentPageMeta.pageType || ''
-    let zonghengPattern = /www.xmkanshu.com/g
-    let iqiyiPattern = /wenxue.m.iqiyi.com/g
-    let isZongheng = zonghengPattern.test(originalUrl)
-    let isIqiyi = iqiyiPattern.test(originalUrl)
-    let site
-    if (isZongheng) {
-      site = 'zongheng'
-    }
-    if (isIqiyi) {
-      site = 'iqiyi'
-    }
-    sendTCLog('interaction', {
-      type: 'o',
-      action: 'pageShow'
-    }, {
-      show: 'pageShow',
-      isRootPage: isRootPage,
-      site: site
-    })
-    let prePageButton = document.querySelector('.navigator a:first-child')
-    let nextPageButton = document.querySelector('.navigator a:last-child')
+    const {isRootPage, novelInstance} = state(window)
+    // 发送首跳非首跳展现日志
+    sendRootLog()
     // 监控页面底部上一页按钮跳转是否异常，异常发送异常日志
-    sendWebbLogLink(prePageButton, 'prePageButton')
+    sendWebbLogLink(document.querySelector('.navigator a:first-child'), 'prePageButton')
     // 监控页面底部下一页按钮跳转是否异常，异常发送异常日志
-    sendWebbLogLink(nextPageButton, 'nextPageButton')
+    sendWebbLogLink(document.querySelector('.navigator a:last-child'), 'nextPageButton')
     // 用来记录翻页的次数，主要用来触发品专的广告
     novelInstance.novelPageNum++
     if (novelInstance.currentPageMeta.pageType === 'page') {
@@ -237,7 +181,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
 
     // 暴露给外部html的调用方法, 显示目录侧边栏
     this.addEventAction('showShellCatalog', function () {
-      window.MIP.reciveClick = +new Date()
       if (flag.isUnlimitedPulldownSids()) {
         this.catalog.show(this)
         this.footer.hide()
@@ -284,10 +227,8 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 获取当前页面的数据，以及需要预渲染的链接
     let jsonld = getJsonld(getCurrentWindow())
     // 预渲染
-    if (this.currentPageMeta.pageType === 'page') {
-      if (this.isReaderPrerender) {
-        prerender.readerPrerender(jsonld)
-      }
+    if (flag.isPrerender(this.currentPageMeta.pageType)) {
+      prerender.readerPrerender(jsonld)
     }
 
     // 当页面翻页后，需要修改footer中【上一页】【下一页】链接
@@ -304,7 +245,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
       name: 'current-page-ready'
     })
     // 观察者模式监听广告渲染是否成功字段 window.MIP.adShow
-    this.showAdLog(pageType, site)
+    showAdLog()
   }
   /**
    * 基类方法，翻页之前执行的方法
@@ -384,7 +325,6 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     })
     // 承接emit事件：显示目录侧边栏
     window.addEventListener('showShellCatalog', (e, data) => {
-      window.MIP.fileClick = +new Date()
       this.catalog.show(this)
       this.footer.hide()
       this.header.hide()
@@ -521,7 +461,10 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
   processShellConfigInLeaf (shellConfig, matchIndex) {
     shellConfig.routes[matchIndex].meta.header.bouncy = false
   }
-
+  // 基类方法， 关闭shell header上的x
+  showHeaderCloseButton () {
+    return false
+  }
   prerenderAllowed () {
     return true
   }
