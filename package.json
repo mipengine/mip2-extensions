@@ -13,7 +13,8 @@
     "fix:js": "eslint --ext .vue,.js . --fix",
     "lint:style": "stylelint ./**/*.{vue,css,less,md}",
     "fix:style": "stylelint ./**/*.{vue,css,less,md} --fix",
-    "lint:test": "eslint ./components/mip-inservice-login/mip-inservice-login.vue"
+    "lint:test": "eslint ./components/mip-inservice-login/mip-inservice-login.vue",
+    "deploy:xiaoshuo": "baidu-bos dist/mip-shell-xiaoshuo/mip-shell-xiaoshuo.js bos://assets/mip2-extensions/mip-shell-xiaoshuo/"
   },
   "husky": {
     "hooks": {

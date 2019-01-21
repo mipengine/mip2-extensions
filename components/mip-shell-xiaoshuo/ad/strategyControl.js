@@ -70,6 +70,7 @@ export default class strategyControl {
     const pageType = novelInstance.currentPageMeta.pageType || ''
     const isNeedAds = novelInstance.adsCache == null ? true : novelInstance.adsCache.isNeedAds
     const novelInstanceId = novelInstance.novelInstanceId
+    const latestChapterId = novelInstance.catalog.getLatestChapterId()
     // 基础novelData数据
     let novelData = {
       isLastPage,
@@ -82,7 +83,8 @@ export default class strategyControl {
       pageType,
       silentFollow: isRootPage,
       isNeedAds,
-      novelInstanceId
+      novelInstanceId,
+      latestChapterId
     }
     // TODO: 当结果页卡片入口为断点续读时，添加entryFrom: 'from_nvl_toast', 需要修改SF里记录到hash里，等SF修改完成，此处添加
     // 当第二次翻页时候，需要告知后端出品专广告
