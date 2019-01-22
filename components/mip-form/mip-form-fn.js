@@ -120,7 +120,7 @@ export default class Form {
     let validateSuccess = true
 
     if (!validateType) {
-      return
+      return validateSuccess
     }
 
     if (validateReg) {
