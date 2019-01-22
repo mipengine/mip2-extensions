@@ -7,6 +7,7 @@ import './mip-audio.less'
 const {CustomElement, util, Services} = MIP
 const listen = util.event.listen
 const hasTouch = util.fn.hasTouch()
+const {isAndroid, isBaiduApp} = util.platform
 
 const CUSTOM_EVENT_SHOW_PAGE = 'show-page'
 const CUSTOM_EVENT_HIDE_PAGE = 'hide-page'
@@ -234,6 +235,7 @@ export default class MipAudio extends CustomElement {
     let button = this.element.querySelector('[seekbar-button]')
     let seekbar = this.element.querySelector('[seekbar]')
     let {width, right} = seekbar.getBoundingClientRect()
+    let audio = this.audio
 
     let startX
     let startBtnLeft
@@ -249,9 +251,9 @@ export default class MipAudio extends CustomElement {
       let event = hasTouch ? e.touches[0] : e
       startX = event.clientX
       startBtnLeft = button.offsetLeft + button.offsetWidth * 0.5
-      status = this.audio.paused ? 'paused' : 'playing'
+      status = audio.paused ? 'paused' : 'playing'
       isSeeking = true
-      this.audio.pause()
+      audio.pause()
     }, false)
 
     // 拖动事件
@@ -284,9 +286,14 @@ export default class MipAudio extends CustomElement {
     listen(button, TOUCHEND, e => {
       isSeeking = false
       if (status === 'playing') {
-        this.audio.play()
+        audio.play()
       }
     }, false)
+
+    // 安卓手百下不能同时播放多个音频，需要监听 audio 暂停事件，重新设置播放按钮
+    if (isAndroid() && isBaiduApp()) {
+      listen(audio, 'pause', () => !isSeeking && this.playOrPause('pause'))
+    }
   }
 
   /**

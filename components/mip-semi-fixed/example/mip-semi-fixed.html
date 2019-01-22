@@ -17,12 +17,18 @@
       padding: 20px;
       background: yellow;
       box-sizing: border-box;
+      opacity: 0.8;
     }
     p {
       text-align: left;
       font-size: 18px;
       margin-top: 20px;
       color: green;
+    }
+
+    .fixed-active {
+      background: orange;
+      opacity: 1;
     }
     </style>
   </head>
@@ -42,7 +48,7 @@
     <div class="placeholder">其实我只是爱上了峨眉山上的云和霞，</div>
     <div class="placeholder">像极了十六岁那年的烟花。</div>
 
-    <mip-semi-fixed id="semi-fixed" threshold="50" fixedClassNames="fixed-active">
+    <mip-semi-fixed id="semi-fixed1" threshold="50" fixedClassNames="fixed-active">
       <div mip-semi-fixed-container class="absolute-style">
         距离顶部50px时自动贴顶 magic
       </div>

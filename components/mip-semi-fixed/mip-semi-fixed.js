@@ -69,7 +69,7 @@ export default class MipSemiFixed extends CustomElement {
 
       document.body.addEventListener('touchmove', () => this.onIframeScroll(viewport))
 
-      this.onIframeScrolll(viewport)
+      this.onIframeScroll(viewport)
     } else {
       // 监听滚动事件和 touchmove 事件
       viewport.on('scroll', () => this.onScroll(viewport))
@@ -132,17 +132,27 @@ export default class MipSemiFixed extends CustomElement {
    * onIframeScroll iframe 下 mip 页面滑动事件
    */
   onIframeScroll () {
-    let element = this.element
+    let {element, container, fixedContainer, threshold, fixedClassNames} = this
     let offsetTop = util.rect.getElementOffset(element).top
 
-    if (offsetTop <= this.threshold) {
-      util.css(this.fixedContainer.parentNode, {display: 'block'})
-      util.css(this.fixedContainer, {opacity: 1})
-      util.css(this.container, {opacity: 0})
+    if (offsetTop <= threshold) {
+      if (container.className.indexOf(fixedClassNames) < 0) {
+        container.className += ' ' + fixedClassNames
+      }
+      container.setAttribute(STATUS_FIXED, '')
+      util.css(container, 'top', threshold + 'px')
+
+      util.css(fixedContainer.parentNode, {display: 'block'})
+      util.css(fixedContainer, {opacity: 1})
+      util.css(container, {opacity: 0})
     } else {
-      util.css(this.fixedContainer.parentNode, {display: 'none'})
-      util.css(this.fixedContainer, {opacity: 0})
-      util.css(this.container, {opacity: 1})
+      container.className = container.className.replace(' ' + fixedClassNames, '')
+      container.removeAttribute(STATUS_FIXED)
+      util.css(container, 'top', '')
+
+      util.css(fixedContainer.parentNode, {display: 'none'})
+      util.css(fixedContainer, {opacity: 0})
+      util.css(container, {opacity: 1})
     }
   }
 }
