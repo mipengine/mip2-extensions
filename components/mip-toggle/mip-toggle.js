@@ -42,6 +42,7 @@ export default class MIPToggle extends CustomElement {
    */
   setHideTimeout (timeout) {
     if (timeout === Infinity) {
+      this.timeoutId && this.clearHideTimeout()
       return
     }
     this.clearHideTimeout()

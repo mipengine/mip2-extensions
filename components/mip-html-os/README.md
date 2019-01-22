@@ -11,8 +11,8 @@
 ## 示例
 
 ```html
-<mip-html-os os="android"><p>This Is Android</p></mip-html-os>
-<mip-html-os os="ios"><p>This Is Ios</p></mip-html-os>
+<mip-html-os os="android" class="mip-hidden"><p>This Is Android</p></mip-html-os>
+<mip-html-os os="ios" class="mip-hidden"><p>This Is Ios</p></mip-html-os>
 ```
 
 ## 属性
@@ -26,3 +26,7 @@
 类型：字符串
 
 取值范围：android, ios
+
+## 注意事项
+
+- 组件需要有 `mip-hidden` class，否则会有闪动问题
