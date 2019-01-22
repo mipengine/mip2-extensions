@@ -39,6 +39,9 @@ export default class MIPSidebar extends CustomElement {
     util.css(el, { display: 'block' })
     util.css(mask, { display: 'block' })
 
+    // 触发重绘，UC 等浏览器需要
+    this.mask.getBoundingClientRect()
+
     setTimeout(() => {
       el.classList.add('show')
       mask.classList.add('show')
