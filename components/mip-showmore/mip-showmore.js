@@ -14,6 +14,13 @@ const SIDS_A = '126449'
 const SIDS_B = '126450'
 const SIDS_C = '126490'
 
+/**
+ * 保存 showmore 的实例以及依赖关系，以便保证组件 init 的顺序从里到外
+ *
+ * @type {Array.<MIPShowMore>}
+ */
+const SHOWMORE_INSTANCE = {}
+
 // 获取实验组id
 if (hash.hashTree.sids) {
   sidsArr = hash.hashTree.sids.value.split('_')
@@ -49,7 +56,6 @@ export default class MIPShowMore extends CustomElement {
 
     this.timeoutArray = []
     this.increaseId = 0
-    this.showmoreInstance = {}
     // 获取点击按钮，v1.0.0 方法
     this.clickBtn = element.querySelector('[showmorebtn]')
     if (this.clickBtn) {
@@ -92,7 +98,9 @@ export default class MIPShowMore extends CustomElement {
       this.element.setAttribute('maxheight', '99999')
     }
     this.analysisDep()
-    this.firstInit()
+    if (!this.containSMChild) {
+      this.firstInit()
+    }
     this.bindClick()
     this.addEventAction('toggle', event => {
       this.toggle(event)
@@ -464,8 +472,8 @@ export default class MIPShowMore extends CustomElement {
     }
     let parentId = this.getId(this.element)
 
-    this.showmoreInstance[parentId] = this.showmoreInstance[parentId] || { deps: [] }
-    this.showmoreInstance[parentId].instance = this
+    SHOWMORE_INSTANCE[parentId] = SHOWMORE_INSTANCE[parentId] || { deps: [] }
+    SHOWMORE_INSTANCE[parentId].instance = this
 
     let currendParentNode = childMipShowmore[0]
     Array.prototype.slice.call(childMipShowmore).forEach(child => {
@@ -474,9 +482,9 @@ export default class MIPShowMore extends CustomElement {
       }
 
       let id = this.getId(child)
-      let childIns = this.showmoreInstance[id] || {}
+      let childIns = SHOWMORE_INSTANCE[id] || {}
       childIns.deps = (childIns.deps || []).concat([parentId])
-      this.showmoreInstance[id] = childIns
+      SHOWMORE_INSTANCE[id] = childIns
 
       currendParentNode = child
     })
@@ -485,10 +493,10 @@ export default class MIPShowMore extends CustomElement {
 
   // 运行嵌套的showmore组件实例
   runInitShowMore () {
-    let depIds = this.showmoreInstance[this.getId(this.element)]
+    let depIds = SHOWMORE_INSTANCE[this.getId(this.element)]
     depIds && depIds.deps.forEach(function (depid) {
-      let instan = this.showmoreInstance[depid]
-      instan && instan.instance && !instan.instance.initialized && instan.instance.init()
+      let instan = SHOWMORE_INSTANCE[depid]
+      instan && instan.instance && !instan.instance.initialized && instan.instance.firstInit()
     })
   }
 
