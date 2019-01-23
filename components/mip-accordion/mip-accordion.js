@@ -171,6 +171,7 @@ function getSibling (el) {
 /**
  * 获取组件 slot 下面的所有 <section>，并且过滤掉嵌套 MIP 组件下面的 section，以免 MIP 组件嵌套造成相互影响
  *
+ * @param {HTMLElement} element 组件根节点
  * @return {Array.<HTMLElement>} selection 列表
  */
 function getSections (element) {
