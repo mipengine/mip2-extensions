@@ -357,7 +357,7 @@ export default class MIPVdTabs extends CustomElement {
         .find('.mip-vd-tabs-nav-layer')
         .css({'position': 'fixed', 'border-top': '1px solid #ccc', 'top': '0'})
       tab.toggle.css({
-        '-webkit-transform': 'scaleY(1)',
+        '-webkit-transform': 'scaleY(-1)',
         'transform': 'scaleY(-1)'
       })
       tab.toggleState = 1
