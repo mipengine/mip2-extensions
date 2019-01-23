@@ -54,7 +54,7 @@ export default class MIPStatsBaidu extends CustomElement {
       bindEle()
 
       let hm = document.createElement('script')
-      hm.src = `https://hm.baidu.com/hm.js?${token}`
+      hm.src = `//hm.baidu.com/hm.js?${token}`
       elem.appendChild(hm)
     } else {
       logger.warn(elem, '请在配置中提供 token 字段'); // eslint-disable-line
