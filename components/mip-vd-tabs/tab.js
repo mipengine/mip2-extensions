@@ -136,7 +136,7 @@ export default class Tab {
       $navLayer.append($navLayerUl)
       this.view.after($navLayer.show())
       this.toggle.css({
-        '-webkit-transform': 'scaleY(1)',
+        '-webkit-transform': 'scaleY(-1)',
         'transform': 'scaleY(-1)'
       })
       this.toggleState = 1
