@@ -168,6 +168,32 @@ function getSibling (el) {
   return el
 }
 
+/**
+ * 获取组件 slot 下面的所有 <section>，并且过滤掉嵌套 MIP 组件下面的 section，以免 MIP 组件嵌套造成相互影响
+ *
+ * @param {HTMLElement} element 组件根节点
+ * @return {Array.<HTMLElement>} selection 列表
+ */
+function getSections (element) {
+  const sections = element.querySelectorAll('section')
+  let validSections = []
+  for (let i = 0; i < sections.length; i++) {
+    let section = sections[i]
+
+    let parent = section.parentNode
+    while (parent) {
+      if (parent.tagName.indexOf('MIP-') === 0) {
+        if (parent === element) {
+          validSections.push(section)
+        }
+        break
+      }
+      parent = parent.parentNode
+    }
+  }
+  return validSections
+}
+
 export default class MIPAccordion extends CustomElement {
   /**
    * 允许预渲染
@@ -182,7 +208,7 @@ export default class MIPAccordion extends CustomElement {
   build () {
     let element = this.element
     let type = element.getAttribute('type') || 'automatic'
-    let sections = this.sections = element.querySelectorAll('section')
+    let sections = this.sections = getSections(element)
     let sessionId = this.sessionId = element.getAttribute('sessions-key')
     let sessionKey = this.sessionKey = `MIP-${sessionId}-${location.href}`
     let currentState = getSession.apply(this)
@@ -268,9 +294,9 @@ export default class MIPAccordion extends CustomElement {
             ele: targetContent,
             type: 'fold',
             transitionTime: aniTime,
-            cbFun: function (dom) {
-              dom.setAttribute(ARIA_EXPANDED_ATTRIBUTE, CLOSE_STATUS)
-            }.bind(undefined, targetContent)
+            cbFun: function () {
+              targetContent.setAttribute(ARIA_EXPANDED_ATTRIBUTE, CLOSE_STATUS)
+            }// .bind(undefined, targetContent)
           })
 
           sections.forEach(section => {
@@ -299,7 +325,10 @@ export default class MIPAccordion extends CustomElement {
               heightAni({
                 ele: content,
                 type: 'fold',
-                transitionTime: aniTime
+                transitionTime: aniTime,
+                cb: function () {
+                  util.css(content, 'height', '')
+                }
               })
             })
           }
@@ -321,7 +350,10 @@ export default class MIPAccordion extends CustomElement {
             ele: targetContent,
             type: 'unfold',
             oriHeight: 0,
-            transitionTime: aniTime
+            transitionTime: aniTime,
+            cb: function () {
+              util.css(targetContent, 'height', '')
+            }
           })
 
           setSession(sessionKey, targetId, true)
