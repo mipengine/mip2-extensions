@@ -35,7 +35,7 @@ export default class MIPAd extends MIP.CustomElement {
       'baidu-wm-ext': baiduWmExtRender,
       'ad-imageplus': adImageplusRender,
       'ad-ssp': adSspRender,
-      'sd-baidussp': adBaidusspRender
+      'ad-baidussp': adBaidusspRender
     }[type]
 
     if (renderFunc && typeof renderFunc === 'function') {
