@@ -13,7 +13,7 @@ mip 广告组件 `<mip-ad>` 的一种类型：百度联盟广告反屏蔽。产�
 ## 示例
 
 ```html
-<!--domain="dup.lovedword.com"为示例，需要填写在网盟申请的domain-->
+<!--domain="dup.lovedword.com" 为示例，需要填写在网盟申请的 domain-->
 <mip-ad
   type="baidu-wm-ext"
   domain="dup.lovedword.com"

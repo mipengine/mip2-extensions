@@ -5,14 +5,16 @@
 
 /* global MIP */
 
+const { util, viewer } = MIP
+const { log } = util
+const logger = log('mip-ad')
+
 /**
  * container api 标识
  *
  * @type {string}
  */
 const API_STR = '__container_api_'
-
-const log = MIP.util.log('mip-ad')
 
 /**
  * 渲染 ssp 内容联盟广告
@@ -33,10 +35,10 @@ export default function render (el) {
       })
     } else {
       let script = document.createElement('script')
-      script.src = document.location.protocol + '//' + domain + '/' + token + '.js'
+      script.src = `${document.location.protocol}//${domain}/${token}.js`
       document.body.appendChild(script)
 
-      let fixedElement = MIP.viewer.fixedElement
+      let fixedElement = viewer.fixedElement
       let layer = fixedElement._fixedLayer
       let child = document.getElementById(token)
 
@@ -61,6 +63,6 @@ export default function render (el) {
       })
     }
   } else {
-    log.error(el, '请传入正确的 domain 或者 token 属性')
+    logger.error(el, '请传入正确的 domain 或者 token 属性')
   }
 }
