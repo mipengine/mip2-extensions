@@ -33,6 +33,13 @@ export default class MIPGoToTop extends CustomElement {
 
     el.addEventListener('click', this.scrollToTop.bind(this))
 
+    // 兼容低版本荣耀自带浏览器
+    let parent = el.parentNode
+    if (parent.tagName === 'MIP-FIXED' && parent.getAttribute('type') === 'gototop') {
+      util.css(parent, 'transform', 'initial')
+      util.css(parent, '-webkit-transform', 'initial')
+    }
+
     // 实时获取滚动高度
     viewport.on('scroll', () => {
       this.scrollTop = viewport.getScrollTop()
