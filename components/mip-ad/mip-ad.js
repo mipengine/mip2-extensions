@@ -43,3 +43,7 @@ export default class MIPAd extends MIP.CustomElement {
     }
   }
 }
+
+// 前人留下的坑
+// @see: https://github.com/mipengine/mip-extensions/blob/master/src/mip-ad/mip-ad.js#L41
+MIP.registerElement('mip-embed', MIPAd)
