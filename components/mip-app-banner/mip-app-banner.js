@@ -103,7 +103,6 @@ export default class MIPAppBanner extends CustomElement {
     if (!preProcess.init(el)) {
       return
     }
-    // el.classList.remove(MIP_HIDDEN_CLS)
     let openBtn = el.querySelector('button[open-button]')
     let content = this.metaTag.getAttribute('content')
     let parts = content.replace(/\s/, '').split(',')
