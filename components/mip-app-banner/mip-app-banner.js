@@ -12,7 +12,7 @@ const { fetchJsonp } = MIP.sandbox
 const log = util.log('mip-app-banner')
 const MIP_HIDDEN_CLASS = 'mip-hidden'
 
-// app 调起
+// app 调起/下载
 let openButton = {
   setup (openBtn, openInAppUrl, installAppUrl) {
     openBtn.addEventListener('click', () => {
@@ -20,11 +20,20 @@ let openButton = {
     })
   },
   onClick (openInAppUrl, installAppUrl) {
+    // 延时后跳转到下载 app
     let timer = setTimeout(() => {
       viewer.open(installAppUrl, { isMipLink: false, replace: true })
       clearTimeout(timer)
     }, 1500)
-    window.open(openInAppUrl, '_top')
+
+    // 通过 iframe 尝试调起 app，避免跳转到错误页
+    let iframe = document.createElement('iframe')
+    iframe.src = openInAppUrl
+    iframe.style.display = 'none'
+    document.body.appendChild(iframe)
+    setTimeout(() => document.body.removeChild(iframe), 200)
+
+    // 跳转到 app，无需下载
     let visibilitychange = () => {
       let tag = document.hidden || document.webkitHidden
       tag && clearTimeout(timer)
