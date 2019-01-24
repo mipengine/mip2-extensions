@@ -10,7 +10,7 @@
 
 ## 说明
 
-开发者可以将仅希望在指定的"缓存环境" 、 "平台" 、 "UA" 、 "OS"下展示的内容使用`mip-env`包裹来实现。
+开发者可以将仅希望在指定的 "平台" 、 "UA" 、 "OS"下展示的内容使用`mip-env`包裹来实现。
 
 1、scope中所有value都支持多值,以逗号分隔
 eg: scope={"ua":"uc,chrome","os":"!android,!ios"}
@@ -33,7 +33,7 @@ scope={"ua":"uc,qq,!baidu,!qq,!chrome"} 最终会被认为是 scope={"ua":"uc,qq
 
 ```html
   <div class='continer'>
-    <mip-env scope={"cache":"baidu","dp":"baidu","ua":"!uc,!qq","os":"ios"} >
+    <mip-env scope={"dp":"baidu","ua":"!uc,!qq","os":"ios"} >
       <div>只在符合scope设定的环境中才会展示此内容</div>
     </mip-env>
   </div>
@@ -48,15 +48,6 @@ scope={"ua":"uc,qq,!baidu,!qq,!chrome"} 最终会被认为是 scope={"ua":"uc,qq
 类型: json字符串
 
 param:
-
-  cache
-  说明: 缓存环境
-  必选: 否
-  取值: 'baidu' , 'sm' // 百度缓存 , 神马搜索缓存
-  备注: 
-  1、所有值不区分大小写。填写了cache键则必须有值才行
-  2、所有取值均可在前面加"!",表示非xx
-
   dp
   说明: 分发平台(Distribution platform)
   必选: 否
