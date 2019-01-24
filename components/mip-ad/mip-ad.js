@@ -14,6 +14,8 @@ import adImageplusRender from './mip-ad-imageplus'
 import adSspRender from './mip-ad-ssp'
 import adBaidusspRender from './mip-ad-baidussp'
 
+const {warn} = MIP.util.log('mip-ad')
+
 export default class MIPAd extends MIP.CustomElement {
   /**
    * 提前渲染
@@ -27,6 +29,11 @@ export default class MIPAd extends MIP.CustomElement {
    */
   build () {
     let el = this.element
+
+    if (el.tagName.toLowerCase() === 'mip-embed') {
+      warn('[Deprecated] mip-embed 标签已弃用，请使用 mip-ad 标签.')
+    }
+
     let type = el.getAttribute('type')
     let renderFunc = {
       'ad-comm': adCommRender,
