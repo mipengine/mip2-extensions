@@ -14,6 +14,8 @@ const SIDS_A = '126449'
 const SIDS_B = '126450'
 const SIDS_C = '126490'
 
+let increaseId = 0
+
 /**
  * 保存 showmore 的实例以及依赖关系，以便保证组件 init 的顺序从里到外
  *
@@ -55,7 +57,6 @@ export default class MIPShowMore extends CustomElement {
     let { element } = this
 
     this.timeoutArray = []
-    this.increaseId = 0
     // 获取点击按钮，v1.0.0 方法
     this.clickBtn = element.querySelector('[showmorebtn]')
     if (this.clickBtn) {
@@ -285,8 +286,10 @@ export default class MIPShowMore extends CustomElement {
   };
   // 高度阈值控制
   toggle (event) {
+    // FIXME: MIP1 中 event 是空的，导致没问题，而在 MIP2 中写对了，反而错了，暂时先这样，后续在修复
+    event = null
     let classList = this.element.classList
-    let clickBtn = event && event.target
+    let clickBtn = (event && event.target)
       ? matchOriginTarget(this.element.id.trim(), event.target)
       : null
     let opt = {}
@@ -458,8 +461,7 @@ export default class MIPShowMore extends CustomElement {
   getId (element) {
     element = element || this.element
     if (!element.dataset.showmoreId) {
-      this.increaseId += 1
-      element.dataset.showmoreId = `__showmoreincreaseId__${this.increaseId}`
+      element.dataset.showmoreId = `__showmoreincreaseId__${++increaseId}`
     }
     return element.dataset.showmoreId
   }
