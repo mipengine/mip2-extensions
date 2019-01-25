@@ -47,7 +47,8 @@ export default class MIPScrollbox extends CustomElement {
    */
   build () {
     let element = this.element
-    let config = Object.assign({}, DEFAULTS, element.dataset)
+    // 不能用 Object.assign 不然的话 element.dataset 不能拷贝过来
+    let config = util.fn.extend({}, DEFAULTS, element.dataset)
     let updateView = util.fn.throttle(() => viewport.trigger('changed'), 200)
 
     // 绑定滚动事件触发更新视图
