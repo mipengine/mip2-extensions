@@ -9,7 +9,7 @@ export default class MIPSidebar extends CustomElement {
     super(...args)
     this.side = this.element.getAttribute('side')
     // side 必须是 left 或者 right，默认是 left
-    if (!['left', 'right'].includes(this.side)) {
+    if (this.side !== 'left' && this.side !== 'right') {
       this.side = 'left'
       this.element.setAttribute('side', this.side)
     }
@@ -39,7 +39,7 @@ export default class MIPSidebar extends CustomElement {
     util.css(el, { display: 'block' })
     util.css(mask, { display: 'block' })
 
-    // 触发重绘，UC 等浏览器需要
+    // 触发重绘，Android UC 等浏览器需要
     this.mask.getBoundingClientRect()
 
     setTimeout(() => {
