@@ -92,7 +92,7 @@
                 </div>
               {{/list}}
             </div>
-            <mip-fixed still class="mip-group-selection-sidebar-wrapper">
+            <mip-fixed class="mip-group-selection-sidebar-wrapper" type="right" top="10px">
               <div class="mip-group-selection-sidebar">
                 {{#list}}
                   <div class="mip-group-selection-link" data-target-anchor="{{key}}">{{key}}</div>
@@ -102,7 +102,7 @@
           </template>
         </div>
       </mip-group-selection>
-      <mip-fixed bottom="10px" type="right">
+      <mip-fixed still bottom="10px" type="right">
         <mip-toggle id="mytoggle">
           <p>selected!</p>
         </mip-toggle>
