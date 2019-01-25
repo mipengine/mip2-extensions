@@ -13,8 +13,8 @@
 ### 基本用法
 
 ```html
-<mip-semi-fixed id="semi-fixed" fixedClassNames="fixedStyle">
-  <div mip-semi-fixed-container class="absoluteStyle">
+<mip-semi-fixed id="semi-fixed" fixed-class-names="fixed-style">
+  <div mip-semi-fixed-container class="absolute-style">
     距离顶部0px时自动贴顶 magic
   </div>
 </mip-semi-fixed>
@@ -30,8 +30,8 @@
 ### 设置 `fixed` 时距离页面顶部的阈值
 
 ```html
-<mip-semi-fixed id="semi-fixed2" threshold="100" fixedClassNames="fixedStyle">
-  <div mip-semi-fixed-container class="absoluteStyle">
+<mip-semi-fixed id="semi-fixed2" threshold="100" fixed-class-names="fixed-style">
+  <div mip-semi-fixed-container class="absolute-style">
 	距离顶部100px时停下
   </div>
 </mip-semi-fixed>
@@ -49,28 +49,45 @@
 ### threshold
 
 说明：元素 `fixed` 状态时距离页面顶部的距离
+
 必选项：否
+
 类型：整数
+
 取值范围：无
+
 单位：无
+
 默认值：0
 
-### fixedClassNames
+### fixed-class-names
 
-说明：元素 `fixed` 状态时需要添加的类
+说明：元素 `fixed` 状态时需要添加的类, 多个 class 之间使用空格分隔
+
 必选项：否
+
 类型：字符串
+
 取值范围：无
+
 单位：无
+
 默认值：''
+
+[warn] `fixedClassNames` 写法即将废弃，请使用 `fixed-class-names`
 
 ## 子节点
 
 ### div[mip-semi-fixed-container]
 
 说明：所有 HTML 需要放在这个节点中
+
 必选项：是
+
 类型：DOM 节点
+
 取值范围：无
+
 单位：无
+
 默认值：div[mip-semi-fixed-container]
