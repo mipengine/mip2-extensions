@@ -9,6 +9,7 @@ const {
 } = MIP
 
 const log = util.log('mip-group-selection')
+const { fixedElement } = viewer
 
 export default class MIPGroupSelection extends CustomElement {
   /**
@@ -64,12 +65,22 @@ export default class MIPGroupSelection extends CustomElement {
    * 绑定侧边栏快捷选择事件
    */
   bindSidebarClickEvent () {
-    util.event.delegate(this.element, '.mip-group-selection-link', 'click', e => {
-      let button = e.target
-      let targetAnchor = button.dataset.targetAnchor
-      // 滚动待选列表到指定分组
-      this.scrollToAnchor(targetAnchor)
-    })
+    // ios sf 环境中
+    if (!MIP.standalone && util.platform.isIOS() && fixedElement._fixedLayer) {
+      let wrapper = fixedElement._fixedLayer.querySelector('.mip-group-selection-sidebar-wrapper')
+      util.event.delegate(wrapper, '.mip-group-selection-link', 'click', e => {
+        let button = e.target
+        let targetAnchor = button.dataset.targetAnchor
+        // 滚动待选列表到指定分组
+        this.scrollToAnchor(targetAnchor)
+      })
+    } else {
+      util.event.delegate(this.element, '.mip-group-selection-link', 'click', e => {
+        let button = e.target
+        let targetAnchor = button.dataset.targetAnchor
+        this.scrollToAnchor(targetAnchor)
+      })
+    }
   }
 
   /**
@@ -80,13 +91,10 @@ export default class MIPGroupSelection extends CustomElement {
   scrollToAnchor (anchor) {
     let anchorElement = this.element.querySelector('[data-anchor=' + anchor + ']')
     try {
-      window.scrollBy({
-        behavior: 'smooth',
-        top: anchorElement.getBoundingClientRect().top - 10
-      })
+      viewport.setScrollTop(anchorElement.offsetTop + 10)
     } catch (e) {}
     // 兜底效果，再 scroll 一次
-    window.scrollBy(0, anchorElement.getBoundingClientRect().top - 10)
+    viewport.setScrollTop(anchorElement.offsetTop + 10)
   }
 
   /**
