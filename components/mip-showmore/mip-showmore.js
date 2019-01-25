@@ -274,8 +274,8 @@ export default class MIPShowMore extends CustomElement {
     if (!this.clickBtn) {
       return
     }
-    this.clickBtn.addEventListener('click', event => {
-      this.toggle(event)
+    this.clickBtn.addEventListener('click', () => {
+      this.toggle()
     })
   }
   // 点击时按钮添加class
@@ -286,8 +286,6 @@ export default class MIPShowMore extends CustomElement {
   };
   // 高度阈值控制
   toggle (event) {
-    // FIXME: MIP1 中 event 是空的，导致没问题，而在 MIP2 中写对了，反而错了，暂时先这样，后续在修复
-    event = null
     let classList = this.element.classList
     let clickBtn = (event && event.target)
       ? matchOriginTarget(this.element.id.trim(), event.target)
