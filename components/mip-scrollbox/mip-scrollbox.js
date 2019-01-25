@@ -72,9 +72,14 @@ export default class MIPScrollbox extends CustomElement {
 
     // 这个 for 循序是需要用到通过上面 for 循序计算出来的总的 width
     nodesArr.forEach(node => {
-      node.style.width = (node.dataset.col || 3) * config.rate / width * 100 + '%'
-      node.style.paddingRight = config.right / cols + '%'
+      util.css(node, {
+        width: (node.dataset.col || 3) * config.rate / width * 100 + '%',
+        paddingRight: config.right / cols + '%'
+      })
     })
-    element.querySelector('[data-scroller]').style.width = width + '%'
+    util.css(element.querySelector('[data-scroller]'), {
+      width: width + '%'
+    })
+    // element.querySelector('[data-scroller]').style.width = width + '%'
   }
 }
