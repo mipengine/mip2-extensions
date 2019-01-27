@@ -6,7 +6,7 @@
 import state from '../common/state'
 
 // 广告数据的缓存时间
-const AD_DATA_CACHE = 300000
+const AD_DATA_CACHE = 600000
 
 // 页面的类型集
 const PAGE_TYPES = {
@@ -38,8 +38,10 @@ const PAGE_TYPES = {
  */
 export const initFirstFetchCache = (data, novelInstance = {}) => {
   let adsCache = {}
+
   // 把当前的广告数据挂载在小说实例下
   adsCache.fetchedData = JSON.parse(JSON.stringify(data))
+
   // 初始化该次广告请求的时间
   adsCache.novelInstanceTime = +new Date()
 
@@ -48,12 +50,16 @@ export const initFirstFetchCache = (data, novelInstance = {}) => {
 
   // 初始化ads中广告的队列的adsInitLength、residueCount、errorAbnormal
   initAdsCount(adsCache)
+
   // 初始化是否是第一次请求
   adsCache.isFirstFetch = true
+
   // 所有的广告策略的数据全部挂载在adsCache的数据下
   novelInstance.adsCache = adsCache
+
   // 计算当前页的广告策略
   computeAdStrategy(novelInstance)
+
   // 计算出需要出的广告数据
   adsCache.adStrategyCacheData = getRenderAdData(window)
 }
@@ -259,15 +265,16 @@ const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
     let random = Math.random()
     if (strategy[i].strategy &&
       JSON.stringify(strategy[i].strategy) !== '{}' &&
+      !endCycle &&
       (strategy[i].probability == null ||
-        (strategy[i].probability && strategy[i].probability / 100 >= 1) ||
-        (strategy[i].probability && random >= strategy[i].probability)
+        (strategy[i].probability && (strategy[i].probability / 100) >= random)
       )
     ) {
       // 当该策略命中广告后，顺序取策略，只要有一个策略命中则不考虑别的策略
-      let adTypes = getStrategy(endCycle, adsCount, strategy[i].strategy, adData, type)
+      let adTypes = getStrategy(adsCount, strategy[i].strategy, adData, type)
       if (JSON.stringify(adTypes) !== '{}') {
         curPageStrategy[type] = adTypes
+        endCycle = true
       }
     }
   }
@@ -276,31 +283,27 @@ const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
 /**
  * 获取广告策略中的广告队列，并且修改广告队列最初的计数
  *
- * @param {boolean} endCycle 是否结束循环
  * @param {Object} adsCount 广告队列的计数
  * @param {Object} strategy 每个广告类型中的广告策略
  * @param {Object} adData fetch返回的广告数据
  * @param {Object} type 页面类型
  * @returns {Object} 返回通过广告策略中计算出的广告队列的数据
  */
-const getStrategy = (endCycle, adsCount, strategy, adData, type) => {
+const getStrategy = (adsCount, strategy, adData, type) => {
   let adTypes = {}
   for (let adNum in strategy) {
-    if (!endCycle || type === PAGE_TYPES.DETAIL) {
-      if (adsCount[adNum] == null) {
-        adsCount[adNum] = {
-          adsInitLength: 0,
-          residueCount: 0,
-          errorAbnormal: 0
-        }
+    if (adsCount[adNum] == null) {
+      adsCount[adNum] = {
+        adsInitLength: 0,
+        residueCount: 0,
+        errorAbnormal: 0
       }
-      if (adsCount[adNum].adsInitLength === 0) {
-        adsCount[adNum].errorAbnormal++
-      } else if (adData.ads[adNum].length !== 0) {
-        adTypes[adNum] = adData.ads[adNum].splice(0, strategy[adNum])
-        adsCount[adNum].residueCount -= strategy[adNum]
-        endCycle = true
-      }
+    }
+    if (adsCount[adNum].adsInitLength === 0) {
+      adsCount[adNum].errorAbnormal++
+    } else if (adData.ads[adNum].length !== 0) {
+      adTypes[adNum] = adData.ads[adNum].splice(0, strategy[adNum])
+      adsCount[adNum].residueCount -= strategy[adNum]
     }
   }
 

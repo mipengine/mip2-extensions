@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    button {
+      background-color: aquamarine;
+      color: black;
+      display: block;
+      margin: 10px;
+      padding: 20px;
+    }
+
+    body[mip-x-button-color5=yellow] .exp-btn5 {
+      background-color: yellow;
+    }
+
+    body[mip-x-button-color5=red] .exp-btn5 {
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>调试：打印实验信息</h1>
+  <mip-experiment layout="nodisplay" class="mip-hidden" needconsole>
+    <script type="application/json" for="mip-experiment">
+      {
+        "button-color5": {
+          "sticky": false,
+          "descri": "5.设置按钮背景色,黄-红-绿",
+          "variants": {
+            "yellow": 50,
+            "red": 1
+          }
+        }
+      }
+
+    </script>
+    <p>设置按钮背景色,黄(50%)-红(1%)-绿(默认49%)</p>
+    <p>在url中添加‘#mip-x-button-color5=red’显示红色按钮</p>
+    <p>控制台显示分组过程信息</p>
+    <button class="exp-btn5">修改背景色</button>
+  </mip-experiment>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-experiment/mip-experiment.js"></script>
+</body>
+
+</html>

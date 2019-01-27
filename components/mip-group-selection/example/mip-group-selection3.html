@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    /* 自定义样式 */
+      #mytoggle {
+        display: none
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h2>配合事件绑定</h2>
+      <mip-group-selection class="mip-hidden" on="selected:mytoggle.toggle">
+        <!-- 在 application/json 中配置全部城市 -->
+        <script type="application/json">
+          {
+            "list": [{
+              "key": "热门",
+              "cities": [
+                { "city": "北京", "pinyin": "beijing", "code": "1" },
+                { "city": "上海", "pinyin": "shanghai", "code": "2" },
+                { "city": "广州", "pinyin": "guangzhou", "code": "3" },
+                { "city": "深圳", "pinyin": "shenzhen", "code": "4" },
+                { "city": "重庆", "pinyin": "chongqing", "code": "5" }
+              ]
+            }, {
+              "key": "A",
+              "cities": [
+                { "city": "澳门", "pinyin": "aomen", "code": "7" },
+                { "city": "安庆", "pinyin": "anqing", "code": "8" },
+                { "city": "安泽", "pinyin": "anze", "code": "9" }
+              ]
+            }, {
+              "key": "B",
+              "cities": [
+                { "city": "宝清", "pinyin": "baoqing", "code": "10" },
+                { "city": "宝鸡", "pinyin": "baoji", "code": "11" },
+                { "city": "巴东", "pinyin": "badong", "code": "12" }
+              ]
+            }, {
+              "key": "C",
+              "cities": [
+                { "city": "重庆", "pinyin": "chongqing", "code": "13" },
+                { "city": "成都", "pinyin": "chengdu", "code": "14" },
+                { "city": "苍山", "pinyin": "cangshan", "code": "15" }
+              ]
+            }, {
+              "key": "D",
+              "cities": [
+                { "city": "大庆", "pinyin": "daqing", "code": "16" },
+                { "city": "大理", "pinyin": "dali", "code": "17" },
+                { "city": "东莞", "pinyin": "dongguan", "code": "18" }
+              ]
+            }, {
+              "key": "E",
+              "cities": [
+                { "city": "鄂尔多斯", "pinyin": "eerduosi", "code": "19" },
+                { "city": "峨眉山", "pinyin": "emeishan", "code": "20" }
+              ]
+            }, {
+              "key": "F",
+              "cities": [
+                { "city": "阜阳", "pinyin": "fuyang", "code": "21" },
+                { "city": "福州", "pinyin": "fuzhou", "code": "22" },
+                { "city": "防城港", "pinyin": "fangchenggang", "code": "23" }
+              ]
+            }, {
+              "key": "G",
+              "cities": [
+                { "city": "广州", "pinyin": "guangzhou", "code": "24" },
+                { "city": "贵阳", "pinyin": "guiyang", "code": "25" }
+              ]
+            }]
+          }
+        </script>
+        <!-- 城市选择组件依赖的 DOM 结构，不建议自行删除结构 -->
+        <div class="mip-group-selection-wrapper">
+          <template type="mip-mustache">
+            <div class="mip-group-selection-content">
+              {{#list}}
+                <div class="mip-group-selection-group mip-group-selection-part-letter">
+                  <div class="mip-group-selection-title" data-anchor="{{key}}">{{key}}</div>
+                  {{#cities}}
+                    <p class="mip-group-selection-item" data-code="{{code}}" data-pinyin="{{pinyin}}" data-city="{{city}}">{{city}}</p>
+                  {{/cities}}
+                </div>
+              {{/list}}
+            </div>
+            <mip-fixed class="mip-group-selection-sidebar-wrapper" type="right" top="10px">
+              <div class="mip-group-selection-sidebar">
+                {{#list}}
+                  <div class="mip-group-selection-link" data-target-anchor="{{key}}">{{key}}</div>
+                {{/list}}
+              </div>
+            </mip-fixed>
+          </template>
+        </div>
+      </mip-group-selection>
+      <mip-fixed bottom="10px" type="right">
+        <mip-toggle id="mytoggle">
+          <p>selected!</p>
+        </mip-toggle>
+      </mip-fixed>
+    </div>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-group-selection/mip-group-selection.js"></script>
+    <script src="/mip-mustache/mip-mustache.js"></script>
+    <script src="/mip-toggle/mip-toggle.js"></script>
+  </body>
+</html>

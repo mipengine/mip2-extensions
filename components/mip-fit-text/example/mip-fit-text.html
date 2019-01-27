@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    .test-wrapper {
+      width: 220px;
+      height: 220px;
+      background: #dcdcdc;
+    }
+    mip-fit-text {
+      border: 1px solid red;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>mip-fit-text</h1>
+    <h2>基本使用</h2>
+    <h3>宽高比为 3:2</h3>
+    <div class="test-wrapper">
+      <mip-fit-text
+        width="300"
+        height="200"
+        layout="responsive"
+      >MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP-HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。</mip-fit-text>
+    </div>
+    <h3>宽高比为 1:1</h3>
+    <div class="test-wrapper">
+      <mip-fit-text
+        width="200"
+        height="200"
+        layout="responsive"
+      >MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP-HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。</mip-fit-text>
+    </div>
+    <h2>设置 <code>min-font-size=30</code></h2>
+    <div class="test-wrapper">
+      <mip-fit-text
+        width="300"
+        height="200"
+        layout="responsive"
+        min-font-size="30"
+      >MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP-HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。</mip-fit-text>
+    </div>
+    <h2>设置 <code>max-font-size=10</code></h2>
+    <div class="test-wrapper">
+      <mip-fit-text
+        width="300"
+        height="200"
+        layout="responsive"
+        max-font-size="10"
+      >MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP-HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。</mip-fit-text>
+    </div>
+    <h2>设置 <code>line-height=2</code></h2>
+    <div class="test-wrapper">
+      <mip-fit-text
+        width="300"
+        height="200"
+        layout="responsive"
+        line-height="2"
+      >MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP-HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。</mip-fit-text>
+    </div>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-fit-text/mip-fit-text.js"></script>
+  </body>
+</html>

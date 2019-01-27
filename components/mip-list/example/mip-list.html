@@ -8,37 +8,50 @@
   <link rel="canonical" href="对应的原页面地址">
   <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <style mip-custom>
-    /* 自定义样式 */
+    body {
+      padding: 20px 20px
+    }
+    h4 {
+      margin: 20px 0 10px
+    }
+    p {
+      margin: 8px 0
+    }
+    button {
+      margin: 5px 0 0 0
+    }
   </style>
 </head>
 
 <body>
-  <br>
-  <br>
-  <div>基本用法</div>
-  <div>[info]JSONP 异步请求的接口需要遵循规范 `callback` 为 `'callback'`</div>
-  <mip-list src="https://xxx" preLoad>
+  <h4>基本用法</h4>
+  <p>JSONP 异步请求的接口需要遵循规范 `callback` 为 `'callback'`</p>
+  <mip-list src="./data.js" preload>
     <template type="mip-mustache">
       <div>
-        <li>name: {{name}}</li>
-        <li>alias: {{alias}}</li>
+        <li>name: {{ name }}</li>
+        <li>alias: {{ alias }}</li>
       </div>
     </template>
   </mip-list>
-  <br>
-  <br>
-  <div>定制模板</div>
-  <mip-list template="mip-template-id" src="https://xxx" preLoad>
-    <template type="mip-mustache" id="mip-template-id">
+
+  <h4>定制模板</h4>
+  <p>通过 template 属性指定模板渲染</p>
+  <mip-list
+    template="mip-template-id1"
+    src="./data.js"
+    preload
+  >
+    <template type="mip-mustache" id="mip-template-id1">
       <div>
-        <li>name: {{name}}</li>
-        <li>alias: {{alias}}</li>
+        <li>name: {{ name }}</li>
+        <li>alias: {{ alias }}</li>
       </div>
     </template>
   </mip-list>
-  <br>
-  <br>
-  <div>同步数据</div>
+
+  <h4>同步数据</h4>
+  <p>使用内置的数据渲染 mip-list</p>
   <mip-list synchronous-data>
     <script type="application/json">
       {
@@ -53,29 +66,34 @@
           "alias": "bobo"
         }]
       }
-
     </script>
     <template type="mip-mustache">
       <div>
-        <li>name: {{name}}</li>
-        <li>alias: {{alias}}</li>
+        <li>name: {{ name }}</li>
+        <li>alias: {{ alias }}</li>
       </div>
     </template>
   </mip-list>
   <br>
-  <br>
-  <div>点击加载更多
-    [info]有 `has-more` 属性时，`mip-list` 标签必须要有 `id` 属性，同时需要有点击按钮的 DOM 节点，并且此节点有 `on` 属性，属性值为：`tap:对应mip-list的id.more`
-  </div>
-  <mip-list template="mip-template-id" src="http://xxx?a=a&b=b" id="mip-list" has-more pnName="pageNum" pn=2 timeout="3000"
-    preLoad>
-    <template type="mip-mustache" id="mip-template-id">
+  <h4>点击加载更多</h4>
+  <p>有 `has-more` 属性时，`mip-list` 标签必须要有 `id` 属性，同时需要有点击按钮的 DOM 节点，并且此节点有 `on` 属性，属性值为：`tap:对应mip-list的id.more`</p>
+  <mip-list
+    template="mip-template-id2"
+    src="./data-has-more.js"
+    id="mip-list"
+    has-more
+    pn-name="pageNum"
+    pn="2"
+    timeout="3000"
+    preload
+  >
+    <template type="mip-mustache" id="mip-template-id2">
       <div>
-        <li>{{key}}: {{value}}</li>
+        <li>name: {{ name }}</li>
       </div>
     </template>
   </mip-list>
-  <div on="tap:mip-list.more"> 点击查看更多 </div>
+  <button on="tap:mip-list.more">点击查看更多</button>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
   <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
   <script src="/mip-list/mip-list.js"></script>

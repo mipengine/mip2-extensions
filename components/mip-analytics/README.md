@@ -6,6 +6,8 @@
 支持布局|
 所需脚本| [https://c.mipcdn.com/static/v2/mip-analytics/mip-analytics.js](https://c.mipcdn.com/static/v2/mip-analytics/mip-analytics.js)
 
+MIP 提供了性能数据以帮助开发者了解自己当前自己的 MIP 页面的性能情况，可以通过 `<mip-analytics>` 组件发日志到自己的统计服务端进行统计。并且开发者可以通过定制配置信息对一些 DOM 元素或者组件的交互（目前支持点击事件）进行统计。而且还可以进行轮询（setInterval 机制）的日志发送，实时了解页面的交互状态。
+
 ## 示例
 
 ### 基本用法
@@ -25,9 +27,9 @@
   <script type="application/json">
     {
       "hosts" : {
-        "className1" : "https://m.baidu.com/div1?",
-        "disp" : "https://m.baidu.com/${disp}?",
-        "className2" : "https://m.baidu.com/_${div2}.gif?"
+        "className1": "https://some-log-host.com/some-log-path/div1?",
+        "disp": "https://some-log-host.com/${disp}?",
+        "className2" : "https://some-log-host.com/_${div2}.gif?"
       },
 
       "setting" : {
@@ -82,7 +84,7 @@
           }
         ],
 
-        "timerxx" : [
+        "timer" : [
           {
             "host" : "className2",
             "queryString" : {
@@ -131,11 +133,11 @@
 
 必选项：否  
 
-类型：Array   
+类型：Array
 
 ##### setting.click.selector
 
-说明：指定触发点击的选择器     
+说明：指定触发点击的选择器
 
 必选项：是  
 
@@ -149,7 +151,6 @@
 
 类型：CSS 选择器
 
-
 ##### setting.click.host
 
 说明：指定日志发送的 log server，可以使用插值变量占位，`${varName}`，在 vars 中指定真实值。 插件使用图片伪装请求。host 应该是一个图片地址，一般是 GIF。如 https://logserver.com/mylog.gif?
@@ -160,13 +161,12 @@
 
 ##### setting.click.queryString
 
-说明：指定 host 的 querystring，一级属性序列化为 & 链接的参数，二级对象属性会被序列化为 JSON 字符串。可以支持一些内建变量，目前支持速度信息，以下内建变量会返回时间戳。
+说明：指定 host 的 querystring，一级属性序列化为 & 链接的参数，二级对象属性会被序列化为 JSON 字符串。可以支持一些内建变量，目前支持 MIP 速度信息以及 performance API 的一些信息，以下 MIP 性能内建变量会返回时间戳。
 
 * `"${MIPStart}"`
 * `"${MIPPageShow}"`
 * `"${MIPDomContentLoaded}"`
 * `"${MIPFirstScreen}"`
- 
 
 必选项：否
 

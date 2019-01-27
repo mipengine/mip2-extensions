@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    button {
+      background-color: aquamarine;
+      color: black;
+      display: block;
+      margin: 10px;
+      padding: 20px;
+    }
+
+    body[mip-x-button-color3=yellow] .exp-btn3 {
+      background-color: yellow;
+    }
+
+    body[mip-x-button-color3=grey] .exp-btn3 {
+      background-color: #888888;
+    }
+
+    body[mip-x-button-color3=blue] .exp-btn3 {
+      background-color: #3388ff;
+    }
+
+    body[mip-x-font-color=black] .exp-btn3 {
+      color: black;
+    }
+
+    body[mip-x-font-color=white] .exp-btn3 {
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>多组样式抽样</h1>
+  <mip-experiment layout="nodisplay" class="mip-hidden">
+    <script type="application/json" for="mip-experiment">
+      {
+        "button-color3": {
+          "sticky": false,
+          "descri": "3.设置按钮背景色,黄-灰-蓝-绿",
+          "variants": {
+            "yellow": 30,
+            "grey": 30,
+            "blue": 30
+          }
+        },
+        "font-color": {
+          "sticky": false,
+          "descri": "设置按钮字体颜色,黑-白",
+          "variants": {
+            "black": 50,
+            "white": 50
+          }
+        }
+      }
+    </script>
+    <p>设置按钮背景色,黄(30%)-灰(30%)-蓝(30%)-绿(默认10%)</p>
+    <p>设置按钮字体色,黑(50%)-白(50%)</p>
+    <p>每次刷新重新分组</p>
+    <button class="exp-btn3">修改背景色&字体颜色</button>
+  </mip-experiment>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-experiment/mip-experiment.js"></script>
+</body>
+
+</html>

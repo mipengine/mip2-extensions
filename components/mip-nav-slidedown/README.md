@@ -8,8 +8,12 @@
 支持布局|responsive, fixed-height, fill, container, fixed
 所需脚本|https://c.mipcdn.com/static/v2/mip-nav-slidedown/mip-nav-slidedown.js
 
+> 注意：mip-nav-slidedown 在使用的过程中必须有一个最外层的容器 DOM，在官方给的示例中使用的是 `<div class="mip-nav-wrapper">...</div>`，开发者可以自行定义其他的 DOM 和具体样式。
+
 ## 示例
+
 ### 基本使用
+
 ```html
 <div class="mip-nav-wrapper">
   <mip-nav-slidedown
@@ -26,7 +30,7 @@
           <a href="//www.mipengine.org/timeline.html">动态</a>
         </li>
         <li>
-          <a href="http://www.cnblogs.com/mipengine/">博客</>
+          <a href="http://www.cnblogs.com/mipengine/">博客</a>
         </li>
         <li class="navbar-wise-close">
           <span id="navbar-wise-close-btn"></span>
@@ -38,7 +42,9 @@
 ```
 
 ### 导航菜单个数多
+
 导航菜单个数较多时，菜单展开可以上下滚动。
+
 ```html
 <div class="mip-nav-wrapper">
   <mip-nav-slidedown
@@ -69,10 +75,12 @@
 ```
 
 ### 增加二级菜单
+
 直接添加`<ul>`可以展现二级菜单效果。
+
 ```html
 <div class="mip-nav-wrapper">
-  <mip-nav-slidedown 
+  <mip-nav-slidedown
     data-id="bs-navbar"
     class="mip-element-sidebar container"
     data-showbrand="1"
@@ -114,28 +122,44 @@
 
 ## 属性
 
-### data-id  
-说明：内部菜单 `id`  
-必选项：是  
-类型：字符串  
+### data-id
 
-### data-showbrand  
-说明：是否需要左上角显示可点击区域  
-必选项：否  
-类型：数字  
-取值：0（不显示），1（显示）  
+说明：内部菜单 `id`
+
+必选项：是
+
+类型：字符串
+
+### data-showbrand
+
+说明：是否需要左上角显示可点击区域
+
+必选项：否
+
+类型：数字
+
+取值：0（不显示），1（显示）
+
 默认值：1
 
-### data-brandname  
-说明：左上角显示可点击区域文字，仅在 `data-showbrand=1` 时显示  
-必选项：否  
-类型：字符串，如 "MIP官网"  
+### data-brandname
 
-### data-brandhref  
-说明：左上角图标跳转链接，在 `data-showbrand` 为 1 时有效  
-必选项：否  
-类型：URL  
+说明：左上角显示可点击区域文字，仅在 `data-showbrand=1` 时显示
+
+必选项：否
+
+类型：字符串，如 "MIP官网"
+
+### data-brandhref
+
+说明：左上角图标跳转链接，在 `data-showbrand` 为 1 时有效
+
+必选项：否
+
+类型：URL
+
 默认：'/'
 
 ## 注意事项
+
 1. 一个页面内，只能存在一个下拉菜单，`data-id="bs-navbar"`。

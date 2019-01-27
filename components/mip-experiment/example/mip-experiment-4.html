@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom></style>
+</head>
+
+<body>
+  <h1>html 代码块渲染抽样</h1>
+  <mip-experiment class="mip-hidden" needconsole>
+    <script type="application/json" for="mip-experiment">
+      {
+        "anim-experiment": {
+          "sticky": false,
+          "descri": "按照流量抽样分组，40%渲染组件mip-img，60%渲染组件mip-anim",
+          "type": "tag-abtest",
+          "variants": {
+            "mip-img-group": 40,
+            "mip-anim-group": 60
+          }
+        }
+      }
+    </script>
+    <div for="anim-experiment">
+      <template type="mip-mustache">
+        {{#mip-img-group}}
+          实验组 mip-img-group：
+          <mip-img
+            layout="responsive" width="350" height="263"
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+        {{/mip-img-group}}
+        {{#mip-anim-group}}
+          实验组 mip-anim-group：
+          <mip-anim
+            layout="fixed" width=210 height=210
+            src="https://www.mipengine.org/static/img/sample_gif.gif" alt="an animation">
+            <mip-img
+              layout="responsive" width="350" height="263"
+              src="https://www.mipengine.org/static/img/sample_01.jpg">
+            </mip-img>
+          </mip-anim>
+        {{/mip-anim-group}}
+      </template>
+    </div>
+  </mip-experiment>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-experiment/mip-experiment.js"></script>
+  <script src="/mip-anim/mip-anim.js"></script>
+  <!-- mustache模板依赖 -->
+  <script src="/mip-mustache/mip-mustache.js"></script>
+</body>
+
+</html>

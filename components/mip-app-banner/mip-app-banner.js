@@ -5,37 +5,46 @@
  * @author caoru@baidu.com
  */
 import './mip-app-banner.less'
-let {
-  CustomElement,
-  util,
-  viewer
-} = MIP
-let platform = util.platform
-let fetchJsonp = MIP.sandbox.fetchJsonp
-// app 调起
+
+const { CustomElement, util, viewer } = MIP
+const { platform } = util
+const { fetchJsonp } = MIP.sandbox
+const log = util.log('mip-app-banner')
+const MIP_HIDDEN_CLASS = 'mip-hidden'
+
+// app 调起/下载
 let openButton = {
-  setup (openButton, openInAppUrl, installAppUrl) {
-    openButton.addEventListener('click', () => {
+  setup (openBtn, openInAppUrl, installAppUrl) {
+    openBtn.addEventListener('click', () => {
       this.onClick(openInAppUrl, installAppUrl)
     })
   },
   onClick (openInAppUrl, installAppUrl) {
-    let timer = setTimeout(function () {
-      window.top.location.href = installAppUrl
+    // 延时后跳转到下载 app
+    let timer = setTimeout(() => {
+      viewer.open(installAppUrl, { isMipLink: false, replace: true })
+      clearTimeout(timer)
     }, 1500)
-    window.open(openInAppUrl, '_top')
-    let visibilitychange = function () {
+
+    // 通过 iframe 尝试调起 app，避免跳转到错误页
+    let iframe = document.createElement('iframe')
+    iframe.src = openInAppUrl
+    iframe.style.display = 'none'
+    document.body.appendChild(iframe)
+    setTimeout(() => document.body.removeChild(iframe), 200)
+
+    // 跳转到 app，无需下载
+    let visibilitychange = () => {
       let tag = document.hidden || document.webkitHidden
       tag && clearTimeout(timer)
     }
     document.addEventListener('visibilitychange', visibilitychange)
     document.addEventListener('webkitvisibilitychange', visibilitychange)
-    window.addEventListener('pagehide', function () {
-      clearTimeout(timer)
-    })
+    window.addEventListener('pagehide', () => clearTimeout(timer))
   }
 }
-// storage的获取、判断、设置
+
+// storage 的获取、判断、设置
 let ls = {
   getSotrageKey (id) {
     return 'mip-app-banner:' + id
@@ -47,7 +56,7 @@ let ls = {
     localStorage.setItem(this.getSotrageKey(id), true)
   }
 }
-// 去掉banne并设置storage
+// 去掉 banner 并设置 storage
 let dismissButton = {
   element: null,
   add (element) {
@@ -59,7 +68,7 @@ let dismissButton = {
   },
   onClick () {
     ls.setSotrage(this.element.id)
-    this.element.remove()
+    this.element.classList.add(MIP_HIDDEN_CLASS)
   }
 }
 // banner 初始化
@@ -69,30 +78,21 @@ let preProcess = {
   },
   init (element) {
     if (this.isDismissed(element.id)) {
-      element.remove()
-      return
+      return false
     }
-    util.css(element, {
-      visibility: 'visible'
-    })
+    element.classList.remove(MIP_HIDDEN_CLASS)
     dismissButton.add(element)
+    return true
   }
 }
 
-export default class MipAppBanner extends CustomElement {
+export default class MIPAppBanner extends CustomElement {
   /**
    * 判断打开平台
-   *
-   * @return {boolean}
    */
   canShowBanner () {
-    this.isSysBanner = platform.isSafari() || platform.isBaidu() // || platform.isQQ();
-    this.showSysBanner = !viewer.isIframed && this.isSysBanner
-    if (this.showSysBanner) {
-      return false
-    }
-    this.isEmbeddedSafari = viewer.isIframed && this.isSysBanner
-    if (this.isEmbeddedSafari) {
+    let isSysBanner = platform.isSafari() || platform.isBaidu() // || platform.isQQ();
+    if (isSysBanner) {
       return false
     }
     this.metaTag = document.head.querySelector('meta[name=apple-itunes-app]')
@@ -105,17 +105,19 @@ export default class MipAppBanner extends CustomElement {
    *  是不是ios的app调起
    */
   iosAppBanner () {
+    let el = this.element
     if (!this.canShowBanner()) {
-      this.element.remove()
+      return
     }
-    this.metaTag = document.head.querySelector('meta[name=apple-itunes-app]')
-    let openBtn = this.element.querySelector('button[open-button]')
-    preProcess.init(this.element)
+    if (!preProcess.init(el)) {
+      return
+    }
+    let openBtn = el.querySelector('button[open-button]')
     let content = this.metaTag.getAttribute('content')
     let parts = content.replace(/\s/, '').split(',')
     let config = {}
-    for (let part of parts) {
-      let params = part.split('=')
+    for (let i = 0; i < parts.length; i++) {
+      let params = parts[i].split('=')
       config[params[0]] = params[1]
     }
     let appId = config['app-id']
@@ -128,61 +130,54 @@ export default class MipAppBanner extends CustomElement {
    * 判断是否是Android的app调起
    */
   andriodAppBanner () {
+    let el = this.element
     if (!this.canShowBanner()) {
-      this.element.remove()
       return
     }
-    let anOpenButton = this.element.querySelector('button[open-button]')
-    preProcess.init(this.element)
-    this.manifestLink = null
-    this.manifestHref = ''
-    this.missingDataSources = false
-    this.manifestLink = document.head.querySelector('link[rel=manifest],link[rel=origin-manifest]')
+    if (!preProcess.init(el)) {
+      return
+    }
+    let openBtn = el.querySelector('button[open-button]')
+    let manifestLink = document.head.querySelector('link[rel=manifest],link[rel=origin-manifest]')
     let isChromeAndroid = platform.isAndroid() && platform.isChrome()
-    let showSysBanner = !viewer.isIframed && isChromeAndroid
-    if (showSysBanner) {
-      this.element.remove()
-      return
-    }
-    this.missingDataSources = platform.isAndroid() && !this.manifestLink
 
-    if (this.missingDataSources) {
-      this.element.remove()
+    if (MIP.standalone && isChromeAndroid) {
+      el.classList.add(MIP_HIDDEN_CLASS)
       return
     }
-    this.manifestHref = this.manifestLink.getAttribute('href')
-    if (/http:\/\//.test(this.manifestHref)) {
-      console.error('必须是https的连接')
+    if (platform.isAndroid() && !manifestLink) {
+      el.classList.add(MIP_HIDDEN_CLASS)
+      return
     }
-    fetchJsonp(this.manifestHref).then(res => {
+    let manifestHref = manifestLink.getAttribute('href')
+    if (/http:\/\//.test(manifestHref)) {
+      log.warn('必须是https的连接!')
+    }
+    fetchJsonp(manifestHref).then(res => {
       return res.json()
     }).then(data => {
       let apps = data.related_applications
       if (!apps) {
-        this.element.remove()
+        el.classList.add(MIP_HIDDEN_CLASS)
+        return
       }
-      for (let app of apps) {
+      for (let i = 0; i < apps.length; i++) {
+        let app = apps[i]
         if (app.platform === 'play') {
           let installAppUrl = app.install
           let openInAppUrl = app.open
-          openButton.setup(anOpenButton, openInAppUrl, installAppUrl)
+          openButton.setup(openBtn, openInAppUrl, installAppUrl)
         }
       }
     })
   }
-  // 提前渲染
-  prerenderAllowed () {
-    return true
-  }
-  // 插入文档时执行
-  connectedCallback () {
-    let element = this.element
-    preProcess.isDismissed(element.id)
-    util.css(element, {
-      display: '',
-      visibility: 'hidden'
-    })
-    if (platform.isIos()) {
+
+  firstInviewCallback () {
+    // 覆盖 nodisplay 的 display: 'none'
+    util.css(this.element, { display: '' })
+    // 通过 mip-hidden 控制显示和隐藏
+    this.element.classList.add(MIP_HIDDEN_CLASS)
+    if (platform.isIOS()) {
       this.iosAppBanner()
     } else {
       this.andriodAppBanner()

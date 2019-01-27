@@ -95,14 +95,14 @@ class footer {
     // 创建底部按钮 HTML
     let footerHTML = `
       <div class="upper mip-border mip-border-bottom">
-          <span from-cache cache-first class="page-button page-previous" mip-link href="" replace>
-              <i class="icon gap-right-small icon-left"></i>
-              ${previous}
-          </span>
-          <span from-cache cache-first class="page-button page-next" mip-link href="" replace>
-              ${next}
-              <i class="icon gap-left-small icon-right"></i>
-          </span>
+        <span from-cache cache-first class="page-button page-previous" mip-link href="" replace>
+            <i class="icon gap-right-small icon-left"></i>
+            ${previous}
+        </span>
+        <span from-cache cache-first class="page-button page-next" mip-link href="" replace>
+            ${next}
+            <i class="icon gap-left-small icon-right"></i>
+        </span>
       </div>
       <div class="button-wrapper">
           ${renderFooterButtonGroup(this.config.actionGroup)}
@@ -141,7 +141,6 @@ class footer {
     nextButton.classList.remove('disabled')
     if (!nextHref) nextButton.classList.add('disabled')
   }
-
   // 显示底bar
   show (shellElement) {
     let footer = this
