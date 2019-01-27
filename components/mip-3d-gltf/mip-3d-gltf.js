@@ -3,8 +3,9 @@
  * @author guozhuorong@baidu.com
  */
 
-/* global MIP, fetch */
-let { CustomElement } = MIP
+/* global THREE */
+let { CustomElement, util } = MIP
+const log = util.log('mip-3d-gltf')
 
 function boolFmt (attr) {
   return attr !== 'false'
@@ -17,8 +18,8 @@ function numberFmt (attr) {
 function isWebGLAvailable () {
   try {
     let canvas = document.createElement('canvas')
-    return !!(window.WebGLRenderingContext 
-              && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+    return !!(window.WebGLRenderingContext &&
+                (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
   } catch (e) {
     return false
   }
@@ -28,8 +29,8 @@ function getErrorMessage () {
   let message = 'Your browser does not seem to support WebGL'
   let element = document.createElement('div')
   element.id = 'webglmessage'
-  let style = 'font-family: monospace; font-size: 13px; font-weight: normal; text-align: center;'
-                + 'background: rgb(255, 255, 255); color: rgb(0, 0, 0); padding: 1.5em'
+  let style = 'font-family: monospace; font-size: 13px; font-weight: normal; text-align: center;' +
+                'background: rgb(255, 255, 255); color: rgb(0, 0, 0); padding: 1.5em'
   element.setAttribute('style', style)
 
   element.innerHTML = message
@@ -176,7 +177,7 @@ export default class MipGLTF extends CustomElement {
       .then(() => {
         if (isWebGLAvailable() === false) {
           this.container.appendChild(getErrorMessage())
-          return Promise.reject('WebGL')
+          return Promise.reject(new Error('WebGL'))
         }
         return this.initialize()
       })
@@ -185,11 +186,10 @@ export default class MipGLTF extends CustomElement {
         this.animate()
       })
       .catch(err => {
-        if (err === 'WebGL') {
-          console.warn('WebGL is not available!')
-        }
-        else {
-          console.error('import err:', err)
+        if (err.message === 'WebGL') {
+          log.warn('WebGL is not available!')
+        } else {
+          log.error('import err:', err)
         }
       })
   }
@@ -230,19 +230,19 @@ export default class MipGLTF extends CustomElement {
 
   setupControls () {
     let controls = new THREE.OrbitControls(this.camera, this.renderer.domElement)
-    controls.target.set(0, - 0.2, - 0.2)
+    controls.target.set(0, -0.2, -0.2)
     Object.assign(controls, this.option['controls'])
 
     this.controls = controls
   }
 
   setupLight () {
-    const amb = new THREE.AmbientLight(0xEDECD5, .5)
+    const amb = new THREE.AmbientLight(0xEDECD5, 0.5)
 
-    const dir1 = new THREE.DirectionalLight(0xFFFFFF, .5)
+    const dir1 = new THREE.DirectionalLight(0xFFFFFF, 0.5)
     dir1.position.set(0, 5, 3)
 
-    const dir2 = new THREE.DirectionalLight(0xAECDD6, .4)
+    const dir2 = new THREE.DirectionalLight(0xAECDD6, 0.4)
     dir2.position.set(-1, -2, 4)
 
     const light = new THREE.Group()

@@ -6,6 +6,7 @@
  * @author Don McCurdy / https://www.donmccurdy.com
  */
 
+/* eslint-disable */
 THREE.GLTFLoader = ( function () {
 
 	function GLTFLoader( manager ) {
