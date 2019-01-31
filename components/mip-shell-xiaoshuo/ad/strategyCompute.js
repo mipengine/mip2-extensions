@@ -212,8 +212,8 @@ const initCurPageType = (pageTypes = [], novelInstance = {}) => {
   }
 
   // 判断当是阅读页级别的书，查看次页属于翻了几页；
-  const readPageNum = novelInstance.currentPageMeta.readPageNum || 0
-  const turnPageType = 'page_' + (readPageNum === 0 ? 0 : readPageNum - 1)
+  const readPageNum = novelInstance.readPageNum || 1
+  const turnPageType = 'page_' + readPageNum
   pageTypes.forEach((value, index) => {
     readType.forEach(type => {
       if (value === type) {
