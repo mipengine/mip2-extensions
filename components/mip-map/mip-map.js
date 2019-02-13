@@ -26,15 +26,13 @@ export default class MIPMap extends CustomElement {
     }
     this.config = config
 
-    this.sanitize()
-
-    this.ak = config.ak || ''
-    this.location = config.location
-    this.controls = config.controls
-    this.info = config.info
-    this.hideMap = (config.hasOwnProperty('hideMap') ? config['hideMap'] : config['hide-map']) === true
-    this.getPosition = (config.hasOwnProperty('getPosition') ? config['getPosition'] : config['get-position']) === true
-    this.dataOnlyGetSdk = (config.hasOwnProperty('dataOnlyGetSdk') ? config['dataOnlyGetSdk'] : config['data-only-get-sdk']) === true
+    this.ak = el.getAttribute('ak') || config.ak || ''
+    this.location = this.getObjAttribute('location')
+    this.controls = this.getObjAttribute('controls')
+    this.info = this.getObjAttribute('info')
+    this.hideMap = this.getBoolAttribute('hide-map')
+    this.getPosition = this.getBoolAttribute('get-position')
+    this.dataOnlyGetSdk = this.getBoolAttribute('data-only-get-sdk')
 
     this.map = null
     this.point = {}
@@ -43,19 +41,38 @@ export default class MIPMap extends CustomElement {
   }
 
   /**
-   * 校验参数
+   * 获取类型为对象的属性值
    *
+   * @param {string} str 属性名
+   * @returns {Object} 属性值
    */
-  sanitize () {
-    if (this.config.hasOwnProperty('hide-map')) {
-      log.warn('[Deprecated] hide-map 参数不允许再使用，请使用 \'hideMap\' 代替')
+  getObjAttribute (str) {
+    let el = this.element
+    let obj = null
+    if (el.hasAttribute(str)) {
+      try {
+        obj = util.jsonParse(el.getAttribute(str))
+      } catch (e) {
+        log.warn(e)
+      }
+    } else {
+      obj = this.config[str]
     }
-    if (this.config.hasOwnProperty('get-position')) {
-      log.warn('[Deprecated] get-position 参数不允许再使用，请使用 \'getPosition\' 代替')
+    return obj
+  }
+
+  /**
+   * 获取类型为布尔的属性值
+   *
+   * @param {string} str 属性名
+   * @returns {boolean} 属性值
+   */
+  getBoolAttribute (str) {
+    let el = this.element
+    if (el.hasAttribute(str)) {
+      return el.getAttribute(str) === 'true'
     }
-    if (this.config.hasOwnProperty('data-only-get-sdk')) {
-      log.warn('Deprecated] data-only-get-sdk 参数不允许再使用，请使用 \'dataOnlyGetSdk\' 代替')
-    }
+    return this.config[str] === true
   }
 
   /**
