@@ -411,9 +411,8 @@ const formatAdData = (allAds, novelInstance) => {
       if (adData.template[value.tplName] == null) {
         // 把需要请求的tpl存起来
         fetchTpl.push(value.tplName)
-      } else {
-        showedAds[i] = ++showedAd
       }
+      showedAds[i] = ++showedAd
     })
     template.push(templateValue)
   }
