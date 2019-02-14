@@ -28,8 +28,14 @@
         "street": "故宫博物馆"
       },
       "controls": {
-        "NavigationControl": {},
-        "MapTypeControl": {}
+        "NavigationControl": {
+          "showZoomInfo": true,
+          "enableGeolocation": true
+        },
+        "MapTypeControl": {
+          "type": "BMAP_MAPTYPE_CONTROL_HORIZONTAL",
+          "mapTypes": ["BMAP_NORMAL_MAP", "BMAP_SATELLITE_MAP", "BMAP_HYBRID_MAP"]
+        }
       },
       "info": {
         "width": 250,
@@ -59,7 +65,8 @@
           "enableGeolocation": true
         },
         "MapTypeControl": {
-          "type": "BMAP_MAPTYPE_CONTROL_HORIZONTAL"
+          "type": "BMAP_MAPTYPE_CONTROL_HORIZONTAL",
+          "mapTypes": ["BMAP_NORMAL_MAP", "BMAP_SATELLITE_MAP", "BMAP_HYBRID_MAP"]
         }
       }
     }
@@ -104,7 +111,8 @@
         "enableGeolocation": true
       },
       "MapTypeControl": {
-        "type": "BMAP_MAPTYPE_CONTROL_DROPDOWN"
+        "type": "BMAP_MAPTYPE_CONTROL_DROPDOWN",
+        "mapTypes": ["BMAP_NORMAL_MAP", "BMAP_SATELLITE_MAP", "BMAP_HYBRID_MAP"]
       }
     },
     "info": {

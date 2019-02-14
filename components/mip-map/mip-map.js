@@ -210,6 +210,15 @@ export default class MIPMap extends CustomElement {
         if (typeof val === 'string' && val.indexOf('BMAP_') !== -1) {
           params[prop] = window[val]
         }
+        if (Array.isArray(val)) {
+          let array = val.map(v => {
+            if (v.indexOf('BMAP_') !== -1) {
+              return window[v]
+            }
+            return v
+          })
+          params[prop] = array
+        }
       })
 
       let Fn = BMap[key]
