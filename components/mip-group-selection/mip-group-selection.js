@@ -17,28 +17,39 @@ export default class MIPGroupSelection extends CustomElement {
    *
    * @returns {Object} Promise
    */
-  async getData () {
-    if (this.dataUrl) {
-      try {
-        let res = await fetch(this.dataUrl, { credentials: 'include' })
-        if (res.ok) {
-          return res.json()
-        }
-        return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
-      } catch (e) {
-        return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
-      }
-    }
+  // async getData () {
+  //   if (this.dataUrl) {
+  //     try {
+  //       let res = await fetch(this.dataUrl, { credentials: 'include' })
+  //       if (res.ok) {
+  //         return res.json()
+  //       }
+  //       return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
+  //     } catch (e) {
+  //       return Promise.reject(new Error('mip-city-selection 组件 Fetch 请求失败!'))
+  //     }
+  //   }
+  //   let groupData = this.element.querySelector('script[type="application/json"]')
+  //   if (groupData) {
+  //     try {
+  //       groupData = util.jsonParse(groupData.textContent)
+  //     } catch (e) {
+  //       return Promise.reject(new Error('mip-city-selection 组件 json 配置错误, 请检查 json 格式。'))
+  //     }
+  //     return groupData
+  //   }
+  //   return null
+  // }
+  getData () {
     let groupData = this.element.querySelector('script[type="application/json"]')
-    if (groupData) {
+    return new Promise((resolve, reject) => {
       try {
         groupData = util.jsonParse(groupData.textContent)
       } catch (e) {
-        return Promise.reject(new Error('mip-city-selection 组件 json 配置错误, 请检查 json 格式。'))
+        reject(new Error('asd'))
       }
-      return groupData
-    }
-    return null
+      resolve(groupData)
+    })
   }
 
   /**
@@ -127,6 +138,6 @@ export default class MIPGroupSelection extends CustomElement {
       this.bindSidebarClickEvent()
       // 绑定列表元素选择事件
       this.bindItemClickEvent()
-    }, log.warn)
+    }).catch(log.warn)
   }
 }
