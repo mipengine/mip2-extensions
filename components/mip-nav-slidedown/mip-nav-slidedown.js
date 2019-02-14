@@ -101,7 +101,7 @@ export default class MipNavSlidedown extends CustomElement {
   render () {
     let element = this.element
     let id = element.getAttribute('data-id')
-    let showBrand = !(element.getAttribute('data-showBrand') === 0)
+    let showBrand = !(element.getAttribute('data-showBrand') === '0')
     let brandName = element.getAttribute('data-brandName') || ''
     let brandHref = element.getAttribute('data-brandhref') || '#'
     let ulNav = element.querySelector('#' + id)
