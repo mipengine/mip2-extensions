@@ -13,6 +13,16 @@ function traverseAndConcat (obj) {
   return Object.keys(obj).reduce((total, key) => total + obj[key], '')
 }
 
+/**
+ * 工具方法 转驼峰式字符串为短横线分隔式字符串
+ *
+ * @param {string} str 驼峰式字符串
+ * @returns {string} 短横线分隔式字符串
+ */
+function hyphenate (str) {
+  return str.replace(/[A-Z]/g, s => ('-' + s.toLowerCase())).replace(/^-/, '')
+}
+
 export default class MIPMap extends CustomElement {
   constructor (...args) {
     super(...args)
@@ -30,9 +40,9 @@ export default class MIPMap extends CustomElement {
     this.location = this.getObjAttribute('location')
     this.controls = this.getObjAttribute('controls')
     this.info = this.getObjAttribute('info')
-    this.hideMap = this.getBoolAttribute('hide-map')
-    this.getPosition = this.getBoolAttribute('get-position')
-    this.dataOnlyGetSdk = this.getBoolAttribute('data-only-get-sdk')
+    this.hideMap = this.getBoolAttribute('hideMap')
+    this.getPosition = this.getBoolAttribute('getPosition')
+    this.dataOnlyGetSdk = this.getBoolAttribute('dataOnlyGetSdk')
 
     this.map = null
     this.point = {}
@@ -64,15 +74,27 @@ export default class MIPMap extends CustomElement {
   /**
    * 获取类型为布尔的属性值
    *
-   * @param {string} str 属性名
+   * @param {string} camelCase 驼峰式属性名
    * @returns {boolean} 属性值
    */
-  getBoolAttribute (str) {
+  getBoolAttribute (camelCase) {
     let el = this.element
-    if (el.hasAttribute(str)) {
-      return el.getAttribute(str) === 'true'
+    let kebabCase = hyphenate(camelCase)
+    if (el.hasAttribute(kebabCase)) {
+      return el.getAttribute(kebabCase) !== 'false'
     }
-    return this.config[str] === true
+    if (el.hasAttribute(camelCase)) {
+      log.warn(`标签属性应使用短横线分隔式：${kebabCase}`)
+      return el.getAttribute(camelCase) !== 'false'
+    }
+    if (this.config.hasOwnProperty(camelCase)) {
+      return this.config[camelCase] !== false
+    }
+    if (this.config.hasOwnProperty(kebabCase)) {
+      log.warn(`在 <script type="json/application"></script> 中参数应使用驼峰式：${camelCase}`)
+      return this.config[kebabCase] !== false
+    }
+    return false
   }
 
   /**

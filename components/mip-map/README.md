@@ -12,14 +12,15 @@
 
 ### 基本用法
 
+将参数写在 `<script type="application/json">` 标签中，使用驼峰式命名：
 ```html
 <mip-map height="400">
   <script type="application/json">
     {
       "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
-      "hide-map": false,
-      "get-position": false,
-      "data-only-get-sdk": false,
+      "hideMap": false,
+      "getPosition": false,
+      "dataOnlyGetSdk": false,
       "location": {
         "province": "北京",
         "city": "北京市",
@@ -34,6 +35,32 @@
         "width": 250,
         "height": 100,
         "content": "<h4>故宫博物馆</h4><p>地址：北京市东城区景山前街4号<br/>电话：(010)65131892</p></div>"
+      }
+    }
+  </script>
+</mip-map>
+```
+
+也可以将参数通过属性传入，使用短横线分隔式命名：
+```html
+<mip-map height="400" ak="hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl" hide-map="false" get-position="false"
+  data-only-get-sdk="false" info="{width: 250, height: 100, content: '<h4>故宫博物馆</h4><p>地址：北京市东城区景山前街4号<br/>电话：(010)65131892</p></div>'}">
+  <script type="application/json">
+    {
+      "location": {
+        "province": "北京",
+        "city": "北京市",
+        "district": "东城区",
+        "street": "故宫博物馆"
+      },
+      "controls": {
+        "NavigationControl": {
+          "showZoomInfo": true,
+          "enableGeolocation": true
+        },
+        "MapTypeControl": {
+          "type": "BMAP_MAPTYPE_CONTROL_HORIZONTAL"
+        }
       }
     }
   </script>
@@ -143,16 +170,16 @@
   "speed":null,
   "timestamp":null,
   "point":{
-      "lng":116.28123645733,
-      "lat":40.050551292543
+    "lng":116.28123645733,
+    "lat":40.050551292543
   },
   "address":{
-      "city":"北京市",
-      "city_code":0,
-      "district":"海淀区",
-      "province":"北京市",
-      "street":"软件园西三路辅路",
-      "street_number":""
+    "city":"北京市",
+    "city_code":0,
+    "district":"海淀区",
+    "province":"北京市",
+    "street":"软件园西三路辅路",
+    "street_number":""
   }
 }
 ```
