@@ -166,7 +166,11 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     // 用来记录翻页的次数，主要用来触发品专的广告
     novelInstance.novelPageNum++
     if (novelInstance.currentPageMeta.pageType === 'page') {
-      novelInstance.readPageNum++
+      if (novelInstance.readPageNum == null) {
+        novelInstance.readPageNum = 1
+      } else {
+        novelInstance.readPageNum++
+      }
     }
     // 如果有前端广告缓存，则走此处的逻辑
     initAdByCache(novelInstance)
