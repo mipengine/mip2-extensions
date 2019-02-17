@@ -100,7 +100,7 @@ export default class MipCustom extends CustomElement {
     let errorData = {}
     // 性能日志
     let performance = {}
-    performance.fetchStart = +new Date() - 0
+    performance.fetchStart = +new Date()
 
     // fetch
     fetch(url, {
@@ -147,7 +147,7 @@ export default class MipCustom extends CustomElement {
 
     if (data.config) {
       let config = dataProcessor.addPaths(data.config)
-      require.config(config)
+      window.require.config(config)
     } else {
       console.error('common广告模板中公共模块缺失')
       return
@@ -158,24 +158,20 @@ export default class MipCustom extends CustomElement {
       template = data.template
     }
 
-    function renderTpl (data) {
-      for (let i = 0; i < data.length; i++) {
-        let renderItem = data[i]
-        Object.assign(renderItem, {id: i})
-        let container = document.createElement('div')
-        container.setAttribute('mip-custom-container', i)
-        element.appendChild(container)
-        if (renderItem instanceof Array && renderItem.length !== 0) {
-          renderTpl(renderItem)
-        } else {
-          let args = {element, renderItem, container}
-          // 对小说进行渲染
-          renderFactory(args)
-        }
+    // 保持 dom 结构和 v1 一致
+    for (let i = 0; i < template.length; i++) {
+      let tplData = template[i]
+      let container = document.createElement('div')
+      container.setAttribute('mip-custom-container', i)
+      element.appendChild(container)
+
+      // dom 渲染
+      for (let index = 0; index < tplData.length; index++) {
+        let renderItem = tplData[index]
+        Object.assign(renderItem, {id: index})
+        renderFactory({element, renderItem, container})
       }
     }
-
-    renderTpl(template)
 
     // 广告插入页面时，增加渐显效果
     let mipCustomContainers = document.querySelectorAll('[mip-custom-container]')

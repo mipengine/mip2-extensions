@@ -102,7 +102,7 @@ let performanceData = {
     lid: getHashData('lid'),
     info: {},
     group: 'common',
-    ts: +new Date() - 0
+    ts: +new Date()
   }
 }
 
