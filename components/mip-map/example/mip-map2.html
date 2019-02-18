@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>mip-map MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+  </style>
+</head>
+
+<body>
+  <mip-map height="400" ak="hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl" hide-map="false" get-position="false"
+    data-only-get-sdk="false" info="{width: 250, height: 100, content: '<h4>故宫博物馆</h4><p>地址：北京市东城区景山前街4号<br/>电话：(010)65131892</p></div>'}">
+    <script type="application/json">
+      {
+        "location": {
+          "province": "北京",
+          "city": "北京市",
+          "district": "东城区",
+          "street": "故宫博物馆"
+        },
+        "controls": {
+          "NavigationControl": {
+            "showZoomInfo": true,
+            "enableGeolocation": true
+          },
+          "MapTypeControl": {
+            "type": "BMAP_MAPTYPE_CONTROL_HORIZONTAL",
+            "mapTypes": ["BMAP_NORMAL_MAP", "BMAP_SATELLITE_MAP", "BMAP_HYBRID_MAP"]
+          }
+        }
+      }
+    </script>
+  </mip-map>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-map/mip-map.js"></script>
+</body>
+
+</html>
