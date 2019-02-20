@@ -212,8 +212,8 @@ const initCurPageType = (pageTypes = [], novelInstance = {}) => {
   }
 
   // 判断当是阅读页级别的书，查看次页属于翻了几页；
-  const readPageNum = novelInstance.currentPageMeta.readPageNum || 0
-  const turnPageType = 'page_' + (readPageNum === 0 ? 0 : readPageNum - 1)
+  const readPageNum = novelInstance.readPageNum || 1
+  const turnPageType = 'page_' + readPageNum
   pageTypes.forEach((value, index) => {
     readType.forEach(type => {
       if (value === type) {
@@ -420,9 +420,8 @@ const formatAdData = (allAds, novelInstance) => {
       if (adData.template[value.tplName] == null) {
         // 把需要请求的tpl存起来
         fetchTpl.push(value.tplName)
-      } else {
-        showedAds[i] = ++showedAd
       }
+      showedAds[i] = ++showedAd
     })
     template.push(templateValue)
   }
