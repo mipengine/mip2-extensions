@@ -311,6 +311,7 @@ const getStrategy = (adsCount, strategy, adData, type) => {
   // 上一个循环已经排除错误情况
   for (let adNum in strategy) {
     if (strategy.hasOwnProperty(adNum)) {
+      // 把广告给截取出来 用掉 所以用掉的广告就不在原来的数组里了
       adTypes[adNum] = adData.ads[adNum].splice(0, strategy[adNum])
       adsCount[adNum].residueCount -= strategy[adNum]
     }
