@@ -15,6 +15,21 @@ export default class MIPInstallServiceWorker extends CustomElement {
 
     this.taskList = []
 
+    /**
+     * 表示当前节点是否调用过 connectedCallback
+     *
+     * @type {boolean}
+     */
+    this.inited = false
+  }
+
+  /** @override */
+  connectedCallback () {
+    if (this.inited) {
+      return
+    }
+    this.inited = true
+
     // 如果 Service Worker 不支持，可以通过浏览器缓存来实现 shell 效果
     if (window.navigator.serviceWorker) {
       this.installUrlRewrite()
