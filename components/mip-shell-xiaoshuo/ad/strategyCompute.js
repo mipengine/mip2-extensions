@@ -282,6 +282,7 @@ const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
 
 /**
  * 获取广告策略中的广告队列，并且修改广告队列最初的计数
+ * 2019-02-14 新增逻辑：只要这个策略中的广告有一条没有数据，则返回失败
  *
  * @param {Object} adsCount 广告队列的计数
  * @param {Object} strategy 每个广告类型中的广告策略
@@ -301,12 +302,20 @@ const getStrategy = (adsCount, strategy, adData, type) => {
     }
     if (adsCount[adNum].adsInitLength === 0) {
       adsCount[adNum].errorAbnormal++
-    } else if (adData.ads[adNum].length !== 0) {
+      return {}
+    }
+    if (adData.ads[adNum].length < strategy[adNum]) {
+      return {}
+    }
+  }
+  // 上一个循环已经排除错误情况
+  for (let adNum in strategy) {
+    if (strategy.hasOwnProperty(adNum)) {
+      // 把广告给截取出来 用掉 所以用掉的广告就不在原来的数组里了
       adTypes[adNum] = adData.ads[adNum].splice(0, strategy[adNum])
       adsCount[adNum].residueCount -= strategy[adNum]
     }
   }
-
   return adTypes
 }
 
