@@ -10,7 +10,7 @@ const { Gesture, fn, jsonParse } = util
 const logger = util.log('mip-stats-mta')
 
 /**
- * 绑定交互式的百度统计的属性
+ * 绑定自定义事件 mta 统计的属性
  *
  * @type {string}
  */
@@ -22,40 +22,66 @@ export default class MIPStatsMta extends CustomElement {
    */
   build () {
     const elem = this.element
-    const config = getConfig(elem)
+    const config = getStatsMtaConfig(elem) || {}
     if (config) {
+      const { name, sid, cid, version = 'v2.0.4' } = config
+      if (checkMtaConfigIsError({ name, sid, cid })) {
+        return
+      }
+      /* eslint-disable */
+      const _mtac = {
+        senseQuery: 1
+      };
+      /* eslint-enable */
       const mta = document.createElement('script')
-      mta.src = config.mta_url
-      mta.setAttribute('name', config.name)
-      mta.setAttribute('sid', config.sid)
-      mta.setAttribute('cid', config.cid)
+      mta.src = `//pingjs.qq.com/h5/stats.js?${version}`
+      mta.setAttribute('name', name)
+      mta.setAttribute('sid', sid)
+      mta.setAttribute('cid', cid)
       const s = document.getElementsByTagName('script')[0]
       s.parentNode.insertBefore(mta, s)
-      // logger.log(MtaH5)
       bindEle()
     } else {
-      logger.warn('mta config is wrong')
+      logger.warn(elem, 'mta 配置信息错误')
     }
   }
 }
 
 /**
+ * 检测统计的配置信息参数
+ *
+ * @param   {Object} config 统计的配置信息
+ * @returns  {boolean} isError 返回检查到的参数合法状态
+ *
+ */
+function checkMtaConfigIsError (config) {
+  const isError = Object.keys(config).some((item) => {
+    if (config[item]) {
+      return false
+    }
+    logger.warn(this, `mta配置信息错误：${item} 不能为空`)
+    return true
+  })
+  return isError
+}
+
+/**
+ * 从组件中的 type 为 "application/json" 的 script 标签中获取 JSON 数据
  *
  * @param   {HTMLElement}  el  mip-stats-mta 的 DOM 元素
- * @returns {Object}           mta的配置信息
- *
- *  */
-function getConfig (el) {
-  let config = {}
-  const setconfig = el.getAttribute('setconfig')
+ * @returns {Object}           mta 统计的配置信息
+ */
+function getStatsMtaConfig (el) {
   try {
-    config = decodeURIComponent(setconfig)
-    config = JSON.parse(config)
+    let script = el.querySelector('script[type="application/json"]')
+    if (script) {
+      return jsonParse(script.textContent) || {}
+    }
   } catch (e) {
-    config = null
+    logger.warn(el, '配置数据不是合法的 JSON', e)
   }
-  return config
 }
+
 /**
  *
  * @param {Array<Object>} data mta 自定义采集数据的配置
@@ -75,10 +101,10 @@ function mtaSend (data) {
     if (MtaH5) {
       MtaH5.clickStat(eventId, eventParams)
     } else {
-      logger.error('MtaH5 is undefined!')
+      logger.error(this, 'MtaH5 未定义!')
     }
   } catch (error) {
-    logger.error('mta send fail! error:', error)
+    logger.error(this, 'mta 数据发送失败')
   }
 }
 
@@ -93,7 +119,7 @@ function eventHandler () {
   try {
     statusJson = jsonParse(decodeURIComponent(tempData))
   } catch (e) {
-    logger.warn('事件追踪data-stats-mta数据不正确')
+    logger.warn(this, '事件追踪 data-stats-mta 数据不正确')
     return
   }
   if (!statusJson.data) {
@@ -111,8 +137,8 @@ function eventHandler () {
  */
 function bindEleHandler (tagBox) {
   for (let index = 0; index < tagBox.length; index++) {
-    let statusData = tagBox[index].getAttribute(DATA_STATS_MTA_OBJ)
-
+    const tagBoxItem = tagBox[index]
+    let statusData = tagBoxItem.getAttribute(DATA_STATS_MTA_OBJ)
     /**
      * 检测statusData是否存在
      */
@@ -121,9 +147,9 @@ function bindEleHandler (tagBox) {
     }
 
     try {
-      statusData = JSON.parse(decodeURIComponent(statusData))
+      statusData = jsonParse(decodeURIComponent(statusData))
     } catch (e) {
-      logger.warn('事件追踪data-stats-mta数据不正确')
+      logger.warn(tagBoxItem, '事件追踪 data-stats-mta 数据不正确')
       continue
     }
 
@@ -141,36 +167,36 @@ function bindEleHandler (tagBox) {
       continue
     }
 
-    if (tagBox[index].classList.contains('mip-stats-eventload')) {
+    if (tagBoxItem.classList.contains('mip-stats-eventload')) {
       continue
     }
 
-    tagBox[index].classList.add('mip-stats-eventload')
+    tagBoxItem.classList.add('mip-stats-eventload')
 
     // 解决on=tap: 和click冲突短线方案
     // TODO 这个为短线方案
     if (eventType === 'click' &&
-        tagBox[index].hasAttribute('on') &&
-        tagBox[index].getAttribute('on').match('tap:') &&
+        tagBoxItem.hasAttribute('on') &&
+        tagBoxItem.getAttribute('on').match('tap:') &&
         fn.hasTouch()) {
-      const gesture = new Gesture(tagBox[index])
+      const gesture = new Gesture(tagBoxItem)
       gesture.on('tap', eventHandler)
     } else {
-      tagBox[index].addEventListener(eventType, eventHandler, false)
+      tagBoxItem.addEventListener(eventType, eventHandler, false)
     }
   }
 }
 
 // 绑定事件追踪
 function bindEle () {
-  const tagBox = document.querySelectorAll(`*[${DATA_STATS_MTA_OBJ}]`)
-  bindEleHandler(tagBox)
-  // const now = Date.now()
-  // const intervalTimer = setInterval(function () {
-  //   // 获取所有需要触发的dom
-  //   // 由于存在异步渲染
-  //   if (Date.now() - now >= 8000) {
-  //     clearInterval(intervalTimer)
-  //   }
-  // }, 100)
+  const now = Date.now()
+  const intervalTimer = setInterval(function () {
+    // 获取所有需要触发的dom
+    const tagBox = document.querySelectorAll(`*[${DATA_STATS_MTA_OBJ}]`)
+    bindEleHandler(tagBox)
+    // 由于存在异步渲染
+    if (Date.now() - now >= 8000) {
+      clearInterval(intervalTimer)
+    }
+  }, 100)
 }
