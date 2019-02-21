@@ -54,9 +54,22 @@ export default class MIPShowMore extends CustomElement {
   constructor (...args) {
     super(...args)
 
+    /**
+     * 表示是否运行过 connectedCallback
+     *
+     * @type {boolean}
+     */
+    this.inited = false
+    this.timeoutArray = []
+  }
+
+  /** @override */
+  connectedCallback () {
+    if (this.inited) {
+      return
+    }
     let { element } = this
 
-    this.timeoutArray = []
     // 获取点击按钮，v1.0.0 方法
     this.clickBtn = element.querySelector('[showmorebtn]')
     if (this.clickBtn) {
@@ -87,6 +100,7 @@ export default class MIPShowMore extends CustomElement {
 
     // 是否初使化
     this.initialized = false
+    this.inited = true
 
     // 获取内容显示框，v1.1.0 方法
     if (!this.showBox) {
