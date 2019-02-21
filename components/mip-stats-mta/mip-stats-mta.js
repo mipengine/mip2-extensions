@@ -28,11 +28,7 @@ export default class MIPStatsMta extends CustomElement {
       if (checkMtaConfigIsError({ name, sid, cid })) {
         return
       }
-      /* eslint-disable */
-      const _mtac = {
-        senseQuery: 1
-      };
-      /* eslint-enable */
+
       const mta = document.createElement('script')
       mta.src = `//pingjs.qq.com/h5/stats.js?${version}`
       mta.setAttribute('name', name)
@@ -51,8 +47,7 @@ export default class MIPStatsMta extends CustomElement {
  * 检测统计的配置信息参数
  *
  * @param   {Object} config 统计的配置信息
- * @returns  {boolean} isError 返回检查到的参数合法状态
- *
+ * @returns {boolean} isError 返回检查到的参数合法状态
  */
 function checkMtaConfigIsError (config) {
   const isError = Object.keys(config).some((item) => {
@@ -73,7 +68,7 @@ function checkMtaConfigIsError (config) {
  */
 function getStatsMtaConfig (el) {
   try {
-    let script = el.querySelector('script[type="application/json"]')
+    const script = el.querySelector('script[type="application/json"]')
     if (script) {
       return jsonParse(script.textContent) || {}
     }
@@ -83,7 +78,6 @@ function getStatsMtaConfig (el) {
 }
 
 /**
- *
  * @param {Array<Object>} data mta 自定义采集数据的配置
  *
  * 数组第一个参数表示，事件列表中添加的事件ID，ID需要先在MTA前台配置好才能生效。
@@ -108,26 +102,25 @@ function mtaSend (data) {
   }
 }
 
-// 事件触发
+/**
+ * 事件触发
+ */
 function eventHandler () {
   const tempData = this.getAttribute(DATA_STATS_MTA_OBJ)
   if (!tempData) {
     return
   }
 
-  let statusJson = {}
   try {
-    statusJson = jsonParse(decodeURIComponent(tempData))
+    const statusJson = jsonParse(decodeURIComponent(tempData))
+    const attrData = statusJson.data
+    if (!attrData) {
+      return
+    }
+    mtaSend(attrData)
   } catch (e) {
     logger.warn(this, '事件追踪 data-stats-mta 数据不正确')
-    return
   }
-  if (!statusJson.data) {
-    return
-  }
-
-  const attrData = statusJson.data
-  mtaSend(attrData)
 }
 
 /**
@@ -187,7 +180,9 @@ function bindEleHandler (tagBox) {
   }
 }
 
-// 绑定事件追踪
+/**
+ * 绑定事件追踪
+ */
 function bindEle () {
   const now = Date.now()
   const intervalTimer = setInterval(function () {
