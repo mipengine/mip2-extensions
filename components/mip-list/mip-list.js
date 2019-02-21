@@ -9,9 +9,7 @@ const { fetchJsonp } = window
 const log = util.log('mip-list')
 
 export default class MIPList extends CustomElement {
-  constructor (...args) {
-    super(...args)
-
+  connectedCallback () {
     this.sanitize()
 
     this.pnName = this.element.getAttribute('pn-name') ||
