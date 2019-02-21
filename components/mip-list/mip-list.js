@@ -18,8 +18,13 @@ export default class MIPList extends CustomElement {
       this.element.getAttribute('pnName') ||
       'pn'
     this.pn = this.element.getAttribute('pn') || 1
+    this.rnName = this.element.getAttribute('rn-name') ||
+      this.element.getAttribute('rnName') || 'rn'
+    this.rn = this.element.getAttribute('rn') || 1
     this.timeout = this.element.getAttribute('timeout') || 5000
     this.src = this.element.getAttribute('src') || ''
+    this.endText = this.element.getAttribute('end-text') ||
+      this.element.getAttribute('endText') || '已经加载完毕'
   }
 
   /**
@@ -80,7 +85,7 @@ export default class MIPList extends CustomElement {
     }
 
     if (this.has('preload')) {
-      let url = getUrl(this.src, this.pnName, this.pn++)
+      let url = getUrl(this.src, this.pnName, this.pn++, this.rnName, this.rn, this.dataParams)
       fetchJsonp(url, { timeout: this.timeout })
         .then(res => res.json())
         .then(data => {
@@ -118,10 +123,10 @@ export default class MIPList extends CustomElement {
     if (this.isEnd) {
       return
     }
-
+    this.dataParams = this.getDataSet()
     this.button.innerHTML = '加载中...'
 
-    let url = getUrl(src, this.pnName, this.pn++)
+    let url = getUrl(src, this.pnName, this.pn++, this.rnName, this.rn, this.dataParams)
     fetchJsonp(url, { timeout: this.timeout })
       .then(res => res.json())
       .then(data => {
@@ -129,12 +134,20 @@ export default class MIPList extends CustomElement {
           this.button.innerHTML = '加载失败'
           return
         }
+        // 根据异步数据更新自定义data-XX
+        this.updateDataSet(data.data)
 
         this.renderTemplate(data.data)
         this.button.innerHTML = '点击查看更多'
+
         if (data.data.isEnd) {
           this.isEnd = data.isEnd
-          this.button.innerHTML = '已经加载完毕'
+          if (this.endText === 'empty') {
+            this.button.innerHTML = ''
+            this.button.className = 'mip-list-more'
+          } else {
+            this.button.innerHTML = this.endText
+          }
           this.button.removeAttribute('on')
         }
       })
@@ -155,6 +168,39 @@ export default class MIPList extends CustomElement {
     })
     this.container.appendChild(fragment)
   }
+
+  /**
+ * getDataSet 获取所有 data-xx 自定义属性
+ */
+  getDataSet () {
+    let dataset = this.element.dataset
+    let dataParams = ''
+
+    if (Object.getOwnPropertyNames(dataset).length > 0) {
+      for (let key in dataset) {
+        dataParams += '&' + key + '=' + dataset[key]
+      }
+    }
+    return dataParams
+  }
+
+  /**
+ * updateDataSet
+ *
+ * @param {Object} res 异步返回数据
+ */
+  updateDataSet (res) {
+    let dataset = this.element.dataset
+    if (Object.getOwnPropertyNames(dataset).length > 0) {
+      for (let i in dataset) {
+        for (let j in res) {
+          if (i === j) {
+            dataset[i] = res[j]
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -163,9 +209,12 @@ export default class MIPList extends CustomElement {
  * @param {string} src 原始 url
  * @param {string} pnName 翻页字段名
  * @param {number} pn 页码
+ * @param {string} rnName 翻页步长字段名
+ * @param {number} rn 步长
+ * @param {string} dataParams 自定义data-xx参数
  * @returns {string} 拼接好的 url
  */
-function getUrl (src, pnName, pn) {
+function getUrl (src, pnName, pn, rnName, rn, dataParams) {
   if (!pnName || !pn) {
     return
   }
@@ -173,8 +222,13 @@ function getUrl (src, pnName, pn) {
   if (src.indexOf('?') > 0) {
     url += src[src.length - 1] === '?' ? '' : '&'
     url += pnName + '=' + pn
+    url += '&' + rnName + '=' + rn
   } else {
     url += '?' + pnName + '=' + pn
+    url += '&' + rnName + '=' + rn
+  }
+  if (dataParams) {
+    url += dataParams
   }
   return url
 }

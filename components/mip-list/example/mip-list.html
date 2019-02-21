@@ -82,18 +82,22 @@
     src="./data-has-more.js"
     id="mip-list"
     has-more
-    pn-name="pageNum"
+    pn-name="pn"
+    rn-name="rn"
     pn="2"
+    rn="1"
+    data-normal="1"
     timeout="3000"
+    end-text='数据加载完毕'
     preload
   >
-    <template type="mip-mustache" id="mip-template-id2">
-      <div>
-        <li>name: {{ name }}</li>
-      </div>
-    </template>
+  <template type="mip-mustache" id="mip-template-id2">
+    <div>
+      <li>name: {{ name }}</li>
+    </div>
+  </template>
   </mip-list>
-  <button on="tap:mip-list.more">点击查看更多</button>
+  <button on="tap:mip-list.more" class="mip-list-more">点击查看更多</button>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
   <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
   <script src="/mip-list/mip-list.js"></script>
