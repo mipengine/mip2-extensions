@@ -1,30 +1,47 @@
 /**
- * @file mip gltf格式3D模型展示组件
+ * @file mip gltf 格式 3D 模型展示组件
  * @author guozhuorong@baidu.com
  */
 
 /* global THREE */
 let { CustomElement, util } = MIP
+const { raf } = util.fn
 const log = util.log('mip-3d-gltf')
 
+/**
+ * 布尔类型属性值转换
+ *
+ * @param {string} attr 属性字符串
+ * @returns {boolean} 布尔值
+ */
 function boolFmt (attr) {
   return attr !== 'false'
 }
 
+/**
+ * 数字类型属性值转换
+ *
+ * @param {string} attr 属性字符串
+ * @returns {number} 数字
+ */
 function numberFmt (attr) {
   return parseFloat(attr)
 }
 
+/**
+ * 是否支持 WebGL
+ *
+ */
 function isWebGLAvailable () {
-  try {
-    let canvas = document.createElement('canvas')
-    return !!(window.WebGLRenderingContext &&
-                (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
-  } catch (e) {
-    return false
-  }
+  const canvas = document.createElement('canvas')
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+  return gl && gl instanceof WebGLRenderingContext
 }
 
+/**
+ * 生成错误信息
+ *
+ */
 function getErrorMessage () {
   let message = 'Your browser does not seem to support WebGL'
   let element = document.createElement('div')
@@ -54,7 +71,7 @@ export default class MipGLTF extends CustomElement {
     this.maxPixelRatio = window.devicePixelRatio
 
     /**
-     * 远程3D模型的链接
+     * 远程 3D 模型的地址
      * @type string
      */
     this.src = null
@@ -101,41 +118,13 @@ export default class MipGLTF extends CustomElement {
      */
     this.option = null
 
-    /**
-     * controls对象
-     * @type Object
-     */
     this.controls = null
-
-    /**
-     * camera对象
-     * @type Object
-     */
     this.camera = null
-
-    /**
-     * scene对象
-     * @type Object
-     */
     this.scene = null
-
-    /**
-     * renderer对象
-     * @type Object
-     */
     this.renderer = null
-
-    /**
-     * light对象
-     * @type Object
-     */
     this.light = null
-
-    /**
-     * 展示容器
-     * @type HTMLElement
-     */
     this.container = null
+    this.model = null
 
     this.animate = this.animate.bind(this)
   }
@@ -153,19 +142,20 @@ export default class MipGLTF extends CustomElement {
   }
 
   build () {
-    this.src = this.element.getAttribute('src') || ''
+    let el = this.element
+    this.src = el.getAttribute('src') || ''
     this.alpha = this.getAttr('alpha', boolFmt, false)
     this.antialiasing = this.getAttr('antialiasing', boolFmt, false)
     this.autoRotate = this.getAttr('auto-rotate', boolFmt, false)
-    this.clearColor = this.element.getAttribute('clear-color') || '#FFFFFF'
+    this.clearColor = el.getAttribute('clear-color') || '#FFFFFF'
     this.maxPixelRatio = this.getAttr('max-pixel-ratio', numberFmt, window.devicePixelRatio)
     this.width = this.getAttr('width', numberFmt, window.innerWidth)
     this.height = this.getAttr('height', numberFmt, window.innerHeight)
     this.option = this.getOption()
 
-    this.container = this.element.ownerDocument.createElement('div')
+    this.container = el.ownerDocument.createElement('div')
     this.applyFillContent(this.container, true)
-    this.element.appendChild(this.container)
+    el.appendChild(this.container)
   }
 
   layoutCallback () {
@@ -175,7 +165,7 @@ export default class MipGLTF extends CustomElement {
         import('./OrbitControls')
       ]))
       .then(() => {
-        if (isWebGLAvailable() === false) {
+        if (!isWebGLAvailable()) {
           this.container.appendChild(getErrorMessage())
           return Promise.reject(new Error('WebGL'))
         }
@@ -183,6 +173,9 @@ export default class MipGLTF extends CustomElement {
       })
       .then(() => {
         this.container.appendChild(this.renderer.domElement)
+        this.addEventAction('setModelRotation', (e, args) => {
+          this.model.rotation.set(...this.getModelRotation(args))
+        })
         this.animate()
       })
       .catch(err => {
@@ -194,19 +187,53 @@ export default class MipGLTF extends CustomElement {
       })
   }
 
+  /**
+   * 解析参数字符串，计算转动参数
+   *
+   * @param {string} args 参数字符串
+   * @returns {number[]} 三维转动参数
+   */
+  getModelRotation (args) {
+    let axisNames = ['x', 'y', 'z']
+    let array = args.trim().split(',')
+    return axisNames.map(axis => {
+      let val = -1
+      let min = 0
+      let max = Math.PI * 2
+      let matched = null
+
+      for (let i = 0; i < array.length; i++) {
+        let arg = array[i].trim()
+        matched = arg.match(new RegExp(`^${axis}=(\\d+(\\.\\d+)?)$`))
+        if (matched) {
+          val = parseFloat(matched[1])
+          continue
+        }
+        matched = arg.match(new RegExp(`^${axis}Max=(\\d+(\\.\\d+)?)$`))
+        if (matched) {
+          max = parseFloat(matched[1])
+          continue
+        }
+        matched = arg.match(new RegExp(`^${axis}Min=(\\d+(\\.\\d+)?)$`))
+        if (matched) {
+          min = parseFloat(matched[1])
+        }
+      }
+      if (val === -1) {
+        return this.model.rotation[axis]
+      }
+      return val * max + (1 - val) * min
+    })
+  }
+
   initialize () {
-    this.setupScene()
+    this.scene = new THREE.Scene()
+    this.model = new THREE.Group()
     this.setupRenderer()
     this.setupCamera()
     this.setupControls()
     this.setupLight()
     return this.loadModel()
-  }
-
-  setupScene () {
-    let scene = new THREE.Scene()
-
-    this.scene = scene
   }
 
   setupRenderer () {
@@ -222,10 +249,8 @@ export default class MipGLTF extends CustomElement {
   }
 
   setupCamera () {
-    let camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.25, 20)
-    camera.position.set(-1.8, 0.9, 5)
-
-    this.camera = camera
+    this.camera = new THREE.PerspectiveCamera(50, this.width / this.height, 0.25, 100)
+    this.camera.position.set(-1.8, 0.9, 5)
   }
 
   setupControls () {
@@ -254,7 +279,10 @@ export default class MipGLTF extends CustomElement {
     let loader = new THREE.GLTFLoader()
     return new Promise(resolve => {
       loader.load(this.option['src'], gltf => {
-        this.scene.add(gltf.scene)
+        gltf.scene.children.slice().forEach(child => {
+          this.model.add(child)
+        })
+        this.scene.add(this.model)
         resolve()
       }, undefined, e => {
         console.error(e)
@@ -263,7 +291,7 @@ export default class MipGLTF extends CustomElement {
   }
 
   animate () {
-    requestAnimationFrame(this.animate)
+    raf(this.animate)
     this.controls.update()
     this.renderer.render(this.scene, this.camera)
   }
