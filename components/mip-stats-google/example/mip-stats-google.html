@@ -12,22 +12,22 @@
   </head>
   <body>
     <div>
-        <div class="fo" data-stats-ga-obj='{"type":"click","data":["send", "event", "foo", "click"]}'>
+        <button class="fo" data-stats-ga-obj='{"type":"click","data":["send", "event", "foo", "click"]}'>
           点击发送请求
         </div>
 
 
-      <mip-stats-google-analytics>
+      <mip-stats-google>
         <script type="application/json">
           [
             ["create", "UA-XXXXX-Y", "auto"],
             ["send", "pageview"]
           ]
         </script>
-      </mip-stats-google-analytics>
+      </mip-stats-google>
     </div>
 
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-    <script src="/mip-stats-google-analytics/mip-stats-google-analytics.js"></script>
+    <script src="/mip-stats-google/mip-stats-google.js"></script>
   </body>
 </html>

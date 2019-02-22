@@ -1,6 +1,6 @@
 /**
  * @file analytics.js GA统计组件
- * @author bruce
+ * @author brucetansh@gmail.com
  */
 
 /* global MIP, ga */
@@ -30,15 +30,15 @@ export default class MipStatsGoogle extends CustomElement {
     }
     // Google Analytics 官方写法与eslint冲突，为保持兼容性，暂时关闭eslint
     // https://developers.google.com/analytics/devguides/collection/analyticsjs/
-    /* eslint-disable */
+    /* eslint-disable-next-line */
     window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 
     // 获取token 自定义事件
     let { evConf } = config
 
-    for(let i = 0; i < evConf.length; i++){
-        /* global ga */
-        window.ga.apply(this, evConf[i]);
+    for (let i = 0; i < evConf.length; i++) {
+      /* global ga */
+      window.ga.apply(this, evConf[i])
     }
 
     // 绑定事件
@@ -59,6 +59,7 @@ export default class MipStatsGoogle extends CustomElement {
     let { element } = this
 
     let config = {}
+    config.evConf = []
 
     try {
       let configContent = element.querySelector('script[type="application/json"]').textContent
@@ -66,25 +67,21 @@ export default class MipStatsGoogle extends CustomElement {
       if (configContent) {
         let configData = jsonParse(configContent)
         config.evConf = configData
-        return config
       }
     } catch (e) {
       console.warn('json is illegal')
       console.warn(e)
-      return {
-        evConf: []
-      }
     }
+    return config
   }
 
   // 绑定事件追踪
   bindEle () {
     // 获取所有需要触发的dom
     let tagBox = document.querySelectorAll('*[data-stats-ga-obj]')
-
-    for (let node of tagBox.values()) {
+    for (let i = 0; i < tagBox.length; i++) {
+      let node = tagBox[i]
       let statusData = node.getAttribute('data-stats-ga-obj')
-
       // 检测statusData是否存在
       if (!statusData) {
         continue
@@ -151,7 +148,8 @@ function getConfigArr (configItem) {
   let itemArr = configItem.slice(1, configItem.length - 1).split(',')
   let configArr = []
 
-  for (let item of itemArr) {
+  for (let i = 0; i < itemArr.length; i++) {
+    let item = itemArr[i]
     let arrItem = item.replace(/(^\s*)|(\s*$)/g, '').replace(/'/g, '')
     arrItem = arrItem === 'false' || arrItem === 'true' ? Boolean(arrItem) : arrItem
     configArr.push(arrItem)
@@ -167,6 +165,6 @@ function eventHandler () {
   let statusData = this.getAttribute('data-stats-ga-obj')
   let statusJson = jsonParse(decodeURIComponent(statusData))
   let eventData = getConfigArr(statusJson.data)
+  /* global ga */
   window.ga.apply(this, eventData)
 }
-

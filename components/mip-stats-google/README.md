@@ -1,4 +1,4 @@
-# mip-stats-google-analytics Google Analytics统计
+# mip-stats-google Google Analytics统计
 
 添加GA统计组件，用于统计页面数据。
 
@@ -6,7 +6,7 @@
 ----|----
 类型| 通用
 支持布局|N/S
-所需脚本|https://c.mipcdn.com/extensions/platform/v2/google-analytics.com/mip-stats-google-analytics/mip-stats-google-analytics.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-stats-google/mip-stats-google.js
 
 ## 说明
 
@@ -16,14 +16,14 @@ MIP GA统计组件基于[Google Analytics API](https://developers.google.com/ana
 ### MIP 组件通过 JSON 数据引入
 
 ```html
-<mip-stats-google-analytics>
+<mip-stats-google>
     <script type="application/json">
         [
             ["create", "UA-XXXXX-Y", "auto"],
             ["send", "pageview"]
         ]
     </script>
-</mip-stats-google-analytics>
+</mip-stats-google>
 
 ```
 
@@ -34,9 +34,9 @@ MIP GA统计组件基于[Google Analytics API](https://developers.google.com/ana
 [warning] `data-stats-ga-obj` 要求配置外层为单引号，内层为双引号。或按照下文 **`data-stats-ga-obj` 双引号配置方法** 处理。
 
 ```html
-<div data-stats-ga-obj='{"type":"click","data":["send", "event", "foo", "click"]}'>
+<button class="foo" data-stats-ga-obj='{"type":"click","data":["send", "event", "foo", "click"]}'>
   点击发送请求
-</div>
+</button>
 ```
 
 ### 事件追踪属性
