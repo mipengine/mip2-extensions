@@ -139,7 +139,7 @@ const renderStyleOrScript = (str, reg, tag, attr, container) => {
  * @param  {HTMLElement} customNode 定制化组件节点
  * @param  {HTMLElement} container  装载定制化组件节点的容器
  */
-const moveToFixedLayer = (element, customNode, container) => {
+const moveToFixedLayer = (element, customNode, container, that = null) => {
   let type = customNode.getAttribute('mip-fixed')
   let top = customNode.getAttribute('top') || null
   let bot = customNode.getAttribute('bottom') || null
@@ -147,6 +147,7 @@ const moveToFixedLayer = (element, customNode, container) => {
 
   // 兼容 酷派手机 UC 浏览器
   if (util.platform.isIos()) {
+    that && (that.excr = 10)
     container.remove()
   }
 

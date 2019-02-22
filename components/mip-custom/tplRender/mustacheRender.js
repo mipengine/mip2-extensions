@@ -45,13 +45,20 @@ export default class MustacheRender extends Render {
 
       if (res.element.hasAttribute('mip-fixed') &&
         res.element.getAttribute('mip-fixed') === 'bottom') {
-        dom.moveToFixedLayer(this.element, this.customNode, this.container)
+        dom.moveToFixedLayer(this.element, this.customNode, this.container, this)
         fixedElement.setPlaceholder()
         let zIndex = dom.getCss(res.element.parentNode, 'z-index')
 
         if (zIndex >= this.maxzIndex) {
           this.maxzIndex = zIndex
-          fixedElement.setPlaceholder(dom.getCss(res.element, 'height') - this.excr)
+          let now = Date.now()
+          let timer = setInterval(() => {
+            let height = dom.getCss(res.element, 'height')
+            if (height > 0 || Date.now() - now > 8000) {
+              fixedElement.setPlaceholder(height - this.excr)
+              clearInterval(timer)
+            }
+          }, 16)
         }
       }
     })
