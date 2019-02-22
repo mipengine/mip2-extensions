@@ -135,9 +135,10 @@ const renderStyleOrScript = (str, reg, tag, attr, container) => {
 /**
  * [moveToFixedLayer 需要悬浮的组件外层嵌套mip-fixed并移动到 fixed layer]
  *
- * @param  {HTMLElement} element    mip-custom 节点
- * @param  {HTMLElement} customNode 定制化组件节点
- * @param  {HTMLElement} container  装载定制化组件节点的容器
+ * @param {HTMLElement} element mip-custom 节点
+ * @param {HTMLElement} customNode 定制化组件节点
+ * @param {HTMLElement} container 装载定制化组件节点的容器
+ * @param {Object} that 需要修改一个这个 Object 的一个参数 excr
  */
 const moveToFixedLayer = (element, customNode, container, that = null) => {
   let type = customNode.getAttribute('mip-fixed')
