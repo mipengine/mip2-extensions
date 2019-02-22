@@ -49,10 +49,19 @@ export default class MipAudio extends CustomElement {
     // 继承父类属性、方法
     super(element)
 
+    this.totalTimeShown = false
+    this.inited = false
+  }
+
+  /** @override */
+  connectedCallback () {
+    if (this.inited) {
+      return
+    }
+    this.inited = true
     this.audioAttrs = getAttributeSet(this.element.attributes)
     // 保存用户自定义交互控件
     this.customControls = this.element.querySelector('[controller]') || ''
-    this.totalTimeShown = false
   }
 
   /**
