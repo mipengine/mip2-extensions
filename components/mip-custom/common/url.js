@@ -37,6 +37,9 @@ const getHashParams = () => {
     }
   }
 
+  // pc标识字段
+  params.fromSite = data.getHashData('fromSite')
+
   return params
 }
 
