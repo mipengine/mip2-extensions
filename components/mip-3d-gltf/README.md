@@ -36,6 +36,24 @@ gltf格式的3D模型展示组件
       auto-rotate="true"
       src="https://ampbyexample.com/glTF/DamagedHelmet.glb">
     </mip-3d-gltf>
+
+    <h2>3、通过 setModelRotation 方法转动模型</h2>
+    <div>
+      <button on="tap:test.setModelRotation(x=0.5, xMin=0, xMax=3.14)">点击转动(x=0.5, xMin=0, xMax=3.14)</button>
+    </div>
+    <div>
+      <button on="tap:test.setModelRotation(y=0.2, yMin=2, yMax=4)">点击转动(y=0.2, yMin=2, yMax=4)</button>
+    </div>
+    <div>
+      <button on="tap:test.setModelRotation(z=0.7, zMin=1, zMax=5)">点击转动(z=0.7, zMin=1, zMax=5)</button>
+    </div>
+    <mip-3d-gltf
+      id='test'
+      layout="fixed"
+      width="250"
+      height="450"
+      src="https://ampbyexample.com/glTF/DamagedHelmet.glb">
+    </mip-3d-gltf>
 ```
 
 ## 属性
@@ -129,3 +147,15 @@ gltf格式的3D模型展示组件
 类型：`Boolean`
 
 默认值：false
+
+## 暴露方法
+
+### setModelRotation(x, y, z, xMin, xMax, yMin, yMax, zMin, zMax)
+
+说明：转动模型，转动顺序为 ZYX
+
+- x/y/z - 取值范围为 0～1
+- min/max - 弧度角度，默认值分别为 0/pi*2
+
+计算公式：`xAngle = x*xMax - (1-x)*xMin`
+计算示例：`setModelRotation(x=0.5, xMin=0, xMax=3.14)` 所得 `x` 部分的转动角度为 `0.5*3.14 - (1-0.5)*0 = 1.57`
