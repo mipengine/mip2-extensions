@@ -57,7 +57,8 @@ const addPlaceholder = me => {
  * @param  {HTMLElement} fixedLayer fixed body
  */
 const proxyLink = (el, fixedLayer) => {
-  util.event.delegate(el, 'a', 'click', e => {
+  // 事件监听不能改为箭头函数
+  util.event.delegate(el, 'a', 'click', function (e) {
     if (this.hasAttribute('mip-link') || /clk_info/.test(this.href)) {
       return
     }
