@@ -196,29 +196,20 @@ export default class MipGLTF extends CustomElement {
   getModelRotation (args) {
     let axisNames = ['x', 'y', 'z']
     let array = args.trim().split(',')
-    return axisNames.map(axis => {
-      let val = -1
-      let min = 0
-      let max = Math.PI * 2
-      let matched = null
-
-      for (let i = 0; i < array.length; i++) {
-        let arg = array[i].trim()
-        matched = arg.match(new RegExp(`^${axis}=(\\d+(\\.\\d+)?)$`))
-        if (matched) {
-          val = parseFloat(matched[1])
-          continue
-        }
-        matched = arg.match(new RegExp(`^${axis}Max=(\\d+(\\.\\d+)?)$`))
-        if (matched) {
-          max = parseFloat(matched[1])
-          continue
-        }
-        matched = arg.match(new RegExp(`^${axis}Min=(\\d+(\\.\\d+)?)$`))
-        if (matched) {
-          min = parseFloat(matched[1])
-        }
+    let argObj = {}
+    array.forEach(item => {
+      item = item.trim().split('=')
+      let value = parseFloat(item[1])
+      if (!isNaN(value)) {
+        argObj[item[0]] = value
       }
+    })
+    return axisNames.map(axis => {
+      const {
+        [axis]: val = -1,
+        [axis + 'Min']: min = 0,
+        [axis + 'Max']: max = Math.PI * 2
+      } = argObj
       if (val === -1) {
         return this.model.rotation[axis]
       }
