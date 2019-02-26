@@ -31,7 +31,7 @@ MIP GA统计组件基于[Google Analytics API](https://developers.google.com/ana
 
 事件追踪与百度统计提供的定制化方法相同
 
-[warning] `data-stats-ga-obj` 要求配置外层为单引号，内层为双引号。或按照下文 **`data-stats-ga-obj` 双引号配置方法** 处理。
+[warning] `data-stats-ga-obj` 要求配置外层为单引号，内层为双引号。
 
 ```html
 <button class="foo" data-stats-ga-obj='{"type":"click","data":["send", "event", "foo", "click"]}'>
