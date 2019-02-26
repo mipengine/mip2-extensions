@@ -133,7 +133,7 @@ function bindEleHandler (tagBoxs) {
     }
 
     if (eventType === 'load') {
-      window._hmt.push(data)
+      window.ga.apply(this, getConfigArr(data))
     } else if (eventType === 'click' &&
       target.hasAttribute('on') &&
       target.getAttribute('on').match('tap:') &&
