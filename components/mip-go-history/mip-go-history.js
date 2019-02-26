@@ -1,7 +1,7 @@
 import './index.less'
 
 export default class MIPGoHistory extends MIP.CustomElement {
-  build() {
+  build () {
     let node = this.element
     let address = node.getAttribute('data')
     node.addEventListener('click', () => {
@@ -19,4 +19,3 @@ export default class MIPGoHistory extends MIP.CustomElement {
     })
   }
 }
-
