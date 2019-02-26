@@ -55,7 +55,7 @@
     "glob": "^7.1.2",
     "husky": "^1.0.0-rc.8",
     "mip2": "^1.4.3",
-    "stylelint": "9.6.0",
+    "stylelint": "^9.10.1",
     "stylelint-config-standard": "^18.2.0"
   }
 }
