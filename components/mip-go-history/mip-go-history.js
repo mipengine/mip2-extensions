@@ -13,7 +13,7 @@ export default class MIPGoHistory extends MIP.CustomElement {
         if (referrer) {
           window.history.back()
         } else {
-        
+          window.location.href = address
         }
       }
     })
