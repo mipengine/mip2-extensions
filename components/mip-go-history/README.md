@@ -17,13 +17,13 @@
 ```
 // 代码示例
 ```
-
+   <mip-go-history data="https://www.mipengine.org/">返回</mip-go-history>
 ## 属性
-
+  
 ### 属性1
 
 **说明**：
-
+        返回来源页,没有来源页返回指定网址
 **必选项**：
 
 **单位**：
