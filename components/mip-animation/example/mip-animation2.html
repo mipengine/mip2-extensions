@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    .inner-01,
+    .inner-02,
+    .inner-03,
+    .inner-04,
+    .inner-05,
+    .inner-06,
+    .inner-07,
+    .inner-071,
+    .inner-08,
+    .inner-09,
+    .inner-10 {
+      width: 20px;
+      height: 40px;
+      background: red;
+      margin-bottom: 5px;
+    }
+
+    </style>
+  </head>
+  <body>
+    <h2>width()，width('.inner-01')，height(closest('.inner-02'))，效果是移动长度为选中元素的宽度或高度</h2>
+    <div class="inner-01"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-01",
+          "keyframes": [
+            {
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(width())"
+            }
+          ],
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+    <div class="inner-02"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-02",
+          "keyframes": [
+            {
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(width('.inner-01'))"
+            }
+          ],
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+    <div class="inner-03"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-03",
+          "keyframes": [
+            {
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(height(closest('.inner-03')))"
+            }
+          ],
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+    <h2>var()，取变量值</h2>
+    <div class="inner-04"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-04",
+          "--y": "40deg",
+          "--x": "calc(var(--y) + 10 * 14deg)",
+          "--z": 0.5,
+          "--w": 2,
+          "--v": 1000,
+          "iterations": "var(--w)",
+          "iterationStart": "var(--z)",
+          "delay": "var(--v)",
+          "keyframes": {
+            "transform": "translateX(100px)"
+          },
+          "duration": 2000
+        }
+      </script>
+    </mip-animation>
+
+    <h2>num()，去除单位，这里的 delay 是去除单位后的 1000</h2>
+    <div class="inner-05"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-05",
+          "delay": "num(1000px)",
+          "keyframes": {
+            "transform": "translateX(100px)"
+          },
+          "duration": 2000
+        }
+      </script>
+    </mip-animation>
+
+    <h2>rand()，效果是随机 100px-200px</h2>
+    <div class="inner-06"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-06",
+          "keyframes": {
+            "transform": "translateX(rand(100px, 200px))"
+          },
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+    <div class="inner-07"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-07",
+          "keyframes": {
+            "transform": "translateX(calc(rand() * 200px))"
+          },
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+    <div class="inner-071"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-071",
+          "keyframes": {
+            "transform": "translateX(calc(rand(50px, 50vw) * 2))"
+          },
+          "duration": 2000
+        }
+      </script>
+    </mip-animation>
+    <h2>index()，第一个不动，第二个动</h2>
+    <div class="inner-08"></div>
+    <div class="inner-08"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-08",
+          "keyframes": [
+            {
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(calc(index() * 200px))"
+            }
+          ],
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+    <h2>calc()</h2>
+    <div class="inner-09"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-09",
+          "keyframes": [
+            {
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translate(calc(index() * 1px + num(10px)* 10px + rand() * 20px), calc(index() * 1px + num(10px)* 10px + rand() * 20px))"
+            }
+          ],
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+
+    <h2>transform有多个效果</h2>
+    <div class="inner-10"></div>
+    <mip-animation trigger="visibility">
+      <script type="application/json">
+        {
+          "selector": ".inner-10",
+          "keyframes": {
+              "transform": "translate(calc(index() * 1px + num(10px)* 10px + rand() * 20px), calc(index() * 1px + num(10px)* 10px + rand() * 20px)) rotate(calc(num(90px)*1deg))"
+          },
+          "duration": 1000
+        }
+      </script>
+    </mip-animation>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-animation/mip-animation.js"></script>
+  </body>
+</html>

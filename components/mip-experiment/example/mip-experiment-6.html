@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    button {
+      background-color: black;
+      display: block;
+      margin: 10px;
+      padding: 20px;
+    }
+
+    body[mip-x-button-color6=red] #btn01 {
+      background-color: red;
+    }
+
+    body[mip-x-button-color6=grey] #btn01 {
+      background-color: #888888;
+    }
+  </style>
+</head>
+<body>
+  <h1>与百度统计配合使用</h1>
+  <mip-stats-baidu>
+    <script type="application/json">
+      {
+        "token": "02890d4a309827eb62bc3335b2b28f7f"
+      }
+    </script>
+  </mip-stats-baidu>
+  <mip-experiment layout="nodisplay" class="mip-hidden">
+    <script type="application/json" for="mip-experiment">
+      {
+        "button-color6": {
+          "sticky": false,
+          "descri": "设置按钮背景色,红-灰-黑（默认）",
+          "variants": {
+            "red": 30,
+            "grey": 30
+          },
+          "baidu-stats": [
+            ["window", "load"],
+            ["#btn01", "click", "2.23"]
+          ]
+        }
+      }
+    </script>
+    <p>设置按钮背景色,红（30%）-灰（30%）-黑（默认40%）</p>
+    <p>每次刷新重新分组</p>
+    <p>点击按钮发送百度统计日志:</p>
+    <pre>https://hm.baidu.com/hm.gif?cc=0&ck=1&cl=24-bit&ds=411x731&vl=731&ep=%23btn01__click*mip-x-button-color6%3Dred*2.23&et=4&ja=0&ln=zh-cn&lo=0&lt=1547628450&rnd=215121273&si=02890d4a309827eb62bc3335b2b28f7f&su=http%3A%2F%2Flocalhost%3A8111%2Fcomponents%2Fmip-experiment%2Fexample%2Fmip-experiment-6.html&v=1.2.38&lv=2&api=8_0</pre>
+    <button id="btn01">修改背景色</button>
+  </mip-experiment>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-stats-baidu/mip-stats-baidu.js"></script>
+  <script src="/mip-experiment/mip-experiment.js"></script>
+</body>
+
+</html>
