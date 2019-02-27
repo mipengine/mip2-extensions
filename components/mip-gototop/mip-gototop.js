@@ -17,7 +17,6 @@ export default class MIPGoToTop extends CustomElement {
     this.unit = out[1]
     this.originalThreshold = out[0]
     this.threshold = convertToPixel(out[0], out[1])
-    this.delay = parseInt(this.element.getAttribute('delay'), 10) || 0
   }
 
   /**
