@@ -26,6 +26,14 @@ function hyphenate (str) {
 export default class MIPMap extends CustomElement {
   constructor (...args) {
     super(...args)
+
+    this.map = null
+    this.point = {}
+    this.marker = null
+    this.currentMarker = null
+  }
+
+  connectedCallback () {
     let el = this.element
     let config = {}
 
@@ -43,11 +51,6 @@ export default class MIPMap extends CustomElement {
     this.hideMap = this.getBoolAttribute('hideMap')
     this.getPosition = this.getBoolAttribute('getPosition')
     this.dataOnlyGetSdk = this.getBoolAttribute('dataOnlyGetSdk')
-
-    this.map = null
-    this.point = {}
-    this.marker = null
-    this.currentMarker = null
   }
 
   /**
