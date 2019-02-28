@@ -7,17 +7,20 @@ const ANIMATION_TIMEOUT = 300
 export default class MIPSidebar extends CustomElement {
   constructor (...args) {
     super(...args)
+    this.side = 'left'
+    this.isOpen = false
+    this.running = false
+    this.bodyOverflow = 'hidden'
+    this.mask = null
+  }
+
+  connectedCallback () {
     this.side = this.element.getAttribute('side')
     // side 必须是 left 或者 right，默认是 left
     if (this.side !== 'left' && this.side !== 'right') {
       this.side = 'left'
       this.element.setAttribute('side', this.side)
     }
-
-    this.isOpen = false
-    this.running = false
-    this.bodyOverflow = 'hidden'
-    this.mask = null
   }
 
   toggle (e) {
