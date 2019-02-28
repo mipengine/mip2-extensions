@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <title>MIP page</title>
-    <link rel="canonical" href="对应的原页面地址">
+    <link rel="canonical" href="https://www.mipengine.org">
     <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
     <style mip-custom>
     /* 自定义样式 */
@@ -13,10 +13,11 @@
       height:150px;
       border-bottom: 1px solid #aaa;
     }
-    .absoluteStyle {
+    .absolute-style {
       padding: 20px;
       background: yellow;
       box-sizing: border-box;
+      opacity: 0.8;
     }
     p {
       text-align: left;
@@ -24,15 +25,35 @@
       margin-top: 20px;
       color: green;
     }
+
+    .fixed-active {
+      background: orange;
+      opacity: 1;
+    }
     </style>
   </head>
   <body>
     <p>基本用法</p>
-    <mip-semi-fixed id="semi-fixed" fixedClassNames="fixedStyle">
-      <div mip-semi-fixed-container class="absoluteStyle">
+    <mip-semi-fixed id="semi-fixed" fixed-class-names="fixed-active">
+      <div mip-semi-fixed-container class="absolute-style">
         距离顶部0px时自动贴顶 magic
       </div>
     </mip-semi-fixed>
+
+    <!--以下为占位符，仅用于查看组件效果-->
+    <div class="placeholder">小毛驴滴滴答答，</div>
+    <div class="placeholder">倚天剑伴我走天涯。 </div>
+    <div class="placeholder">大家都说我因为爱着杨过大侠，</div>
+    <div class="placeholder">才在峨眉山上出了家， </div>
+    <div class="placeholder">其实我只是爱上了峨眉山上的云和霞，</div>
+    <div class="placeholder">像极了十六岁那年的烟花。</div>
+
+    <mip-semi-fixed id="semi-fixed1" threshold="50" fixedClassNames="fixed-active">
+      <div mip-semi-fixed-container class="absolute-style">
+        距离顶部50px时自动贴顶 magic
+      </div>
+    </mip-semi-fixed>
+
     <!--以下为占位符，仅用于查看组件效果-->
     <div class="placeholder">小毛驴滴滴答答，</div>
     <div class="placeholder">倚天剑伴我走天涯。 </div>
@@ -42,8 +63,8 @@
     <div class="placeholder">像极了十六岁那年的烟花。</div>
 
     <p>设置 `fixed` 时距离页面顶部的阈值</p>
-    <mip-semi-fixed id="semi-fixed2" threshold="100" fixedClassNames="fixedStyle">
-      <div mip-semi-fixed-container class="absoluteStyle">
+    <mip-semi-fixed id="semi-fixed2" threshold="100" fixed-class-names="fixed-active">
+      <div mip-semi-fixed-container class="absolute-style">
         距离顶部100px时停下
       </div>
     </mip-semi-fixed>

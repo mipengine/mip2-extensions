@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  </head>
+  <body>
+    <script mip-access type="application/json">
+      {
+          "authorization": "https://raw.githubusercontent.com/mipengine/mip2-extensions/master/components/mip-access/example/authorization.json?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
+          "pingback": "https://raw.githubusercontent.com/mipengine/mip2-extensions/master/components/mip-access/example/authorization.json?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
+          "login": {
+            "login": "https://raw.githubusercontent.com/mipengine/mip2-extensions/master/components/mip-access/example/login?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM/login?rid=READER_ID&url=CANONICAL_URL",
+            "logout": "https://raw.githubusercontent.com/mipengine/mip2-extensions/master/components/mip-access/example/logout"
+          },
+          "authorizationFallbackResponse": {
+              "error": true,
+              "loggedIn": false,
+              "powerUser": false
+          }
+      }
+    </script>
+    <section>
+      <p>Welcome to the website! This section is visible to all.</p>
+    </section>
+    <section mip-access="loggedIn">
+      <p>This section is only visible if you're logged in. Welcome back!</p>
+    </section>
+    <section mip-access="loggedIn AND powerUser">
+      <p>This section is only visible if you're logged in
+        <em>and</em> classified as "power user".</p>
+    </section>
+    <section mip-access="NOT loggedIn">
+      <p>This section is only visible if you're not logged in.</p>
+    </section>
+    <section
+      mip-access="NOT loggedIn"
+      mip-access-hide
+      role="button"
+      tabindex="0">
+      <a on="tap:mip-access.login">Login</a>
+    </section>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-access/mip-access.js"></script>
+  </body>
+</html>

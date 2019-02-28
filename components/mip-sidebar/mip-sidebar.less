@@ -1,0 +1,47 @@
+mip-sidebar {
+  position: fixed !important;
+  top: 0;
+  max-height: 100% !important;
+  height: 100%;
+  max-width: 80% !important;
+  background-color: #efefef;
+  min-width: 45px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  z-index: 9999 !important;
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+  display: none;
+  transition: transform 233ms cubic-bezier(0, 0, 0.21, 1);
+
+  &[side=left] {
+    left: 0 !important;
+    transform: translateX(-100%) !important;
+  }
+
+  &[side=right] {
+    right: 0 !important;
+    transform: translateX(100%) !important;
+  }
+
+  &[side].show {
+    transform: translateX(0) !important;
+  }
+}
+
+.mip-sidebar-mask {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-image: none !important;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 9998 !important;
+  transition: background-color 0.5s 0.05s;
+  display: none;
+
+  &.show {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}

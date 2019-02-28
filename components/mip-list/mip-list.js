@@ -1,107 +1,133 @@
 /**
  * @file mip-list 组件
- * @author zhangqichao02@baidu.com
+ * @author sekiyika(pengxing@baidu.com)
  */
 
-let {
-  CustomElement,
-  templates
-} = MIP
+const { CustomElement, templates, util } = MIP
+const { fetchJsonp } = window
 
-let {
-  fetchJsonp
-} = window
+const log = util.log('mip-list')
 
-export default class MipList extends CustomElement {
-  constructor (...args) {
-    super(...args)
-    this.pnName = this.element.getAttribute('pnName') || 'pn'
+export default class MIPList extends CustomElement {
+  connectedCallback () {
+    this.sanitize()
+
+    this.pnName = this.element.getAttribute('pn-name') ||
+      this.element.getAttribute('pnName') ||
+      'pn'
     this.pn = this.element.getAttribute('pn') || 1
     this.timeout = this.element.getAttribute('timeout') || 5000
     this.src = this.element.getAttribute('src') || ''
   }
 
+  /**
+   * shortcut for hasAttribute
+   *
+   * @param {string} name attr name
+   * @returns {boolean} has attribute
+   */
+  has (name) {
+    return this.element.hasAttribute(name)
+  }
+
+  /**
+   * 校验参数
+   */
+  sanitize () {
+    if (this.has('pnName')) {
+      log.warn(this.element, '[Deprecated] pnName 属性不允许再使用，请使用 \'pn-name\' 代替')
+    }
+  }
+
+  /**
+   * 构造元素，只会运行一次
+   *
+   * @override
+   */
   firstInviewCallback () {
-    let {
-      element
-    } = this
     this.container = document.createElement('div')
-    element.appendChild(this.container)
-    if (!this.container.hasAttribute('role')) {
-      this.container.setAttribute('role', 'list')
+    let { element, container } = this
+
+    // this.applyFillContent(container)
+    element.appendChild(container)
+
+    if (!container.hasAttribute('role')) {
+      container.setAttribute('role', 'list')
     }
 
     // 同步配置数据
-    if (element.hasAttribute('synchronous-data')) {
+    if (this.has('synchronous-data')) {
       let script = element.querySelector('script[type="application/json"]')
-      let data = script ? JSON.parse(script.textContent.toString()) : null
+      let data = script ? util.jsonParse(script.textContent.toString()) : null
       this.renderTemplate(data)
       return
     }
 
     // 异步获取数据
-    let url = this.src
     if (!this.src) {
-      console.error('mip-list 的 src 属性不能为空')
+      log.error(this.element, 'mip-list 的 src 属性不能为空')
       return
     }
 
     // 有查看更多属性的情况
-    if (element.hasAttribute('has-more')) {
-      this.addEventAction('more', function (e) {
+    if (this.has('has-more')) {
+      this.addEventAction('more', e => {
         this.button = e.target
         this.pushResult(this.src)
       })
     }
 
-    if (element.hasAttribute('preLoad')) {
-      url = getUrl(this.src, this.pnName, this.pn++)
-      fetchJsonp(url, {
-        jsonpCallback: 'callback',
-        timeout: this.timeout
-      }).then(res => {
-        return res.json()
-      }).then(data => {
-        if (!data.status && data.data) {
-          this.renderTemplate(data.data)
-        }
-      })
+    if (this.has('preload')) {
+      let url = getUrl(this.src, this.pnName, this.pn++)
+      fetchJsonp(url, { timeout: this.timeout })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.status && data.data) {
+            this.renderTemplate(data.data)
+          }
+        })
     }
   }
 
   /**
-   * renderTemplate 获取模版
+   * renderTemplate 获取模板
    *
    * @param {Object} data 渲染数据
    */
   renderTemplate (data) {
-    if (data && data.items && data.items instanceof Array) {
-      templates.render(
-        this.element, data.items
-      ).then(render.bind(this))
-    } else {
-      console.error('数据不符合规范')
+    if (!data || !data.items || !(data.items instanceof Array)) {
+      log.error(this.element, data, '数据不符合规范')
+      return
     }
+
+    templates
+      .render(this.element, data.items)
+      .then(html => {
+        this.render(html)
+      })
   }
 
   /**
-   * pushResult push结果函数
+   * pushResult push 结果函数
    *
-   * @param {string} src ajax请求的url
+   * @param {string} src ajax 请求的 url
    */
   pushResult (src) {
     if (this.isEnd) {
       return
     }
+
     this.button.innerHTML = '加载中...'
+
     let url = getUrl(src, this.pnName, this.pn++)
-    fetchJsonp(url, {
-      jsonpCallback: 'callback',
-      timeout: this.timeout
-    }).then(res => {
-      return res.json()
-    }).then(data => {
-      if (!data.status && data.data) {
+    fetchJsonp(url, { timeout: this.timeout })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status || !data.data) {
+          this.button.innerHTML = '加载失败'
+          return
+        }
+
         this.renderTemplate(data.data)
         this.button.innerHTML = '点击查看更多'
         if (data.data.isEnd) {
@@ -109,10 +135,23 @@ export default class MipList extends CustomElement {
           this.button.innerHTML = '已经加载完毕'
           this.button.removeAttribute('on')
         }
-      } else {
-        this.button.innerHTML = '加载失败'
-      }
+      })
+  }
+
+  /**
+   * render dom 渲染函数
+   *
+   * @param {Array} htmls html 对象数组
+   */
+  render (htmls) {
+    let fragment = document.createDocumentFragment()
+    htmls.forEach(html => {
+      let node = document.createElement('div')
+      node.innerHTML = html
+      node.setAttribute('role', 'listitem')
+      fragment.appendChild(node)
     })
+    this.container.appendChild(fragment)
   }
 }
 
@@ -125,6 +164,9 @@ export default class MipList extends CustomElement {
  * @returns {string} 拼接好的 url
  */
 function getUrl (src, pnName, pn) {
+  if (!pnName || !pn) {
+    return
+  }
   let url = src
   if (src.indexOf('?') > 0) {
     url += src[src.length - 1] === '?' ? '' : '&'
@@ -133,20 +175,4 @@ function getUrl (src, pnName, pn) {
     url += '?' + pnName + '=' + pn
   }
   return url
-}
-
-/**
- * render dom渲染函数
- *
- * @param {Array} htmls html对象数组
- */
-function render (htmls) {
-  let fragment = document.createElement('div')
-  for (let html of htmls) {
-    let node = document.createElement('div')
-    node.innerHTML = html
-    node.setAttribute('role', 'listitem')
-    fragment.appendChild(node)
-  }
-  this.container.appendChild(fragment)
 }
