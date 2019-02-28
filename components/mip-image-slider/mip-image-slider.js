@@ -63,6 +63,16 @@ export default class MIPImageSlider extends CustomElement {
     this.rightContainer = null
 
     this.position = null
+
+    // 移动条
+    this.barWrapper = null
+    // 箭头提示
+    this.leftArrow = null
+    this.rightArrow = null
+  }
+
+  /** @override */
+  connectedCallback () {
     this.disableHintReappear = this.element.hasAttribute('disable-hint-reappear')
     let initialPosition = +this.element.getAttribute('initial-slider-position')
     this.initialSliderPosition = this.element.hasAttribute('initial-slider-position')
@@ -70,12 +80,6 @@ export default class MIPImageSlider extends CustomElement {
       : 0.5
     this.stepSize = this.element.hasAttribute('step-size')
       ? (+this.element.getAttribute('step-size') || 0.1) : 0.1
-
-    // 移动条
-    this.barWrapper = null
-    // 箭头提示
-    this.leftArrow = null
-    this.rightArrow = null
   }
   /**
    * 初始化 4 个关键 Node，中间的移动条，左右箭头
