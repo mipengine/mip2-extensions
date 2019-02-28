@@ -351,7 +351,7 @@ export default class MipAudio extends CustomElement {
     // Gather metadata
     const artist = element.getAttribute('artist') || ''
     const title = element.getAttribute('title') ||
-                  element.getAttribute('aria-label') ||
+                  // element.getAttribute('aria-label') ||
                   document.title ||
                   ''
     const album = element.getAttribute('album') || ''
