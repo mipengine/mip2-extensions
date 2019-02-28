@@ -1,8 +1,7 @@
 const { CustomElement, util } = MIP
 
 export default class MIPToggle extends CustomElement {
-  constructor (...args) {
-    super(...args)
+  connectedCallback () {
     let el = this.element
     this.hideTimeout = this.parseTimeout(el.getAttribute('hidetimeout'))
     this.display = el.getAttribute('display') || 'block'
