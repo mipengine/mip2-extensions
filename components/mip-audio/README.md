@@ -123,12 +123,6 @@
 
 布尔属性，如果存在，默认将 `audio` 标签静音
 
-#### controlsList
-
-可以参考 MDN 的文档，[controlsList](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLMediaElement/controlsList)，该属性不被所有浏览器支持，兼容性请看上面文档的浏览器兼容性段落。
-
-[info]如果开发者编写自定义皮肤控件，那么 `controlsList` 则不生效
-
 ### Media Session 相关属性
 
 `mip-audio` 标签实现了 [`Media Session API`](https://developers.google.cn/web/updates/2017/02/media-session)，允许开发者指定一些关于音频本身的信息，这些信息会被用于在一些设备播放时显示的通知上，如下图所示
