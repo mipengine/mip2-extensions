@@ -33,8 +33,8 @@ function needNoCache (pageType) {
         }
       })
   } else {
-    isNeedNoCache = false
-    pageNoCacheType = []
+    isNeedNoCache = true
+    pageNoCacheType = pageType
   }
   // 特殊处理
   pageNoCacheType = deletePage(pageNoCacheType)
@@ -45,13 +45,14 @@ function needNoCache (pageType) {
 }
 /**
  * 去掉 page 和 page_1，主要是这个 page 类型，每次都会被算进来，nocache 需要去掉这个类型
+ * 2019-2-28: 增加 page_1，加上这个配置不会有影响
  *
  * @param {Array} pageNoCacheType 当前页面的类型
  * @returns {Array} 去掉相应内容的数组
  */
 function deletePage (pageNoCacheType) {
   return pageNoCacheType.reduce((acc, val) => {
-    if (val !== 'page' && val !== 'page_1') {
+    if (val !== 'page') {
       acc.push(val)
     }
     return acc
