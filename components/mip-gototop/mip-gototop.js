@@ -7,9 +7,13 @@ const MIP_GOTOTOP_SHOW_CLS = 'mip-gototop-show'
 export default class MIPGoToTop extends CustomElement {
   constructor (...args) {
     super(...args)
+    this.scrollTop = 0
+  }
+
+  /** @override */
+  connectedCallback () {
     this.threshold = this.element.getAttribute('threshold') || 200
     this.delay = parseInt(this.element.getAttribute('delay'), 10) || 0
-    this.scrollTop = 0
   }
 
   /**

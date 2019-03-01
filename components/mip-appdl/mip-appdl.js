@@ -5,8 +5,8 @@ const { CustomElement, util } = MIP
 const log = util.log('mip-appdl')
 
 export default class MIPAppdl extends CustomElement {
-  constructor (...args) {
-    super(...args)
+  /** @override */
+  connectedCallback () {
     let el = this.element
     this.src = el.getAttribute('src') || ''
     this.downBtnText = el.getAttribute('downbtntext') || ''
