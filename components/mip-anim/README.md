@@ -35,7 +35,7 @@
 <mip-anim layout="fixed" width=210 height=210 src="http://boscdn.baidu.com/v1/assets/mipengine/sample.gif" alt="an animation"></mip-anim>
 ```
 
-### 没传 GIF 图，只显示默认图
+### 没传 GIF 图
 
 ```html
 <mip-anim layout="fixed" width=210 height=210  alt="an animation">
@@ -45,29 +45,29 @@
 
 ## 属性
 
-#### src
+### src
 
 与 `img` 标签的 `src` 属性相似。其值必须是指向可公开缓存图像文件的 URL。MIP-Cache 可能会对 `src` 进行改写，使其指向缓存版本。
 
-#### srcset
+### srcset
 
 与 `img` 标签的 `srcset` 属性相同。
 
-#### alt
+### alt
 
 图像的替代文本，与 `img` 标签的 `alt` 属性相同。
 
-#### attribution
+### attribution
 
-表明图像来源的文本，例如 `attribution="CC courtesy of Cats on Flicker"`。
+表明图像来源的文本。
 
-#### height 和 width
+### height 和 width
 
-显示指明图像大小，MIP Runtime 无需加载资源就能够决定图像的宽高比。
+显示指明图像大小，让 MIP Runtime 无需加载资源就能够决定图像的宽高比。
 
-#### 常见属性
+### 常见属性
 
-MIP 组件共有的扩展属性。
+MIP 组件共有的扩展属性，如 `on`、`sizes` 等。
 
 ## 样式
 
