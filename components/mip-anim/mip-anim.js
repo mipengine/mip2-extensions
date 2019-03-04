@@ -61,15 +61,17 @@ function loadPromise (element) {
  *
  * @param {!Element} element
  * @param {boolean} opt
+ * @param {boolean} isPlaceholder
  */
-function toggle (element, opt) {
+function toggle (element, opt, isPlaceholder) {
+  let hideClass = isPlaceholder ? 'mip-hidden' : 'mip-hide'
   if (opt === undefined) {
-    opt = element.classList.contains('mip-hide')
+    opt = element.classList.contains(hideClass)
   }
   if (opt) {
-    element.classList.remove('mip-hide')
+    element.classList.remove(hideClass)
   } else {
-    element.classList.add('mip-hide')
+    element.classList.add(hideClass)
   }
 }
 
@@ -124,8 +126,8 @@ export default class MIPAnim extends CustomElement {
   }
 
   updateInViewport (inViewport) {
-    this.placeholder && toggle(this.placeholder, !inViewport)
-    toggle(this.img, inViewport)
+    this.placeholder && toggle(this.placeholder, !inViewport, true)
+    toggle(this.img, inViewport, false)
   }
 
   // 兼容 v1 默认将 mip-img 作为 placeholder 的情况
