@@ -43,42 +43,13 @@ function propagateAttributes (src, dest, attrs) {
 }
 
 /**
- * Finds the last child element that satisfies the callback.
- *
- * @param {!Element} parent
- * @param {function(!Element):boolean} callback
- * @return {?Element}
- */
-function lastChildElement (parent, callback) {
-  for (let child = parent.lastElementChild; child; child = child.previousElementSibling) {
-    if (callback(child)) {
-      return child
-    }
-  }
-  return null
-}
-
-/**
- * check elements that has a native placeholder property
- * like input and textarea
- *
- *  @param {!Element} element
- */
-function isInputPlaceholder (element) {
-  return 'placeholder' in element
-}
-
-/**
- * promise 在元素 load 事件触发时 resolve
+ * promise 在元素加载完成时 resolve
  *
  * @param {!Element} element 待加载元素
  * @returns {!Promise} promise
  */
 function loadPromise (element) {
   return new Promise(resolve => {
-    if (!element.hasAttribute('src')) {
-      resolve(element)
-    }
     element.onload = () => {
       resolve(element)
     }
@@ -102,7 +73,7 @@ function toggle (element, opt) {
   }
 }
 
-export default class MipAnim extends CustomElement {
+export default class MIPAnim extends CustomElement {
   build () {
     let el = this.element
     this.hasLoaded = false
@@ -119,7 +90,7 @@ export default class MipAnim extends CustomElement {
       log.error('设置 role=img 会导致屏幕阅读器不可用，请使用 alt 或者 ARIA 属性')
     }
 
-    // 如果有 placeholder，img 先隐藏
+    // 如果有 placeholder，img 先隐藏，显示 placeholder
     if (this.placeholder) {
       toggle(this.img, false)
     }
@@ -157,9 +128,14 @@ export default class MipAnim extends CustomElement {
     toggle(this.img, inViewport)
   }
 
+  // 兼容 v1 默认将 mip-img 作为 placeholder 的情况
   getPlaceholder () {
-    return lastChildElement(this, el => {
-      return el.hasAttribute('placeholder') && !isInputPlaceholder(el)
-    }) || this.element.querySelector('mip-img')
+    let el = this.element
+    let placeholder = el.getPlaceholder()
+    if (!placeholder) {
+      placeholder = el.querySelector('mip-img')
+      log.warn("请使用 'placeholder' 属性指定占位符！")
+    }
+    return placeholder
   }
 }

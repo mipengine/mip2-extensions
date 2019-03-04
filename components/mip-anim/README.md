@@ -35,11 +35,11 @@
 <mip-anim layout="fixed" width=210 height=210 src="http://boscdn.baidu.com/v1/assets/mipengine/sample.gif" alt="an animation"></mip-anim>
 ```
 
-### 没传 GIF 图
+### 不指定 URL
 
 ```html
 <mip-anim layout="fixed" width=210 height=210  alt="an animation">
-   <mip-img class="background" layout="fixed-height" width=210 height=210 src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
+   <mip-img placeholder class="background" layout="fixed-height" width=210 height=210 src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
 </mip-anim>
 ```
 
