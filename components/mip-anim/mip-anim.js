@@ -72,14 +72,34 @@ function isInputPlaceholder (element) {
  * promise 在元素 load 事件触发时 resolve
  *
  * @param {!Element} element 待加载元素
- * @returns {!Promise<Element>} promise
+ * @returns {!Promise} promise
  */
 function loadPromise (element) {
   return new Promise(resolve => {
+    if (!element.hasAttribute('src')) {
+      resolve(element)
+    }
     element.onload = () => {
       resolve(element)
     }
   })
+}
+
+/**
+ * Shows or hides the specified element.
+ *
+ * @param {!Element} element
+ * @param {boolean} opt
+ */
+function toggle (element, opt) {
+  if (opt === undefined) {
+    opt = element.classList.contains('mip-hide')
+  }
+  if (opt) {
+    element.classList.remove('mip-hide')
+  } else {
+    element.classList.add('mip-hide')
+  }
 }
 
 export default class MipAnim extends CustomElement {
@@ -99,25 +119,12 @@ export default class MipAnim extends CustomElement {
       log.error('设置 role=img 会导致屏幕阅读器不可用，请使用 alt 或者 ARIA 属性')
     }
 
-    // 如果有 placeholder，mip-anim 先隐藏
+    // 如果有 placeholder，img 先隐藏
     if (this.placeholder) {
-      el.classList.add('mip-hidden')
+      toggle(this.img, false)
     }
 
     el.appendChild(this.img)
-  }
-
-  layoutCallback () {
-    propagateAttributes(this.element, this.img, LAYOUT_ATTRIBUTES)
-    guaranteeSrcForSrcsetUnsupportedBrowsers(this.img)
-    return loadPromise(this.img)
-  }
-
-  unlayoutCallback () {
-    // 释放内存
-    this.img.src = SRC_PLACEHOLDER
-    this.img.srcset = SRC_PLACEHOLDER
-    this.hasLoaded = false
   }
 
   viewportCallback (inViewport) {
@@ -127,14 +134,27 @@ export default class MipAnim extends CustomElement {
     this.updateInViewport(inViewport)
   }
 
-  firstInviewCallback () {
+  layoutCallback () {
+    propagateAttributes(this.element, this.img, LAYOUT_ATTRIBUTES)
+    guaranteeSrcForSrcsetUnsupportedBrowsers(this.img)
+    return loadPromise(this.img)
+  }
+
+  firstLayoutCompleted () {
     this.hasLoaded = true
     this.updateInViewport(true)
   }
 
+  unlayoutCallback () {
+    // 释放内存
+    this.img.src = SRC_PLACEHOLDER
+    this.img.srcset = SRC_PLACEHOLDER
+    this.hasLoaded = false
+  }
+
   updateInViewport (inViewport) {
-    this.placeholder && this.placeholder.classList.toggle('mip-hidden', inViewport)
-    this.element.classList.toggle('mip-hidden', !inViewport)
+    this.placeholder && toggle(this.placeholder, !inViewport)
+    toggle(this.img, inViewport)
   }
 
   getPlaceholder () {

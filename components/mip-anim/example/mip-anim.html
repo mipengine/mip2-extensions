@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    .code {
+      margin: 20px 10px;
+      padding: 2px 10px;
+      color: #657b83;
+      border: 1px solid #ccc;
+      overflow-x: auto;
+      border-radius: 3px 3px 3px 3px;
+      font-size: 13px;
+      line-height: 19px;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,.05), 0 1px 4px 0 rgba(0,0,0,.08), 0 3px 1px -2px rgba(0,0,0,.2);
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>有 placeholder 子元素</h2>
+
+<pre class="code">&lt;mip-anim
+  width=&quot;300&quot; height=&quot;200&quot;
+  src=&quot;http://boscdn.baidu.com/v1/assets/mipengine/sample.gif&quot;
+  alt=&quot;动图加载失败&quot;&gt;
+  &lt;mip-img class=&quot;background&quot; width=&quot;210&quot; height=&quot;210&quot;
+    src=&quot;http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg&quot;
+    alt=&quot;图片加载失败&quot;&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-anim&gt;</pre>
+
+<div>
+  <mip-anim width="300" height="200" src="http://boscdn.baidu.com/v1/assets/mipengine/sample.gif" alt="动图加载失败">
+    <mip-img class="background" width="210" height="210" src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"
+      alt="图片加载失败">
+    </mip-img>
+  </mip-anim>
+</div>
+
+<h2>无 placeholder 子元素</h2>
+
+<pre class="code">&lt;mip-anim
+  width=&quot;300&quot; height=&quot;200&quot;
+  src=&quot;http://boscdn.baidu.com/v1/assets/mipengine/sample.gif&quot;
+  alt=&quot;动图加载失败&quot;&gt;
+&lt;/mip-anim&gt;</pre>
+
+<div>
+  <mip-anim width="300" height="200" src="http://boscdn.baidu.com/v1/assets/mipengine/sample.gif" alt="动图加载失败">
+  </mip-anim>
+</div>
+
+<h2>不指定 url</h2>
+
+<pre class="code">&lt;mip-anim
+  width=&quot;300&quot; height=&quot;200&quot;
+  alt=&quot;动图加载失败&quot;&gt;
+  &lt;mip-img class=&quot;background&quot; width=&quot;210&quot; height=&quot;210&quot;
+    src=&quot;http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg&quot;
+    alt=&quot;图片加载失败&quot;&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-anim&gt;</pre>
+
+<div>
+  <mip-anim width="300" height="200" alt="图片加载失败">
+    <mip-img width="300" height="200" src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"
+      alt="图片加载失败"></mip-img>
+  </mip-anim>
+</div>
+
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="/mip-anim/mip-anim.js"></script>
+</body>
+
+</html>
