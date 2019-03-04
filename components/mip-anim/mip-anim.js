@@ -134,7 +134,7 @@ export default class MIPAnim extends CustomElement {
     let placeholder = el.getPlaceholder()
     if (!placeholder) {
       placeholder = el.querySelector('mip-img')
-      log.warn("请使用 'placeholder' 属性指定占位符！")
+      placeholder && log.warn("请使用 'placeholder' 属性指定占位符！")
     }
     return placeholder
   }
