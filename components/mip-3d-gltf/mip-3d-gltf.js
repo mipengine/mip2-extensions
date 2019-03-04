@@ -172,7 +172,6 @@ export default class MipGLTF extends CustomElement {
         return this.initialize()
       })
       .then(() => {
-        this.container.appendChild(this.renderer.domElement)
         this.addEventAction('setModelRotation', (e, args) => {
           this.model.rotation.set(...this.getModelRotation(args))
         })
@@ -229,6 +228,10 @@ export default class MipGLTF extends CustomElement {
 
   setupRenderer () {
     let renderer = new THREE.WebGLRenderer(this.option['renderer'])
+    let el = renderer.domElement
+    let style = 'position: absolute; top: 0; right: 0; bottom: 0; left: 0;'
+    el.setAttribute('style', style)
+    this.container.appendChild(el)
 
     renderer.setPixelRatio(Math.min(this.option['rendererSettings']['maxPixelRatio'], window.devicePixelRatio))
     renderer.setClearColor(this.option['rendererSettings']['clearColor'], this.option['rendererSettings']['clearAlpha'])
