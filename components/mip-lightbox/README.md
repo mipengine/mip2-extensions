@@ -8,12 +8,14 @@
 支持布局|N/A
 所需脚本|https://c.mipcdn.com/static/v2/mip-lightbox/mip-lightbox.js
 
+组件支持 `open`， `close`， `toggle` 三种类型的事件，分别对应 `显示`，`关闭`，`切换`的操作。我们可以通过在按钮元素上绑定 tap 事件，并指定对应的 lightbox 组件 id 进行控制，如下示例。
+
 ## 示例
 
 ### 基本使用
 
 ```html
-<button on="tap:my-lightbox.toggle" id="btn-open" role="button" tabindex="0">
+<button on="tap:my-lightbox.open" id="btn-open" role="button" tabindex="0">
     Open lightbox
 </button>
 
@@ -107,6 +109,6 @@
 
 ## 注意事项
 
-- `<mip-lightbox>` 默认是隐藏的，作为打开开关的 DOM 节点需设置 `on` 属性，且 `on` 属性的属性值为 "tap:组件ID.open"。
+- `<mip-lightbox>` 默认是隐藏的，作为打开开关的 DOM 节点需设置 `on` 属性，如需打开弹层，可设置 `on` 的属性值为 "tap:组件ID.open"。
 
-- `<mip-lightbox>` 需要一个 `<div>` 子节点，这个 `<div>` 的 `calss` 必须有 `lightbox`，并且必须有 `on` 属性，属性值为 "tap:组件ID.close"。
+- `<mip-lightbox>` 可以设置一个 `<div>` 子节点，用于自定义弹层的内容。如需设置关闭按钮，关闭按钮节点并且必须有 `on` 属性，属性值为 "tap:组件ID.close"。

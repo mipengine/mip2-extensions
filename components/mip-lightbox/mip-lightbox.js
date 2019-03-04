@@ -202,6 +202,7 @@ export default class MipLightbox extends CustomElement {
 
     // 事件注册
     this.addEventAction('close', this.close.bind(this))
+    this.addEventAction('open', this.openBox.bind(this))
     this.addEventAction('openBox', this.openBox.bind(this))
     this.addEventAction('toggle', this.toggle.bind(this))
   }
