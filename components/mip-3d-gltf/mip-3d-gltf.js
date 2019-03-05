@@ -8,6 +8,10 @@ let { CustomElement, util } = MIP
 const { raf } = util.fn
 const log = util.log('mip-3d-gltf')
 
+const CAMERA_DISTANCE_FACTOR = 1
+const CAMERA_FAR_FACTOR = 50
+const CAMERA_NEAR_FACTOR = 0.1
+
 /**
  * 布尔类型属性值转换
  *
@@ -219,8 +223,8 @@ export default class MipGLTF extends CustomElement {
   initialize () {
     this.scene = new THREE.Scene()
     this.model = new THREE.Group()
+    this.camera = new THREE.PerspectiveCamera()
     this.setupRenderer()
-    this.setupCamera()
     this.setupControls()
     this.setupLight()
     return this.loadModel()
@@ -242,9 +246,29 @@ export default class MipGLTF extends CustomElement {
     this.renderer = renderer
   }
 
-  setupCamera () {
-    this.camera = new THREE.PerspectiveCamera(50, this.width / this.height, 0.25, 100)
-    this.camera.position.set(-1.8, 0.9, 5)
+  setupCameraForObj (object) {
+    const center = new THREE.Vector3()
+    const size = new THREE.Vector3()
+    const bbox = new THREE.Box3()
+    bbox.setFromObject(object)
+    bbox.getCenter(center)
+    bbox.getSize(size)
+
+    const sizeLength = size.length()
+    this.camera.far = sizeLength * CAMERA_FAR_FACTOR
+    this.camera.near = sizeLength * CAMERA_NEAR_FACTOR
+    this.camera.aspect = this.width / this.height
+    this.camera.position.lerpVectors(
+      center,
+      bbox.max,
+      1 + CAMERA_DISTANCE_FACTOR
+    )
+    this.camera.lookAt(center)
+
+    this.camera.updateProjectionMatrix()
+    this.camera.updateMatrixWorld()
+
+    this.controls.target.copy(center)
   }
 
   setupControls () {
@@ -273,6 +297,7 @@ export default class MipGLTF extends CustomElement {
     let loader = new THREE.GLTFLoader()
     return new Promise(resolve => {
       loader.load(this.option['src'], gltf => {
+        this.setupCameraForObj(gltf.scene)
         gltf.scene.children.slice().forEach(child => {
           this.model.add(child)
         })
