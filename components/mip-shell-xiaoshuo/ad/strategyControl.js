@@ -175,9 +175,9 @@ export default class strategyControl {
       Object.assign(novelData, {frsrcid: getHashData('srcid')})
     }
     // 2019-2-26 特殊逻辑，有了 cache 和 nocache 之后，cache 页只有 page 类型，其他类型都不需要 cache 广告，因此为 false
-    if (pageType === 'detail') {
-      novelData.isNeedAds = false
-    }
+    // if (pageType === 'detail') {
+    //   novelData.isNeedAds = false
+    // }
     return novelData
   }
 
