@@ -1,8 +1,7 @@
 const { CustomElement, util } = MIP
 
 export default class MipAnim extends CustomElement {
-  constructor (...args) {
-    super(...args)
+  connectedCallback () {
     this.src = this.element.getAttribute('src') || ''
     this.alt = this.element.getAttribute('alt') || ''
   }

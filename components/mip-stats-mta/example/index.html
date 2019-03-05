@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+      .title {
+        text-align: center;
+        margin-top: 100px;
+        color: #333;
+      }
+      .button {
+        margin: 30px auto;
+        border-radius: 5px;
+        background: #4350FC;
+        color: #fff;
+        display: block;
+        border: none;
+        padding: 10px 30px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1 class="title">腾讯移动分析 mta</h1>
+      <button class="button" data-stats-mta='{"type":"click","data":["test666666", {"pramaid":"2asjue1323"}]}'>click me!</button>
+    </div>
+    <mip-stats-mta>
+      <script type="application/json">
+        {
+          "version": "v2.0.4",
+          "name": "MTAH5",
+          "sid": "500671073",
+          "cid": "500671075",
+        }
+      </script>
+    </mip-stats-mta>
+    <!--
+    -->
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-stats-mta/mip-stats-mta.js"></script>
+  </body>
+</html>

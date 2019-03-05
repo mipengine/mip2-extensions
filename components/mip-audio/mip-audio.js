@@ -49,10 +49,19 @@ export default class MipAudio extends CustomElement {
     // 继承父类属性、方法
     super(element)
 
+    this.totalTimeShown = false
+    this.inited = false
+  }
+
+  /** @override */
+  connectedCallback () {
+    if (this.inited) {
+      return
+    }
+    this.inited = true
     this.audioAttrs = getAttributeSet(this.element.attributes)
     // 保存用户自定义交互控件
     this.customControls = this.element.querySelector('[controller]') || ''
-    this.totalTimeShown = false
   }
 
   /**
@@ -111,7 +120,7 @@ export default class MipAudio extends CustomElement {
       isFinite(audio.duration) && // 部分安卓机器 audio.duration 为 Infinite
       audio.duration > 0.1 // 在安卓UC上获取的duration为0.1
 
-    Services.timerFor(window)
+    Services.timer()
       .poll(isValid, 200)
       .then(() => (time.innerHTML = this.msToDate(audio.duration)))
   }

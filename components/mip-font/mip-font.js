@@ -110,7 +110,7 @@ export default class MIPFont extends MIP.CustomElement {
     timeout = !(typeof timeout === 'number' && isFinite(timeout)) ||
         timeout < 0 ? CONFIG_DEFAULT.timeout : timeout
     timeout = Math.max(
-      (timeout - MIP.Services.timerFor(window).timeSinceStart()),
+      (timeout - MIP.Services.timer().timeSinceStart()),
       CONFIG_DEFAULT.cacheFontTime
     )
     return timeout
