@@ -165,6 +165,7 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     sendWebbLogLink(document.querySelector('.navigator a:last-child'), 'nextPageButton')
     // 用来记录翻页的次数，主要用来触发品专的广告
     novelInstance.novelPageNum++
+    // 目前除了 page 就 detail 是单独的，page_2 也是 page 的一种
     if (novelInstance.currentPageMeta.pageType === 'page') {
       if (novelInstance.readPageNum == null) {
         novelInstance.readPageNum = 1
