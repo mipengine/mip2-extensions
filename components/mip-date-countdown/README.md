@@ -6,7 +6,7 @@
 ----|----
 类型|通用
 支持布局|responsive, fixed-height, fill, container, fixed
-所需脚本| https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js</br>https://c.mipcdn.com/static/v2/mip-date-countdown/mip-date-countdown.js
+所需脚本| https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js<br>https://c.mipcdn.com/static/v2/mip-date-countdown/mip-date-countdown.js
 
 `mip-date-countdown` 组件用于在 MIP 页面中显示倒计时的信息。只需要在组件的标签上配置特定的时间属性，组件将会计算出一系列的时间值，配合 `mip-mustache` 组件，就可以把这些值按照特定的形式渲染出来。如下示例：
 
