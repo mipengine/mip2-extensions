@@ -12,10 +12,17 @@
   </head>
   <body>
     <div>
-      <mip-html-os os="android"> <p>this is android</p> </mip-html-os>
-      <mip-html-os os="ios"> <p>this is ios</p> </mip-html-os>
+      <mip-custom>
+          <script type="application/json">
+            {
+                "accid": "e2217bab684fbb898dccf04b",
+                "title": "%E8%BF%99%E9%87%8C%E6%98%AF%E6%A0%87%E9%A2%98"
+            }
+        </script>
+      </mip-custom>
     </div>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-    <script src="/mip-html-os/mip-html-os.js"></script>
+    <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+    <script src="/mip-custom/mip-custom.js"></script>
   </body>
 </html>

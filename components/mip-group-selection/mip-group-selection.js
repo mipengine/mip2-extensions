@@ -44,7 +44,7 @@ export default class MIPGroupSelection extends CustomElement {
   /**
    * 获取分组配置信息，渲染备选项和右侧快速选择列表
    *
-   * @param {Object} html 要被渲染的数据
+   * @param {string} html templates 解析出来的字符串
    */
   renderHtml (html) {
     let wrapper = document.createElement('div')
@@ -67,12 +67,15 @@ export default class MIPGroupSelection extends CustomElement {
   bindSidebarClickEvent () {
     // ios sf 环境中
     if (!MIP.standalone && util.platform.isIOS() && fixedElement._fixedLayer) {
-      let wrapper = fixedElement._fixedLayer.querySelector('.mip-group-selection-sidebar-wrapper')
-      util.event.delegate(wrapper, '.mip-group-selection-link', 'click', e => {
-        let button = e.target
-        let targetAnchor = button.dataset.targetAnchor
-        // 滚动待选列表到指定分组
-        this.scrollToAnchor(targetAnchor)
+      // ios8 bug: mip-fixed 还没移到 fixedLayer 中，需要延迟执行
+      setTimeout(() => {
+        let wrapper = fixedElement._fixedLayer.querySelector('.mip-group-selection-sidebar-wrapper')
+        util.event.delegate(wrapper, '.mip-group-selection-link', 'click', e => {
+          let button = e.target
+          let targetAnchor = button.dataset.targetAnchor
+          // 滚动待选列表到指定分组
+          this.scrollToAnchor(targetAnchor)
+        })
       })
     } else {
       util.event.delegate(this.element, '.mip-group-selection-link', 'click', e => {
@@ -127,6 +130,6 @@ export default class MIPGroupSelection extends CustomElement {
       this.bindSidebarClickEvent()
       // 绑定列表元素选择事件
       this.bindItemClickEvent()
-    }, log.warn)
+    }).catch(log.warn)
   }
 }

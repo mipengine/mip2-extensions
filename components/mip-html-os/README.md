@@ -8,25 +8,17 @@
 支持布局|responsive, fixed-height, fill, container, fixed
 所需脚本|https://c.mipcdn.com/static/v2/mip-html-os/mip-html-os.js
 
+仅当操作系统与 `os` 属性值匹配时显示内容。如果没有指定 `os` 属性值，隐藏内容。
+
 ## 示例
 
 ```html
-<mip-html-os os="android" class="mip-hidden"><p>This Is Android</p></mip-html-os>
-<mip-html-os os="ios" class="mip-hidden"><p>This Is Ios</p></mip-html-os>
+<mip-html-os os="android"><p>This Is Android</p></mip-html-os>
+<mip-html-os os="ios"><p>This Is Ios</p></mip-html-os>
 ```
 
 ## 属性
 
 ### os
 
-说明：选择操作系统
-
-必选项：是
-
-类型：字符串
-
-取值范围：android, ios
-
-## 注意事项
-
-- 组件需要有 `mip-hidden` class，否则会有闪动问题
+指定操作系统，取值范围是 `android` 和 `ios`。
