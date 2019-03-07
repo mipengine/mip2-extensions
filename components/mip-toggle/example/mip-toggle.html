@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    div {
+      margin-top: 30px;
+    }
+    button {
+      background-color: #008CB0;
+      border: none;
+      color: white;
+      padding: 5px 15px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 10px;
+      border-radius: 5px;
+      margin: 5px 0 5px 0;
+    }
+    .my-mip-toggle {
+      transition: 2s opacity;
+      opacity: 0;
+    }
+    .my-mip-toggle-enter {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <h2>基本使用</h2>
+    <button on="tap:my-mip-toggle-1.toggle">显示/隐藏</button>
+    <button on="tap:my-mip-toggle-1.show">显示</button>
+    <button on="tap:my-mip-toggle-1.hide">隐藏</button>
+    <mip-toggle id="my-mip-toggle-1">
+      <p>lorem ipsum</p>
+    </mip-toggle>
+  </div>
+
+  <div>
+    <h2>自动隐藏</h2>
+    <button on="tap:my-mip-toggle-2.toggle">显示/隐藏</button>
+    <button on="tap:my-mip-toggle-2.show">显示</button>
+    <button on="tap:my-mip-toggle-2.hide">隐藏</button>
+    <mip-toggle id="my-mip-toggle-2" hidetimeout="500" layout="nodisplay">
+      <p>lorem ipsum</p>
+    </mip-toggle>
+  </div>
+
+  <div>
+    <h2>自定义 display</h2>
+    <button on="tap:my-mip-toggle-3.toggle">显示/隐藏</button>
+    <p>
+      <mip-toggle id="my-mip-toggle-3" display="inline">lorem ipsum</mip-toggle> dolor sit amet
+    </p>
+  </div>
+
+  <div>
+    <h2>自动隐藏（传入参数）</h2>
+    <button on="tap:my-mip-toggle-4.show(500)">显示500ms</button>
+    <button on="tap:my-mip-toggle-4.show(1000)">显示1s</button>
+    <button on="tap:my-mip-toggle-4.show(3000)">显示3s</button>
+    <button on="tap:my-mip-toggle-4.show(Infinity)">不自动隐藏（覆盖默认值）</button>
+    <mip-toggle id="my-mip-toggle-4" layout="nodisplay" hidetimeout="2000">
+      <p>lorem ipsum</p>
+    </mip-toggle>
+  </div>
+
+  <div>
+    <h2>自定义动画</h2>
+    <button on="tap:my-mip-toggle-5.toggle">显示/隐藏</button>
+    <mip-toggle id="my-mip-toggle-5" enterclass="my-mip-toggle-enter" class="my-mip-toggle">
+      <p>lorem ipsum</p>
+    </mip-toggle>
+  </div>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-toggle/mip-toggle.js"></script>
+</body>
+
+</html>

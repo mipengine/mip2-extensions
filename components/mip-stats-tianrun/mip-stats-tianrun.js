@@ -1,60 +1,41 @@
 /**
- * @file mip-stats-tianrun.js 天润统计组件
- * @author wangqizheng
+ * @file 天润统计组件
+ * @author mj(zoumiaojiang@gmail.com)
  */
 
-let { CustomElement, util } = MIP
+/* global MIP */
+
+import './mip-stats-tianrun.less'
+
+const { CustomElement, util } = MIP
+const logger = util.log('mip-stats-tianrun')
 
 export default class MipStatsTianrun extends CustomElement {
-  constructor (...args) {
-    // 继承父类属性、方法
-    super(...args)
-
-    // 获取参数
-    this.sub = this.element.getAttribute('sub') || 'cl2'
-    this.z = this.element.getAttribute('z') || '26'
-
-    // 插入脚本位置
-    this.scriptContainer = document.body || document.documentElement
-  }
-
-  // 提前渲染
-  prerenderAllowed () {
-    return true
-  }
-
-  // 插入文档时就应加载脚本
+  /**
+   * 渲染组件
+   */
   build () {
-    let { sub, z, element, scriptContainer } = this
-
-    // 元素需要隐藏
-    util.css(element, 'display', 'none')
+    let element = this.element
+    let sub = element.getAttribute('sub') || 'cl2'
+    let z = element.getAttribute('z') || '26'
 
     // 插入统计脚本
-    let insertScript = new Promise((resolve, reject) => {
-      let statsScript = document.createElement('script')
-      statsScript.type = 'text/javascript'
-      statsScript.src = `//${sub}.webterren.com/webdig.js?z=${z}`
+    let statsScript = document.createElement('script')
+    statsScript.type = 'text/javascript'
+    statsScript.src = `//${sub}.webterren.com/webdig.js?z=${z}`
 
-      // 脚本加载成功
-      statsScript.onload = resolve
-
-      // 脚本加载失败
-      statsScript.onerror = () => {
-        reject(new Error('天润统计脚本加载失败'))
-      }
-
-      scriptContainer.appendChild(statsScript)
-    })
-
-    // 插入天润统计标识
-    insertScript.then(() => {
+    // 脚本加载成功
+    statsScript.onload = () => {
+      // 插入天润统计标识
       let trackerScript = document.createElement('script')
       trackerScript.type = 'text/javascript'
       trackerScript.innerHTML = 'wd_paramtracker("_wdxid=000000000000000000000000000000000000000000");'
-      scriptContainer.appendChild(trackerScript)
-    }).catch(e => {
-      console.log(e)
-    })
+      element.appendChild(trackerScript)
+    }
+
+    // 脚本加载失败
+    statsScript.onerror = () => logger.warn(element, '天润统计脚本加载失败')
+
+    element.appendChild(statsScript)
   }
 }
