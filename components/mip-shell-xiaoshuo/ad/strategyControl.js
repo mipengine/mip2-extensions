@@ -9,9 +9,80 @@ import {Constant} from '../common/constant-config'
 import state from '../common/state'
 import {getCurrentWindow, getRootWindow, getHashData} from '../common/util'
 import {
-  initFirstFetchCache
+  initFirstFetchCache,
+  computeNoCacheAds,
+  getCurPageType
 } from './strategyCompute'
-
+/**
+ * 根据页面类型和之前的 schema 判断是否需要广告请求
+ *
+ * @param {string} pageType 页面类型
+ * @returns {Array} 第一个值是 true 则需要广告，否则反之；第二个值是当前页面类型集合
+ */
+function needNoCache (pageType) {
+  let {novelInstance} = state(getCurrentWindow())
+  let pageNoCacheType = []
+  let isNeedNoCache = false
+  if (novelInstance.nocache) {
+    let noCachePageType = (novelInstance.nocache.schema && novelInstance.nocache.schema['page_nocache_ads']) || {}
+    Object.keys(noCachePageType)
+      .forEach(v => {
+        if (pageType.indexOf(v) !== -1) {
+          isNeedNoCache = true
+          pageNoCacheType.push(v)
+        }
+      })
+  } else {
+    isNeedNoCache = true
+    pageNoCacheType = pageType
+  }
+  // 特殊处理
+  pageNoCacheType = deletePage(pageNoCacheType)
+  if (isNeedNoCache === false) {
+    pageNoCacheType = []
+  }
+  return [isNeedNoCache, pageNoCacheType]
+}
+/**
+ * 判断是否是品专广告，目前品专广告只有 page_x 才会出现
+ *
+ * @param {Array} pageNoCacheType 判断需要 nocache 广告的页面类型
+ * @returns {boolean} 布尔值
+ */
+function isPinZhuan (pageNoCacheType) {
+  for (let index = 0; index < pageNoCacheType.length; index++) {
+    if (pageNoCacheType[index].indexOf('page_') !== -1) {
+      return true
+    }
+  }
+  return false
+}
+/**
+ * 去掉 page 和 page_1，主要是这个 page 类型，每次都会被算进来，nocache 需要去掉这个类型
+ * 2019-2-28: 增加 page_1，加上这个配置不会有影响
+ *
+ * @param {Array} pageNoCacheType 当前页面的类型
+ * @returns {Array} 去掉相应内容的数组
+ */
+function deletePage (pageNoCacheType) {
+  return pageNoCacheType.reduce((acc, val) => {
+    if (val !== 'page') {
+      acc.push(val)
+    }
+    return acc
+  }, [])
+}
+/**
+ * 把 nocache 的模板加入 cache 的广告数据中
+ *
+ * @param {Object} adStrategyCacheData cache 的广告数据
+ * @param {Array} template nocache 的模板
+ * @returns {Object} 汇总的广告数据
+ */
+function addNoCacheTemplate (adStrategyCacheData, template) {
+  adStrategyCacheData.template = adStrategyCacheData.template.concat(template)
+  return adStrategyCacheData
+}
 export default class strategyControl {
   constructor (config) {
     this.globalAd = false
@@ -26,6 +97,7 @@ export default class strategyControl {
     // 梳理广告的novelData
     let novelData = this.getNovelData()
     const currentWindow = getCurrentWindow()
+    const rootWindow = getRootWindow(currentWindow)
     const {currentPage, rootPageId} = state(currentWindow)
     this.changeStrategy()
     let data = {
@@ -46,7 +118,6 @@ export default class strategyControl {
     }
     // 页内的广告
     if (this.pageAd) {
-      const rootWindow = getRootWindow(currentWindow)
       rootWindow.MIP.viewer.page.broadcastCustomEvent({
         name: 'showAdvertising',
         data
@@ -54,6 +125,11 @@ export default class strategyControl {
     }
     // 只发请求，忽略该次的任何操作
     if (novelData.ignoreSendLog && novelData.showedAds) {
+      // nocache 也要设置为false
+      let novelData = this.getNovelData()
+      novelData.isNeedNoCache = false
+      novelData.pageNoCacheType = []
+      Object.assign(data, {novelData})
       window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
         name: 'ignoreSendLogFetch',
         data
@@ -68,9 +144,11 @@ export default class strategyControl {
     const officeId = novelInstance.currentPageMeta.officeId || ''
     const novelPageNum = novelInstance.novelPageNum || ''
     const pageType = novelInstance.currentPageMeta.pageType || ''
-    const isNeedAds = novelInstance.adsCache == null ? true : novelInstance.adsCache.isNeedAds
+    let isNeedAds = novelInstance.adsCache == null ? true : novelInstance.adsCache.isNeedAds
     const novelInstanceId = novelInstance.novelInstanceId
     const latestChapterId = novelInstance.catalog.getLatestChapterId()
+    let [CurPageType] = getCurPageType()
+    let [isNeedNoCache, pageNoCacheType] = needNoCache(CurPageType)
     // 基础novelData数据
     let novelData = {
       isLastPage,
@@ -84,7 +162,14 @@ export default class strategyControl {
       silentFollow: isRootPage,
       isNeedAds,
       novelInstanceId,
-      latestChapterId
+      latestChapterId,
+      isNeedNoCache,
+      pageNoCacheType
+    }
+    // 2019-03-05 临时增加：isNeedAds 在 isNeedNoCache 为 true 需要品专广告的时候，强行变更其值为 true
+    if (novelData.isNeedNoCache && isPinZhuan(novelData.pageNoCacheType)) {
+      novelData.isNeedAds = true
+      isNeedAds = true
     }
     // TODO: 当结果页卡片入口为断点续读时，添加entryFrom: 'from_nvl_toast', 需要修改SF里记录到hash里，等SF修改完成，此处添加
     // 当第二次翻页时候，需要告知后端出品专广告
@@ -108,6 +193,10 @@ export default class strategyControl {
     if (getHashData('srcid')) {
       Object.assign(novelData, {frsrcid: getHashData('srcid')})
     }
+    // 2019-2-26 特殊逻辑，有了 cache 和 nocache 之后，cache 页只有 page 类型，其他类型都不需要 cache 广告，因此为 false
+    // if (pageType === 'detail') {
+    //   novelData.isNeedAds = false
+    // }
     return novelData
   }
 
@@ -147,8 +236,7 @@ export default class strategyControl {
    */
   eventAllPageHandler () {
     const currentWindow = getCurrentWindow()
-    const {isRootPage} = state(currentWindow)
-    const rootWindow = isRootPage ? window : window.parent
+    const rootWindow = getRootWindow(currentWindow)
 
     let listen = function (target, name, handler) {
       target.addEventListener(name, handler)
@@ -223,14 +311,28 @@ export default class strategyControl {
         // 第一次请求的时候需要初始化fetch的数据，并且计算出当前的广告数据
         initFirstFetchCache(adData, novelInstance)
       }
-      const adStrategyCacheData = novelInstance.adsCache.adStrategyCacheData
-      // 计算出需要出的广告数据
+      novelInstance.nocache = computeNoCacheAds(adData, novelInstance.nocache)
+      let adStrategyCacheData = novelInstance.adsCache.adStrategyCacheData
+      addNoCacheTemplate(adStrategyCacheData, novelInstance.nocache.template)
+      // 计算出需要出的广告数据，这个纯粹是为了发 ignore 日志的，因为 custom 只会监听一次 showAdvertising
       if (novelInstance.adsCache != null && novelInstance.adsCache.isFirstFetch) {
         this.strategyStatic()
       }
       window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
         name: 'showAdStrategyCache',
         data: adStrategyCacheData
+      })
+    })
+    // 不是第一次请求，所以需要将 noCache 的广告数据回传给 mip-custom
+    window.addEventListener('noCacheAdDataReady', e => {
+      let adData = (e && e.detail && e.detail[0]) || {}
+      let currentWindow = getCurrentWindow()
+      let {novelInstance = {}} = state(currentWindow)
+      // 计算 nocache 的广告
+      novelInstance.nocache = computeNoCacheAds(adData, novelInstance.nocache)
+      addNoCacheTemplate(novelInstance.adsCache.adStrategyCacheData, novelInstance.nocache.template)
+      window.MIP.viewer.page.emitCustomEvent(currentWindow, false, {
+        name: 'addNoCacheAds'
       })
     })
   }
