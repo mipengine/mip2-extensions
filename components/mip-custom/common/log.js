@@ -121,12 +121,35 @@ const setErrorLogs = (errorData, fetchData) => {
  * @param {Object} fetchData    common返回的数据
  */
 const setPerformanceLogs = (performance, fetchData) => {
+  // 性能日志：emptyTime-广告未显示时间
+  // 渲染结束时间戳
+  performance.renderEnd = +new Date()
+
+  // 给到SF
+  // 合作页业务性能监控需要两个主要指标
+  // 1. 从搜索点出开始到mip页主体内容展现
+  // 2. 从搜索点出开始到mip页面整体展现 （除了主体内容，可能存在mip-custom等异步加载的内容）
+  // 在mip页内，将整体展现完成时间 和 mip页属于哪个产品类型 传给SF，SF统一上报
+  // 同时支持拓展其他指标
+  let mainData = fetchData.data
+  // mainData.common.product = 'medicine';
+  if (mainData && mainData.common && mainData.common.product && mainData.responseTime) {
+    // 在search-sfr-services仓库的mipService里监听它
+    MIP.viewer.sendMessage('product-baseperf-log', {
+      fullLoadTime: performance.renderEnd,
+      otherDurations: {
+        // 后端渲染时间
+        mipServerAllTime: mainData.responseTime.mipServerAllTime || 0,
+        // 前端渲染时间
+        frontendRender: performance.renderEnd - performance.responseEnd
+      },
+      product: mainData.common.product
+    })
+  }
+
   const random500 = Math.random() * 500
 
   if (random500 < 1) {
-    // 性能日志：emptyTime-广告未显示时间
-    // 渲染结束时间戳
-    performance.renderEnd = +new Date()
     // 页面空白毫秒数
     performance.emptyTime = performance.renderEnd - performance.fetchStart
     performance.frontendRender = performance.renderEnd - performance.responseEnd
