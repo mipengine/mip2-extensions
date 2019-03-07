@@ -44,6 +44,20 @@ function needNoCache (pageType) {
   return [isNeedNoCache, pageNoCacheType]
 }
 /**
+ * 判断是否是品专广告，目前品专广告只有 page_x 才会出现
+ *
+ * @param {Array} pageNoCacheType 判断需要 nocache 广告的页面类型
+ * @returns {boolean} 布尔值
+ */
+function isPinZhuan (pageNoCacheType) {
+  for (let index = 0; index < pageNoCacheType.length; index++) {
+    if (pageNoCacheType[index].indexOf('page_') !== -1) {
+      return true
+    }
+  }
+  return false
+}
+/**
  * 去掉 page 和 page_1，主要是这个 page 类型，每次都会被算进来，nocache 需要去掉这个类型
  * 2019-2-28: 增加 page_1，加上这个配置不会有影响
  *
@@ -130,7 +144,7 @@ export default class strategyControl {
     const officeId = novelInstance.currentPageMeta.officeId || ''
     const novelPageNum = novelInstance.novelPageNum || ''
     const pageType = novelInstance.currentPageMeta.pageType || ''
-    const isNeedAds = novelInstance.adsCache == null ? true : novelInstance.adsCache.isNeedAds
+    let isNeedAds = novelInstance.adsCache == null ? true : novelInstance.adsCache.isNeedAds
     const novelInstanceId = novelInstance.novelInstanceId
     const latestChapterId = novelInstance.catalog.getLatestChapterId()
     let [CurPageType] = getCurPageType()
@@ -151,6 +165,11 @@ export default class strategyControl {
       latestChapterId,
       isNeedNoCache,
       pageNoCacheType
+    }
+    // 2019-03-05 临时增加：isNeedAds 在 isNeedNoCache 为 true 需要品专广告的时候，强行变更其值为 true
+    if (novelData.isNeedNoCache && isPinZhuan(novelData.pageNoCacheType)) {
+      novelData.isNeedAds = true
+      isNeedAds = true
     }
     // TODO: 当结果页卡片入口为断点续读时，添加entryFrom: 'from_nvl_toast', 需要修改SF里记录到hash里，等SF修改完成，此处添加
     // 当第二次翻页时候，需要告知后端出品专广告
