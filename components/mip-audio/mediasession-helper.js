@@ -1,5 +1,6 @@
-
 /** refrer from  {@link https://github.com/ampproject/amphtml/blob/518a6b0ade/src/mediasession-helper.js} */
+
+const log = MIP.util.log('mip-list')
 
 /**
  * @typedef {Object} MetadataDef
@@ -53,7 +54,14 @@ export function parseSchemaImage () {
     // No schema element found
     return
   }
-  const schemaJson = MIP.util.jsonParse(schema.textContent)
+
+  let schemaJson
+  try {
+    schemaJson = MIP.util.jsonParse(schema.textContent)
+  } catch (e) {
+    log.error(schema, 'JSON 有格式错误')
+  }
+
   if (!schemaJson || !schemaJson['image']) {
     // No image found in the schema
     return

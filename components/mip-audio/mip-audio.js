@@ -48,7 +48,6 @@ export default class MipAudio extends CustomElement {
       return
     }
     this.inited = true
-    this.audioAttrs = getAttributeSet(this.element.attributes)
     // 保存用户自定义交互控件
     this.customControls = this.element.querySelector('[controller]') || ''
   }
@@ -387,25 +386,6 @@ export default class MipAudio extends CustomElement {
       () => { this.playOrPause('pause') }
     )
   }
-}
-
-/**
- * 通过 attributes map 获取 key value 的对象
- *
- * @param {NamedNodeMap} attributes the attribute list, spec: https://dom.spec.whatwg.org/#interface-namednodemap
- * @returns {Object} the attribute set, legacy:
- * @example
- * {
- *     "src": "http://xx.mp4",
- *     "autoplay": "",
- *     "width": "720"
- * }
- */
-function getAttributeSet (attributes) {
-  return [...attributes].reduce((attrs, attr) => {
-    attrs[attr.name] = attr.value
-    return attrs
-  }, {})
 }
 
 /**
