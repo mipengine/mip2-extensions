@@ -21,7 +21,7 @@ let globalScriptId = 'MIP_DUP_JS'
  * @param {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
  */
 export default function render (el) {
-  let cproId = el.getAttribute('cproid') || el.getAttribute('crop-id')
+  let cproId = el.getAttribute('cproid') || el.getAttribute('cpro-id')
 
   if (!cproId) {
     return
