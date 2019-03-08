@@ -4,6 +4,7 @@
  */
 
 import state from '../common/state'
+import {getCurrentWindow} from '../common/util'
 
 // 广告数据的缓存时间
 const AD_DATA_CACHE = 600000
@@ -12,7 +13,8 @@ const AD_DATA_CACHE = 600000
 const PAGE_TYPES = {
   PAGE: 'page',
   CHAPTEREND: 'chapterEnd',
-  DETAIL: 'detail'
+  DETAIL: 'detail',
+  PAGE_NUM_PREFIX: 'page_'
 }
 
 /**
@@ -61,9 +63,36 @@ export const initFirstFetchCache = (data, novelInstance = {}) => {
   computeAdStrategy(novelInstance)
 
   // 计算出需要出的广告数据
-  adsCache.adStrategyCacheData = getRenderAdData(window)
+  adsCache.adStrategyCacheData = getRenderAdData(getCurrentWindow())
 }
-
+/**
+ * 这个函数是每次渲染 nocache 广告都要处理数据的操作，不管是第一次还是之后的每次都是同一个函数
+ *
+ * @param {Object} data mip-custom 传过来的数据
+ * @param {Object} nocache 保存 nocache 所有相关数据的地方
+ * @param {boolean} updateSchema 是否更新 nocache 的 schema
+ * @returns {Object} 返回 nocache 的所有数据
+ */
+export function computeNoCacheAds (data, nocache = {}, updateSchema = false) {
+  // 简单的深度复制 保存数据
+  let copyData = JSON.parse(JSON.stringify(data))
+  nocache.fetchedData = copyData
+  // schema 初始化 或者 强制更新
+  if (nocache.schema == null || updateSchema) {
+    nocache.schema = copyData.adData.schema
+  }
+  // 初始化本次 common 请求带回的 nocache 广告数量
+  nocache.adsCountNoCache = initAdsCountHelper(copyData.adData.nocacheads)
+  // 判断当前页面类型
+  nocache.curPageTypeNoCache = initCurPageType(nocache.schema['page_types'])
+  // 计算当前页面的策略
+  nocache.curPageStrategyNoCache = getCurPageStrategyNoCache(nocache)
+  // 根据策略获取广告数据
+  nocache.template = getAdDataNoCache(nocache.curPageStrategyNoCache, copyData.adData)
+  // nocache 的完整广告格式
+  nocache.noCacheData = getFormattedAdData(nocache.fetchedData.adData, nocache.template)
+  return nocache
+}
 /**
  * 当现有的广告需要从前端缓存中获取时，初始化相关的数据
  *
@@ -93,7 +122,25 @@ export const initAdByCache = (novelInstance = {}) => {
     }
   }
 }
-
+/**
+ * 根据页面类型计算当前页的 nocache 广告
+ *
+ * @param {Object} nocache 数据
+ * @returns {Object} nocache 广告数据
+ */
+export function getCurPageStrategyNoCache (nocache) {
+  let {curPageTypeNoCache, adsCountNoCache, fetchedData} = nocache
+  let curPageStrategy = {}
+  if (curPageTypeNoCache.length !== 0) {
+    curPageTypeNoCache.forEach(type => {
+      // 根据 curPageTypeNoCache 的类型获取广告数据
+      computeStrategyHelper(curPageStrategy, type, fetchedData.adData, adsCountNoCache, nocache.schema['page_nocache_ads'], 'nocacheads')
+    })
+  } else {
+    console.warn('当前页面类型和规定的页面类型无一匹配')
+  }
+  return curPageStrategy
+}
 /**
  * 根据页面类型计算当前页的广告策略
  *
@@ -113,7 +160,7 @@ export const computeAdStrategy = (novelInstance = {}) => {
   }
 
   // 获取当前页属于的页面类型
-  initCurPageType(adData.schema['page_types'], novelInstance)
+  initCurPageType(adData.schema['page_types'])
   // 通过curPageType去获取对应页面类型的stragegy
   adsCache.curPageStrategy = getCurPageStrategy(novelInstance)
 
@@ -134,6 +181,26 @@ export const computeAdStrategy = (novelInstance = {}) => {
 }
 
 /**
+ * 初始化广告数据的数量
+ *
+ * @param {Object} ads commmon 返回的 data.nocacheads 数据
+ * @returns {Object} 返回广告数量初始化后的数据
+ */
+function initAdsCountHelper (ads = {}) {
+  let adsCount = {}
+  Object.keys(ads).forEach(val => {
+    let adsInitLength = ads[val].length
+    let residueCount = ads[val].length
+    let errorAbnormal = 0
+    adsCount[val] = {
+      adsInitLength,
+      residueCount,
+      errorAbnormal
+    }
+  })
+  return adsCount
+}
+/**
  * 初始化ads中广告的队列的adsInitLength、residueCount、errorAbnormal
  *
  * @param {Object} adsCache 小说挂载root实例下的广告前端缓存
@@ -142,21 +209,9 @@ const initAdsCount = (adsCache = {}) => {
   const ads = (adsCache.fetchedData &&
     adsCache.fetchedData.adData &&
     adsCache.fetchedData.adData.ads) || {}
-  let adsCount = {}
-
-  for (let i in ads) {
-    let adsInitLength = ads[i].length
-    let residueCount = ads[i].length
-    let errorAbnormal = 0
-    adsCount[i] = {
-      adsInitLength,
-      residueCount,
-      errorAbnormal
-    }
-  }
 
   // 缓存当前页的广告队列的情况
-  adsCache.adsCount = adsCount
+  adsCache.adsCount = initAdsCountHelper(ads)
 }
 
 /**
@@ -192,13 +247,36 @@ const initBoundary = (novelInstance = {}) => {
  * 判断当前页面可以属哪几种页面类型
  *
  * @param {Object} pageTypes schema的页面类型的优先级
- * @param {Object} novelInstance 小说shell的实例
+ * @returns {Array} 返回页面类型的数组
  */
-const initCurPageType = (pageTypes = [], novelInstance = {}) => {
-  // 根据shell的pageType获取当前页面的页面类型，主要有整本书级别的和阅读页级别的
-  const pageType = (novelInstance.currentPageMeta && novelInstance.currentPageMeta.pageType) || ''
-  const {isLastPage} = state(window)
+const initCurPageType = (pageTypes = []) => {
+  const {novelInstance = {}} = state(window)
   let curPageType = []
+  let [readType, turnPageType] = getCurPageType()
+
+  pageTypes.forEach(value => {
+    readType.forEach(type => {
+      if (value === type) {
+        curPageType.push(value)
+      }
+    })
+    if (value === turnPageType) {
+      curPageType.push(value)
+    }
+  })
+  novelInstance.adsCache && (novelInstance.adsCache.curPageType = curPageType)
+  return curPageType
+}
+/**
+ * 获取当前页面的类型
+ *
+ * @returns {Array} 数组第一个值是页面类型集合，第二个值是 page_x 的值
+ */
+export function getCurPageType () {
+  let win = getCurrentWindow()
+  let {isLastPage, novelInstance = {}} = state(win)
+  // 根据shell的pageType获取当前页面的页面类型，主要有整本书级别的和阅读页级别的
+  let pageType = novelInstance.currentPageMeta && novelInstance.currentPageMeta.pageType
   let readType = []
 
   // 添加当前页面的页面类型到readType中
@@ -210,25 +288,22 @@ const initCurPageType = (pageTypes = [], novelInstance = {}) => {
   } else {
     readType.push(pageType)
   }
-
-  // 判断当是阅读页级别的书，查看次页属于翻了几页；
-  const readPageNum = novelInstance.readPageNum || 1
-  const turnPageType = 'page_' + readPageNum
-  pageTypes.forEach((value, index) => {
-    readType.forEach(type => {
-      if (value === type) {
-        curPageType.push(value)
-      }
-    })
-    if (value === turnPageType) {
-      curPageType.push(value)
-    }
-  })
-  novelInstance.adsCache.curPageType = curPageType
+  // TODO page_2只能存在page页中?
+  // 判断当是阅读页级别的书，查看当前页是第几页
+  let readPageNum = novelInstance.readPageNum || 1
+  let turnPageType = PAGE_TYPES.PAGE_NUM_PREFIX + readPageNum
+  readType.push(turnPageType)
+  return [readType, turnPageType]
 }
-
 /**
  * 根据schema计算出当前页面需要出的广告策略
+ * 返回结果类似:
+ *
+ * {
+ *   page: {
+ *     ad_1395: [{...}, {...}]
+ *   }
+ * }
  *
  * @param {Object} novelInstance 小说shell的实例
  * @returns {Object} 通过schema计算出的当前页面广告策勒
@@ -249,18 +324,19 @@ const getCurPageStrategy = (novelInstance = {}) => {
   }
   return curPageStrategy
 }
-
 /**
- * 根据curPageType的类型获取广告数据
+ * 根据 schema 计算当前页面可出的广告内容
  *
- * @param {boolean} curPageStrategy 当前页面广告策勒
- * @param {Object} type 当前页命中广告类型
- * @param {Object} adData fetch返回的广告数据
- * @param {Object} adsCount 广告队列的计数
+ * @param {Object} curPageStrategy 当前页面的广告策略
+ * @param {string} type 页面类型
+ * @param {Object} adData common返回的数据
+ * @param {Object} adsCount 广告数量
+ * @param {Object} schema schema 内容
+ * @param {string} cacheType 是 cache 的广告 还是 nocache 的广告
  */
-const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
+function computeStrategyHelper (curPageStrategy, type, adData, adsCount, schema = {}, cacheType) {
   let endCycle = false
-  let strategy = adData.schema['page_ads'][type]
+  let strategy = schema[type] || {}
   for (let i in strategy) {
     let random = Math.random()
     if (strategy[i].strategy &&
@@ -271,13 +347,24 @@ const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
       )
     ) {
       // 当该策略命中广告后，顺序取策略，只要有一个策略命中则不考虑别的策略
-      let adTypes = getStrategy(adsCount, strategy[i].strategy, adData, type)
+      let adTypes = getStrategy(adsCount, strategy[i].strategy, adData, cacheType)
       if (JSON.stringify(adTypes) !== '{}') {
         curPageStrategy[type] = adTypes
         endCycle = true
       }
     }
   }
+}
+/**
+ * 根据curPageType的类型获取广告数据
+ *
+ * @param {boolean} curPageStrategy 当前页面广告策勒
+ * @param {Object} type 当前页命中广告类型
+ * @param {Object} adData fetch返回的广告数据
+ * @param {Object} adsCount 广告队列的计数
+ */
+const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
+  computeStrategyHelper(curPageStrategy, type, adData, adsCount, adData.schema['page_ads'], 'ads')
 }
 
 /**
@@ -287,10 +374,10 @@ const computeStrategy = (curPageStrategy, type, adData, adsCount) => {
  * @param {Object} adsCount 广告队列的计数
  * @param {Object} strategy 每个广告类型中的广告策略
  * @param {Object} adData fetch返回的广告数据
- * @param {Object} type 页面类型
+ * @param {Object} cacheType 页面类型
  * @returns {Object} 返回通过广告策略中计算出的广告队列的数据
  */
-const getStrategy = (adsCount, strategy, adData, type) => {
+const getStrategy = (adsCount, strategy, adData, cacheType) => {
   let adTypes = {}
   for (let adNum in strategy) {
     if (adsCount[adNum] == null) {
@@ -304,7 +391,7 @@ const getStrategy = (adsCount, strategy, adData, type) => {
       adsCount[adNum].errorAbnormal++
       return {}
     }
-    if (adData.ads[adNum].length < strategy[adNum]) {
+    if (adData[cacheType][adNum].length < strategy[adNum]) {
       return {}
     }
   }
@@ -312,13 +399,34 @@ const getStrategy = (adsCount, strategy, adData, type) => {
   for (let adNum in strategy) {
     if (strategy.hasOwnProperty(adNum)) {
       // 把广告给截取出来 用掉 所以用掉的广告就不在原来的数组里了
-      adTypes[adNum] = adData.ads[adNum].splice(0, strategy[adNum])
+      adTypes[adNum] = adData[cacheType][adNum].splice(0, strategy[adNum])
       adsCount[adNum].residueCount -= strategy[adNum]
     }
   }
   return adTypes
 }
-
+/**
+ * 将当前命中的策略和广告数据合并
+ *
+ * @param {Object} curPageStrategy 当前命中的策略和广告数据
+ * @param {Object} adData fetch 返回的广告数据
+ * @returns {Array} 返回 template 数组
+ */
+function getAdDataNoCache (curPageStrategy, adData) {
+  let allAds = {}
+  Object.keys(curPageStrategy).forEach(key => {
+    Object.keys(curPageStrategy[key]).forEach(val => {
+      if (allAds[val]) {
+        allAds[val] = allAds[val].concat(curPageStrategy[key][val])
+      } else {
+        allAds[val] = curPageStrategy[key][val]
+      }
+    })
+  })
+  // 由于 nocache 不需要后台记录展现了哪些广告，每次需要的模板文件后台也是一定返回的，所以只需将模板插入页面中即可
+  let [template] = getTemplate(allAds, adData)
+  return template
+}
 /**
  * 获取当前广告策略的数据
  *
@@ -350,6 +458,11 @@ const getRenderAdData = currentWindow => {
 
 /**
  * 获取当前广告策略的数据
+ * 类似结果如下：
+ *
+ * {
+ *   ad_1395: [{...}, {...}]
+ * }
  *
  * @param {string} prioritys 通过common返回的叠加策略
  * @param {Object} adsCache 缓存的广告数据
@@ -373,7 +486,7 @@ const getOverlayAds = (prioritys, adsCache, curAdStrategyKeys = []) => {
   })
 
   let priorityValues = {}
-
+  // 首先将 page 类型的策略放进 priorityValues
   Object.assign(priorityValues, adsCache.curPageStrategy[curAdStrategyKeys[0]])
 
   // 通过当前的命中的策略的类型，获取叠加的广告策勒
@@ -402,12 +515,41 @@ const getOverlayAds = (prioritys, adsCache, curAdStrategyKeys = []) => {
 const formatAdData = (allAds, novelInstance) => {
   let {adsCache = {}} = novelInstance
   let {adData = {}} = adsCache.fetchedData
+
+  // 整理出最后的页面
+  let [template, fetchTpl, showedAds] = getTemplate(allAds, adData)
+
+  adsCache.fetchTpl = fetchTpl
+  adsCache.showedAds = showedAds
+
+  return getFormattedAdData(adData, template)
+}
+/**
+ * 将得到的广告数据处理成 mip-custom 需要的标准形式
+ *
+ * @param {Object} adData 广告数据
+ * @param {Array} template template 模板数据
+ * @returns {Object} mip-custom 需要的标准数据，用以渲染
+ */
+function getFormattedAdData (adData, template) {
   let formatData = {}
+  const {common = {}, config = {}, responseTime = {}} = adData
+  Object.assign(formatData, {common, config, responseTime})
+  Object.assign(formatData, {template})
+  return formatData
+}
+/**
+ * 根据广告策略找出模板
+ *
+ * @param {Object} allAds 本次需要展现的所有广告的集合
+ * @param {Object} adData common 发来的数据
+ * @returns {Array} 第一个值是模板，第二是缺少的模板，第三个是记录了展现的广告
+ */
+function getTemplate (allAds, adData) {
   let template = []
   let fetchTpl = []
   let showedAds = {}
 
-  // 整理出最后的页面
   for (let i in allAds) {
     let templateValue = []
     let showedAd = 0
@@ -425,10 +567,5 @@ const formatAdData = (allAds, novelInstance) => {
     })
     template.push(templateValue)
   }
-  adsCache.fetchTpl = fetchTpl
-  adsCache.showedAds = showedAds
-  const {common = {}, config = {}, responseTime = {}} = adData
-  Object.assign(formatData, {common, config, responseTime})
-  Object.assign(formatData, {template})
-  return formatData
+  return [template, fetchTpl, showedAds]
 }

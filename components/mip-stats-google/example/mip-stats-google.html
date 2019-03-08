@@ -11,22 +11,23 @@
     </style>
   </head>
   <body>
-    <!--注意：请使用 encodeURIComponent 处理 data-stats-baidu-obj 数据 -->
-    <div data-stats-baidu-obj='{"type":"click","data":["_trackEvent","some_desc_for_this_button","click"]}'>
-      点击发送请求
-    </div>
     <div>
-      <mip-stats-baidu>
+        <button class="fo" data-stats-ga-obj='{"type":"click","data":["send", "event", "foo", "click"]}'>
+          点击发送请求
+        </div>
+
+
+      <mip-stats-google>
         <script type="application/json">
-          {
-            "token": "af2e5b8ba47c0aa572a91195b1f7ff3e",
-            "_setCustomVar": [1, "login", "1", 2],
-            "_setAutoPageview": [true]
-          }
+          [
+            ["create", "UA-XXXXX-Y", "auto"],
+            ["send", "pageview"]
+          ]
         </script>
-      </mip-stats-baidu>
+      </mip-stats-google>
     </div>
+
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-    <script src="/mip-stats-baidu/mip-stats-baidu.js"></script>
+    <script src="/mip-stats-google/mip-stats-google.js"></script>
   </body>
 </html>
