@@ -433,10 +433,10 @@ export default class MIPSelectItem extends MIP.CustomElement {
       let itemValue = ''
       if (values.includes('-')) {
         let val = values.split('-')
-        if (val[0] != '0') {
+        if (val[0] !== '0') {
           itemValue += `${term[0]}${val[0]}`
         }
-        if (val[1] != '0') {
+        if (val[1] !== '0') {
           itemValue += `${term[1]}${val[1]}`
         }
       } else {
