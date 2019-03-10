@@ -151,7 +151,7 @@ export default class MipCustom extends CustomElement {
   /**
    * 获取模板队列和缓存数据状态
    *
-   * @returns {Object}
+   * @returns {Object} 返回队列对象
    */
   getQueue () {
     return window.MIP && MIP.custom && {
