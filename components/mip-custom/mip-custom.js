@@ -349,7 +349,8 @@ export default class MipCustom extends CustomElement {
       let mipCustomContainer = mipCustomContainers[i]
       mipCustomContainer.classList.add('fadein')
     }
-
+    // 广告渲染完成
+    window.MIP.adShow = true
     // 移除广告占位符号
     dom.removePlaceholder(this)
   }
