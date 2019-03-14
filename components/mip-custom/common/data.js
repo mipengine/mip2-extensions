@@ -132,6 +132,7 @@ let logData = {
 export default {
   domain: 'https://mipengine.baidu.com/',
   ajaxUrl: 'https://mipengine.baidu.com/common?',
+  topAjaxUrl: 'https://mipengine.baidu.com/commonTop?',
   REGEXS,
   params,
   config,
