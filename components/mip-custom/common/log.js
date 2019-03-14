@@ -7,7 +7,7 @@
 import data from './data'
 
 const {util} = MIP
-
+const {logData} = data
 /**
  * [getXPath 获取 xpath 数组]
  *
@@ -92,7 +92,6 @@ const setNetDurationLogs = (performance, errorData, res) => {
   }
 
   if (!res.ok) {
-    let {logData = {}} = data
     sendLog(logData.host, util.fn.extend(logData.error, logData.params, errorData))
   }
 }
@@ -108,7 +107,6 @@ const setErrorLogs = (errorData, fetchData) => {
     info: fetchData.errmsg,
     t: +new Date()
   }
-  let {logData = {}} = data
   sendLog(logData.host, util.fn.extend(logData.error, logData.params, errorData))
 
   console.warn(fetchData.errmsg)
