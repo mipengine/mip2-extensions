@@ -11,7 +11,7 @@ export default class MIPSidebar extends CustomElement {
 
   constructor (...args) {
     super(...args)
-    this.running = false
+    this.inTransition = false
     this.bodyOverflow = 'hidden'
     this.mask = null
     this.handleToggle = this.handleToggle.bind(this)
@@ -42,7 +42,7 @@ export default class MIPSidebar extends CustomElement {
     this.addEventAction('close', this.handleClose)
   }
 
-  attributeChangedCallback (name) {
+  attributeChangedCallback (name, oldValue, newValue) {
     if (name === 'open') {
       this.isOpen() ? this.open() : this.close()
     }
@@ -53,16 +53,17 @@ export default class MIPSidebar extends CustomElement {
   }
 
   handleOpen () {
-    this.element.setAttribute('open', '')
+    this.inTransition || this.element.setAttribute('open', 'true')
   }
 
   handleClose () {
-    this.element.removeAttribute('open')
+    this.inTransition || this.element.removeAttribute('open')
   }
 
-  async whenTransitionEnd (callback) {
+  async transition () {
+    this.inTransition = true
     await this.timer.sleep(TRANSITION_TIMEOUT)
-    callback()
+    this.inTransition = false
   }
 
   isOpen () {
@@ -85,9 +86,7 @@ export default class MIPSidebar extends CustomElement {
       mask.classList.add('show')
     })
 
-    this.whenTransitionEnd(() => {
-      this.running = true
-    })
+    this.transition()
 
     this.bodyOverflow = getComputedStyle(document.body).overflow
     document.body.style.overflow = 'hidden'
@@ -99,15 +98,10 @@ export default class MIPSidebar extends CustomElement {
     const element = this.element
     const mask = this.mask
 
-    if (!this.running) {
-      return
-    }
-    this.running = false
-
     element.classList.remove('show')
     mask.classList.remove('show')
 
-    this.whenTransitionEnd(() => {
+    this.transition().then(() => {
       util.css(element, { display: 'none' })
       util.css(mask, { display: 'none' })
     })
