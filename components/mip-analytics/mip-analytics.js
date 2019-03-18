@@ -84,7 +84,7 @@ export default class MIPAnalytics extends MIP.CustomElement {
           if (!this.isSendDisp && isDomReady(data)) {
             this.mipSpeedInfo = data
             this.isSendDisp = true
-            triggers.forEach(el => this.log.send(el))
+            triggers.forEach(el => this.sendLog(el))
           }
         })
       },
@@ -93,114 +93,8 @@ export default class MIPAnalytics extends MIP.CustomElement {
 
       timer (triggers) {
         triggers.forEach(el => this.timers.push(
-          setInterval(() => this.log.send(el), el.option.interval || 4000)
+          setInterval(() => this.sendLog(el), el.option.interval || 4000)
         ))
-      }
-    }
-
-    /**
-     * 日志相关的封装
-     *
-     * @type {Object}
-     */
-    this.log = {
-
-      /**
-       * 数据序列化处理
-       *
-       * @param   {Object} obj 必须是对象
-       * @param   {string} vars 配置变量,用于替换1级参数的插值
-       * @returns {string}      拼接后的字符串
-       */
-      serialize (obj, vars) {
-        if (!obj) {
-          return ''
-        }
-
-        let str = ''
-        let item = ''
-        if (isObject(obj)) {
-          for (let k in obj) {
-            if (obj.hasOwnProperty(k)) {
-              item = obj[k]
-              if (typeof item === 'undefined') {
-                continue
-              }
-
-              if (isObject(item)) {
-                item = JSON.stringify(item)
-              }
-
-              str += k + '=' + encodeURIComponent(this.valReplace(item, vars)) + '&'
-            }
-          }
-          str = str.substring(0, str.length - 1) // 去掉末尾的&
-        } else if (typeof obj === 'string') {
-          str = obj
-        }
-
-        return str
-      },
-
-      /**
-       * 使用img的方式发送日志
-       *
-       * @param {string} url src链接
-       */
-      imgSendLog (url) {
-        let key = 'MIP_ANALYTICS_IMAGE_' + Date.now()
-        let img = window[key] = new Image()
-
-        img.onload = () => {
-          // 防止多次触发onload;
-          img.onload = img.onerror = img.onabort = null
-          // 清空引用,避免内存泄漏
-          window[key] = null
-          img = null
-        }
-        img.src = url
-      },
-
-      /**
-       * 替换插值 ${var}
-       *
-       * @param   {string} str  被替换的字符串
-       * @param   {string} vars 替换变量
-       * @returns {string}      替换后的字符串
-       */
-      valReplace (str, vars) {
-        vars = vars || {}
-        util.fn.extend(vars, this.mipSpeedInfo)
-
-        return str.replace(/(\${.*})/g, $1 => {
-          let key = $1.substring(2, $1.length - 1).trim()
-          if (typeof vars[key] === 'object') {
-            return ''
-          }
-
-          return vars[key] || $1
-        })
-      },
-
-      /**
-       * 发送日志
-       *
-       * @param {Object} cfg 日志的配置信息，需要符合一定规范
-       * @param {Object|string} params json 数据或者 object 数据，会自动放到 ext 字段中
-       */
-      send (cfg, params) {
-        if (params) {
-          cfg.queryString.ext = params
-        } else {
-          try {
-            delete cfg.queryString.ext
-          } catch (e) {
-            cfg.queryString.ext = undefined
-          }
-        }
-        let queryString = this.serialize(cfg.queryString, cfg.vars) + '&t=' + Date.now()
-        let url = this.valReplace(cfg.host, cfg.vars) + queryString
-        this.imgSendLog(url)
       }
     }
   }
@@ -244,11 +138,109 @@ export default class MIPAnalytics extends MIP.CustomElement {
           dom,
           eventTag,
           eventName,
-          () => this.log.send(el, dom.getAttribute && (dom.getAttribute('data-click') || '')),
+          () => this.sendLog(el, dom.getAttribute && (dom.getAttribute('data-click') || '')),
           false
         )
       })
     })
+  }
+
+  /**
+   * 数据序列化处理
+   *
+   * @param   {Object} obj 必须是对象
+   * @param   {string} vars 配置变量,用于替换1级参数的插值
+   * @returns {string}      拼接后的字符串
+   */
+  serialize (obj, vars) {
+    if (!obj) {
+      return ''
+    }
+
+    let str = ''
+    let item = ''
+    if (isObject(obj)) {
+      for (let k in obj) {
+        if (obj.hasOwnProperty(k)) {
+          item = obj[k]
+          if (typeof item === 'undefined') {
+            continue
+          }
+
+          if (isObject(item)) {
+            item = JSON.stringify(item)
+          }
+
+          str += k + '=' + encodeURIComponent(this.valReplace(item, vars)) + '&'
+        }
+      }
+      str = str.substring(0, str.length - 1) // 去掉末尾的&
+    } else if (typeof obj === 'string') {
+      str = obj
+    }
+
+    return str
+  }
+
+  /**
+   * 使用img的方式发送日志
+   *
+   * @param {string} url src链接
+   */
+  imgSendLog (url) {
+    let key = 'MIP_ANALYTICS_IMAGE_' + Date.now()
+    let img = window[key] = new Image()
+
+    img.onload = () => {
+      // 防止多次触发onload;
+      img.onload = img.onerror = img.onabort = null
+      // 清空引用,避免内存泄漏
+      window[key] = null
+      img = null
+    }
+    img.src = url
+  }
+
+  /**
+   * 替换插值 ${var}
+   *
+   * @param   {string} str  被替换的字符串
+   * @param   {string} vars 替换变量
+   * @returns {string}      替换后的字符串
+   */
+  valReplace (str, vars) {
+    vars = vars || {}
+    util.fn.extend(vars, this.mipSpeedInfo)
+
+    return str.replace(/(\${.*})/g, $1 => {
+      let key = $1.substring(2, $1.length - 1).trim()
+      if (typeof vars[key] === 'object') {
+        return ''
+      }
+
+      return vars[key] || $1
+    })
+  }
+
+  /**
+   * 发送日志
+   *
+   * @param {Object} cfg 日志的配置信息，需要符合一定规范
+   * @param {Object|string} params json 数据或者 object 数据，会自动放到 ext 字段中
+   */
+  sendLog (cfg, params) {
+    if (params) {
+      cfg.queryString.ext = params
+    } else {
+      try {
+        delete cfg.queryString.ext
+      } catch (e) {
+        cfg.queryString.ext = undefined
+      }
+    }
+    let queryString = this.serialize(cfg.queryString, cfg.vars) + '&t=' + Date.now()
+    let url = this.valReplace(cfg.host, cfg.vars) + queryString
+    this.imgSendLog(url)
   }
 
   /**
