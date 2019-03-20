@@ -4,6 +4,14 @@
  * @time 2016.8.1
  */
 import './mip-audio.less'
+import {
+  EMPTY_METADATA,
+  parseFavicon,
+  parseOgImage,
+  parseSchemaImage,
+  setMediaSession
+} from './mediasession-helper'
+
 const {CustomElement, util, Services} = MIP
 const listen = util.event.listen
 const hasTouch = util.fn.hasTouch()
@@ -17,32 +25,12 @@ const TOUCHEND = hasTouch ? 'touchend' : 'mouseup'
 
 // 属性来自 https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/audio
 const AUDIO_ATTRIBUTES = [
-  'autoplay', 'buffered', 'loop',
-  'autoplay', 'muted', 'played',
-  'preload', 'src', 'volume'
+  'src', 'preload', 'autoplay',
+  'muted', 'loop', 'controlsList'
 ]
 
 // Number.isFinite 是 es6 的 api
 const isFinite = Number.isFinite || (n => n + 1 !== n)
-
-/**
- * 通过 attributes map 获取 key value 的对象
- *
- * @param {NamedNodeMap} attributes the attribute list, spec: https://dom.spec.whatwg.org/#interface-namednodemap
- * @returns {Object} the attribute set, legacy:
- * @example
- * {
- *     "src": "http://xx.mp4",
- *     "autoplay": "",
- *     "width": "720"
- * }
- */
-function getAttributeSet (attributes) {
-  return [...attributes].reduce((attrs, attr) => {
-    attrs[attr.name] = attr.value
-    return attrs
-  }, {})
-}
 
 export default class MipAudio extends CustomElement {
   constructor (element) {
@@ -50,6 +38,7 @@ export default class MipAudio extends CustomElement {
     super(element)
 
     this.totalTimeShown = false
+    this.metadata = EMPTY_METADATA
     this.inited = false
   }
 
@@ -59,7 +48,6 @@ export default class MipAudio extends CustomElement {
       return
     }
     this.inited = true
-    this.audioAttrs = getAttributeSet(this.element.attributes)
     // 保存用户自定义交互控件
     this.customControls = this.element.querySelector('[controller]') || ''
   }
@@ -71,14 +59,11 @@ export default class MipAudio extends CustomElement {
    * @returns {Object} 创建的audio元素
    */
   createAudioTag () {
-    let audioEle = document.createElement('audio')
-    for (let k in this.audioAttrs) {
-      if (this.audioAttrs.hasOwnProperty(k) && AUDIO_ATTRIBUTES.indexOf(k) > -1) {
-        audioEle.setAttribute(k, this.audioAttrs[k])
-      }
-    }
-    audioEle.classList.add('mip-audio-tag')
-    return audioEle
+    const audio = document.createElement('audio')
+    propagateAttributes(this.element, audio, AUDIO_ATTRIBUTES)
+
+    audio.classList.add('mip-audio-tag')
+    return audio
   }
 
   /**
@@ -88,20 +73,17 @@ export default class MipAudio extends CustomElement {
    * @returns {string} 创建的audio控件DOM
    */
   createDefaultController () {
-    let audioDom =
-      `
-        <div controller>
-          <i play-button class="mip-audio-stopped-icon"></i>
-          <div current-time>00:00</div>
-          <div seekbar>
-            <div seekbar-fill></div>
-            <div seekbar-button></div>
-          </div>
-          <div total-time>--:--</div>
+    return `
+      <div controller>
+        <i play-button class="mip-audio-stopped-icon"></i>
+        <div current-time>00:00</div>
+        <div seekbar>
+          <div seekbar-fill></div>
+          <div seekbar-button></div>
         </div>
-      `
-
-    return audioDom
+        <div total-time>--:--</div>
+      </div>
+    `
   }
 
   /**
@@ -316,12 +298,17 @@ export default class MipAudio extends CustomElement {
   }
 
   layoutCallback () {
-    let ele = this.element
+    const ele = this.element
     // 根据用户配置创建audio标签，插入文档流
-    let audio = this.audio = this.createAudioTag()
+    const audio = this.audio = this.createAudioTag()
 
     // 将原来mip-audio内容插入audio.
-    ;[...ele.childNodes].forEach(node => this.audio.appendChild(node))
+    ;[...ele.childNodes].forEach(node => {
+      // 只将带有 src 属性的标签放入 audio 标签中，为了支持 source 标签
+      if (node.getAttribute && node.getAttribute('src')) {
+        this.audio.appendChild(node)
+      }
+    })
     ele.appendChild(audio)
 
     // 优先加载音频，让总时间等信息更快返回
@@ -343,20 +330,77 @@ export default class MipAudio extends CustomElement {
     // 事件绑定：获取总播放时长，更新DOM
     // FIXME: 由于ios10手机百度不执行loadedmetadata函数，
     // 魅族自带浏览器在播放前获取总播放时长为0.需要修改
-    listen(audio, 'loadedmetadata', () => this.applyTotalTime(), false)
+    listen(audio, 'loadedmetadata', () => this.applyTotalTime())
 
     // 事件绑定：点击播放暂停按钮，播放&暂停音频
-    listen(ele.querySelector('[play-button]'), 'click', () => this.playOrPause(), false)
+    listen(ele.querySelector('[play-button]'), 'click', () => this.playOrPause())
 
     // 事件绑定：音频播放中，更新时间DOM
-    listen(audio, 'timeupdate', () => this.timeUpdate(), false)
+    listen(audio, 'timeupdate', () => this.timeUpdate())
 
     // 事件绑定：拖动进度条事件
     this.bindSeekEvent()
 
     // 事件绑定：音频播放完毕，显示停止DOM
-    listen(audio, 'ended', this.playEnded.bind(this), false)
+    listen(audio, 'ended', this.playEnded.bind(this))
+    listen(audio, 'playing', this.audioPlaying.bind(this))
+
+    this.gatherMetadata()
 
     return util.event.loadPromise(audio)
+  }
+
+  gatherMetadata () {
+    const element = this.element
+    // Gather metadata
+    const artist = element.getAttribute('artist') || ''
+    const title = element.getAttribute('title') ||
+                  // element.getAttribute('aria-label') ||
+                  document.title ||
+                  ''
+    const album = element.getAttribute('album') || ''
+    const artwork = element.getAttribute('artwork') ||
+                    parseSchemaImage(document) ||
+                    parseOgImage(document) ||
+                    parseFavicon(document) ||
+                    ''
+
+    this.metadata = {
+      title,
+      artist,
+      album,
+      artwork: [{src: artwork}]
+    }
+  }
+
+  /**
+   * 正在播放时的回调，设置 mediaSession
+   * {@link https://developers.google.com/web/updates/2017/02/media-session}
+   *
+   * @private
+   */
+  audioPlaying () {
+    setMediaSession(
+      this.metadata,
+      () => { this.playOrPause() },
+      () => { this.playOrPause('pause') }
+    )
+  }
+}
+
+/**
+ * 传播属性
+ *
+ * @param {HTMLElement} src 源节点
+ * @param {HTMLElement} dest 目标节点
+ * @param {Array.<string>|string} attrs 属性列表
+ */
+function propagateAttributes (src, dest, attrs) {
+  attrs = Array.isArray(attrs) ? attrs : [attrs]
+  for (let i = 0; i < attrs.length; i++) {
+    const attr = attrs[i]
+    if (src.hasAttribute(attr)) {
+      dest.setAttribute(attr, src.getAttribute(attr))
+    }
   }
 }

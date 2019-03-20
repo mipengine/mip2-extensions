@@ -124,7 +124,7 @@ const getSourceId = () => {
  */
 const get = (el, poi) => {
   let firstKey = true
-  let url = data.ajaxUrl
+  let url = poi === 'top' ? data.topAjaxUrl : data.ajaxUrl
   let urlParams = getUrlParams(el)
 
   if (!urlParams) {
