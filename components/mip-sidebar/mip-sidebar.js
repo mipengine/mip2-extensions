@@ -53,7 +53,7 @@ export default class MIPSidebar extends CustomElement {
   }
 
   handleOpen () {
-    this.inTransition || this.element.setAttribute('open', 'true')
+    this.inTransition || this.element.setAttribute('open', '')
   }
 
   handleClose () {
