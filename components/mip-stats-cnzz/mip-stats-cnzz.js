@@ -50,7 +50,7 @@ export default class MIPStatsCnzz extends MIP.CustomElement {
       ])
 
       let cnzzScript = document.createElement('script')
-      let src = `https://s${lineNum}.cnzz.com/z_stat.php?id=${token}&web_id=${token}`
+      let src = `//s${lineNum}.cnzz.com/z_stat.php?id=${token}&web_id=${token}`
 
       setConfig && _czc.push(buildArry(decodeURIComponent(setConfig)))
       cnzzScript.src = src

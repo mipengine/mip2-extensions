@@ -61,7 +61,9 @@ const htmlTemplate = `
     <script>
       window.onload = function () {
         var sfLinks = document.querySelectorAll('.sf-links a');
-        sfLinks.forEach(function (linkDom) {
+        var sfLinksArray = Array.prototype.slice.call(sfLinks);
+
+        sfLinksArray.forEach(function (linkDom) {
           if (linkDom.getAttribute('href')) {
             var prefix = 'https://www.mipengine.org/validator/preview/s?url=';
             var host = window.location.href;

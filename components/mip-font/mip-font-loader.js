@@ -24,7 +24,7 @@ export default class FontLoader {
    */
   load (fontConfig, timeout) {
     this.fontConfig = fontConfig
-    return MIP.Services.timerFor(window)
+    return MIP.Services.timer()
       .timeout(timeout, this.loadMain())
       .then(() => {
         this.fontLoadResolved = true

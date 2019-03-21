@@ -7,17 +7,20 @@ const ANIMATION_TIMEOUT = 300
 export default class MIPSidebar extends CustomElement {
   constructor (...args) {
     super(...args)
-    this.side = this.element.getAttribute('side')
-    // side 必须是 left 或者 right，默认是 left
-    if (!['left', 'right'].includes(this.side)) {
-      this.side = 'left'
-      this.element.setAttribute('side', this.side)
-    }
-
+    this.side = 'left'
     this.isOpen = false
     this.running = false
     this.bodyOverflow = 'hidden'
     this.mask = null
+  }
+
+  connectedCallback () {
+    this.side = this.element.getAttribute('side')
+    // side 必须是 left 或者 right，默认是 left
+    if (this.side !== 'left' && this.side !== 'right') {
+      this.side = 'left'
+      this.element.setAttribute('side', this.side)
+    }
   }
 
   toggle (e) {
@@ -38,6 +41,9 @@ export default class MIPSidebar extends CustomElement {
 
     util.css(el, { display: 'block' })
     util.css(mask, { display: 'block' })
+
+    // 触发重绘，Android UC 等浏览器需要
+    this.mask.getBoundingClientRect()
 
     setTimeout(() => {
       el.classList.add('show')

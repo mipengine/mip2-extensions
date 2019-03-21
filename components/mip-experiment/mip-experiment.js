@@ -204,9 +204,8 @@ class Experiment {
 }
 
 export default class MIPExperiment extends CustomElement {
-  constructor (ele) {
-    super(ele)
-
+  connectedCallback () {
+    let ele = this.element
     let jsonScript = ele.querySelector('script[type="application/json"]')
     if (!jsonScript) {
       warn('<mip-experiment> 找不到配置')
@@ -231,14 +230,12 @@ export default class MIPExperiment extends CustomElement {
       exp.setExpGroup(expGroup)
 
       if (exp.baiduStats) {
-        Services.extensionsFor(window)
+        Services.extensions()
           .waitForExtension('mip-stats-baidu')
           .then(() => exp.bindBaiduStats(exp.baiduStats))
       }
     })
-  }
 
-  connectedCallback () {
     util.css(this.element, 'display', 'inherit')
   }
 }

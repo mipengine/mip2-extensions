@@ -87,12 +87,12 @@
                 <div class="mip-group-selection-group mip-group-selection-part-letter">
                   <div class="mip-group-selection-title" data-anchor="{{key}}">{{key}}</div>
                   {{#cities}}
-                    <a class="mip-group-selection-item" href="#" data-code="{{code}}" data-pinyin="{{pinyin}}" data-city="{{city}}">{{city}}</a>
+                    <p class="mip-group-selection-item" data-code="{{code}}" data-pinyin="{{pinyin}}" data-city="{{city}}">{{city}}</p>
                   {{/cities}}
                 </div>
               {{/list}}
             </div>
-            <mip-fixed still class="mip-group-selection-sidebar-wrapper">
+            <mip-fixed class="mip-group-selection-sidebar-wrapper" type="right" top="10px">
               <div class="mip-group-selection-sidebar">
                 {{#list}}
                   <div class="mip-group-selection-link" data-target-anchor="{{key}}">{{key}}</div>
@@ -110,7 +110,7 @@
     </div>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="/mip-group-selection/mip-group-selection.js"></script>
-    <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
-    <script src="https://c.mipcdn.com/static/v1/mip-toggle/mip-toggle.js"></script>
+    <script src="/mip-mustache/mip-mustache.js"></script>
+    <script src="/mip-toggle/mip-toggle.js"></script>
   </body>
 </html>

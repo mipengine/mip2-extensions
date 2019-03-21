@@ -47,7 +47,8 @@ export default class MIPScrollbox extends CustomElement {
    */
   build () {
     let element = this.element
-    let config = Object.assign({}, DEFAULTS, element.dataset)
+    // 不能用 Object.assign 不然的话 element.dataset 不能拷贝过来
+    let config = util.fn.extend({}, DEFAULTS, element.dataset)
     let updateView = util.fn.throttle(() => viewport.trigger('changed'), 200)
 
     // 绑定滚动事件触发更新视图
@@ -72,9 +73,14 @@ export default class MIPScrollbox extends CustomElement {
 
     // 这个 for 循序是需要用到通过上面 for 循序计算出来的总的 width
     nodesArr.forEach(node => {
-      node.style.width = (node.dataset.col || 3) * config.rate / width * 100 + '%'
-      node.style.paddingRight = config.right / cols + '%'
+      util.css(node, {
+        width: (node.dataset.col || 3) * config.rate / width * 100 + '%',
+        paddingRight: config.right / cols + '%'
+      })
     })
-    element.querySelector('[data-scroller]').style.width = width + '%'
+    util.css(element.querySelector('[data-scroller]'), {
+      width: width + '%'
+    })
+    // element.querySelector('[data-scroller]').style.width = width + '%'
   }
 }

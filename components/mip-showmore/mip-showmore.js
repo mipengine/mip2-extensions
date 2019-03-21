@@ -14,6 +14,15 @@ const SIDS_A = '126449'
 const SIDS_B = '126450'
 const SIDS_C = '126490'
 
+let increaseId = 0
+
+/**
+ * 保存 showmore 的实例以及依赖关系，以便保证组件 init 的顺序从里到外
+ *
+ * @type {Array.<MIPShowMore>}
+ */
+const SHOWMORE_INSTANCE = {}
+
 // 获取实验组id
 if (hash.hashTree.sids) {
   sidsArr = hash.hashTree.sids.value.split('_')
@@ -45,11 +54,22 @@ export default class MIPShowMore extends CustomElement {
   constructor (...args) {
     super(...args)
 
+    /**
+     * 表示是否运行过 connectedCallback
+     *
+     * @type {boolean}
+     */
+    this.inited = false
+    this.timeoutArray = []
+  }
+
+  /** @override */
+  connectedCallback () {
+    if (this.inited) {
+      return
+    }
     let { element } = this
 
-    this.timeoutArray = []
-    this.increaseId = 0
-    this.showmoreInstance = {}
     // 获取点击按钮，v1.0.0 方法
     this.clickBtn = element.querySelector('[showmorebtn]')
     if (this.clickBtn) {
@@ -80,6 +100,7 @@ export default class MIPShowMore extends CustomElement {
 
     // 是否初使化
     this.initialized = false
+    this.inited = true
 
     // 获取内容显示框，v1.1.0 方法
     if (!this.showBox) {
@@ -92,7 +113,9 @@ export default class MIPShowMore extends CustomElement {
       this.element.setAttribute('maxheight', '99999')
     }
     this.analysisDep()
-    this.firstInit()
+    if (!this.containSMChild) {
+      this.firstInit()
+    }
     this.bindClick()
     this.addEventAction('toggle', event => {
       this.toggle(event)
@@ -265,8 +288,8 @@ export default class MIPShowMore extends CustomElement {
     if (!this.clickBtn) {
       return
     }
-    this.clickBtn.addEventListener('click', event => {
-      this.toggle(event)
+    this.clickBtn.addEventListener('click', () => {
+      this.toggle()
     })
   }
   // 点击时按钮添加class
@@ -278,7 +301,7 @@ export default class MIPShowMore extends CustomElement {
   // 高度阈值控制
   toggle (event) {
     let classList = this.element.classList
-    let clickBtn = event && event.target
+    let clickBtn = (event && event.target)
       ? matchOriginTarget(this.element.id.trim(), event.target)
       : null
     let opt = {}
@@ -450,8 +473,7 @@ export default class MIPShowMore extends CustomElement {
   getId (element) {
     element = element || this.element
     if (!element.dataset.showmoreId) {
-      this.increaseId += 1
-      element.dataset.showmoreId = `__showmoreincreaseId__${this.increaseId}`
+      element.dataset.showmoreId = `__showmoreincreaseId__${++increaseId}`
     }
     return element.dataset.showmoreId
   }
@@ -464,8 +486,8 @@ export default class MIPShowMore extends CustomElement {
     }
     let parentId = this.getId(this.element)
 
-    this.showmoreInstance[parentId] = this.showmoreInstance[parentId] || { deps: [] }
-    this.showmoreInstance[parentId].instance = this
+    SHOWMORE_INSTANCE[parentId] = SHOWMORE_INSTANCE[parentId] || { deps: [] }
+    SHOWMORE_INSTANCE[parentId].instance = this
 
     let currendParentNode = childMipShowmore[0]
     Array.prototype.slice.call(childMipShowmore).forEach(child => {
@@ -474,9 +496,9 @@ export default class MIPShowMore extends CustomElement {
       }
 
       let id = this.getId(child)
-      let childIns = this.showmoreInstance[id] || {}
+      let childIns = SHOWMORE_INSTANCE[id] || {}
       childIns.deps = (childIns.deps || []).concat([parentId])
-      this.showmoreInstance[id] = childIns
+      SHOWMORE_INSTANCE[id] = childIns
 
       currendParentNode = child
     })
@@ -485,10 +507,10 @@ export default class MIPShowMore extends CustomElement {
 
   // 运行嵌套的showmore组件实例
   runInitShowMore () {
-    let depIds = this.showmoreInstance[this.getId(this.element)]
+    let depIds = SHOWMORE_INSTANCE[this.getId(this.element)]
     depIds && depIds.deps.forEach(function (depid) {
-      let instan = this.showmoreInstance[depid]
-      instan && instan.instance && !instan.instance.initialized && instan.instance.init()
+      let instan = SHOWMORE_INSTANCE[depid]
+      instan && instan.instance && !instan.instance.initialized && instan.instance.firstInit()
     })
   }
 

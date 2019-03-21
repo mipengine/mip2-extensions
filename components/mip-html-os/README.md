@@ -8,6 +8,8 @@
 支持布局|responsive, fixed-height, fill, container, fixed
 所需脚本|https://c.mipcdn.com/static/v2/mip-html-os/mip-html-os.js
 
+仅当操作系统与 `os` 属性值匹配时显示内容。如果没有指定 `os` 属性值，隐藏内容。
+
 ## 示例
 
 ```html
@@ -19,10 +21,4 @@
 
 ### os
 
-说明：选择操作系统
-
-必选项：是
-
-类型：字符串
-
-取值范围：android, ios
+指定操作系统，取值范围是 `android` 和 `ios`。

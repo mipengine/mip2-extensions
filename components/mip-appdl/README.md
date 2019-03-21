@@ -19,7 +19,7 @@ App 下载，可区分 Android 和 iOS。
   downbtntext="立即使用"
   other-downsrc="https://downapp.baidu.com/baidusearch/AndroidPhone/11.3.0.13/1/757b/20190108123357/baidusearch_AndroidPhone_11-3-0-13_757b.apk"
   android-downsrc="https://downapp.baidu.com/baidusearch/AndroidPhone/11.3.0.13/1/757b/20190108123357/baidusearch_AndroidPhone_11-3-0-13_757b.apk"
-  ios-downsrc="itms-apps://itunes.apple.com/app/id382201985" postiontye="fixed">
+  ios-downsrc="itms-apps://itunes.apple.com/app/id382201985">
 </mip-appdl>
 ```
 
@@ -35,7 +35,7 @@ App 下载，可区分 Android 和 iOS。
     downbtntext="立即使用"
     other-downsrc="https://downapp.baidu.com/baidusearch/AndroidPhone/11.3.0.13/1/757b/20190108123357/baidusearch_AndroidPhone_11-3-0-13_757b.apk"
     android-downsrc="https://downapp.baidu.com/baidusearch/AndroidPhone/11.3.0.13/1/757b/20190108123357/baidusearch_AndroidPhone_11-3-0-13_757b.apk"
-    ios-downsrc="itms-apps://itunes.apple.com/app/id382201985" postiontye="fixed">
+    ios-downsrc="itms-apps://itunes.apple.com/app/id382201985">
   </mip-appdl>
 </mip-fixed>
 ```
@@ -98,3 +98,7 @@ App 下载，可区分 Android 和 iOS。
 取值：URL 类型
 
 使用限制：如果对应系统没有下载链接时显示默认链接
+
+## 注意事项
+
+组件可能会被浏览器的广告过滤策略屏蔽

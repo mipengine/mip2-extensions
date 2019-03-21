@@ -164,6 +164,19 @@
         <div target="email" visible-when-invalid="valueMissing">email 不能为空</div>
         <div target="email" visible-when-invalid="patternMismatch">请输入正确的 email 地址</div>
         <input type="submit" value="提交">
+        <div class="mip-example-submit-results" submit-success>
+          <template type="mip-mustache">
+              <p>查询成功！用户信息如下: </p>
+              <p>年龄{{age}}</p>
+              <p>邮箱{{email}}</p>
+              <p>电话{{telephone}}</p>
+          </template>
+        </div>
+        <div submit-error>
+          <template type="mip-mustache">
+            Error!.
+          </template>
+        </div>
       </mip-form>
     </div>
 

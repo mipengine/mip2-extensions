@@ -1,36 +1,143 @@
 const { CustomElement, util } = MIP
+const log = util.log('mip-ainm')
 
-export default class MipAnim extends CustomElement {
-  constructor (...args) {
-    super(...args)
-    this.src = this.element.getAttribute('src') || ''
-    this.alt = this.element.getAttribute('alt') || ''
+const BUILD_ATTRIBUTES = ['alt', 'aria-label', 'aria-describedby',
+  'aria-labelledby']
+const LAYOUT_ATTRIBUTES = ['src', 'srcset']
+const SRC_PLACEHOLDER = 'data:image/gif;base64,' +
+'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+
+/**
+ * 如果 img 没有 src 属性并且浏览器不支持 srcset，
+ * 将 srcset 的第一个 url 作为 img 的 src
+ *
+ * @param {!Element} img 图像元素
+ */
+function guaranteeSrcForSrcsetUnsupportedBrowsers (img) {
+  if (!img.hasAttribute('src') && 'srcset' in img === false) {
+    const srcset = img.getAttribute('srcset')
+    const matches = /\S+/.exec(srcset)
+    if (matches == null) {
+      return
+    }
+    const srcseturl = matches[0]
+    img.setAttribute('src', srcseturl)
+  }
+}
+
+/**
+ * 传播属性
+ *
+ * @param {HTMLElement} src 源节点
+ * @param {HTMLElement} dest 目标节点
+ * @param {Array.<string>|string} attrs 属性列表
+ */
+function propagateAttributes (src, dest, attrs) {
+  attrs = Array.isArray(attrs) ? attrs : [attrs]
+  for (let i = 0; i < attrs.length; i++) {
+    const attr = attrs[i]
+    if (src.hasAttribute(attr)) {
+      dest.setAttribute(attr, src.getAttribute(attr))
+    }
+  }
+}
+
+/**
+ * promise 在元素加载完成时 resolve
+ *
+ * @param {!Element} element 待加载元素
+ * @returns {!Promise} promise
+ */
+function loadPromise (element) {
+  return new Promise(resolve => {
+    element.onload = () => {
+      resolve(element)
+    }
+  })
+}
+
+/**
+ * Shows or hides the specified element.
+ *
+ * @param {!Element} element
+ * @param {boolean} opt
+ * @param {boolean} isPlaceholder
+ */
+function toggle (element, opt, isPlaceholder) {
+  let hideClass = isPlaceholder ? 'mip-hidden' : 'mip-hide'
+  if (opt === undefined) {
+    opt = element.classList.contains(hideClass)
+  }
+  if (opt) {
+    element.classList.remove(hideClass)
+  } else {
+    element.classList.add(hideClass)
+  }
+}
+
+export default class MIPAnim extends CustomElement {
+  build () {
+    let el = this.element
+    this.hasLoaded = false
+    this.placeholder = this.getPlaceholder()
+    this.img = new Image()
+    this.img.setAttribute('decoding', 'async')
+    propagateAttributes(el, this.img, BUILD_ATTRIBUTES)
+    this.applyFillContent(this.img, true)
+
+    // Remove role=img otherwise this breaks screen-readers focus and
+    // only read "Graphic" when using only 'alt'.
+    if (el.getAttribute('role') === 'img') {
+      el.removeAttribute('role')
+      log.error('设置 role=img 会导致屏幕阅读器不可用，请使用 alt 或者 ARIA 属性')
+    }
+
+    // 如果有 placeholder，img 先隐藏，显示 placeholder
+    if (this.placeholder) {
+      toggle(this.img, false)
+    }
+
+    el.appendChild(this.img)
   }
 
-  firstInviewCallback () {
-    let el = this.element
-    let placeholderImg = el.querySelector('mip-img')
-    if (this.src) {
-      // 加载gif图
-      promiseIf({ src: this.src, alt: this.alt }).then(imageObj => {
-        // 隐藏默认图
-        if (placeholderImg) {
-          util.css(placeholderImg, { display: 'none' })
-        }
-        el.appendChild(imageObj)
-      })
+  viewportCallback (inViewport) {
+    if (!this.hasLoaded) {
+      return
     }
+    this.updateInViewport(inViewport)
+  }
 
-    // 判断图片是否加载成功
-    function promiseIf (data) {
-      return new Promise(resolve => {
-        let image = document.createElement('img')
-        image.src = data.src
-        image.alt = data.alt
-        image.onload = () => {
-          resolve(image)
-        }
-      })
+  layoutCallback () {
+    propagateAttributes(this.element, this.img, LAYOUT_ATTRIBUTES)
+    guaranteeSrcForSrcsetUnsupportedBrowsers(this.img)
+    return loadPromise(this.img)
+  }
+
+  firstLayoutCompleted () {
+    this.hasLoaded = true
+    this.updateInViewport(true)
+  }
+
+  unlayoutCallback () {
+    // 释放内存
+    this.img.src = SRC_PLACEHOLDER
+    this.img.srcset = SRC_PLACEHOLDER
+    this.hasLoaded = false
+  }
+
+  updateInViewport (inViewport) {
+    this.placeholder && toggle(this.placeholder, !inViewport, true)
+    toggle(this.img, inViewport, false)
+  }
+
+  // 兼容 v1 默认将 mip-img 作为 placeholder 的情况
+  getPlaceholder () {
+    let el = this.element
+    let placeholder = el.getPlaceholder()
+    if (!placeholder) {
+      placeholder = el.querySelector('mip-img')
+      placeholder && log.warn("请使用 'placeholder' 属性指定占位符！")
     }
+    return placeholder
   }
 }
