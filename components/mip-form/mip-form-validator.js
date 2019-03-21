@@ -6,7 +6,7 @@
 const REGS = {
   EMAIL: '^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$',
   PHONE: '^1\\d{10}$',
-  IDCAR: '^\\d{15}|\\d{18}$'
+  IDCARD: '(^\\d{15}$)|(^\\d{18}$)|(^\\d{17}(\\d|X|x)$)'
 }
 
 const CustomValidationReporting = {
@@ -48,6 +48,13 @@ export class FormValidator {
    * 检验输入是否合法
    */
   checkInputValid () {
+    this.valid = true
+    for (let input of this.inputs) {
+      const validityState = this.validateInput(input)
+      if (validityState !== 'valid') {
+        this.valid = false
+      }
+    }
     return this.valid
   }
 
@@ -188,7 +195,7 @@ class ShowFirstOnSubmitValidator extends FormValidator {
       if (validityState !== 'valid') {
         this.valid = false
         this.showValidatorReport(input, validityState)
-        return this.valid
+        break
       }
     }
     return this.valid

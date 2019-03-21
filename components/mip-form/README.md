@@ -204,7 +204,7 @@
 
 ### validatetype
 
-说明：验证类型, 用于支持简单的验证。目前提供  `email`, `phone`, `idcar`, `custom`。当类型为 `custom` 时则需要填写 `validatereg` 实现自定义校验。
+说明：验证类型, 用于支持简单的验证。目前提供  `email`, `phone`, `idcard`, `custom`。当类型为 `custom` 时则需要填写 `validatereg` 实现自定义校验。
 
 可选：
 
@@ -212,7 +212,7 @@
 * `custom` 自定义校验，需配合 validatereg 使用
 * `email` 输入电子邮件，默认正则 `/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/`
 * `phone` 输入电话号码，默认正则  `/^1\d{10}$/`
-* `idcar` 输入信用卡号，默认正则 `/^\d{15}|\d{18}$/`
+* `idcard` 输入身份证号，默认正则 `/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/`
 
 ### validatereg
 

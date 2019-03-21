@@ -80,14 +80,14 @@
     </div>
 
     <div class="mip-form-example">
-      <p class="mip-example-title"> 验证 email, phone, idcar</p>
+      <p class="mip-example-title"> 验证 email, phone, idcard</p>
       <mip-form method="get" url="https://www.mipengine.org">
         <input type="email" name="email" validatetype="email" validatetarget="email" placeholder="电子邮箱" required>
         <div class="mip-form-target" target="email">请输入正确的 email</div>
         <input type="phone" name="phone" validatetype="phone" validatetarget="phone" placeholder="电话" required>
-        <div class="mip-form-target" target="phone">请输入正确的电话，需要 10 位数字 </div>
-        <input type="idcar" name="idcar" validatetype="idcar" validatetarget="idcar" placeholder="信用卡" required>
-        <div class="mip-form-target" target="idcar">请输入正确的信用卡，需要 15 或 18 位数字 </div>
+        <div class="mip-form-target" target="phone">请输入正确的电话，需要 11 位数字 </div>
+        <input type="idcard" name="idcard" validatetype="idcard" validatetarget="idcard" placeholder="身份证号" required>
+        <div class="mip-form-target" target="idcard">请输入正确的身份证号，需要 15 或 18 位数字 </div>
         <input type="submit" value="提交">
       </mip-form>
     </div>
@@ -151,7 +151,6 @@
           name="username"
           validatetarget="username"
           validatetype="custom"
-          validatereg="\p{L}+\s\p{L}+"
           placeholder="姓名"
           required>
         <div target="username" visible-when-invalid="valueMissing">姓名不能为空</div>
