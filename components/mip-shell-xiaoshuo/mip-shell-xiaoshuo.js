@@ -41,6 +41,16 @@ export default class MipShellNovel extends MIP.builtinComponents.MipShell {
     scrollBoundary()
     // 阅读器内部预渲染开关
     this.isReaderPrerender = false
+    // 神奇的代码解决白屏问题
+    let value
+    Object.defineProperty(window.MIP_PAGE_META_CACHE, MIP.viewer.page.pageId, {
+      get () {
+        return value
+      },
+      set (v) {
+        value = v
+      }
+    })
   }
 
   // 通过小说JS给dom添加预渲染字段
