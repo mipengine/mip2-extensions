@@ -179,7 +179,6 @@ export default class Form {
    */
   fetchUrl (url) {
     util.css([this.submittingEle], {display: 'block'})
-    // TODO: form input value as data
     this.renderTpl(this.submittingEle, {})
     util.css([this.successEle, this.errorEle], {display: 'none'})
 
@@ -317,9 +316,22 @@ export default class Form {
         util.css(cross, {display: 'none'})
       }, false)
     }
-    cross.addEventListener('touchstart', this.clear, false)
     cross.addEventListener('mousedown', this.clear, false)
     cross.addEventListener('click', this.clear, false)
+    cross.addEventListener('touchstart', this.clear, false)
+
+    // on iOS UIWebview，twice touch cannot enter text
+    // see: https://stackoverflow.com/questions/13124340/cant-type-into-html-input-fields-on-ios-after-clicking-twice
+    cross.addEventListener('touchend', (event) => {
+      const name = event.target.getAttribute('name')
+      let input = this.element.querySelector('input[name="' + name + '"]')
+      if (document.activeElement === input) {
+        window.focus()
+        setTimeout(() => {
+          input.focus()
+        }, 0)
+      }
+    })
   }
 
   clear (e) {
@@ -327,7 +339,6 @@ export default class Form {
     e.preventDefault()
     let name = e.target.getAttribute('name')
     let inputSelect = this.parentNode.querySelector('input[name="' + name + '"]')
-    inputSelect.focus()
     inputSelect.value = ''
     util.css(this, {display: 'none'})
   }

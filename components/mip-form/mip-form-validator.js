@@ -68,7 +68,7 @@ export class FormValidator {
   showValidatorReport (input, validityState) {
     const validateTarget = input.getAttribute('validatetarget')
     const validateTargetDom = this.form.querySelectorAll(`div[target="${validateTarget}"]`)
-    validateTargetDom.forEach((element) => {
+    for (let element of validateTargetDom) {
       if (element.hasAttribute('visible-when-invalid')) {
         const visibleDomAttr = element.getAttribute('visible-when-invalid')
         if (visibleDomAttr === validityState) {
@@ -77,7 +77,7 @@ export class FormValidator {
       } else {
         element.classList.add('visible')
       }
-    })
+    }
   }
 
   /**
@@ -88,9 +88,9 @@ export class FormValidator {
   hideValidatorReport (input) {
     const validateTarget = input.getAttribute('validatetarget')
     const reportElement = this.form.querySelectorAll(`.visible[target="${validateTarget}"]`)
-    reportElement.forEach((element) => {
+    for (let element of reportElement) {
       element.classList.remove('visible')
-    })
+    }
   }
 
   /**
