@@ -14,9 +14,9 @@
 
 `git clone` 出来的项目结构与 `mip2 init` 命令初始化的项目结构类似，我们可以在 `components` 目录新增组件。
 
-- [组件开发](https://github.com/mipengine/mip2/blob/master/docs/guide/mip-cli/component-development.md)
-- [调试](https://github.com/mipengine/mip2/blob/master/docs/guide/mip-cli/component-testing.md)
-- [校验](https://github.com/mipengine/mip2/blob/master/docs/guide/mip-cli/cli-usage.md#mip2-validate-%E7%BB%84%E4%BB%B6%E5%92%8C%E9%A1%B5%E9%9D%A2%E6%A0%A1%E9%AA%8C)
+- [组件开发](https://github.com/mipengine/mip2/blob/master/docs/contribute/development/component-syntax.md)
+- [调试](https://github.com/mipengine/mip2/blob/master/docs/contribute/debug/mip-dev.md)
+- [校验](https://www.mipengine.org/v2/contribute/getting-start/mip-cli-usage.html#mip2-validate-%E7%BB%84%E4%BB%B6%E5%92%8C%E9%A1%B5%E9%9D%A2%E6%A0%A1%E9%AA%8C)
 
 3.**发起 Pull Request**
 

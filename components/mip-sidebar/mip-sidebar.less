@@ -14,7 +14,7 @@ mip-sidebar {
   display: none;
   transition: transform 233ms cubic-bezier(0, 0, 0.21, 1);
 
-  &[side=left] {
+  &:not([side=right]) {
     left: 0 !important;
     transform: translateX(-100%) !important;
   }
@@ -24,7 +24,7 @@ mip-sidebar {
     transform: translateX(100%) !important;
   }
 
-  &[side].show {
+  &.show {
     transform: translateX(0) !important;
   }
 }

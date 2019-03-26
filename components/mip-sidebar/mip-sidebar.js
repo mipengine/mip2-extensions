@@ -1,113 +1,120 @@
 import './mip-sidebar.less'
 
-const { CustomElement, util } = MIP
+const {CustomElement, Services, util} = MIP
 
-const ANIMATION_TIMEOUT = 300
+const TRANSITION_TIMEOUT = 300
 
 export default class MIPSidebar extends CustomElement {
+  static get observedAttributes () {
+    return ['open']
+  }
+
   constructor (...args) {
     super(...args)
-    this.side = 'left'
-    this.isOpen = false
-    this.running = false
+    this.inTransition = false
     this.bodyOverflow = 'hidden'
     this.mask = null
+    this.handleToggle = this.handleToggle.bind(this)
+    this.handleOpen = this.handleOpen.bind(this)
+    this.handleClose = this.handleClose.bind(this)
+    this.timer = Services.timer()
   }
 
-  connectedCallback () {
-    this.side = this.element.getAttribute('side')
-    // side 必须是 left 或者 right，默认是 left
-    if (this.side !== 'left' && this.side !== 'right') {
-      this.side = 'left'
-      this.element.setAttribute('side', this.side)
+  build () {
+    /** @type {!HTMLElement} */
+    const element = this.element
+
+    if (this.isOpen()) {
+      this.open()
+    } else {
+      element.setAttribute('aria-hidden', 'true')
+    }
+
+    this.mask = document.createElement('div')
+    this.mask.classList.add('mip-sidebar-mask')
+    element.parentElement.appendChild(this.mask)
+
+    document.addEventListener('keydown', event => event.keyCode === 27 && this.handleClose())
+    this.mask.addEventListener('touchmove', event => event.preventDefault())
+    this.mask.addEventListener('click', this.handleClose)
+    this.addEventAction('toggle', this.handleToggle)
+    this.addEventAction('open', this.handleOpen)
+    this.addEventAction('close', this.handleClose)
+  }
+
+  attributeChangedCallback (name, oldValue, newValue) {
+    if (name === 'open') {
+      this.isOpen() ? this.open() : this.close()
     }
   }
 
-  toggle (e) {
-    this.isOpen ? this.close(e) : this.open()
+  handleToggle () {
+    this.isOpen() ? this.handleClose() : this.handleOpen()
   }
 
-  /**
-   * 打开 sidebar 和 mask
-   */
+  handleOpen () {
+    this.inTransition || this.element.setAttribute('open', '')
+  }
+
+  handleClose () {
+    this.inTransition || this.element.removeAttribute('open')
+  }
+
+  async transition () {
+    this.inTransition = true
+    await this.timer.sleep(TRANSITION_TIMEOUT)
+    this.inTransition = false
+  }
+
+  isOpen () {
+    return this.props.open
+  }
+
   open () {
-    let el = this.element
-    let mask = this.mask
+    /** @type {!HTMLElement} */
+    const element = this.element
+    const mask = this.mask
 
-    if (this.isOpen) {
-      return
-    }
-    this.isOpen = true
-
-    util.css(el, { display: 'block' })
+    util.css(element, { display: 'block' })
     util.css(mask, { display: 'block' })
 
     // 触发重绘，Android UC 等浏览器需要
     this.mask.getBoundingClientRect()
 
-    setTimeout(() => {
-      el.classList.add('show')
+    this.timer.delay(() => {
+      element.classList.add('show')
       mask.classList.add('show')
-    }, 0)
+    })
 
-    setTimeout(() => {
-      this.running = true
-    }, ANIMATION_TIMEOUT)
+    this.transition()
 
     this.bodyOverflow = getComputedStyle(document.body).overflow
     document.body.style.overflow = 'hidden'
-    el.setAttribute('aria-hidden', 'false')
+    element.setAttribute('aria-hidden', 'false')
   }
 
-  /**
-   * 关闭 sidebar 和 mask
-   *
-   * @param {Object} e 点击事件
-   */
-  close (e) {
-    let el = this.element
-    let mask = this.mask
+  close () {
+    /** @type {!HTMLElement} */
+    const element = this.element
+    const mask = this.mask
 
-    e.preventDefault()
-    if (!this.running) {
-      return
-    }
-    this.running = false
-
-    el.classList.remove('show')
+    element.classList.remove('show')
     mask.classList.remove('show')
 
-    setTimeout(() => {
-      this.isOpen = false
-      util.css(el, { display: 'none' })
+    this.transition().then(() => {
+      util.css(element, { display: 'none' })
       util.css(mask, { display: 'none' })
-    }, ANIMATION_TIMEOUT)
+    })
 
     document.body.style.overflow = this.bodyOverflow
-    el.setAttribute('aria-hidden', 'true')
+    element.setAttribute('aria-hidden', 'true')
   }
+}
 
-  build () {
-    let el = this.element
-    if (!this.isOpen) {
-      el.setAttribute('aria-hidden', 'true')
-    }
-
-    this.mask = document.createElement('div')
-    this.mask.className = 'mip-sidebar-mask'
-    el.parentNode.appendChild(this.mask)
-
-    document.addEventListener('keydown', e => {
-      if (e.keyCode === 27) {
-        this.close(e)
-      }
-    }, false)
-    this.mask.addEventListener('touchmove', e => {
-      e.preventDefault()
-    }, false)
-    this.mask.addEventListener('click', this.close.bind(this))
-    this.addEventAction('toggle', this.toggle.bind(this))
-    this.addEventAction('open', this.open.bind(this))
-    this.addEventAction('close', this.close.bind(this))
-  }
+MIPSidebar.props = {
+  side: {
+    type: String,
+    default: 'left'
+  },
+  open: Boolean
 }
