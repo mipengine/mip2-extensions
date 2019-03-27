@@ -218,6 +218,7 @@ function shareHandle (options, successcallback, failCallback) {
             timestamp: data.timestamp,
             signature: data.signature
           })
+
           let configData = {
             title: options.title,
             desc: options.content,
@@ -362,7 +363,6 @@ export default class ShareConfig {
     let defaultConfig = options
     defaultConfig['channel'] = 'pageSeach'
     defaultConfig['debug'] = false
-    defaultConfig['linkUrl'] = window.location.href
     sealConfig.init(defaultConfig)
   }
 
