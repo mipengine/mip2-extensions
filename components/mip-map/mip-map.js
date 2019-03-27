@@ -124,6 +124,7 @@ export default class MIPMap extends CustomElement {
    *
    */
   getCurrentLocation () {
+    var _that = this;
     let BMap = window.BMap
     let geolocation = new BMap.Geolocation()
     geolocation.getCurrentPosition(res => {
@@ -139,6 +140,82 @@ export default class MIPMap extends CustomElement {
         viewer.eventAction.execute('getPositionComplete', this.element, res)
       }
     }, {enableHighAccuracy: true})
+  }
+
+  /**
+   * 加入指定的覆盖物
+   */
+  addPoint(t, stores){
+    if(!stores) stores = this.getObjAttribute('stores')
+    let BMap = window.BMap
+    let BMapLib = window.BMapLib
+    //第一步，清除覆盖物
+    this.map.clearOverlays();
+
+    //计算中心点
+    let points = [];
+    for(let i=0;i<stores.length;i++){
+      points.push({"lng":stores[i].lng,"lat":stores[i].lat});
+    }
+    let view = this.map.getViewport(eval(points));
+    let mapZoom = view.zoom;
+    let centerPoint = view.center;
+    this.map.centerAndZoom(centerPoint,mapZoom);
+
+    //添加覆盖物
+    for(let i=0; i<stores.length; i++){
+      let tmpPoint = new BMap.Point(stores[i].lng, stores[i].lat);
+      let tmpMarker = new BMap.Marker(tmpPoint);
+      this.map.addOverlay(tmpMarker);
+      let searchInfoWindow = null;
+      let content = '<div style="margin:0;line-height:20px;padding:2px;">' +
+        '' +
+        '地址：'+stores[i].info+'<br/>' +
+        '</div>';
+      searchInfoWindow = new BMapLib.SearchInfoWindow(this.map, content, {
+        title  : stores[i].name,      //标题
+        width  : 260,             //宽度
+        height : 105,              //高度
+        panel  : "panel",         //检索结果面板
+        enableAutoPan : true,     //自动平移
+        searchTypes   :[
+          BMAPLIB_TAB_SEARCH,   //周边检索
+          BMAPLIB_TAB_TO_HERE,  //到这里去
+          BMAPLIB_TAB_FROM_HERE //从这里出发
+        ]
+      });
+      tmpMarker.addEventListener('click', () => {
+        searchInfoWindow.open(tmpMarker);
+      })
+    }
+    //添加完成
+  }
+
+  //弹出一个标点
+  addInfo(t, store){
+    if(!store){ store = this.getObjAttribute('store')}
+    let BMap = window.BMap
+    let BMapLib = window.BMapLib
+
+    let tmpPoint = new BMap.Point(store.lng, store.lat);
+    let tmpMarker = new BMap.Marker(tmpPoint);
+    let searchInfoWindow = null;
+    let content = '<div style="margin:0;line-height:20px;padding:2px;">' +
+      '' + store.info+'<br/>' +
+      '</div>';
+    searchInfoWindow = new BMapLib.SearchInfoWindow(this.map, content, {
+      title  : store.name,      //标题
+      width  : 290,             //宽度
+      height : 105,              //高度
+      panel  : "panel",         //检索结果面板
+      enableAutoPan : true,     //自动平移
+      searchTypes   :[
+        BMAPLIB_TAB_SEARCH,   //周边检索
+        BMAPLIB_TAB_TO_HERE,  //到这里去
+        BMAPLIB_TAB_FROM_HERE //从这里出发
+      ]
+    });
+    searchInfoWindow.open(tmpMarker);
   }
 
   /**
@@ -169,7 +246,7 @@ export default class MIPMap extends CustomElement {
         }
         this.marker = new BMap.Marker(this.point)
         this.map.addOverlay(this.marker)
-        this.map.centerAndZoom(this.point, 16)
+        this.map.centerAndZoom(this.point, 15)
 
         // 配置弹层
         this.setInfoWindow()
@@ -243,7 +320,8 @@ export default class MIPMap extends CustomElement {
 
     // 初始化地图
     this.map = new BMap.Map('allmap')
-    this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 15)
+    //init
+    this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 11)
 
     // 自动定位、或者手动定位
     this.getPosition ? this.getCurrentLocation() : this.searchLocation()
@@ -270,17 +348,27 @@ export default class MIPMap extends CustomElement {
           window.document.body.removeChild(script)
           window.BMap._insertScript = null
           window._initBaiduMap = null
+
+          let script1 = document.createElement('script')
+          window.document.body.appendChild(script1)
+          script1.src = `https://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.js`
+
+          let link1 = document.createElement('link')
+          window.document.body.appendChild(link1)
+          link1.rel="stylesheet";
+          link1.href = `http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.css`
         }
-        let script = document.createElement('script')
-        window.document.body.appendChild(script)
-        script.src = `https://api.map.baidu.com/api?v=2.0&ak=${this.ak}&callback=_initBaiduMap`
       })
+      let script = document.createElement('script')
+      window.document.body.appendChild(script)
+      script.src = `https://api.map.baidu.com/api?v=2.0&ak=${this.ak}&callback=_initBaiduMap`
       return window.BMap._insertScript
     } else if (!window.BMap._insertScript) {
       return Promise.resolve(window.BMap)
     }
     return window.BMap._insertScript
   }
+
 
   firstInviewCallback () {
     let wrapper = document.createElement('div')
@@ -289,5 +377,10 @@ export default class MIPMap extends CustomElement {
     this.element.appendChild(wrapper)
 
     this.getMapJDK().then(this.resolveOptions.bind(this))
+  }
+  // 插入文档时执行
+  build () {
+    this.addEventAction('addInfo', this.addInfo.bind(this))
+    this.addEventAction('addPoint', this.addPoint.bind(this))
   }
 }
