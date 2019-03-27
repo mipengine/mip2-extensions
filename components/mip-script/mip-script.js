@@ -1,14 +1,10 @@
-<template>
-  <div><slot /></div>
-</template>
-
-<script>
 import mark from 'mip-sandbox/lib/global-mark'
 import generate from 'mip-sandbox/lib/generate-lite'
 import detect from 'mip-sandbox/lib/unsafe-detect'
 /* global mipDataPromises */
-/* global Promise */
-/* global fetch */
+
+const {CustomElement} = MIP
+const log = MIP.util.log('mip-script')
 
 const SYNC_SIZE = 2
 const ASYNC_SIZE = 10
@@ -55,45 +51,58 @@ function run (script, element) {
   }
 }
 
-export default {
-  connectedCallback (element) {
-    let src = element.getAttribute('src')
+export default class MIPScript extends CustomElement {
+  async connectedCallback () {
+    /** @type {HTMLElement} */
+    const element = this.element
+    const {src} = this.props
+
     if (src) {
-      fetch(src)
-        .then(res => {
-          if (res.ok) {
-            res.text().then(data => {
-              if (!data) {
-                return
-              }
-              if (getSize(script) > 1024 * ASYNC_SIZE) {
-                console.error(`WARNING: ASYNC <mip-script> is out of range. Src: ${src}. Please keep it under ${ASYNC_SIZE}KB`)
-                return
-              }
-              run(data, element)
-            })
-          } else {
-            console.error(`Fetch script ${src} failed!`)
-          }
-        })
-        .catch(console.error)
+      try {
+        const res = await fetch(src)
+
+        if (!res.ok) {
+          throw new Error(`Fetch script ${src} failed!`)
+        }
+
+        const data = await res.text()
+
+        if (!data) {
+          return
+        }
+
+        if (getSize(data) > 1024 * ASYNC_SIZE) {
+          throw new Error(`ASYNC <mip-script> is out of range. Src: ${src}. Please keep it under ${ASYNC_SIZE}KB`)
+        }
+
+        run(data, element)
+      } catch (err) {
+        log.error(err.message)
+      }
+
+      return
     }
 
-    let script = element.textContent.trim()
+    const script = element.textContent.trim()
 
     if (!script) {
       return
     }
+
     if (getSize(script) > 1024 * SYNC_SIZE) {
-      console.error(`WARNING: <mip-script> is out of range.Please keep it under ${SYNC_SIZE}KB`)
+      log.error(`<mip-script> is out of range. Please keep it under ${SYNC_SIZE}KB`)
+
       return
     }
 
     run(script, element)
-  },
+  }
 
   prerenderAllowed () {
     return true
   }
 }
-</script>
+
+MIPScript.props = {
+  src: String
+}
