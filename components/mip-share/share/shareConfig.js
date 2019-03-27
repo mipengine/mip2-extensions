@@ -3,7 +3,7 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
-/* global location, setShareInfo, wx */
+/* global fetchJsonp, location, setShareInfo, wx */
 
 import './wxSdk.min'
 
@@ -35,15 +35,6 @@ const IS_BD_BOX = / baiduboxapp\//i.test(UA)
  */
 const IS_QQ = /\bqq\b/i.test(UA)
 
-// let isWeibo = /\bweibo\b/i.test(UA)
-
-/**
- * 空函数
- *
- * @type {Function}
- */
-const EMPTY_FUNC = function () {}
-
 /**
  * 当前环境的 protocol
  *
@@ -73,86 +64,6 @@ const DEFAULT_DESC = '百度App'
 const DEFAULT_ICON = 'https://b.bdstatic.com/searchbox/icms/searchbox/img/po/act/newuserredpack/box_logo.png'
 
 let globalOptions
-
-/**
- * 加载 JS
- *
- * @param {?Object} opts 配置的参数
- */
-function loadJS (opts) {
-  let header = document.head || document.getElementsByTagName('head')[0] || document.documentElement
-  let {
-    url,
-    data,
-    success = EMPTY_FUNC,
-    error = EMPTY_FUNC,
-    timeout = 2e4
-  } = opts
-
-  let callbackName
-  let script = document.createElement('script')
-
-  script.type = 'text/javascript'
-
-  if (typeof data === 'object') {
-    let tmpArr = []
-    Object.keys(data).forEach(key => tmpArr.push(key + '=' + encodeURIComponent(data[key])))
-    data = tmpArr.join('&')
-  }
-  if (data) {
-    url += (url.indexOf('?') === -1 ? '?' : '&') + data
-  }
-
-  url = url.replace(/[&?]{1,2}/, '?')
-
-  if (/=\?/.test(url)) {
-    callbackName = '_box_jsonp' + Date.now()
-    url = url.replace(/=\?/, '=' + callbackName)
-  }
-
-  script.src = url
-
-  let done = true
-  let timer
-  let clear = () => {
-    if (callbackName) {
-      delete window[callbackName]
-    }
-    timer && clearTimeout(timer)
-    script.onload = script.onreadystatechange = script.onerror = null
-    script = null
-  }
-
-  let cb = () => {
-    if (script && (!script.readyState || /loaded|complete/.test(script.readyState))) {
-      clear()
-      if (done && typeof success === 'function') {
-        success.apply(null, [].slice.call(arguments))
-      }
-      done = false
-    }
-  }
-
-  let errorCallback = evt => {
-    clear()
-    done && error(evt)
-    done = false
-  }
-
-  if (callbackName) {
-    window[callbackName] = cb
-  }
-
-  timer = setTimeout(() => {
-    clear()
-    done && error('timeout')
-    done = false
-  }, timeout)
-
-  script.onload = script.onreadystatechange = script.onerror = cb
-  script.onerror = errorCallback
-  header.appendChild(script)
-}
 
 /**
  * 获取 dom 文本
@@ -273,17 +184,26 @@ function shareHandle (options, successcallback, failCallback) {
     options.wx = options.wx || {}
     options.wx.appId = options.wx.appId || 'wxadc1a0c6b9096e89'
     options.wx.jsApiList = options.wx.jsApiList || []
-    options.wx.jsApiList = options.wx.jsApiList.concat(['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'])
+    options.wx.jsApiList = options.wx.jsApiList.concat([
+      'checkJsApi',
+      'onMenuShareTimeline',
+      'onMenuShareAppMessage',
+      'onMenuShareQQ',
+      'onMenuShareWeibo',
+      'onMenuShareQZone',
+      'updateTimelineShareData',
+      'updateTimelineShareData'
+    ])
 
-    loadJS({
-      url: PROTOCAL + options.wx.api,
-      data: {
-        url: encodeURIComponent(location.href),
-        callback: '?',
-        ts: Date.now()
-      },
-      success (res) {
-        if (!res.errno) {
+    let jsonpUrl = `${PROTOCAL}${options.wx.api}`
+
+    fetchJsonp(
+      `${jsonpUrl}${jsonpUrl.indexOf('?') > -1 ? '&' : '?'}url=${encodeURIComponent(location.href)}&ts=${Date.now()}`,
+      {jsonpCallbackFunction: '_box_jsonp' + Date.now()}
+    )
+      .then(response => response.json())
+      .then(res => {
+        if (res.errno) {
           return sendErrorLog('wx_gettoken_err', location.href)
         }
 
@@ -301,8 +221,8 @@ function shareHandle (options, successcallback, failCallback) {
           let configData = {
             title: options.title,
             desc: options.content,
-            link: options.linkUrl,
-            imgUrl: options.iconUrl,
+            link: decodeURIComponent(options.linkUrl),
+            imgUrl: decodeURIComponent(options.iconUrl),
             success () {
               successcallback && successcallback()
             },
@@ -311,11 +231,13 @@ function shareHandle (options, successcallback, failCallback) {
             }
           }
           wx.ready(() => {
-            wx.onMenuShareTimeline(configData)
-            wx.onMenuShareAppMessage(configData)
-            wx.onMenuShareQQ(configData)
-            wx.onMenuShareWeibo(configData)
-            wx.onMenuShareQZone(configData)
+            wx.onMenuShareTimeline && wx.onMenuShareTimeline(configData)
+            wx.onMenuShareAppMessage && wx.onMenuShareAppMessage(configData)
+            wx.onMenuShareQQ && wx.onMenuShareQQ(configData)
+            wx.onMenuShareWeibo && wx.onMenuShareWeibo(configData)
+            wx.onMenuShareQZone && wx.onMenuShareQZone(configData)
+            wx.updateAppMessageShareData && wx.updateAppMessageShareData(configData)
+            wx.updateTimelineShareData && wx.updateTimelineShareData(configData)
           })
         }
         if (IS_QQ) {
@@ -333,8 +255,7 @@ function shareHandle (options, successcallback, failCallback) {
             }
           })
         }
-      }
-    })
+      })
   }
 }
 
