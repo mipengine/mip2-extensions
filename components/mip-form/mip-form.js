@@ -6,7 +6,7 @@
 import Form from './mip-form-fn'
 import './mip-form.less'
 
-let { CustomElement } = MIP
+const { CustomElement } = MIP
 
 export default class MipForm extends CustomElement {
   prerenderAllowed () {
@@ -16,6 +16,6 @@ export default class MipForm extends CustomElement {
   build () {
     let form = new Form()
     form.createDom(this.element)
-    form.setEventHandle()
+    form.setEventHandler()
   }
 }

@@ -29,7 +29,7 @@ export default class Form {
     this.successEle = element.querySelector('[submit-success]')
     this.errorEle = element.querySelector('[submit-error]')
     this.submittingEle = element.querySelector('[submitting]')
-    this.requestUrl = (element.getAttribute('fetch-url') || '').trim() || ''
+    this.requestUrl = (element.getAttribute('fetch-url') || '').trim()
     this.validator = getValidatorFromForm(element)
 
     let form = document.createElement('form')
@@ -48,7 +48,7 @@ export default class Form {
     }
   }
 
-  setEventHandle () {
+  setEventHandler () {
     // 表单提交
     let curEles = this.element.querySelectorAll('form')
     for (let item of curEles) {
@@ -178,7 +178,7 @@ export default class Form {
    * @param {string} url 请求url
    */
   fetchUrl (url) {
-    util.css([this.submittingEle], {display: 'block'})
+    util.css(this.submittingEle, {display: 'block'})
     this.renderTpl(this.submittingEle, {})
     util.css([this.successEle, this.errorEle], {display: 'none'})
 

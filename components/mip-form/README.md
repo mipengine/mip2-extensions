@@ -127,10 +127,10 @@
   </div>
   <div class="mip-example-submit-results" submit-success>
     <template type="mip-mustache">
-        <p>{{name}} 提交成功！用户信息如下: </p>
-        <p>年龄{{age}}</p>
-        <p>邮箱{{email}}</p>
-        <p>电话{{telephone}}</p>
+      <p>{{name}} 提交成功！用户信息如下: </p>
+      <p>年龄{{age}}</p>
+      <p>邮箱{{email}}</p>
+      <p>电话{{telephone}}</p>
     </template>
   </div>
   <div submit-error>
