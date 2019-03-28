@@ -2,17 +2,18 @@
  * @file mip-form-fn.js 表单组件原型类
  * @author duxiaonan@baidu.com (duxiaonan)
  */
-
+import { getValidatorFromForm } from './mip-form-validator'
 const {
   util,
   viewer,
   templates
 } = MIP
-let evt
-const REGS = {
-  EMAIL: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
-  PHONE: /^1\d{10}$/,
-  IDCAR: /^\d{15}|\d{18}$/
+const FORM_EVENT = {
+  SUBMIT: 'submit',
+  SUBMIT_SUCCESS: 'submitSuccess',
+  SUBMIT_ERROR: 'submitError',
+  VALID: 'valid',
+  INVALID: 'invalid'
 }
 
 export default class Form {
@@ -27,35 +28,63 @@ export default class Form {
     this.method = (element.getAttribute('method') || 'GET').toUpperCase()
     this.successEle = element.querySelector('[submit-success]')
     this.errorEle = element.querySelector('[submit-error]')
-    this.requestUrl = (element.getAttribute('fetch-url') || '').trim() || ''
+    this.submittingEle = element.querySelector('[submitting]')
+    this.requestUrl = (element.getAttribute('fetch-url') || '').trim()
+    this.validator = getValidatorFromForm(element)
 
     let form = document.createElement('form')
     let target = element.getAttribute('target') || '_blank'
     form.action = this.url
     form.method = this.method
     form.target = viewer.isIframed && target !== '_blank' ? '_top' : target
+    // 不展现 <form> 默认 validate, 由组件接管 validate 过程
+    form.setAttribute('novalidate', '')
     element.appendChild(form)
     util.dom.insert(form, element.children)
+    // 添加 <input> 清除按钮
+    const addClearBtn = this.element.hasAttribute('clear')
+    if (addClearBtn) {
+      this.addClearButton()
+    }
+  }
 
-    // 按钮提交
-    let curEles = element.querySelectorAll('form')
+  setEventHandler () {
+    // 表单提交
+    let curEles = this.element.querySelectorAll('form')
     for (let item of curEles) {
       item.addEventListener('submit', event => {
         event.preventDefault()
-        evt = event
-        this.onSubmit(element)
+        this.onSubmit()
       })
     }
-
     // 部分浏览器回车不触发submit
-    element.addEventListener('keydown', event => {
+    this.element.addEventListener('keydown', event => {
       if (event.keyCode === 13) {
         // 为了使余下浏览器不多次触发submit, 使用prevent
-        evt = event
         event.preventDefault()
-        this.onSubmit(element)
+        this.onSubmit()
       }
     })
+
+    // 给 input 绑定事件，向 SF 发送数据
+    const inputAll = this.element.querySelectorAll('input')
+    for (let item of inputAll) {
+      item.addEventListener('focus', () => {
+        this.sendFormMessage('focus')
+      })
+
+      item.addEventListener('blur', () => {
+        this.sendFormMessage('blur')
+      })
+    }
+    // blur
+    this.element.addEventListener('blur', (event) => {
+      this.validator.onBlur(event)
+    }, true)
+    // input
+    this.element.addEventListener('input', (event) => {
+      this.validator.onInput(event)
+    }, true)
   }
 
   /**
@@ -66,33 +95,19 @@ export default class Form {
   onSubmit (element) {
     const isHttp = this.url.toLowerCase().match('http://')
     const isGetMethod = this.method === 'GET'
-    let preventSubmit = false
+    this.triggerCustomEvent(FORM_EVENT.SUBMIT, {})
 
-    // 执行提交句柄
-    this.submitHandle()
-
-    // 简单的输入校验
-    let jumpUrlParams = ''
-    let inputs = this.element.querySelectorAll('input, textarea, select')
-    for (let input of inputs) {
-      if (input.type === 'submit') {
-        break
-      }
-      let inputValue = input.value
-      if (input.type === 'checkbox' || input.type === 'radio') {
-        inputValue = input.checked ? inputValue : ''
-      }
-      jumpUrlParams += '&' + input.name + '=' + inputValue
-      const validateSuccess = this.validateInput(input, inputValue)
-      preventSubmit = !validateSuccess ? true : preventSubmit
-    }
-
-    if (preventSubmit) {
+    // 校验输入
+    const valid = this.validator.checkInputValid()
+    if (!valid) {
+      this.triggerCustomEvent(FORM_EVENT.INVALID, {})
       return
     }
+    this.triggerCustomEvent(FORM_EVENT.VALID, {})
 
-    // 在SF环境下使用mibm-jumplink，跳转显示原链接。 http-GET请求交给外层跳转
+    // 在SF环境下使用 mibm-jumplink，跳转显示原链接。 http-GET请求交给外层跳转
     if (!MIP.standalone && isHttp && isGetMethod) {
+      const jumpUrlParams = this.getFormAsParamsString(this.element)
       const jumpUrl = this.getJumpUrl(jumpUrlParams)
       viewer.sendMessage('mibm-jumplink', {
         url: jumpUrl
@@ -106,32 +121,26 @@ export default class Form {
   }
 
   /**
-   * 校验输入符合规则
+   * 获取 Form 取值作为跳转 URL 参数
    *
-   * @param {HTMLElement} inputElement input Dom
-   * @param {string} value 需要校验的值
-   * @returns {boolean} validate success
+   * @param {*} form 表单
    */
-  validateInput (inputElement, value) {
-    const validateType = inputElement.getAttribute('validatetype')
-    const validateTarget = inputElement.getAttribute('validatetarget')
-    const validateReg = inputElement.getAttribute('validatereg')
-    const emptyValue = (value === '')
-    let validateSuccess = true
+  getFormAsParamsString (form) {
+    const data = []
+    const inputs = form.querySelectorAll('input, textarea, select')
+    for (let input of inputs) {
+      let inputValue = input.value
+      if (input.type === 'submit') {
+        continue
+      }
 
-    if (!validateType) {
-      return validateSuccess
+      if (input.type === 'checkbox' || input.type === 'radio') {
+        inputValue = input.checked ? inputValue : ''
+      }
+      data.push(input.name + '=' + inputValue)
     }
-
-    if (validateReg) {
-      validateSuccess = !emptyValue && (new RegExp(validateReg)).test(value)
-    } else {
-      validateSuccess = (validateType === 'must') ? !emptyValue : REGS[validateType.toUpperCase()].test(value)
-    }
-    util.css(this.element.querySelectorAll('div[target="' + validateTarget + '"]'), {
-      display: (!validateSuccess ? 'block' : 'none')
-    })
-    return validateSuccess
+    const result = data.join('&')
+    return result
   }
 
   /**
@@ -154,26 +163,13 @@ export default class Form {
   }
 
   /**
-   * 提交时的事件
+   * 触发自定义事件
+   *
+   * @param {string} event 事件名称
+   * @param {Object} detail 数据
    */
-  submitHandle () {
-    viewer.eventAction.execute('submit', evt.target, evt)
-  }
-
-  /**
-   * 提交成功调用的在html on里使用的事件
-   */
-  submitSuccessHandle () {
-    if (!evt) { return }
-    viewer.eventAction.execute('submitSuccess', evt.target, evt)
-  }
-
-  /**
-   * 提交失败调用的在html on里使用的事件
-   */
-  submitErrorHandle () {
-    if (!evt) { return }
-    viewer.eventAction.execute('submitError', evt.target, evt)
+  triggerCustomEvent (event, detail) {
+    viewer.eventAction.execute(event, this.element, detail)
   }
 
   /**
@@ -182,7 +178,10 @@ export default class Form {
    * @param {string} url 请求url
    */
   fetchUrl (url) {
+    util.css(this.submittingEle, {display: 'block'})
+    this.renderTpl(this.submittingEle, {})
     util.css([this.successEle, this.errorEle], {display: 'none'})
+
     let fetchData = {
       method: this.method,
       credentials: 'include'
@@ -198,19 +197,24 @@ export default class Form {
 
     fetch(url, fetchData).then((res) => {
       if (res.ok) {
-        this.submitSuccessHandle()
         res.json().then((data) => {
+          this.triggerCustomEvent(FORM_EVENT.SUBMIT_SUCCESS, {
+            response: data
+          })
+          util.css(this.submittingEle, {display: 'none'})
           util.css(this.successEle, {display: 'block'})
           this.renderTpl(this.successEle, data)
         }).catch((err) => {
           this.fetchReject(err)
         })
       } else {
-        this.submitErrorHandle()
+        this.triggerCustomEvent(FORM_EVENT.SUBMIT_ERROR, {})
         this.fetchReject({})
       }
     }).catch((err) => {
-      this.submitErrorHandle()
+      this.triggerCustomEvent(FORM_EVENT.SUBMIT_ERROR, {
+        response: err
+      })
       this.fetchReject(err)
     })
   }
@@ -221,6 +225,7 @@ export default class Form {
    * @param {Object} err 错误对象
    */
   fetchReject (err) {
+    util.css(this.submittingEle, {display: 'none'})
     util.css(this.errorEle, {display: 'block'})
     this.renderTpl(this.errorEle, err)
   }
@@ -232,6 +237,9 @@ export default class Form {
    * @param {Object} data 模板渲染数据
    */
   renderTpl (element, data) {
+    if (!element) {
+      return
+    }
     templates.render(element, data).then((html) => {
       const tempTarget = this.tempHTML(element)
       tempTarget.innerHTML = html
@@ -256,7 +264,7 @@ export default class Form {
   /**
    * 事件通信
    *
-   * @description 在 input focus 或 blur 时向iframe外层文档发送数据，iframe外层文档返回设置预览头部为 absolute
+   * @description 在 input focus 或 blur 时向iframe外层文档发送数据，iframe 外层文档返回设置预览头部为 absolute。解决 ios 的 UC 浏览器在iframe外层文档悬浮头部 fixed 位置混乱问题
    * @param {Object} event 事件对象
    */
   sendFormMessage (event) {
@@ -267,21 +275,71 @@ export default class Form {
   }
 
   /**
-   * 事件发送处理
-   *
-   * @description 给 input 绑定事件，向 SF 发送数据，为了解决 ios 的 UC 浏览器在iframe外层文档悬浮头部 fixed 位置混乱问题
-   * @param {HTMLElement} element mip 组件标签
+   * 添加清除按钮
    */
-  initMessageEvents (element) {
-    const inputAll = element.querySelectorAll('input')
-    for (let item of inputAll) {
-      item.addEventListener('focus', () => {
-        this.sendFormMessage('focus')
-      })
+  addClearButton () {
+    const clearArr = ['text', 'input', 'datetime', 'email', 'number', 'search', 'tel', 'url']
+    const clearList = clearArr.map(clear => `input[type=${clear}]`).join(',')
+    const clearItems = this.element.querySelectorAll(clearList)
 
-      item.addEventListener('blur', () => {
-        this.sendFormMessage('blur')
-      })
+    if (!clearItems.length) {
+      return
     }
+
+    let cross = document.createElement('div')
+    cross.id = 'mip-form-cross'
+
+    for (let clearItem of clearItems) {
+      const itemHeight = clearItem.offsetHeight
+      clearItem.addEventListener('focus', function () {
+        cross.setAttribute('name', this.getAttribute('name'))
+        util.css(cross, {
+          top: this.offsetTop + (itemHeight - 16) / 2 - 8 + 'px',
+          left: this.offsetWidth - 32 + 'px'
+        })
+        this.parentNode.appendChild(cross)
+        if (this.value !== '') {
+          util.css(cross, {display: 'block'})
+        } else {
+          util.css(cross, {display: 'none'})
+          this.addEventListener('input', function () {
+            // andriod type=search自带清空按钮, 不显示清空
+            if (util && util.platform && util.platform.isAndroid() && this.type === 'search') {
+              return
+            }
+            util.css(cross, {display: (this.value !== '' ? 'block' : 'none')})
+          })
+        }
+      }, false)
+      // 点击提交时，如果报错信息展示，则隐藏清空按钮
+      clearItem.addEventListener('blur', () => {
+        util.css(cross, {display: 'none'})
+      }, false)
+    }
+    cross.addEventListener('mousedown', this.clear, false)
+    cross.addEventListener('click', this.clear, false)
+    cross.addEventListener('touchstart', this.clear, false)
+
+    // on iOS UIWebview，twice touch cannot enter text
+    // see: https://stackoverflow.com/questions/13124340/cant-type-into-html-input-fields-on-ios-after-clicking-twice
+    cross.addEventListener('touchend', (event) => {
+      const name = event.target.getAttribute('name')
+      let input = this.element.querySelector('input[name="' + name + '"]')
+      if (document.activeElement === input) {
+        window.focus()
+        setTimeout(() => {
+          input.focus()
+        }, 0)
+      }
+    })
+  }
+
+  clear (e) {
+    e.stopPropagation()
+    e.preventDefault()
+    let name = e.target.getAttribute('name')
+    let inputSelect = this.parentNode.querySelector('input[name="' + name + '"]')
+    inputSelect.value = ''
+    util.css(this, {display: 'none'})
   }
 }
