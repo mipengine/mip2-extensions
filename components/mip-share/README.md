@@ -94,7 +94,7 @@
 
 类型：字符串
 
-取值范围：URL (不能带有`http://`,`https://`，示例：`//xx.yy.com/getToken`)
+取值范围：URL (不能带有`http://`,`https://`，示例：`//xx.yy.com/getToken`，[参考示例](http://po.baidu.com/api/wechat/token.jsonp?app_id=wxadc1a0c6b9096e89&url=https://m.baidu.com&callback=_box_jsonp1532926508317)
 
 ## 注意事项
 
@@ -102,7 +102,7 @@
 
 ## 获取微信动态签名接口返回数据格式参考
 
-接口必须返回`jsonp`格式
+通常情况下，直接使用 `<mip-share>` 组件提供的默认的二次分享获取签名的 API 即可，当开发者需要使用自己的微信 jssdk 签名的时候，wechatAPI 签名接口必须返回 `jsonp` 格式
 
 ```js
 _box_jsonp1532926508317(
@@ -123,4 +123,4 @@ _box_jsonp1532926508317(
 )
 ```
 
-其中，动态签名**必须**包含在`data`下
+其中，动态签名**必须**包含在`data`下，获取签名的算法详见[微信 jssdk 开发文档](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115) 中关于「JS-SDK使用权限签名算法」的介绍。
