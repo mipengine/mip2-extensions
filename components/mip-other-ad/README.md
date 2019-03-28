@@ -22,6 +22,10 @@
 ```html
 <script type="text/javascript" src="广告js地址"></script>
 ```
+示例：
+```html
+<mip-other-ad type="default" src="//fzb01.qiushibaike.com/production/sesln1.js?togl=nkpqq"></mip-other-ad>
+```
 
 ### 2. type=smua
 | 参数     | 参数值     | 是否必须              |
@@ -32,6 +36,10 @@
 适用于以下广告格式：
 ```html
 <script type="text/javascript" smua="smua属性值" src="//www.smucdn.com/smu0/o.js"></script>
+```
+示例：
+```html
+<mip-other-ad type="smua" src="d=m&s=b&u=u3594595&h=330"></mip-other-ad>
 ```
 
 ### 3. type=sogou
@@ -50,6 +58,10 @@
 	window.sogou_un.push({id: "搜狗id",ele:sogou_div});
 </script>
 <script async="async" src="//theta.sogoucdn.com/wap/js/aw.js"></script>
+```
+示例：
+```html
+<mip-other-ad type="sogou" src="1000745" script=""></mip-other-ad>
 ```
 
 ### 3. type=sogou_auto
@@ -70,4 +82,8 @@
 	window.sogou_un.push({id: "搜狗id",ele:sogou_div,w:20,h:5});
 </script>
 <script async="async" src="//theta.sogoucdn.com/wap/js/aw.js"></script>
+```
+示例：
+```html
+<mip-other-ad type="sogou_auto" src="1001690" w="20" h="5" script=""></mip-other-ad>
 ```
