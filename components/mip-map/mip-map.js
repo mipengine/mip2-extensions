@@ -12,6 +12,10 @@ const EXTENSIONS_METADATA = {
 const capitalize = name => name[0].toUpperCase() + name.slice(1)
 
 export default class MIPMap extends CustomElement {
+  static get observedAttributes () {
+    return ['points']
+  }
+
   constructor (...args) {
     super(...args)
 
@@ -19,6 +23,9 @@ export default class MIPMap extends CustomElement {
     this.point = {}
     this.marker = null
     this.currentMarker = null
+    this.overlay = {
+      points: []
+    }
     this.loadExtension = this.loadExtension.bind(this)
     this.handleSearchInfoWindowOpen = this.handleSearchInfoWindowOpen.bind(this)
   }
@@ -47,6 +54,15 @@ export default class MIPMap extends CustomElement {
         this.handleSearchInfoWindowOpen({currentTarget: marker})
       }
     )
+  }
+
+  attributeChangedCallback (name) {
+    if (!this.map) {
+      return
+    }
+    if (name === 'points') {
+      return this.renderPoints()
+    }
   }
 
   loadResources (tag, options) {
@@ -288,9 +304,17 @@ export default class MIPMap extends CustomElement {
 
   renderPoints () {
     const {points, extensions} = this.props
+    const {center, zoom} = this.map.getViewport(points)
+
+    this.map.centerAndZoom(center, zoom)
+
+    this.overlay.points.forEach(overlay => this.map.removeOverlay(overlay))
+    this.overlay.points = []
 
     points.forEach((point) => {
       const marker = this.renderPointMarker(point)
+
+      this.overlay.points.push(marker)
 
       if (extensions.searchInfoWindow) {
         marker.addEventListener('click', this.handleSearchInfoWindowOpen)

@@ -13,7 +13,14 @@
 </head>
 
 <body>
-  <mip-map id="map" height="400">
+  <mip-data>
+    <script type="application/json">
+      {
+        "points": [{"lng":116.403847,"lat":39.915526,"metadata":{"name":"天安门","address":"天安门"}}]
+      }
+    </script>
+  </mip-data>
+  <mip-map id="map" height="400" m-bind:points="points">
     <script type="application/json">
       {
         "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
@@ -41,11 +48,6 @@
           "height": 100,
           "content": "<h4>故宫博物馆</h4><p>地址：北京市东城区景山前街4号<br/>电话：(010)65131892</p></div>"
         },
-        "points": [
-          {"lng": 116.403847, "lat": 39.915526, "metadata": {"name": "天安门", "address": "天安门"}},
-          {"lng": 116.396258, "lat": 39.911226, "metadata": {"name": "国家大剧院", "address": "国家大剧院"}},
-          {"lng": 116.408016, "lat": 39.911460, "metadata": {"name": "国家博物馆", "address": "国家博物馆"}}
-        ],
         "extensions": {
           "searchInfoWindow": {
             "width": 260,
@@ -63,7 +65,8 @@
       {{name}}
     </template>
   </mip-map>
-  <button on='click:map.openSearchInfoWindow({"lng": 116.404177, "lat": 39.909652, "metadata": {"name": "天安门广场", "address": "天安门广场"}})'>去天安门广场</button>
+  <button on='tap:map.openSearchInfoWindow({"lng": 116.404177, "lat": 39.909652, "metadata": {"name": "天安门广场", "address": "天安门广场"}})'>去天安门广场</button>
+  <button on='tap:MIP.setData({points: [{"lng":116.396258,"lat":39.911226,"metadata":{"name":"国家大剧院","address":"国家大剧院"}},{"lng":116.408016,"lat":39.91146,"metadata":{"name":"国家博物馆","address":"国家博物馆"}}]})'>看看大剧院和博物馆</button>
   <script src="http://localhost:8080/dist/mip.js"></script>
   <script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
   <script src="/mip-map/mip-map.js"></script>
