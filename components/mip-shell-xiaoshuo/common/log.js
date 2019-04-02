@@ -7,7 +7,6 @@ import {getCurrentWindow, getRootWindow, getParamFromString} from './util'
 import state from './state'
 
 const {isRootPage, novelInstance, originalUrl} = state(window)
-const pageType = novelInstance ? novelInstance.currentPageMeta.pageType : ''
 
 /**
  * 发送webb性能日志
@@ -67,7 +66,7 @@ export function getSiteInfo () {
   let isZongheng = zonghengPattern.test(originalUrl)
   let site
   isZongheng ? site = 'zongheng' : site = 'iqiyi'
-  return {site, pageType}
+  return {site, pageType: novelInstance ? novelInstance.currentPageMeta.pageType : ''}
 }
 
 /**
@@ -114,7 +113,7 @@ export function showAdLog () {
    * @param {string} newVal 改变后的值
   */
   function observer (oldVal, newVal) {
-    if ((newVal === true) && (pageType !== 'detail')) {
+    if (newVal === true) {
       sendTCLog('interaction', {
         type: 'o',
         action: 'adShow'
