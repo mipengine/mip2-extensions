@@ -94,7 +94,7 @@ export default class MIPMap extends CustomElement {
       return Promise.reject(new Error(`Extension ${name} not found.`))
     }
 
-    const baseUrl = `http://api.map.baidu.com/library/${name}/${version}/src/${name}_min`
+    const baseUrl = `https://api.map.baidu.com/library/${name}/${version}/src/${name}_min`
 
     return Promise.all([
       this.loadStyle(`${baseUrl}.css`),
