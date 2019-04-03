@@ -12,5 +12,14 @@ mip-map {
     img {
       width: auto;
     }
+
+    // 修复百度地图 sdk SearchInfoWindow 样式 bug
+    .BMapLib_SearchInfoWindow {
+      .BMapLib_nav_tab {
+        li:first-child {
+          border-left: 0;
+        }
+      }
+    }
   }
 }
