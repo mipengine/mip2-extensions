@@ -87,6 +87,12 @@ export default class MIPMap extends CustomElement {
     return this.loadResources('script', {async: true, src})
   }
 
+  /**
+   * 加载百度地图 sdk 第三方扩展。
+   *
+   * @param {string} name 扩展名
+   * @returns {Promise<undefined>} 扩展加载中
+   */
   loadExtension (name) {
     const {version} = EXTENSIONS_METADATA[name]
 
@@ -102,6 +108,11 @@ export default class MIPMap extends CustomElement {
     ])
   }
 
+  /**
+   * 根据 extensions 属性，加载所列出的百度地图 sdk 第三方扩展。
+   *
+   * @returns {Promise<Array<undefined>>} 所有扩展加载中
+   */
   loadExtensions () {
     const {extensions} = this.props
 
@@ -259,6 +270,15 @@ export default class MIPMap extends CustomElement {
     })
   }
 
+  /**
+   * 新增一个点标记物，将点的元数据附加在标记物上。
+   *
+   * @param {Object} point 点的配置
+   * @param {number} point.lng 经度
+   * @param {number} point.lat 纬度
+   * @param {Object} point.metadata 点的元数据
+   * @returns {Object} 新增的标记物
+   */
   createPointMarker ({lng, lat, metadata}) {
     const point = new BMap.Point(lng, lat)
     const marker = new BMap.Marker(point)
@@ -268,6 +288,13 @@ export default class MIPMap extends CustomElement {
     return marker
   }
 
+  /**
+   * 获取搜索信息框配置。会根据子元素 <template> 动态获取配置的 DOM 信息。
+   *
+   * @param {Object} point 点坐标
+   * @param {Object} metadata 点的元数据
+   * @returns {Object} 搜索信息框配置
+   */
   async getSearchInfoWindowOptions (point, metadata) {
     const {extensions: {searchInfoWindow: options}} = this.props
     const slots = [...this.element.querySelectorAll('template[search-info-window][key]')]
@@ -280,6 +307,12 @@ export default class MIPMap extends CustomElement {
     return {...options, ...dynamicOptions}
   }
 
+  /**
+   * 在点坐标出弹出搜索信息框。
+   *
+   * @param {Object} point 点坐标
+   * @param {Object} metadata 点的元数据
+   */
   async openSearchInfoWindow (point, metadata) {
     const {content, ...options} = await this.getSearchInfoWindowOptions(point, metadata)
     const searchInfoWindow = new BMapLib.SearchInfoWindow(this.map, content, options)
@@ -287,6 +320,11 @@ export default class MIPMap extends CustomElement {
     searchInfoWindow.open(point)
   }
 
+  /**
+   * 根据触发点击事件的点标记物坐标，将视口移至该处，并打开搜索信息框。
+   *
+   * @param {Object} event 事件对象
+   */
   handleSearchInfoWindowOpen (event) {
     const {currentTarget: {point, metadata}} = event
 
@@ -302,6 +340,9 @@ export default class MIPMap extends CustomElement {
     return marker
   }
 
+  /**
+   * 移除当前点标记物后，根据当前 points 属性，重新渲染点标记物。
+   */
   renderPoints () {
     const {points, extensions} = this.props
     const {center, zoom} = this.map.getViewport(points)
@@ -323,8 +364,7 @@ export default class MIPMap extends CustomElement {
   }
 
   /**
-   * 根据配置执行相应方法
-   *
+   * 渲染地图元素。
    */
   render () {
     const {controls, dataOnlyGetSdk} = this.props
