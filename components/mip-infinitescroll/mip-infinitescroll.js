@@ -84,7 +84,7 @@ export default class MipInfiniteScroll extends CustomElement {
         }).then(function (data) {
           // 数据加载成功，请求返回
           if (data && parseInt(data.status, 10) === 0 && data.data) {
-            if (rn > self.params.rn || !data.data.items) {
+            if (rn > self.params.rn || !data.data.items || !data.data.items.length) {
               resolve('NULL')
               return
             }
