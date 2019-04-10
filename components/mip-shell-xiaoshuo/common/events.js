@@ -5,9 +5,24 @@
  */
 import {Constant} from './constant-config'
 import {sendTCLog} from './log'
+import state from '../common/state'
+import {getCurrentWindow} from '../common/util'
 
 let event = window.MIP.util.event
-
+function changeReadPageNum (plus) {
+  let {novelInstance} = state(getCurrentWindow())
+  if (novelInstance.currentPageMeta.pageType === 'page') {
+    if (novelInstance.readPageNum == null) {
+      novelInstance.readPageNum = 1
+      return
+    }
+    if (plus) {
+      novelInstance.readPageNum++
+    } else {
+      novelInstance.readPageNum--
+    }
+  }
+}
 export default class XiaoshuoEvents {
   // 每次搜索点出，同步刷新调用
   bindRoot () {
@@ -17,6 +32,7 @@ export default class XiaoshuoEvents {
      */
     let nextPageButton = '.mip-shell-footer .page-next:not(.disabled)'
     event.delegate(document.documentElement, nextPageButton, 'click', function () {
+      changeReadPageNum(true)
       // tc日志打点
       sendTCLog('interaction', {
         type: 'b',
@@ -33,6 +49,7 @@ export default class XiaoshuoEvents {
      */
     let previousPageButton = '.mip-shell-footer .page-previous:not(.disabled)'
     event.delegate(document.documentElement, previousPageButton, 'click', function () {
+      changeReadPageNum()
       // tc日志打点
       sendTCLog('interaction', {
         type: 'b',
@@ -57,6 +74,7 @@ export default class XiaoshuoEvents {
    */
   bindPrePageButton () {
     event.delegate(document.documentElement, '.navigator a:first-child', 'click', function () {
+      changeReadPageNum()
       // tc日志打点
       sendTCLog('interaction', {
         type: 'b',
@@ -72,6 +90,7 @@ export default class XiaoshuoEvents {
    */
   bindNextPageButton () {
     event.delegate(document.documentElement, '.navigator a:last-child', 'click', function () {
+      changeReadPageNum(true)
       // tc日志打点
       sendTCLog('interaction', {
         type: 'b',

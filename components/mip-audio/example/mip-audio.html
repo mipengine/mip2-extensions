@@ -29,6 +29,7 @@
         display: -webkit-flex;
         display: flex;
         align-items: center;
+        -webkit-align-items: center;
       }
 
       .all-pink [play-button] {
@@ -121,15 +122,20 @@
   </head>
   <body>
     <div>
-      <mip-audio 
+      <mip-audio
         src="https://mip-doc.bj.bcebos.com/guitar.mp3"
         layout="fixed-height"
-        height="50">
+        height="50"
+        artwork="https://storage.googleapis.com/media-session/sintel/artwork-512.png"
+        title="Snow Fight"
+        album="Jan Morgenstern"
+        artist="Sintel"
+        >
       </mip-audio>
 
       <br><h3>自定义样式</h3> <br>
 
-      <mip-audio 
+      <mip-audio
         src="https://mip-doc.bj.bcebos.com/guitar.mp3"
         class="all-pink"
         layout="fixed-height"
@@ -144,11 +150,12 @@
           <div current-time class="color-gray">00:00</div>
           <div total-time class="color-gray">--:--</div>
         </div>
+        <p>dddd</p>
       </mip-audio>
 
       <br><h3>原生audio</h3> <br>
 
-      <audio src="https://mip-doc.bj.bcebos.com/guitar.mp3" controls></audio>
+      <audio src="https://mip-doc.bj.bcebos.com/guitar.mp3" controls controlsList="nodownload"></audio>
     </div>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="/mip-audio/mip-audio.js"></script>

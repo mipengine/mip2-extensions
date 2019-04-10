@@ -11,42 +11,177 @@
     body {
       padding: 10px;
     }
-    p {
+    .mip-example-title {
       text-align: left;
       font-size: 18px;
       margin-top: 20px;
       margin-bottom: 10px;
       color: green;
     }
+    .mip-form-example span {
+      color: #b9b6b6;
+    }
+    .mip-example-submit-results p {
+      font-size: 14px;
+      color: black;
+    }
     </style>
   </head>
   <body>
-    <p>基本使用</p>
-    <mip-form method="get" url="https://www.mipengine.org?we=123">
-      <input type="text" name="username" validatetarget="username" validatetype="must" placeholder="姓名">
-      <div target="username">姓名不能为空</div>
-      <input type="number" name="age" validatetarget="age" validatetype="must" placeholder="年龄">
-      <div target="age">年龄不能为空</div>
-      <input type="submit" value="提交">
-    </mip-form>
+    <div class="mip-form-example">
+      <p class="mip-example-title">基本使用</p>
+      <mip-form method="get" url="https://www.mipengine.org" target="_blank">
+        <label>
+          <span>搜索</span>
+          <input type="search" name="term" required>
+        </label>
+        <input name="submit-button" type="submit" value="Search">
+      </mip-form>
+    </div>
 
-    <p>加清空按钮</p>
-    <mip-form method="get" url="https://www.mipengine.org" clear>
-      <input type="text" name="username2" validatetarget="username2" validatetype="must" placeholder="姓名">
-      <div target="username2">姓名不能为空</div>
-      <input type="number" name="age2" validatetarget="age2" validatetype="must" placeholder="年龄">
-      <div target="age2">年龄不能为空</div>
-      <input type="submit" value="提交">
-    </mip-form>
+    <div class="mip-form-example">
+      <p class="mip-example-title">加清空按钮</p>
+      <mip-form method="get" url="https://www.mipengine.org" clear>
+        <input type="text" name="username2" validatetarget="username2" validatetype="must" placeholder="姓名">
+        <div target="username2">姓名不能为空</div>
+        <input type="number" name="age2" validatetarget="age2" validatetype="must" placeholder="年龄">
+        <div target="age2">年龄不能为空</div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
 
-    <p>自定义验证规则</p>
-    <mip-form method="get" url="https://www.mipengine.org">
-      <input type="text" name="customnumber" validatetarget="custom" validatetype="custom" validatereg="^[0-9]*$" placeholder="我是自定义验证规则数字">
-      <div class="mip-form-target" target="custom">请输入正确的数字</div>
-      <input type="submit" value="提交">
-    </mip-form>
+    <div class="mip-form-example">
+      <p class="mip-example-title">页面数据刷新(非跨域接口)</p>
+      <span> 提交数据后在当前页面更新结果</span>
+      <mip-form
+        method="get"
+        fetch-url="./mock.json">
+        <input type="text" name="name" placeholder="姓名">
+        <input type="submit" value="提交">
+        <div submitting>
+          <template type="mip-mustache">
+            <p>正在提交申请，请耐心等待</p>
+          </template>
+        </div>
+        <div class="mip-example-submit-results" submit-success>
+          <template type="mip-mustache">
+            <p>{{name}} 提交成功！用户信息如下: </p>
+            <p>年龄{{age}}</p>
+            <p>邮箱{{email}}</p>
+            <p>电话{{telephone}}</p>
+          </template>
+        </div>
+        <div submit-error>
+          <template type="mip-mustache">
+            Sorry {{name}}, 发生了一点错误
+          </template>
+        </div>
+      </mip-form>
+    </div>
+
+    <div class="mip-form-example">
+      <p class="mip-example-title"> 验证 email, phone, idcard</p>
+      <mip-form method="get" url="https://www.mipengine.org">
+        <input type="email" name="email" validatetype="email" validatetarget="email" placeholder="电子邮箱" required>
+        <div class="mip-form-target" target="email">请输入正确的 email</div>
+        <input type="phone" name="phone" validatetype="phone" validatetarget="phone" placeholder="电话" required>
+        <div class="mip-form-target" target="phone">请输入正确的电话，需要 11 位数字 </div>
+        <input type="idcard" name="idcard" validatetype="idcard" validatetarget="idcard" placeholder="身份证号" required>
+        <div class="mip-form-target" target="idcard">请输入正确的身份证号，需要 15 或 18 位数字 </div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
+
+    <div class="mip-form-example">
+      <p class="mip-example-title">【默认】自定义验证规则(show-all-on-submit: 提交时校验提示所有错误项)</p>
+      <mip-form method="get" url="https://www.mipengine.org">
+        <input type="text"
+          name="customnumber"
+          validatetarget="custom"
+          validatetype="custom"
+          validatereg="^[0-9]*$"
+          placeholder="输入数字"
+          required>
+        <div class="mip-form-target" target="custom">请输入正确的数字</div>
+        <input type="email"
+          name="email"
+          validatetarget="email"
+          validatetype="custom"
+          validatereg="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"
+          placeholder="邮箱"
+          required>
+        <div class="mip-form-target" target="email">请输入正确的 email 地址</div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
+
+    <div class="mip-form-example">
+      <p class="mip-example-title"> 自定义验证规则(show-first-on-submit: 提交时校验提示第一个错误项)</p>
+      <mip-form method="get"
+        url="https://www.mipengine.org"
+        custom-validation-reporting="show-first-on-submit">
+        <input
+          type="text"
+          name="customnumber"
+          validatetarget="customnumber"
+          validatetype="custom"
+          validatereg="^[0-9]*$"
+          placeholder="输入数字"
+          required>
+        <div target="customnumber" visible-when-invalid="valueMissing">数字不能为空</div>
+        <div target="customnumber" visible-when-invalid="patternMismatch">请输入正确的数字</div>
+        <input type="email"
+          name="email"
+          validatetarget="email"
+          validatetype="custom"
+          validatereg="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"
+          placeholder="邮箱"
+          required>
+        <div target="email" visible-when-invalid="valueMissing">email 不能为空</div>
+        <div target="email" visible-when-invalid="patternMismatch">请输入正确的 email 地址</div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
+
+    <div class="mip-form-example">
+      <p class="mip-example-title"> 自定义校验规则(as-you-go: 交互时校验)</p>
+      <mip-form
+        method="get" url="https://www.mipengine.org?we=123" target="_top" custom-validation-reporting="as-you-go">
+        <input type="text"
+          name="username"
+          validatetarget="username"
+          validatetype="custom"
+          placeholder="姓名"
+          required>
+        <div target="username" visible-when-invalid="valueMissing">姓名不能为空</div>
+        <input type="email"
+          name="email"
+          validatetarget="email"
+          validatetype="custom"
+          validatereg="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"
+          placeholder="邮箱"
+          required>
+        <div target="email" visible-when-invalid="valueMissing">email 不能为空</div>
+        <div target="email" visible-when-invalid="patternMismatch">请输入正确的 email 地址</div>
+        <input type="submit" value="提交">
+        <div class="mip-example-submit-results" submit-success>
+          <template type="mip-mustache">
+            <p>查询成功！用户信息如下: </p>
+            <p>年龄{{age}}</p>
+            <p>邮箱{{email}}</p>
+            <p>电话{{telephone}}</p>
+          </template>
+        </div>
+        <div submit-error>
+          <template type="mip-mustache">
+            Error!.
+          </template>
+        </div>
+      </mip-form>
+    </div>
 
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
     <script src="/mip-form/mip-form.js"></script>
   </body>
 </html>

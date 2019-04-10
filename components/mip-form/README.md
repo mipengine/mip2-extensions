@@ -1,14 +1,19 @@
-# `mip-form`
+# mip-form
 
 标题|内容
 ----|----
-类型|
+类型|动态内容
 支持布局|responsive, fixed-height, fill, container, fixed
 所需脚本|https://c.mipcdn.com/static/v2/mip-form/mip-form.js
 
 ## 示例
 
 ### 基本使用
+
+`mip-form` 可在 MIP 页面创建 `<form>` 标签用于表单提交。在 `<mip-form>` 内部，通常需要配合其他相关的元素使用，包括 `<textarea>`, `<select>`, `<option>`, `<fieldset>`, `<label>`, `<input type=text>`, `<input type=submit>` 等。
+
+
+`mip-form` 通过必选项 `method` 设置提交方法，`url` 设置表单提交地址。同时可选项 `validatetarget` 和 `validatetype` 支持对表单中 `input` 进行校验。
 
 ```html
 <mip-form method="get" url="https://www.mipengine.org?we=123">
@@ -19,7 +24,126 @@
   <input type="submit" value="提交">
 </mip-form>
 ```
+### 表单校验
+
+`mip-from` 提供多种默认校验类型支持前端输入校验，例如设置 `validatetype=“email”`  可以校验输入是否为 email 地址，同时也支持自定义正则校验。支持在校验失败时，设置不同策略反馈校验结果展示给用户。
+
+#### 非空校验
+
+校验用户输入是否为空，可以在用户输入 `<input>` 元素设置属性 `required`（注：原校验方法为设置 `validatetype=“must”` 已废弃，不建议继续使用）
+
+```html
+<mip-form method="get" url="https://www.mipengine.org" target="_blank">
+  <label>
+    <span>搜索</span>
+    <input type="search" name="term" required>
+  </label>
+  <input name="submit-button" type="submit" value="Search">
+</mip-form>
+```
+
+#### 自定义校验规则
+
+在表单上对用户输入指定自定义校验：
+
+* 将校验类型设置为 `custom ` 即 `validatetype=“custom”`
+* 使用属性 `validatereg` 设置正则规则
+
+```html
+<mip-form method="get" url="https://www.mipengine.org">
+  <input type="text" name="customnumber" validatetarget="customnumber" validatetype="custom" validatereg="^[0-9]*$" placeholder="我是自定义验证规则数字">
+  <div class="mip-form-target" target="customnumber"> 请输入正确的数字 </div>
+  <input type="submit" value="提交">
+</mip-form>
+```
+
+#### 校验结果反馈
+
+发生校验错误时需要设置合理的用户提示
+
+* 使用 `validatetarget` 指定目标校验项，同时在对应的校验提示 DOM 设置 `target`。例如示例中，设置目标校验项为 `validatetarget="customnumber"`，校验失败时提示为 `<div target="customnumber">`。
+
+* 一个校验项有多个提示 DOM 时，可以通过 `visible-when-invalid` 指定发生不同错误类型时，展示对应的错误提示。例如示例中，通过 `visible-when-invalid="valueMissing"` 指定输入为空时展示的提示， `visible-when-invalid="patternMismatch" `指定输入与正则不匹配时展示的提示。
+
+提交表单时  `custom-validation-reporting` 可以设置表单校验后反馈用户的策略：
+
+- `show-first-on-submit` 表单验证时在发生第一个验证错误时停止
+- `show-all-on-submit` 显示所有无效输入的校验错误
+- `as-you-can` 在用户输入交互时反馈验证信息
+
+```html
+<mip-form method="get"
+  url="https://www.mipengine.org"
+  custom-validation-reporting="show-first-on-submit">
+  <input
+    type="text"
+    name="customnumber"
+    validatetarget="customnumber"
+    validatetype="custom"
+    validatereg="^[0-9]*$"
+    placeholder="输入数字"
+    required>
+  <div target="customnumber" visible-when-invalid="valueMissing">数字不能为空</div>
+  <div target="customnumber" visible-when-invalid="patternMismatch">请输入正确的数字</div>
+  <input type="email"
+    name="email"
+    validatetarget="email"
+    validatetype="custom"
+    validatereg="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"
+    placeholder="邮箱"
+    required>
+  <div target="email" visible-when-invalid="valueMissing">email 不能为空</div>
+  <div target="email" visible-when-invalid="patternMismatch">请输入正确的 email 地址</div>
+  <input type="submit" value="提交">
+</mip-form>
+```
+
+### 更新页面
+
+`mip-form` 通过 `fetch-url` 属性支持异步提交表单，配合模版组件 `mip-mustache` 可以方便的更新渲染页面。使用模版渲染更新页面方法如下：
+
+* 在 `<mip-form>` 任意子元素上声明以下响应属性
+* 在使用响应属性的元素中，通过模版 `<template type="mip-mustache"></template>` 创建对应的需要被渲染的内容
+* 服务器返回合法的 JSON 对象给 `submit-success `和 `submit-error` 用于模版渲染。注意服务器响应 header 包括 `Content-Type: application/json`
+
+| 属性             | 描述                                 |
+| ---------------- | ------------------------------------ |
+| `submit-success` | form 提交响应成功展现信息            |
+| `submit-error`   | form 提交响应失败展现信息            |
+| `submitting`     | 可以用来在 form 表单被提交时展现信息 |
+
+下面是一个示例，提交表单过程中，成功或失败后都有对应不同的 DOM 展示。
+
+```html
+<mip-form
+  method="get"
+  fetch-url="https://www.mipengine.org?we=123">
+  <input type="text" name="name" placeholder="姓名">
+  <input type="submit" value="提交">
+  <div submitting>
+    <template type="mip-mustache">
+      <p>正在提交申请，请耐心等待</p>
+    </template>
+  </div>
+  <div class="mip-example-submit-results" submit-success>
+    <template type="mip-mustache">
+      <p>{{name}} 提交成功！用户信息如下: </p>
+      <p>年龄{{age}}</p>
+      <p>邮箱{{email}}</p>
+      <p>电话{{telephone}}</p>
+    </template>
+  </div>
+  <div submit-error>
+    <template type="mip-mustache">
+      Sorry {{name}}, 发生了一点错误
+    </template>
+  </div>
+</mip-form>
+```
+
 ### 加清空按钮
+
+`<mip-form>` 添加 `clear` 属性可以对表单中 `<input>` 添加清空按钮。
 
 ```html
 <mip-form method="get" url="https://www.mipengine.org" clear>
@@ -31,78 +155,84 @@
 </mip-form>
 ```
 
-### 自定义验证规则
+## 事件
 
-```html
-<mip-form method="get" url="https://www.mipengine.org">
-  <input type="text" name="customnumber" validatetarget="custom" validatetype="custom" validatereg="^[0-9]*$" placeholder="我是自定义验证规则数字">
-  <div class="mip-form-target" target="custom">请输入正确的数字</div>
-  <input type="submit" value="提交">
-</mip-form>
-```
+`mip-form` 支持以下 event
 
-### 页面数据刷新
-
-```html
-<mip-form fetch-url="http://yourdomain.com/path">
-  <input type="text" name="name" placeholder="姓名">
-    <div submit-success>
-      <template type="mip-mustache">
-        Success! Thanks for {{name}} trying the mip demo.
-      </template>
-    </div>
-    <div submit-error>
-      <template type="mip-mustache">
-        Error!.
-      </template>
-    </div>
-  <input type="submit" value="提交">
-</mip-form>
-```
+事件| 描述| 数据
+----|:---|----
+`submit`| form 表单被提交时触发||              
+`submitSuccess`| form 提交完成并且响应成功时触发| `event.response` 响应 JSON 数据
+`submitError`| form 提交完成并且响应失败时触发| `event.response` 响应 JSON 数据
+`valid`| form 输入校验合法 ||
+`invalid`| form 输入校验不合法 ||
 
 ## 属性
 
+### target
+
+说明：设置表单  url 提交 后，在何处进行回复。目前仅支持两种值，默认值为 `_blank`。
+
+* `target=_blank` 在新窗口中打开
+* `target=_top` 在当前窗口中打开
+
+必选项：否
+
 ### method
 
-说明：表单提交方法
+说明：具体说明提交表单的 HTTP 方法，如 `method=GET` 或 `method=POST`。出于安全考虑，表单提交方法如果为 `post`，必须使用 HTTPS 地址。
+
 必选项：是
 
 ### url
 
-说明：必须是 HTTP(S) 或 // 开头的地址
+说明：设置表单提交至服务端的接口，必须是 https 开头的绝对地址或 // 开头的相对地址
+
 必选项: 是
+
+### fetch-url
+
+说明: 配置该属性后组件会发送异步请求提交表单，不会打开新页面或者重新加载当前页面。根据浏览器兼容性优先使用 Fetch API，如不支持则使用 XMLHTTPRequeset API 发送异步请求。详细的使用方法可参考 [异步请求响应呈现] ，需要特别注意，使用异步请求功能时，服务端接口需要返回 JSON 对象并实现 CORS 安全策略。
+
+必选项：否
 
 ### validatetarget
 
-说明:  验证提示对应 tag，用于对应错误时的提示显示元素的查找
+说明:  验证提示对应 DOM，用于指定错误时的显示对应的提示 DOM
+
 必选项：否
 
 ### validatetype
 
-说明：验证类型, 用于支持简单的验证。目前提供 `email`, `phone`, `idcar`, `custom`。当为 `custom` 时则需要填写 `validatereg`
-必选项：否
+说明：验证类型, 用于支持简单的验证。目前提供  `email`, `phone`, `idcard`, `custom`。当类型为 `custom` 时则需要填写 `validatereg` 实现自定义校验。
+
+可选：
+
+* `must` (已废弃) 输入非空
+* `custom` 自定义校验，需配合 validatereg 使用
+* `email` 输入电子邮件，默认正则 `/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/`
+* `phone` 输入电话号码，默认正则  `/^1\d{10}$/`
+* `idcard` 输入身份证号，默认正则 `/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/`
 
 ### validatereg
 
 说明: 自定义验证，补充站长个性化的验证规则。如果 `validatetype` 为 `custom` 时需填写相应验证规则
+
 必选项：否
+
+### custom-validation-reporting
+
+说明：声明校验反馈的策略，可取值包括 `show-first-on-submit` ，`show-all-on-submit`，`as-you-go`
+
+### visible-when-invalid
+
+说明：校验发生错误时，指定需要展示的用户提示类型
+
+可选：
+
+* `valueMissing` 值为空
+* `patternMismatch` 正则不匹配
 
 ### clear
 
-说明: 表单中 `<input>` 清空按钮开关
-
-### fetch-url
-
-说明: 有此属性则可以开启异步请求数据逻辑，组件会并根据数据返回状态来按`submit-success`，`submit-error`块中的模板刷新局部信息。
-需要注意的几个点：
-
-- 方法支持。
-- 请求结果请返回 JSON 对象。
-- 数据状态只有在成功（2xx）的时候触发 `submit-success` 的逻辑，其他的均触发 `submit-error` 逻辑。
-
-必选项：否
-
-## 注意事项
-
-1. 表单提交方法如果为 `post`，应使用 HTTPS 地址。避免 MIP-Cache HTTPS 环境提交到 HTTP，导致浏览器报错。
-2. 使用 fetch 功能时，请求使用 cors 时不能配置为 *。
+说明: 表单中 `<input>` 清空输入按钮开关
