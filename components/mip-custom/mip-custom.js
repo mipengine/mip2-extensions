@@ -324,34 +324,40 @@ export default class MipCustom extends CustomElement {
     }
 
     // 医疗屏蔽A区跳转
-    // let commonData = data.common || {}
-    // if (commonData.product === 'medicine') {
-    //   let specialLink = [
-    //     // 寻医问药
-    //     'mip.imask.xywy.com',
-    //     // 宝宝知道
-    //     'baobao.baidu.com',
-    //     // 柠檬爱美
-    //     'lemon.baidu.com',
-    //     // 春雨医生
-    //     'm.chunyuyisheng.com',
-    //     // 好大夫
-    //     'mip.haodf.com',
-    //     // 百科名医
-    //     'm.baikemy.com'
-    //   ]
-    //   specialLink = specialLink.join(',')
-    //   // 特殊网站 绕过屏蔽,
-    //   if (commonData.originalUrl && commonData.originalUrl.indexOf(specialLink) < 0) {
-    //     let alink = document.querySelectorAll('a')
+    let commonData = data.common || {};
+    let isForbidden = false;
+    if (commonData.product === 'medicine') {
+        let specialLink = [
+            // 寻医问药
+            'mip.imask.xywy.com',
+            // 宝宝知道
+            'baobao.baidu.com',
+            // 柠檬爱美
+            'lemon.baidu.com',
+            // 春雨医生
+            'm.chunyuyisheng.com',
+            // 好大夫
+            'mip.haodf.com',
+            // 百科名医
+            'm.baikemy.com'
+        ]
+        for (let i = 0; i < specialLink.length; i++) {
+            if (commonData.originalUrl && commonData.originalUrl.indexOf(specialLink[i]) > -1) {
+                isForbidden = false;
+                break;
+            }
+        }
 
-    //     for (let i = 0; i < alink.length; i++) {
-    //       if (alink[i].href.indexOf('author.baidu.com') < 0) {
-    //         alink[i].href = 'javascript:void(0)'
-    //       }
-    //     }
-    //   }
-    // }
+        if (isForbidden) {
+            let alink = document.querySelectorAll('a');
+
+            for (let i = 0; i < alink.length; i++) {
+                if (alink[i].href.indexOf('author.baidu.com') < 0) {
+                    alink[i].href = 'javascript:void(0)';
+                }
+            }
+        }
+    }
     // 模板数据缓存
     if (data.template) {
       template = data.template
