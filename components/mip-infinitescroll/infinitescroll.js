@@ -259,7 +259,7 @@ export default class InfiniteScroll {
           // 标记数据状态为请求失败
           self.dataStatus = STATUS_REQUESTFAILURE
           self.options.$loading.innerHTML = self.options.loadFailHtml
-          self.once(self.options.$loading, 'click' + self.eventSpace, function () {
+          self.once(self.options.$loading, 'click', function () {
             // 标记数据状态为默认
             self.dataStatus = STATUS_DEFAULT
             self.options.$loading.innerHTML = self.options.loadingHtml
