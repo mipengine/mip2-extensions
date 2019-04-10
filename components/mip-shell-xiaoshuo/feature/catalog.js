@@ -406,6 +406,7 @@ class Catalog {
       $catalogSidebar.removeChild($catalogSidebar.querySelector('.mip-shell-catalog'))
       $catalogSidebar.appendChild($catalog)
     }
+    this.clickCatalogToResetReadPageNum()
     this.bindClickCatalogMessageEvent()
     this.bindShellCatalogMessageEvent()
     this.bindPageCatalogMessageEvent()
@@ -424,6 +425,19 @@ class Catalog {
     })
   }
 
+  /**
+   * 只要是点击目录进入阅读页，readPageNum 重新开始记为 1.
+   *
+   * @private
+   */
+  clickCatalogToResetReadPageNum () {
+    event.delegate(document.documentElement, '.novel-catalog-content .catalog-page-content', 'click', () => {
+      let {novelInstance} = state(getCurrentWindow())
+      if (novelInstance.currentPageMeta.pageType === 'page') {
+        novelInstance.readPageNum = 1
+      }
+    })
+  }
   /**
    * 发送 搜索点出/二跳 日志
    * 点击目录章节绑定发送日志函数
