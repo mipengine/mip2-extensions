@@ -350,7 +350,6 @@ export default class MipCustom extends CustomElement {
 
       if (isForbidden) {
         let alink = document.querySelectorAll('a')
-
         for (let i = 0; i < alink.length; i++) {
           if (alink[i].href.indexOf('author.baidu.com') < 0) {
             alink[i].href = 'javascript:void(0)'
