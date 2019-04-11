@@ -317,7 +317,7 @@ export default class MipCustom extends CustomElement {
 
     if (data.config) {
       let config = dataProcessor.addPaths(data.config)
-      window.require.config(config)
+      window.require.config(config)http://bjyz-yq01-yiliao02-test.epc.baidu.com:8003/ala/c/m.baikemy.com/disease/mip/7420193259777
     } else {
       logger.error('common广告模板中公共模块缺失')
       return
@@ -325,7 +325,7 @@ export default class MipCustom extends CustomElement {
 
     // 医疗屏蔽A区跳转
     let commonData = data.common || {}
-    let isForbidden = false
+    let isForbidden = true
     if (commonData.product === 'medicine') {
       let specialLink = [
         // 寻医问药
