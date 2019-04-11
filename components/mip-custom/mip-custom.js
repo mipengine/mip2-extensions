@@ -325,7 +325,7 @@ export default class MipCustom extends CustomElement {
 
     // 医疗屏蔽A区跳转
     let commonData = data.common || {}
-    let isForbidden = false
+    let isForbidden = true
     if (commonData.product === 'medicine') {
       let specialLink = [
         // 寻医问药
