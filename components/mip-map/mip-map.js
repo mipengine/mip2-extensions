@@ -152,12 +152,7 @@ export default class MIPMap extends CustomElement {
     let BMap = window.BMap
 
     // BMap注入沙盒
-    Object.defineProperty(sandbox, 'BMap', {
-      value: BMap,
-      writable: false,
-      enumerable: true,
-      configurable: true
-    })
+    sandbox.BMap = BMap
 
     // 派发事件
     viewer.eventAction.execute('loaded', this.element, {})
