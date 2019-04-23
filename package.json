@@ -11,9 +11,10 @@
     "fix": "npm run fix:js && npm run fix:style",
     "lint:js": "eslint --ext .vue,.js .",
     "fix:js": "eslint --ext .vue,.js . --fix",
-    "lint:style": "stylelint ./**/*.{vue,css,less,md}",
-    "fix:style": "stylelint ./**/*.{vue,css,less,md} --fix",
-    "lint:test": "eslint ./components/mip-inservice-login/mip-inservice-login.vue"
+    "lint:style": "stylelint ./**/*.{vue,css,less}",
+    "fix:style": "stylelint ./**/*.{vue,css,less} --fix",
+    "lint:test": "eslint ./components/mip-inservice-login/mip-inservice-login.vue",
+    "deploy:xiaoshuo": "baidu-bos dist/mip-shell-xiaoshuo/mip-shell-xiaoshuo.js bos://assets/mip2-extensions/mip-shell-xiaoshuo/"
   },
   "husky": {
     "hooks": {
@@ -36,6 +37,7 @@
   "dependencies": {
     "fastclick": "^1.0.6",
     "mip-sandbox": "^1.0.22",
+    "mustache": "^2.3.0",
     "web-animations-js": "^2.3.1"
   },
   "devDependencies": {
@@ -53,7 +55,7 @@
     "glob": "^7.1.2",
     "husky": "^1.0.0-rc.8",
     "mip2": "^1.4.3",
-    "stylelint": "9.6.0",
+    "stylelint": "^9.10.1",
     "stylelint-config-standard": "^18.2.0"
   }
 }

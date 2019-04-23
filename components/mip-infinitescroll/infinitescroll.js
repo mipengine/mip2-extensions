@@ -44,7 +44,9 @@ export default class InfiniteScroll {
   }
 
   _init () {
-    this.eventSpace = '.InfiniteScroll'
+    // this.eventSpace = '.InfiniteScroll'
+    // FIXME: 目前看来，这个 eventSpace 没用，而且加上之后反而导致事件不会触发，因此注释掉 eventSpace
+    this.eventSpace = ''
     // 标识状态 start-执行 pause-暂停
     this.state = 'start'
     // 每页结果缓存

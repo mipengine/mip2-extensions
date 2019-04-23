@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    h2 {
+      font-size: 20px;
+      margin-top: 50px;
+      margin-bottom: 10px;
+      padding-left: 10px
+    }
+    .demo1 a {
+      display: block;
+      border: 1px solid #ccc;
+      height: 30px;
+      line-height: 30px;
+      padding: 0 10px;
+      margin-right: 20px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+    .demo1 [data-item]:last-child a {
+      margin-right: 0;
+    }
+
+    .demo2 [data-item] {
+      width: 100px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+      height: 100px;
+      overflow: hidden;
+    }
+    .demo2 [data-item] a {
+      display: block;
+      height: 100px;
+      padding: 0 3px;
+      color: #555;
+    }
+    .demo2 [data-item]:last-child {
+      margin-right: 0;
+    }
+
+    .demo3 [data-item] > div {
+      height: 100px;
+      background-color: #ccc;
+    }
+
+    .demo4 [data-item] {
+      height: 100px;
+    }
+    .demo4 [data-item] a {
+      display: block;
+      height: 100px;
+      padding: 0 3px;
+      color: #555;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>不换行文字链</h2>
+  <mip-scrollbox class="demo1" height="32" layout="fixed-height">
+    <div data-wrapper>
+      <div data-inner>
+        <div data-scroller>
+          <div data-item>
+            <a href="https://www.baidu.com">百度一下，你就知道。</a>
+          </div>
+          <div data-item>
+            <a href="https://www.mipengine.org">MIP 是移动网页加速器。</a>
+          </div>
+          <div data-item>
+            <a href="https://github.com/mipengine">MIP 的 GitHub 地址是： https://github.com/mipengine</a>
+          </div>
+          <div data-item>
+            <a href="https://www.mipengine.org">点击查看更多精彩内容>></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mip-scrollbox>
+  <h2>固定宽度换行链接</h2>
+  <mip-scrollbox class="demo2" height="100" layout="fixed-height">
+    <div data-wrapper>
+      <div data-inner>
+        <div data-scroller>
+          <div data-item>
+            <a href="https://www.mipengine.org">使用 MIP 无需等待加载，页面内容将以更友好的方式瞬时到达用户。</a>
+          </div>
+          <div data-item>
+            <a href="https://www.mipengine.org">MIP 提供实用、强大的基础组件，开发者可根据需求任意选择。</a>
+          </div>
+          <div data-item>
+            <a href="https://www.mipengine.org">MIP 是一项永久的开源计划，提供持续优化的解决方案。</a>
+          </div>
+          <div data-item>
+            <a href="https://www.mipengine.org">MIP 语法基于 HTML 并提供详细的示例，开发者仅需做简单开发。</a>
+          </div>
+          <div data-item>
+            <a href="https://www.mipengine.org">MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。</a>
+          </div>
+          <div data-item>
+            <a href="https://www.mipengine.org">MIP HTML 规范中有两类标签，一类是 HTML 常规标签，另一类是 MIP 标签。MIP 标签也被称作 MIP HTML 组件，使用它们来替代 HTML 常规标签可以大幅提升页面性能。</a>
+          </div>
+          <div data-item>
+            <a href="https://www.mipengine.org">用户在访问 MIP 页面的时候，请求首先会发到 CDN 服务器，如果页面存在，则从 CDN 返回，如果 CDN 上不存在，则会请求第三方服务器。同时 MIP-Cache 服务器会将页面缓存到 CDN 上。</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mip-scrollbox>
+  <h2>栅格化</h2>
+  <mip-scrollbox data-type="row" class="demo3" layout="fixed-height">
+    <div data-wrapper>
+      <div data-inner>
+        <div data-scroller>
+          <div data-item>
+            <div>1的内容，span3</div>
+          </div>
+          <div data-item>
+            <div>2的内容，span3</div>
+          </div>
+          <div data-item>
+            <div>3的内容，span3</div>
+          </div>
+          <div data-item>
+            <div>4的内容，span3</div>
+          </div>
+          <div data-item>
+            <div>5的内容，span3</div>
+          </div>
+          <div data-item>
+            <div>6的内容，span3</div>
+          </div>
+          <div data-item>
+            <div>7的内容，span3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mip-scrollbox>
+  <h2>不规则栅格化</h2>
+  <mip-scrollbox data-type="row" class="demo4">
+    <div data-wrapper>
+      <div data-inner>
+        <div data-scroller>
+          <div data-item data-col="6">
+            <a href="https://www.mipengine.org">使用 MIP 无需等待加载，页面内容将以更友好的方式瞬时到达用户。</a>
+          </div>
+          <div data-item data-col="4">
+            <a href="https://www.mipengine.org">MIP 提供实用、强大的基础组件，开发者可根据需求任意选择。</a>
+          </div>
+          <div data-item data-col="6">
+            <a href="https://www.mipengine.org">MIP 是一项永久的开源计划，提供持续优化的解决方案。</a>
+          </div>
+          <div data-item data-col="4">
+            <a href="https://www.mipengine.org">MIP 语法基于 HTML 并提供详细的示例，开发者仅需做简单开发。</a>
+          </div>
+          <div data-item data-col="6">
+            <a href="https://www.mipengine.org">MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mip-scrollbox>
+  <h2>图片删格</h2>
+  <mip-scrollbox data-type="row" class="demo5">
+    <div data-wrapper>
+      <div data-inner>
+        <div data-scroller>
+          <div data-item data-col="4">
+            <mip-img
+              src="https://dummyimage.com/300x400?a"
+              width="300"
+              height="400"
+              layout="responsive"
+            >
+            </mip-img>
+            <p>这是 col4 的容器</p>
+          </div>
+          <div data-item data-col="4">
+            <mip-img
+              src="https://dummyimage.com/300x400?b"
+              width="300"
+              height="400"
+              layout="responsive"
+            >
+            </mip-img>
+            <p>这是 col4 的容器</p>
+          </div>
+          <div data-item data-col="4">
+            <mip-img
+              src="https://dummyimage.com/300x400?c"
+              width="300"
+              height="400"
+              layout="responsive"
+            >
+            </mip-img>
+            <p>这是 col4 的容器</p>
+          </div>
+          <div data-item data-col="4">
+            <mip-img
+              src="https://dummyimage.com/300x400?d"
+              width="300"
+              height="400"
+              layout="responsive"
+            >
+            </mip-img>
+            <p>这是 col4 的容器</p>
+          </div>
+          <div data-item data-col="4">
+            <mip-img
+              src="https://dummyimage.com/300x400?e"
+              width="300"
+              height="400"
+              layout="responsive"
+            >
+            </mip-img>
+            <p>这是 col4 的容器</p>
+          </div>
+          <div data-item data-col="4">
+            <mip-img
+              src="https://dummyimage.com/300x400?f"
+              width="300"
+              height="400"
+              layout="responsive"
+            >
+            </mip-img>
+            <p>这是 col4 的容器</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mip-scrollbox>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-scrollbox/mip-scrollbox.js"></script>
+</body>
+
+</html>

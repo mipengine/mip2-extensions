@@ -20,8 +20,6 @@ mip-audio.mip-audio-default-style {
     box-sizing: border-box;
     position: relative;
     display: flex;
-    display: -webkit-box;
-    display: -webkit-flex;
     align-content: center;
     align-items: center;
     height: 100%;
@@ -31,22 +29,18 @@ mip-audio.mip-audio-default-style {
     width: 20px;
     min-width: 20px;
     height: 20px;
-    box-sizing: content-box;
-    padding: 10px;
-    margin: -10px;
     background-size: 42px 20px;
-    background-clip: content-box;
     flex: 0 0 auto;
+    display: inline-block;
   }
 
   [play-button].mip-audio-stopped-icon {
-    background-image: url('https://mipcache.bdstatic.com/static/static/auido/audioimg.png');
-    background-position: 9px 11px;
+    background-image: url('https://c.mipcdn.com/static/static/auido/audioimg.png');
   }
 
   [play-button].mip-audio-playing-icon {
-    background-image: url('https://mipcache.bdstatic.com/static/static/auido/audioimg.png');
-    background-position: -13px 11px;
+    background-image: url('https://c.mipcdn.com/static/static/auido/audioimg.png');
+    background-position: -22px 0;
   }
 
   [seekbar] {
