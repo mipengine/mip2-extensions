@@ -71,6 +71,7 @@ let params = {
   logid: '',
   query: '',
   title: '',
+  frsrcid: getHashData('srcid'),
   originalUrl: getSubString(location.pathname, REGEXS.regHttps) ||
     getSubString(location.pathname, REGEXS.regHttp) ||
     location.href
