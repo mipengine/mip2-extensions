@@ -1,15 +1,15 @@
 /**
- * @file mip 可视化 echarts 组件
+ * @file mip 可视化 vega 组件
  * @author mj(zoumiaojiang@gmail.com)
  */
 
 /* global MIP, fetch */
 
+import './mip-viz-vega.less'
 const { CustomElement, util, viewport } = MIP
+const logger = util.log('mip-viz-vega')
 
-const logger = util.log('mip-viz-echarts')
-
-export default class MipVizEcharts extends CustomElement {
+export default class MipVizVega extends CustomElement {
   constructor (element) {
     super(element)
 
@@ -67,14 +67,14 @@ export default class MipVizEcharts extends CustomElement {
      *
      * @type {number}
      */
-    this.dataWidth = viewport.getWidth()
+    this.dataWidth = 0
 
     /**
      * 数据传入的高度
      *
      * @type {number}
      */
-    this.dataHeight = viewport.getHeight()
+    this.dataHeight = 0
 
     /**
      * 指定图表的留白
@@ -88,7 +88,7 @@ export default class MipVizEcharts extends CustomElement {
      *
      * @type {?Object}
      */
-    this.echarts = null
+    this.vega = null
 
     /**
      * 图表容器
@@ -96,13 +96,6 @@ export default class MipVizEcharts extends CustomElement {
      * @type {?HTMLElement}
      */
     this.container = null
-
-    /**
-     * 图标对象
-     *
-     * @type {?Object}
-     */
-    this.chart = null
   }
 
   /**
@@ -115,12 +108,29 @@ export default class MipVizEcharts extends CustomElement {
   }
 
   /**
+   * 引入 vega 库
+   */
+  loadVega () {
+    return new Promise(resolve => {
+      window.require.config({
+        paths: {
+          'vega': 'https://cdn.jsdelivr.net/npm/vega@5/build/vega.min'
+        }
+      })
+      window.require(['vega'], vega => {
+        this.vega = vega
+        resolve(vega)
+      })
+    })
+  }
+
+  /**
    * layout 渲染完成之后执行的回调
    */
   async layoutCallback () {
     this.initialize()
     try {
-      await import('./echarts.common.min')
+      await this.loadVega()
       await this.loadData()
       this.measuredBox()
       this.renderGraph()
@@ -139,30 +149,6 @@ export default class MipVizEcharts extends CustomElement {
   }
 
   /**
-   * 计算图表容器的宽高
-   */
-  measuredBox () {
-    let box = this.element
-    let boxMeasuredWidth = box.clientWidth
-    let boxMeasuredHeight = box.clientHeight
-    let boxWidth = box.getAttribute('width')
-    let boxHeight = box.getAttribute('height')
-
-    // 处理隐藏的 layout 的情况
-    if (!boxMeasuredWidth) {
-      boxMeasuredWidth = this.useDataWidth ? this.dataWidth : viewport.getWidth()
-    }
-    if (!boxMeasuredHeight) {
-      boxMeasuredHeight = this.useDataHeight
-        ? this.dataHeight
-        : (boxMeasuredWidth * boxHeight / boxWidth)
-    }
-
-    this.measuredHeight = boxMeasuredHeight
-    this.measuredWidth = boxMeasuredWidth
-  }
-
-  /**
    * 组件初始化渲染
    */
   build () {
@@ -170,34 +156,8 @@ export default class MipVizEcharts extends CustomElement {
     this.src = this.element.getAttribute('src')
     this.useDataWidth = this.element.hasAttribute('use-data-width')
     this.useDataHeight = this.element.hasAttribute('use-data-height')
-  }
-
-  /**
-   * 载入图表数据，本地载入和远程载入
-   */
-  async loadData () {
-    let data
-    let element = this.element
-
-    if (this.inlineData) {
-      try {
-        data = util.jsonParse(this.inlineData)
-      } catch (e) {
-        logger.warn(element, '解析数据出错')
-      }
-    } else {
-      try {
-        let fetchData = await fetch(this.src)
-        data = await fetchData.json()
-      } catch (err) {
-        logger.warn(element, '请求数据出错')
-      }
-    }
-
-    this.data = data.data || {}
-    this.padding = data.padding
-    this.dataWidth = data.width || this.dataWidth
-    this.dataHeight = data.height || this.dataHeight
+    this.dataWidth = viewport.getWidth()
+    this.dataHeight = viewport.getHeight()
   }
 
   /**
@@ -207,10 +167,68 @@ export default class MipVizEcharts extends CustomElement {
    */
   getInlineData () {
     let script = this.element.querySelector('script[type="application/json"]')
+    let data = {}
+
     if (!script) {
       return
     }
-    return script.textContent
+    try {
+      data = util.jsonParse(script.textContent)
+    } catch (e) {
+      logger.warn(this.element, '解析数据出错')
+    }
+
+    return data
+  }
+
+  /**
+   * 载入图表数据，本地载入和远程载入
+   */
+  async loadData () {
+    let data = {}
+    let element = this.element
+
+    if (this.inlineData) {
+      data = this.inlineData
+    } else {
+      try {
+        let fetchData = await fetch(this.src)
+        data = await fetchData.json()
+      } catch (err) {
+        logger.warn(element, '请求数据出错')
+      }
+    }
+
+    this.data = data
+    this.padding = data.padding
+    this.dataWidth = data.width || this.dataWidth
+    this.dataHeight = data.height || this.dataHeight
+  }
+
+  /**
+   * 计算图表容器的宽高
+   */
+  measuredBox () {
+    let box = this.element
+    let boxMeasuredWidth = box.clientWidth
+    let boxMeasuredHeight = box.clientHeight
+    let boxDataWidth = box.getAttribute('width')
+    let boxDataHeight = box.getAttribute('height')
+
+    boxMeasuredWidth = this.useDataWidth
+      ? this.dataWidth
+      : viewport.getWidth()
+
+    if (boxDataWidth && boxDataHeight) {
+      boxMeasuredHeight = this.useDataHeight
+        ? this.dataHeight
+        : (boxMeasuredWidth * boxDataHeight / boxDataWidth)
+    } else {
+      boxMeasuredHeight = this.useDataHeight ? this.dataHeight : boxDataHeight
+    }
+
+    this.measuredHeight = boxMeasuredHeight
+    this.measuredWidth = boxMeasuredWidth
   }
 
   /**
@@ -223,7 +241,7 @@ export default class MipVizEcharts extends CustomElement {
     let p = this.padding
 
     if (typeof p === 'number') {
-      return p
+      return p * 2
     }
 
     if (typeof p === 'object') {
@@ -251,9 +269,19 @@ export default class MipVizEcharts extends CustomElement {
     let width = this.measuredWidth - this.getDataPadding('width')
     let height = this.measuredHeight - this.getDataPadding('height')
 
-    this.echarts = window.echarts
-    this.chart = this.echarts.init(this.container)
-    this.chart.setOption(this.data)
-    this.chart.resize({width, height, silent: true})
+    this.data.width = width - 32
+    this.data.height = height - 32
+
+    if (!this.data['$schema']) {
+      this.data['$schema'] = 'https://vega.github.io/schema/vega/v5.json'
+    }
+
+    let chart = new this.vega.View(this.vega.parse(this.data), {
+      renderer: 'canvas',
+      container: this.container,
+      hover: true
+    })
+
+    chart.runAsync()
   }
 }
