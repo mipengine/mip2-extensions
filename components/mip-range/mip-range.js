@@ -31,36 +31,13 @@ export default class MIPRange extends CustomElement {
   }
 
   build () {
-    let {
-      direction, range, width, height,
-      dotSize, min, max, step, disabled,
-      tipShow, clickable, speed, fixRange,
-      tipDir, dotStyle, processStyle, barStyle,
-      tipFormat, tipExist
-    } = this.props
+    let { direction, range } = this.props
 
     // 设定默认值
     this.isVertical = direction === 'vertical'
     this.isSingle = Array.isArray(range || 0) ? 0 : 1
-    this.direction = direction || 'horizontal'
-    this.width = width || 'auto'
-    this.height = height || 6
-    this.dotSize = dotSize || 16
-    this.min = min || 0
-    this.max = max || 100
-    this.step = step || 1
-    this.disabled = disabled === true
-    this.tipShow = tipShow || 'always'
-    this.clickable = clickable !== false
-    this.speed = speed || 0.2
-    this.range = range || 0
-    this.fixRange = fixRange === true
-    this.tipDir = tipDir || ''
-    this.dotStyle = dotStyle || null
-    this.processStyle = processStyle || null
-    this.barStyle = barStyle || null
-    this.tipFormat = tipFormat || ''
-    this.tipExist = tipExist || 300
+
+    Object.keys(this.props).forEach(key => (this[key] = this.props[key]))
     this.currentValue = this.limitValue(!Array.isArray(this.range) ? [0, this.range] : this.range)
 
     // 渲染组件的内部结构
@@ -798,5 +775,91 @@ export default class MIPRange extends CustomElement {
   resetSlider () {
     this.setRangeData()
     this.setPosition()
+  }
+}
+
+// 申明 props
+MIPRange.props = {
+  width: {
+    type: [Number, String],
+    default: 'auto'
+  },
+  height: {
+    type: [Number, String],
+    default: 6
+  },
+  dotSize: {
+    type: Number,
+    default: 16
+  },
+  min: {
+    type: Number,
+    default: 0
+  },
+  max: {
+    type: Number,
+    default: 100
+  },
+  step: {
+    type: Number,
+    default: 1
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  tipShow: {
+    type: String,
+    default: 'always'
+  },
+  direction: {
+    type: String,
+    default: 'horizontal'
+  },
+  clickable: {
+    type: Boolean,
+    default: true
+  },
+  speed: {
+    type: Number,
+    default: 0.2
+  },
+  range: {
+    type: [String, Number, Array],
+    default: 0
+  },
+  fixRange: {
+    type: Boolean,
+    default: false
+  },
+  tipDir: {
+    type: String,
+    default: ''
+  },
+  dotStyle: {
+    type: [Array, Object],
+    default: () => {
+      return null
+    }
+  },
+  processStyle: {
+    type: [Array, Object],
+    default: () => {
+      return null
+    }
+  },
+  barStyle: {
+    type: [Array, Object],
+    default: () => {
+      return null
+    }
+  },
+  tipFormat: {
+    type: String,
+    default: ''
+  },
+  tipExist: {
+    type: [String, Number],
+    default: 300
   }
 }
