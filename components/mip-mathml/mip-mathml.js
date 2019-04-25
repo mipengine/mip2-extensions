@@ -10,60 +10,73 @@ import './mip-mathml.less'
 const { CustomElement } = MIP
 
 export default class MIPMathml extends CustomElement {
-  build () {
+  /**
+   * 指定在渲染 layout 的过程中是否出现 loading，默认 true
+   *
+   * @returns {boolean} 是否展示 loading
+   */
+  isLoadingEnabled () {
+    return true
+  }
+
+  async layoutCallback () {
+    await this.initialize()
+  }
+
+  /**
+   * 初始化
+   */
+  initialize () {
     let ele = this.element
     let inline = ele.hasAttribute('inline')
-    let height = ele.getAttribute('height')
-    let width = ele.getAttribute('width')
     let wrapper = document.createElement('div')
-    let mipIframe = document.createElement('iframe')
+    let iframe = document.createElement('iframe')
+    let iframeID = this.iframeID = `${Date.now()}_${Math.ceil(Math.random() * 100000)}`
 
     if (inline) {
-      // 如果是内敛要设置父级原生为 inline-block
+      // 如果是内联，要设置父级原生为 inline-block
       ele.style.display = 'inline-block'
       ele.style.verticalAlign = 'middle'
     }
 
     wrapper.className = 'wrapper'
-    mipIframe.width = width || 'auto'
-    mipIframe.height = height || 100
-    mipIframe.setAttribute('frameBorder', 0)
-    mipIframe.setAttribute('scrolling', 'no')
-    mipIframe.setAttribute('srcdoc', this.getIframeBody())
+    iframe.setAttribute('frameBorder', 0)
+    iframe.setAttribute('scrolling', 'no')
+    iframe.setAttribute('srcdoc', this.getIframeBody())
+    wrapper.appendChild(iframe)
 
-    this.iframe = mipIframe
-
-    wrapper.appendChild(mipIframe)
+    this.applyFillContent(wrapper, true)
     this.element.appendChild(wrapper)
 
-    window.addEventListener('message', this.messageHandler)
-  }
+    return new Promise((resolve, reject) => {
+      function messageHandler (event) {
+        let inline = ele.hasAttribute('inline')
 
-  disConnectedCallback () {
-    window.removeEventListener('message', this.messageHandler)
-  }
+        if (event.origin === window.location.origin &&
+          event.data &&
+          iframeID === event.data.iframeID
+        ) {
+          let { width, height } = event.data
 
-  messageHandler (event) {
-    let inline = this.element.hasAttribute('inline')
-    if (event.origin === window.location.origin &&
-      event.data &&
-      this.iframeID === event.data.iframeID
-    ) {
-      let { width, height } = event.data
+          iframe.style.height = `${height}px`
 
-      this.iframe.height = `${height}px`
+          if (inline) {
+            iframe.style.width = `${width}px`
+          }
 
-      if (inline) {
-        this.iframe.width = `${width}px`
+          iframe.style.visibility = 'visible'
+          resolve(true)
+        }
       }
-    }
+
+      window.addEventListener('message', e => messageHandler(e))
+    })
   }
 
   getIframeBody () {
     let ele = this.element
     let mathjaxConfig = ele.getAttribute('mathjaxConfig') || 'TeX-MML-AM_CHTML'
     let formula = ele.getAttribute('formula') || ''
-    let iframeID = this.iframeID = `${Date.now()}_${Math.ceil(Math.random() * 100000)}`
     const MATHJAX_CDN = `https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=${mathjaxConfig}`
 
     return `
@@ -77,7 +90,7 @@ export default class MIPMathml extends CustomElement {
           document.body.setAttribute('style','margin:0')
           display[0].setAttribute('style','margin-top:0;margin-bottom:0')
           window.parent.postMessage({
-            iframeID: '${iframeID}',
+            iframeID: '${this.iframeID}',
             width: rendered.offsetWidth,
             height: rendered.offsetHeight
           }, '*')
