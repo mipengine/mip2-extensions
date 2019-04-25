@@ -24,70 +24,88 @@
 <h2>2、响应式布局，从本地的 script JSON 中获取数据</h2>
 <mip-viz-vega id="charts-2" width="400" height="400" layout="responsive">
   <script type="application/json">
-  {
-    "width": 400,
-    "height": 400,
-    "data": [
-      {
-        "name": "table",
-        "values": [12, 23, 47, 6, 52, 19],
-        "transform": [{"type": "pie", "field": "data"}]
-      }
-    ],
-    "scales": [
-      {
-        "name": "r",
-        "type": "sqrt",
-        "domain": {"data": "table", "field": "data"},
-        "range": [20, 100]
-      }
-    ],
-    "marks": [
-      {
-        "type": "arc",
-        "from": {"data": "table"},
-        "properties": {
-          "enter": {
-            "x": {"field": {"group": "width"}, "mult": 0.5},
-            "y": {"field": {"group": "height"}, "mult": 0.5},
-            "startAngle": {"field": "layout_start"},
-            "endAngle": {"field": "layout_end"},
-            "innerRadius": {"value": 20},
-            "outerRadius": {"scale": "r", "field": "data"},
-            "stroke": {"value": "#fff"}
-          },
-          "update": {
-            "fill": {"value": "#ccc"}
-          },
-          "hover": {
-            "fill": {"value": "pink"}
+   {
+      "width": 500,
+      "height": 200,
+      "padding": 20,
+      "data": [
+        {
+          "name": "table",
+          "values": [
+            {"x": 0, "y": 28, "c":0}, {"x": 0, "y": 55, "c":1},
+            {"x": 1, "y": 43, "c":0}, {"x": 1, "y": 91, "c":1},
+            {"x": 2, "y": 81, "c":0}, {"x": 2, "y": 53, "c":1},
+            {"x": 3, "y": 19, "c":0}, {"x": 3, "y": 87, "c":1},
+            {"x": 4, "y": 52, "c":0}, {"x": 4, "y": 48, "c":1},
+            {"x": 5, "y": 24, "c":0}, {"x": 5, "y": 49, "c":1},
+            {"x": 6, "y": 87, "c":0}, {"x": 6, "y": 66, "c":1},
+            {"x": 7, "y": 17, "c":0}, {"x": 7, "y": 27, "c":1},
+            {"x": 8, "y": 68, "c":0}, {"x": 8, "y": 16, "c":1},
+            {"x": 9, "y": 49, "c":0}, {"x": 9, "y": 15, "c":1}
+          ],
+          "transform": [
+            {
+              "type": "stack",
+              "groupby": ["x"],
+              "sort": {"field": "c"},
+              "field": "y"
+            }
+          ]
+        }
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "type": "band",
+          "range": "width",
+          "domain": {"data": "table", "field": "x"}
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "nice": true, "zero": true,
+          "domain": {"data": "table", "field": "y1"}
+        },
+        {
+          "name": "color",
+          "type": "ordinal",
+          "range": "category",
+          "domain": {"data": "table", "field": "c"}
+        }
+      ],
+      "axes": [
+        {"orient": "bottom", "scale": "x", "zindex": 1},
+        {"orient": "left", "scale": "y", "zindex": 1}
+      ],
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "table"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "x"},
+              "width": {"scale": "x", "band": 1, "offset": -1},
+              "y": {"scale": "y", "field": "y0"},
+              "y2": {"scale": "y", "field": "y1"},
+              "fill": {"scale": "color", "field": "c"}
+            },
+            "update": {
+              "fillOpacity": {"value": 1}
+            },
+            "hover": {
+              "fillOpacity": {"value": 0.5}
+            }
           }
         }
-      },
-      {
-        "type": "text",
-        "from": {"data": "table"},
-        "properties": {
-          "enter": {
-            "x": {"field": {"group": "width"}, "mult": 0.5},
-            "y": {"field": {"group": "height"}, "mult": 0.5},
-            "radius": {"scale": "r", "field": "data", "offset": 8},
-            "theta": {"field": "layout_mid"},
-            "fill": {"value": "#000"},
-            "align": {"value": "center"},
-            "baseline": {"value": "middle"},
-            "text": {"field": "data"}
-          }
-        }
-      }
-    ]
-  }
+      ]
+    }
   </script>
 </mip-viz-vega>
 
 <h2>3、固定高度大小的饼图，使用远程数据，并使用指定的图片进行 placeHolder 占位</h2>
 <mip-viz-vega id="charts-3" use-data-width height="500" layout="fixed-height" src="./pie-data.json">
-  <mip-img placeholder height="500" layout="fixed-height" src="https://placehold.it/400x200?text=echarts">
+  <mip-img placeholder height="500" layout="fixed-height" src="https://placehold.it/400x500?text=vega">
   </mip-img>
 </mip-viz-vega>
 
