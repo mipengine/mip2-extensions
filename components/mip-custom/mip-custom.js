@@ -325,28 +325,8 @@ export default class MipCustom extends CustomElement {
 
     // 医疗屏蔽A区跳转
     let commonData = data.common || {}
-    let isForbidden = true
     if (commonData.product === 'medicine') {
-      let specialLink = [
-        // 寻医问药
-        'mip.imask.xywy.com',
-        // 宝宝知道
-        'baobao.baidu.com',
-        // 柠檬爱美
-        'lemon.baidu.com',
-        // 春雨医生
-        'm.chunyuyisheng.com',
-        // 好大夫
-        'mip.haodf.com',
-        // 百科名医
-        'm.baikemy.com'
-      ]
-      for (let i = 0; i < specialLink.length; i++) {
-        if (commonData.originalUrl && commonData.originalUrl.indexOf(specialLink[i]) > -1) {
-          isForbidden = false
-          break
-        }
-      }
+      let isForbidden = commonData.isForbidden
 
       if (isForbidden) {
         let alink = document.querySelectorAll('a')
