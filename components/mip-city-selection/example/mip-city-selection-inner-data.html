@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html mip>
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
@@ -9,19 +8,17 @@
   <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <style mip-custom>
     /* 自定义样式 */
-
   </style>
 </head>
-
 <body>
-<!--   <mip-test id="cityTest"></mip-test>  测试组件，模拟异步-->
-  <mip-city-selection class="mip-hidden" on="citySelected">
-    <!-- <mip-city-selection class="mip-hidden" on="citySelected:cityTest.print" data-src="http://172.24.138.98:8888/xxxxtest.json"> -->
+  <mip-test id="cityTest"></mip-test>
+  <mip-city-selection class="mip-hidden" on="citySelected:cityTest.print">
     <script type="application/json">
       {
         "list": [{
           "key": "热门",
-          "cities": [{
+          "cities": [
+            {
               "city": "北京",
               "pinyin": "beijing",
               "code": "1"
@@ -49,7 +46,8 @@
           ]
         }, {
           "key": "A",
-          "cities": [{
+          "cities": [
+            {
               "city": "澳门",
               "pinyin": "aomen",
               "code": "7"
@@ -67,7 +65,8 @@
           ]
         }, {
           "key": "B",
-          "cities": [{
+          "cities": [
+            {
               "city": "宝清",
               "pinyin": "baoqing",
               "code": "10"
@@ -85,7 +84,8 @@
           ]
         }, {
           "key": "C",
-          "cities": [{
+          "cities": [
+            {
               "city": "重庆",
               "pinyin": "chongqing",
               "code": "13"
@@ -103,7 +103,8 @@
           ]
         }, {
           "key": "D",
-          "cities": [{
+          "cities": [
+            {
               "city": "大庆",
               "pinyin": "daqing",
               "code": "16"
@@ -121,7 +122,8 @@
           ]
         }, {
           "key": "E",
-          "cities": [{
+          "cities": [
+            {
               "city": "鄂尔多斯",
               "pinyin": "eerduosi",
               "code": "19"
@@ -134,7 +136,8 @@
           ]
         }, {
           "key": "F",
-          "cities": [{
+          "cities": [
+            {
               "city": "阜阳",
               "pinyin": "fuyang",
               "code": "21"
@@ -153,7 +156,8 @@
         },
          {
           "key": "G",
-          "cities": [{
+          "cities": [
+            {
               "city": "广州",
               "pinyin": "guangzhou",
               "code": "24"
@@ -170,6 +174,6 @@
   </mip-city-selection>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
   <script src="/mip-city-selection/mip-city-selection.js"></script>
+  <script src="./mip-test.js"></script>
 </body>
-
 </html>
