@@ -67,11 +67,16 @@ export default class MIPTabs extends CustomElement {
     const offsetX = tabRect.left - firstLabelRect.left
     const line = this.element.querySelector('.mip-tabs-line')
     line.style.width = `${tabRect.width}px`
-    line.style.transform = `translate3d(${offsetX}px, 0, 0)`
+    this.setTransform(line, `translate3d(${offsetX}px, 0, 0)`)
 
     // 容器宽度
     const translateX = -rect.getElementRect(this.element).width * index
-    this.element.querySelector('.mip-tabs-content-wrap').style.transform = `translate3d(${translateX}px, 0, 0)`
+    this.setTransform(this.element.querySelector('.mip-tabs-content-wrap'), `translate3d(${translateX}px, 0, 0)`)
+  }
+
+  setTransform (element, transformRule) {
+    element.style.webkitTransform = transformRule
+    element.style.transform = transformRule
   }
 
   handleTabChange (index) {
