@@ -53,6 +53,8 @@ export default class MIPTabs extends CustomElement {
   moveTo (index) {
     this.tabs[this.currentIndex].setAttribute('is-active', false)
     this.tabs[index].setAttribute('is-active', true)
+    this.labels[this.currentIndex].classList.remove('optionColor')
+    this.labels[index].classList.add('optionColor')
     this.currentIndex = index
 
     const currenLabel = this.labels[index].querySelector('span')
