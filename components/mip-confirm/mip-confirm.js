@@ -74,10 +74,11 @@ export default class MIPConfirm extends CustomElement {
   }
 
   render () {
-    const {infoTitle} = this.props
+    const {infoTitle, infoText} = this.props
 
     this.container.style.display = this.myDialog ? null : 'none'
     this.element.querySelector('.confirm-title').innerHTML = `<div>${infoTitle}</div>`
+    this.element.querySelector('.confirm-content').innerText = infoText
 
     const footer = this.element.querySelector('.confirm-footer')
 
