@@ -778,14 +778,18 @@ export default class MIPRange extends CustomElement {
   }
 }
 
+const MIX_PROPS = val => {
+  return (val && Number.isInteger(+val) ? Number : (Array.isArray(val) ? Array : String))
+}
+
 // 申明 props
 MIPRange.props = {
   width: {
-    type: [Number, String],
+    type: MIX_PROPS,
     default: 'auto'
   },
   height: {
-    type: [Number, String],
+    type: MIX_PROPS,
     default: 6
   },
   dotSize: {
@@ -825,7 +829,7 @@ MIPRange.props = {
     default: 0.2
   },
   range: {
-    type: [String, Number, Array],
+    type: MIX_PROPS,
     default: 0
   },
   fixRange: {
@@ -837,19 +841,19 @@ MIPRange.props = {
     default: ''
   },
   dotStyle: {
-    type: [Array, Object],
+    type: Object,
     default: () => {
       return null
     }
   },
   processStyle: {
-    type: [Array, Object],
+    type: Object,
     default: () => {
       return null
     }
   },
   barStyle: {
-    type: [Array, Object],
+    type: Object,
     default: () => {
       return null
     }
@@ -859,7 +863,7 @@ MIPRange.props = {
     default: ''
   },
   tipExist: {
-    type: [String, Number],
+    type: MIX_PROPS,
     default: 300
   }
 }
