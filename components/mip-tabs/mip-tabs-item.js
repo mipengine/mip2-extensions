@@ -1,6 +1,6 @@
 import './mip-tabs-item.less'
 
-const {CustomElement, util: {dom}} = MIP
+const {CustomElement} = MIP
 
 export default class MIPTabsItem extends CustomElement {
   static get observedAttributes () {
@@ -12,15 +12,12 @@ export default class MIPTabsItem extends CustomElement {
     if (firstElementChild && firstElementChild.classList.contains('tabs-item')) {
       return
     }
-    const childNodes = dom.create(this.element.innerHTML)
+    const childHTML = this.element.innerHTML
 
     this.element.innerHTML = '<div class="tabs-item"></div>'
     const item = this.element.querySelector('.tabs-item')
 
-    if (childNodes) {
-      childNodes.length ? childNodes.forEach(child => item.appendChild(child)) : item.appendChild(childNodes)
-    }
-
+    item.innerHTML = childHTML
     this.updateItem()
   }
 
