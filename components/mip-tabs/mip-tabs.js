@@ -1,6 +1,6 @@
 import './mip-tabs.less'
 
-const {CustomElement, util: {rect}, viewer} = MIP
+const {CustomElement, util: {dom, rect}, viewer} = MIP
 
 export default class MIPTabs extends CustomElement {
   static get observedAttributes () {
@@ -18,16 +18,14 @@ export default class MIPTabs extends CustomElement {
   }
 
   build () {
-    const {firstElementChild, childNodes} = this.element
+    const {firstElementChild} = this.element
 
     if (firstElementChild && firstElementChild.classList.contains('mip-tabs')) {
       return
     }
 
     const {initialTab} = this.props
-    const fragment = document.createDocumentFragment()
-
-    childNodes.forEach(child => fragment.appendChild(child.cloneNode(true)))
+    const childNodes = dom.create(this.element.innerHTML)
 
     this.element.innerHTML = '<div class="mip-tabs">' +
       '<div class="mip-tabs-label-wrap">' +
@@ -38,7 +36,7 @@ export default class MIPTabs extends CustomElement {
       '</div>'
     const content = this.element.querySelector('.mip-tabs-content-wrap')
 
-    content.appendChild(fragment)
+    childNodes && childNodes.length ? childNodes.forEach(child => content.appendChild(child)) : content.appendChild(childNodes)
 
     this.tabs = [...content.childNodes].filter(child => child.nodeName === 'MIP-TABS-ITEM')
 

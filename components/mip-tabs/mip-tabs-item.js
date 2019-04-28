@@ -1,6 +1,6 @@
 import './mip-tabs-item.less'
 
-const {CustomElement} = MIP
+const {CustomElement, util: {dom}} = MIP
 
 export default class MIPTabsItem extends CustomElement {
   static get observedAttributes () {
@@ -8,17 +8,16 @@ export default class MIPTabsItem extends CustomElement {
   }
 
   build () {
-    const {firstElementChild, childNodes} = this.element
+    const {firstElementChild} = this.element
     if (firstElementChild && firstElementChild.classList.contains('tabs-item')) {
       return
     }
-    const fragment = document.createDocumentFragment()
-
-    childNodes.forEach(child => fragment.appendChild(child.cloneNode(true)))
+    const childNodes = dom.create(this.element.innerHTML)
 
     this.element.innerHTML = '<div class="tabs-item"></div>'
-    this.element.querySelector('.tabs-item').appendChild(fragment)
+    const item = this.element.querySelector('.tabs-item')
 
+    childNodes && childNodes.length ? childNodes.forEach(child => item.appendChild(child)) : item.appendChild(childNodes)
     this.updateItem()
   }
 
@@ -27,7 +26,7 @@ export default class MIPTabsItem extends CustomElement {
       const {isActive} = this.props
 
       if (isActive) {
-        const nestedTabs = this.element.querySelectorAll('mip-tabs')
+        const nestedTabs = [...this.element.querySelectorAll('mip-tabs')]
 
         nestedTabs.length && setTimeout(() => {
           nestedTabs.forEach(tabs => tabs.setAttribute('reset-tab', 'true'))
@@ -41,6 +40,9 @@ export default class MIPTabsItem extends CustomElement {
     const {isActive} = this.props
     const item = this.element.querySelector('.tabs-item')
 
+    if (!item) {
+      return
+    }
     if (isActive) {
       item.classList.add('active')
       item.style.display = null
