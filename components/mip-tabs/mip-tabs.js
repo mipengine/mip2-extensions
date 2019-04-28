@@ -36,7 +36,9 @@ export default class MIPTabs extends CustomElement {
       '</div>'
     const content = this.element.querySelector('.mip-tabs-content-wrap')
 
-    childNodes && childNodes.length ? childNodes.forEach(child => content.appendChild(child)) : content.appendChild(childNodes)
+    if (childNodes) {
+      childNodes.length ? childNodes.forEach(child => content.appendChild(child)) : content.appendChild(childNodes)
+    }
 
     this.tabs = [...content.childNodes].filter(child => child.nodeName === 'MIP-TABS-ITEM')
 

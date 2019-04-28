@@ -17,7 +17,10 @@ export default class MIPTabsItem extends CustomElement {
     this.element.innerHTML = '<div class="tabs-item"></div>'
     const item = this.element.querySelector('.tabs-item')
 
-    childNodes && childNodes.length ? childNodes.forEach(child => item.appendChild(child)) : item.appendChild(childNodes)
+    if (childNodes) {
+      childNodes.length ? childNodes.forEach(child => item.appendChild(child)) : item.appendChild(childNodes)
+    }
+
     this.updateItem()
   }
 
