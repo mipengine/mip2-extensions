@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="widtd=device-widtd,minimum-scale=1,initial-scale=1">
+  <link rel="canonical" href="">
+  <title>mip-date-display</title>
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+      /* 自定义样式 */
+      table th {
+        text-align: left;
+      }
+    </style>
+</head>
+<body>
+  <!-- display with datetime -->
+  <mip-date-display datetime="2019-04-29T11:33:03.214Z">
+    <h2>Date: 2019-04-29T15:05:05.000Z</h2>
+    <template type="mip-mustache">
+      <table>
+       <tr>
+          <th>key</th>
+          <th>value</th>
+       </tr>
+       <tr>
+          <td>year</td>
+          <td>{{year}}</td>
+       </tr>
+       <tr>
+          <td>month</td>
+          <td>{{month}}</td>
+       </tr>
+       <tr>
+          <td>monthName</td>
+          <td>{{monthName}}</td>
+       </tr>
+       <tr>
+          <td>day</td>
+          <td>{{day}}</td>
+       </tr>
+       <tr>
+          <td>dayName</td>
+          <td>{{dayName}}</td>
+       </tr>
+       <tr>
+          <td>dayNameShort</td>
+          <td>{{dayNameShort}}</td>
+       </tr>
+       <tr>
+          <td>hour</td>
+          <td>{{hour}}</td>
+       </tr>
+       <tr>
+          <td>minute</td>
+          <td>{{minute}}</td>
+       </tr>
+       <tr>
+          <td>second</td>
+          <td>{{second}}</td>
+       </tr> <tr>
+          <td>iso</td>
+          <td>{{iso}}</td>
+       </tr>
+       <tr>
+          <td>yearTwoDigit</td>
+          <td>{{yearTwoDigit}}</td>
+       </tr>
+       <tr>
+          <td>monthTwoDigit</td>
+          <td>{{monthTwoDigit}}</td>
+       </tr> <tr>
+          <td>dayTwoDigit</td>
+          <td>{{dayTwoDigit}}</td>
+       </tr>
+       <tr>
+          <td>hourTwoDigit</td>
+          <td>{{hourTwoDigit}}</td>
+       </tr>
+       <tr>
+          <td>hour12</td>
+          <td>{{hour12}}</td>
+       </tr>
+       <tr>
+          <td>hour12TwoDigit</td>
+          <td>{{hour12TwoDigit}}</td>
+       </tr> <tr>
+          <td>minuteTwoDigit</td>
+          <td>{{minuteTwoDigit}}</td>
+       </tr>
+       <tr>
+          <td>secondTwoDigit</td>
+          <td>{{secondTwoDigit}}</td>
+       </tr>
+       <tr>
+          <td>dayPeriod</td>
+          <td>{{dayPeriod}}</td>
+       </tr>
+      </table>
+    </template>
+  </mip-date-display>
+
+  <!-- display in utc -->
+  <mip-date-display datetime="2019-04-29T11:33:03.214Z" display-in="utc">
+      <h2>Date: 2019-04-29T15:05:05.000Z</h2>
+      <template type="mip-mustache">
+        <table>
+         <tr>
+            <th>key</th>
+            <th>value</th>
+         </tr>
+         <tr>
+            <td>year</td>
+            <td>{{year}}</td>
+         </tr>
+         <tr>
+            <td>month</td>
+            <td>{{month}}</td>
+         </tr>
+         <tr>
+            <td>monthName</td>
+            <td>{{monthName}}</td>
+         </tr>
+         <tr>
+            <td>day</td>
+            <td>{{day}}</td>
+         </tr>
+         <tr>
+            <td>dayName</td>
+            <td>{{dayName}}</td>
+         </tr>
+         <tr>
+            <td>dayNameShort</td>
+            <td>{{dayNameShort}}</td>
+         </tr>
+         <tr>
+            <td>hour</td>
+            <td>{{hour}}</td>
+         </tr>
+         <tr>
+            <td>minute</td>
+            <td>{{minute}}</td>
+         </tr>
+         <tr>
+            <td>second</td>
+            <td>{{second}}</td>
+         </tr> <tr>
+            <td>iso</td>
+            <td>{{iso}}</td>
+         </tr>
+         <tr>
+            <td>yearTwoDigit</td>
+            <td>{{yearTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>monthTwoDigit</td>
+            <td>{{monthTwoDigit}}</td>
+         </tr> <tr>
+            <td>dayTwoDigit</td>
+            <td>{{dayTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>hourTwoDigit</td>
+            <td>{{hourTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>hour12</td>
+            <td>{{hour12}}</td>
+         </tr>
+         <tr>
+            <td>hour12TwoDigit</td>
+            <td>{{hour12TwoDigit}}</td>
+         </tr> <tr>
+            <td>minuteTwoDigit</td>
+            <td>{{minuteTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>secondTwoDigit</td>
+            <td>{{secondTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>dayPeriod</td>
+            <td>{{dayPeriod}}</td>
+         </tr>
+        </table>
+      </template>
+  </mip-date-display>
+
+  <!-- display with timestamp-ms -->
+  <mip-date-display timestamp-ms="1556537592614">
+      <h2>timestamp-ms: 1556537593214</h2>
+      <template type="mip-mustache">
+        <table>
+         <tr>
+            <th>key</th>
+            <th>value</th>
+         </tr>
+         <tr>
+            <td>year</td>
+            <td>{{year}}</td>
+         </tr>
+         <tr>
+            <td>month</td>
+            <td>{{month}}</td>
+         </tr>
+         <tr>
+            <td>monthName</td>
+            <td>{{monthName}}</td>
+         </tr>
+         <tr>
+            <td>day</td>
+            <td>{{day}}</td>
+         </tr>
+         <tr>
+            <td>dayName</td>
+            <td>{{dayName}}</td>
+         </tr>
+         <tr>
+            <td>dayNameShort</td>
+            <td>{{dayNameShort}}</td>
+         </tr>
+         <tr>
+            <td>hour</td>
+            <td>{{hour}}</td>
+         </tr>
+         <tr>
+            <td>minute</td>
+            <td>{{minute}}</td>
+         </tr>
+         <tr>
+            <td>second</td>
+            <td>{{second}}</td>
+         </tr> <tr>
+            <td>iso</td>
+            <td>{{iso}}</td>
+         </tr>
+         <tr>
+            <td>yearTwoDigit</td>
+            <td>{{yearTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>monthTwoDigit</td>
+            <td>{{monthTwoDigit}}</td>
+         </tr> <tr>
+            <td>dayTwoDigit</td>
+            <td>{{dayTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>hourTwoDigit</td>
+            <td>{{hourTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>hour12</td>
+            <td>{{hour12}}</td>
+         </tr>
+         <tr>
+            <td>hour12TwoDigit</td>
+            <td>{{hour12TwoDigit}}</td>
+         </tr> <tr>
+            <td>minuteTwoDigit</td>
+            <td>{{minuteTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>secondTwoDigit</td>
+            <td>{{secondTwoDigit}}</td>
+         </tr>
+         <tr>
+            <td>dayPeriod</td>
+            <td>{{dayPeriod}}</td>
+         </tr>
+        </table>
+      </template>
+  </mip-date-display>
+
+  <!-- display with timestamp-seconds -->
+  <mip-date-display timestamp-seconds="1556537592">
+      <h2>timestamp-seconds: 1556537593</h2>
+      <template type="mip-mustache">
+        <table>
+          <tr>
+            <th>key</th>
+            <th>value</th>
+          </tr>
+          <tr>
+            <td>year</td>
+            <td>{{year}}</td>
+          </tr>
+          <tr>
+            <td>month</td>
+            <td>{{month}}</td>
+          </tr>
+          <tr>
+            <td>monthName</td>
+            <td>{{monthName}}</td>
+          </tr>
+          <tr>
+            <td>day</td>
+            <td>{{day}}</td>
+          </tr>
+          <tr>
+            <td>dayName</td>
+            <td>{{dayName}}</td>
+          </tr>
+          <tr>
+            <td>dayNameShort</td>
+            <td>{{dayNameShort}}</td>
+          </tr>
+          <tr>
+            <td>hour</td>
+            <td>{{hour}}</td>
+          </tr>
+          <tr>
+            <td>minute</td>
+            <td>{{minute}}</td>
+          </tr>
+          <tr>
+            <td>second</td>
+            <td>{{second}}</td>
+          </tr> <tr>
+            <td>iso</td>
+            <td>{{iso}}</td>
+          </tr>
+          <tr>
+            <td>yearTwoDigit</td>
+            <td>{{yearTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>monthTwoDigit</td>
+            <td>{{monthTwoDigit}}</td>
+          </tr> <tr>
+            <td>dayTwoDigit</td>
+            <td>{{dayTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>hourTwoDigit</td>
+            <td>{{hourTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>hour12</td>
+            <td>{{hour12}}</td>
+          </tr>
+          <tr>
+            <td>hour12TwoDigit</td>
+            <td>{{hour12TwoDigit}}</td>
+          </tr> <tr>
+            <td>minuteTwoDigit</td>
+            <td>{{minuteTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>secondTwoDigit</td>
+            <td>{{secondTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>dayPeriod</td>
+            <td>{{dayPeriod}}</td>
+          </tr>
+        </table>
+      </template>
+  </mip-date-display>
+
+  <!-- display with timestamp-seconds and offset-seconds -->
+  <mip-date-display timestamp-seconds="1556537592" offset-seconds="600">
+      <h2>timestamp-seconds: 1556537593; offset-seconds: 600</h2>
+      <template type="mip-mustache">
+        <table>
+          <tr>
+            <th>key</th>
+            <th>value</th>
+          </tr>
+          <tr>
+            <td>year</td>
+            <td>{{year}}</td>
+          </tr>
+          <tr>
+            <td>month</td>
+            <td>{{month}}</td>
+          </tr>
+          <tr>
+            <td>monthName</td>
+            <td>{{monthName}}</td>
+          </tr>
+          <tr>
+            <td>day</td>
+            <td>{{day}}</td>
+          </tr>
+          <tr>
+            <td>dayName</td>
+            <td>{{dayName}}</td>
+          </tr>
+          <tr>
+            <td>dayNameShort</td>
+            <td>{{dayNameShort}}</td>
+          </tr>
+          <tr>
+            <td>hour</td>
+            <td>{{hour}}</td>
+          </tr>
+          <tr>
+            <td>minute</td>
+            <td>{{minute}}</td>
+          </tr>
+          <tr>
+            <td>second</td>
+            <td>{{second}}</td>
+          </tr> <tr>
+            <td>iso</td>
+            <td>{{iso}}</td>
+          </tr>
+          <tr>
+            <td>yearTwoDigit</td>
+            <td>{{yearTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>monthTwoDigit</td>
+            <td>{{monthTwoDigit}}</td>
+          </tr> <tr>
+            <td>dayTwoDigit</td>
+            <td>{{dayTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>hourTwoDigit</td>
+            <td>{{hourTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>hour12</td>
+            <td>{{hour12}}</td>
+          </tr>
+          <tr>
+            <td>hour12TwoDigit</td>
+            <td>{{hour12TwoDigit}}</td>
+          </tr> <tr>
+            <td>minuteTwoDigit</td>
+            <td>{{minuteTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>secondTwoDigit</td>
+            <td>{{secondTwoDigit}}</td>
+          </tr>
+          <tr>
+            <td>dayPeriod</td>
+            <td>{{dayPeriod}}</td>
+          </tr>
+        </table>
+      </template>
+  </mip-date-display>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-date-display/mip-date-display.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
+</body>
+</html>
