@@ -197,6 +197,37 @@ export default class strategyControl {
     // if (pageType === 'detail') {
     //   novelData.isNeedAds = false
     // }
+
+    // 2019-4-30 为后端增加几个UA相关的字段
+    let ua = window.navigator.userAgent
+    novelData.ua = ua
+
+    if (ua.indexOf('iPhone') !== -1 || ua.indexOf('iPad') !== -1) {
+      novelData.os = 'ios'
+      let match = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
+      if (match) {
+        let version = match[1] + '.' + match[2]
+        if (match[3]) {
+          version += '.' + match[3]
+        }
+        novelData.ov = version
+      }
+    } else if (ua.indexOf('Android') !== -1) {
+      novelData.os = 'android'
+      let match = ua.match(/Android\s([^\s]+)/)
+      if (match) {
+        novelData.ov = match[1]
+      }
+    }
+
+    // 只看手百，不看lite
+    if (ua.indexOf('baiduboxapp') !== -1 && ua.indexOf('lite baiduboxapp') === -1 && ua.indexOf('info baiduboxapp') === -1) {
+      let match = ua.match(/baiduboxapp\/([^\s]+)/)
+      if (match) {
+        novelData.ver = match[1]
+      }
+    }
+
     return novelData
   }
 
