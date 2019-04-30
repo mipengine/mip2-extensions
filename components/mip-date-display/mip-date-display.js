@@ -5,9 +5,9 @@
  */
 
 let {
-    CustomElement,
-    templates
-  } = MIP
+  CustomElement,
+  templates
+} = MIP
 
 /** @const {string} */
 const DEFAULT_LOCALE = 'zh-cn'
@@ -28,7 +28,7 @@ const DEFAULT_OFFSET_SECONDS = 0
   second: number,
   iso: string,
 }} */
-let VariablesDef;
+let VariablesDef
 
 /** @typedef {{
   year: number,
@@ -52,34 +52,26 @@ let VariablesDef;
   secondTwoDigit: string,
   dayPeriod: string,
  }} */
-let EnhancedVariablesDef;
+let EnhancedVariablesDef
 
 export default class MIPDateDisplay extends CustomElement {
   build () {
     this.container = this.element.ownerDocument.createElement('div')
     this.element.appendChild(this.container)
-    
     // Note: One of datetime, timestamp-ms, timestamp-seconds is required.
     this.datetime = this.element.getAttribute('datetime') || ''
-    
     this.timestampSeconds = Number(this.element.getAttribute('timestamp-seconds'))
-    
     this.timestampMiliseconds = Number(this.element.getAttribute('timestamp-ms'))
- 
     this.displayIn = this.element.getAttribute('display-in') || ''
- 
     this.offsetSeconds =
       Number(this.element.getAttribute('offset-seconds')) ||
       DEFAULT_OFFSET_SECONDS
-
     this.locale = this.element.getAttribute('locale') || DEFAULT_LOCALE
-
     const data = this.getDataForTemplate()
-    
     this.renderTemplate(data)
   }
 
-   /**
+  /**
    * renderTemplate 获取模版
    *
    * @param {Object} data 渲染数据
@@ -94,38 +86,38 @@ export default class MIPDateDisplay extends CustomElement {
 
   /**
    * get data for template 获取模板数据
-   * 
-   * @return {!EnhancedVariablesDef}
+   *
+   * @returns {!EnhancedVariablesDef}
    */
-  getDataForTemplate() {
-    const targetTime = this.getTargetTime();
-    const offset = this.offsetSeconds * 1000;
-    const date = new Date(targetTime + offset);
-    const inUTC = this.displayIn.toLowerCase() === 'utc';
+  getDataForTemplate () {
+    const targetTime = this.getTargetTime()
+    const offset = this.offsetSeconds * 1000
+    const date = new Date(targetTime + offset)
+    const inUTC = this.displayIn.toLowerCase() === 'utc'
     const basicData = inUTC
       ? this.getVariablesInUTC(date, this.locale)
-      : this.getVariablesInLocal(date, this.locale);
+      : this.getVariablesInLocal(date, this.locale)
 
-    return this.enhanceBasicVariables(basicData);
+    return this.enhanceBasicVariables(basicData)
   }
 
-   /**
+  /**
    * getTargetTime 获取目标时间
-   * 
-   * @return {number|undefined}
+   *
+   * @returns {number|undefined}
    * @private
    */
   getTargetTime () {
     let targetTime
 
     if (this.datetime.toLowerCase() === 'now') {
-      targetTime = Date.now();
+      targetTime = Date.now()
     } else if (this.datetime) {
       targetTime = Date.parse(this.datetime)
     } else if (this.timestampMiliseconds) {
-      targetTime = +this.timestampMiliseconds;
+      targetTime = +this.timestampMiliseconds
     } else if (this.timestampSeconds) {
-      targetTime = this.timestampSeconds * 1000;
+      targetTime = this.timestampSeconds * 1000
     }
 
     if (targetTime === undefined) {
@@ -135,79 +127,79 @@ export default class MIPDateDisplay extends CustomElement {
     return targetTime
   }
 
-   /**
+  /**
    * get variables in utc 获取utc下的时间数据
-   * 
-   * @param {!Date} date
-   * @param {string} locale
-   * @return {!VariablesDef}
+   *
+   * @param {!Date} date 目标时间
+   * @param {string} locale 语言
+   * @returns {!VariablesDef} 返回值需遵循 VariablesDef 的类型
    * @private
    */
-  getVariablesInUTC(date, locale) {
+  getVariablesInUTC (date, locale) {
     return {
       year: date.getUTCFullYear(),
       month: date.getUTCMonth() + 1,
       monthName: date.toLocaleDateString(locale, {
         month: 'long',
-        timeZone: 'UTC',
+        timeZone: 'UTC'
       }),
       monthNameShort: date.toLocaleDateString(locale, {
         month: 'short',
-        timeZone: 'UTC',
+        timeZone: 'UTC'
       }),
       day: date.getUTCDate(),
       dayName: date.toLocaleDateString(locale, {
         weekday: 'long',
-        timeZone: 'UTC',
+        timeZone: 'UTC'
       }),
       dayNameShort: date.toLocaleDateString(locale, {
         weekday: 'short',
-        timeZone: 'UTC',
+        timeZone: 'UTC'
       }),
       hour: date.getUTCHours(),
       minute: date.getUTCMinutes(),
       second: date.getUTCSeconds(),
-      iso: date.toISOString(),
+      iso: date.toISOString()
     }
   }
 
   /**
    * get variables in local 获取本地区时间数据
-   * 
+   *
    * @param {!Date} date
    * @param {string} locale
-   * @return {!VariablesDef}
+   * @returns {!VariablesDef}
    * @private
    */
-  getVariablesInLocal(date, locale) {
+  getVariablesInLocal (date, locale) {
     return {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
       monthName: date.toLocaleDateString(locale, {month: 'long'}),
       monthNameShort: date.toLocaleDateString(locale, {
-        month: 'short',
+        month: 'short'
       }),
       day: date.getDate(),
       dayName: date.toLocaleDateString(locale, {weekday: 'long'}),
       dayNameShort: date.toLocaleDateString(locale, {
-        weekday: 'short',
+        weekday: 'short'
       }),
       hour: date.getHours(),
       minute: date.getMinutes(),
       second: date.getSeconds(),
-      iso: date.toISOString(),
-    };
+      iso: date.toISOString()
+    }
   }
 
   /**
    * 获取附加时间数据，如12小时制下是时间等
-   * 
+   *
    * @param {!VariablesDef} data
-   * @return {!EnhancedVariablesDef}
+   * @returns {!EnhancedVariablesDef}
    * @private
    */
-  enhanceBasicVariables(data) {
-    const hour12 = data.hour % 12 || 12;
+  enhanceBasicVariables (data) {
+    const hour12 = data.hour % 12 || 12
 
     return /** @type {!EnhancedVariablesDef} */(
       Object.assign({}, data, {
@@ -219,8 +211,8 @@ export default class MIPDateDisplay extends CustomElement {
         hour12TwoDigit: this.padStart(hour12),
         minuteTwoDigit: this.padStart(data.minute),
         secondTwoDigit: this.padStart(data.second),
-        dayPeriod: data.hour < 12 ? 'am' : 'pm',
-      }));
+        dayPeriod: data.hour < 12 ? 'am' : 'pm'
+      }))
   }
 
   /**
@@ -253,8 +245,8 @@ function render (htmls) {
 
 /**
  * remove children 删除子元素
- * 
- * @param {!Element} element
+ *
+ * @param {!Element} element html元素
  */
 function removeChildren (parent) {
   while (parent.firstChild) {
