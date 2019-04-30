@@ -55,6 +55,10 @@ let VariablesDef
 let EnhancedVariablesDef
 
 export default class MIPDateDisplay extends CustomElement {
+  constructor (element) {
+    super(element)
+    this.render = this.render.bind(this)
+  }
   build () {
     this.container = this.element.ownerDocument.createElement('div')
     this.element.appendChild(this.container)
@@ -78,7 +82,7 @@ export default class MIPDateDisplay extends CustomElement {
    */
   renderTemplate (data) {
     if (data) {
-      templates.render(this.element, data).then(render.bind(this))
+      templates.render(this.element, data).then(this.render)
     } else {
       console.error('数据不符合规范')
     }
@@ -115,7 +119,7 @@ export default class MIPDateDisplay extends CustomElement {
     } else if (this.datetime) {
       targetTime = Date.parse(this.datetime)
     } else if (this.timestampMiliseconds) {
-      targetTime = +this.timestampMiliseconds
+      targetTime = this.timestampMiliseconds
     } else if (this.timestampSeconds) {
       targetTime = this.timestampSeconds * 1000
     }
@@ -229,27 +233,15 @@ export default class MIPDateDisplay extends CustomElement {
 
     return '0' + input
   }
-}
 
-/**
- * render dom 渲染函数
- *
- * @param {Array} htmls html对象数组
- */
-function render (htmls) {
-  removeChildren(this.container)
-  let node = document.createElement('div')
-  node.innerHTML = htmls
-  this.container.appendChild(node)
-}
-
-/**
- * remove children 删除子元素
- *
- * @param {!Element} element html元素
- */
-function removeChildren (parent) {
-  while (parent.firstChild) {
-    parent.removeChild(parent.firstChild)
+  /**
+   * render dom 渲染函数
+   *
+   * @param {Array} htmls html对象数组
+   */
+  render (htmls) {
+    let node = document.createElement('div')
+    node.innerHTML = htmls
+    this.container.appendChild(node)
   }
 }
