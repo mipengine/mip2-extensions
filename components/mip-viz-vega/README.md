@@ -10,7 +10,7 @@
 
 ## 说明
 
-基于 vega 的 mip 可视化组件，支持通用的纯 JSON 配置的简单图表
+基于 vega 的 mip 可视化组件，支持通用的纯 JSON 配置的简单图表，mip-viz-vega 采用的是 vega@2.6.1 版本：https://github.com/vega/vega/tree/v2.6.1 [Lisense:BSD](https://github.com/vega/vega/blob/v2.6.1/LICENSE)
 
 ## 示例
 

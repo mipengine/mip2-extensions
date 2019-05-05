@@ -112,12 +112,7 @@ export default class MipVizVega extends CustomElement {
    */
   loadVega () {
     return new Promise(resolve => {
-      window.require.config({
-        paths: {
-          'vega': 'https://cdn.jsdelivr.net/npm/vega@5/build/vega.min'
-        }
-      })
-      window.require(['vega'], vega => {
+      window.require(['d3', 'vega'], (d3, vega) => {
         this.vega = vega
         resolve(vega)
       })
@@ -133,7 +128,10 @@ export default class MipVizVega extends CustomElement {
       await this.loadVega()
       await this.loadData()
       this.measuredBox()
-      this.renderGraph()
+      if (this.hasGeoProjection()) {
+        await import('./libs/d3-geo.min.js')
+      }
+      await this.renderGraph()
     } catch (err) {
       logger.warn(this.element, err)
     }
@@ -146,6 +144,17 @@ export default class MipVizVega extends CustomElement {
     this.container = this.element.ownerDocument.createElement('div')
     this.applyFillContent(this.container, true)
     this.element.appendChild(this.container)
+    window.require.config({
+      paths: {
+        'd3': 'http://bos.nj.bpc.baidu.com/mms-res/d3/d3.min',
+        'vega': 'https://bos.nj.bpc.baidu.com/mms-res/vega/vega.min'
+      }
+    })
+
+    window.onresize = () => {
+      this.measuredBox()
+      this.renderGraph()
+    }
   }
 
   /**
@@ -256,32 +265,59 @@ export default class MipVizVega extends CustomElement {
   }
 
   /**
+   * 判断是否要引入 geoProjection
+   */
+  hasGeoProjection () {
+    let datas = this.data.data
+
+    if (!(datas && datas.length > 0)) {
+      return false
+    }
+
+    for (let data of datas) {
+      let transforms = data.transform
+      if (!(transforms && transforms.length > 0)) {
+        return false
+      }
+      for (let transform of transforms) {
+        if (transform.type === 'geopath') {
+          return true
+        }
+      }
+    }
+
+    return false
+  }
+
+  /**
    * 渲染图表
    */
   renderGraph () {
-    if (this.useDataWidth) {
-      this.measuredWidth = this.dataWidth
-    }
-    if (this.useDataHeight) {
-      this.measuredHeight = this.dataHeight
-    }
-
-    let width = this.measuredWidth - this.getDataPadding('width')
-    let height = this.measuredHeight - this.getDataPadding('height')
-
-    this.data.width = width - 32
-    this.data.height = height - 32
-
-    if (!this.data['$schema']) {
-      this.data['$schema'] = 'https://vega.github.io/schema/vega/v5.json'
-    }
-
-    let chart = new this.vega.View(this.vega.parse(this.data), {
-      renderer: 'canvas',
-      container: this.container,
-      hover: true
+    let parsePromise = new Promise((resolve, reject) => {
+      this.vega.parse.spec(this.data, (error, chartFactory) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(chartFactory)
+      })
     })
 
-    chart.runAsync()
+    return parsePromise.then(chartFactory => {
+      let chart = this.chart = chartFactory({
+        el: this.container
+      })
+
+      if (!this.useDataWidth) {
+        let w = this.measuredWidth - this.getDataPadding('width')
+        chart.width(w)
+      }
+      if (!this.useDataHeight) {
+        let h = this.measuredHeight - this.getDataPadding('height')
+        chart.height(h)
+      }
+
+      chart.viewport([this.measuredWidth, this.measuredHeight])
+      chart.update()
+    })
   }
 }
