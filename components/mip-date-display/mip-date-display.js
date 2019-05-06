@@ -6,8 +6,11 @@
 
 let {
   CustomElement,
-  templates
+  templates,
+  util
 } = MIP
+
+const {error, log} = util.log('mip-date-display')
 
 /** @const {string} */
 const DEFAULT_LOCALE = 'zh-cn'
@@ -84,7 +87,7 @@ export default class MIPDateDisplay extends CustomElement {
     if (data) {
       templates.render(this.element, data).then(this.render)
     } else {
-      console.error('数据不符合规范')
+      error(this.element, data, '数据不符合规范')
     }
   }
 
@@ -125,7 +128,7 @@ export default class MIPDateDisplay extends CustomElement {
     }
 
     if (targetTime === undefined) {
-      console.log('One of datetime, timestamp-ms, or timestamp-seconds is required')
+      log('One of datetime, timestamp-ms, or timestamp-seconds is required')
     }
 
     return targetTime

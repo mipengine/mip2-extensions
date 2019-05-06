@@ -46,11 +46,11 @@ ISO 格式的时间，如 `2019-04-29T11:33:03.214Z`
 
 ### timestamp-ms
 
-目标时间戳（ms），如 `1556537592614`
+目标时间戳（ms），如 `1556537583214`
 
 ### timestamp-seconds
 
-目标时间戳（s），如 `1556537592`
+目标时间戳（s），如 `1556537583`
 
 ### offset-seconds (可选)
 
@@ -88,7 +88,7 @@ zh-tw | Chinese Traditional
 ```html
     <!-- display with datetime -->
   <mip-date-display datetime="2019-04-29T11:33:03.214Z">
-    <h2>Date: 2019-04-29T15:05:05.000Z</h2>
+    <h2>Date: 2019-04-29T11:33:03.214Z</h2>
     <template type="mip-mustache">
        <div>
         year:{{year}}; month:{{month}}; monthName:{{monthName}}; day:{{day}}; dayName:{{dayName}}; dayNameShort:{{dayNameShort}}; hour:{{hour}}; minute:{{minute}}; second:{{second}}; iso:{{iso}}; yearTwoDigit:{{yearTwoDigit}}; monthTwoDigit:{{monthTwoDigit}}; dayTwoDigit:{{dayTwoDigit}}; hourTwoDigit:{{hourTwoDigit}}; hour12:{{hour12}}; minuteTwoDigit:{{minuteTwoDigit}}; secondTwoDigit:{{secondTwoDigit}}; dayPeriod:{{dayPeriod}};
@@ -98,7 +98,7 @@ zh-tw | Chinese Traditional
 
   <!-- display in utc -->
   <mip-date-display datetime="2019-04-29T11:33:03.214Z" display-in="utc">
-      <h2>Date: 2019-04-29T15:05:05.000Z</h2>
+      <h2>Date: 2019-04-29T11:33:03.214Z</h2>
       <template type="mip-mustache">
          <div>
         year:{{year}}; month:{{month}}; monthName:{{monthName}}; day:{{day}}; dayName:{{dayName}}; dayNameShort:{{dayNameShort}}; hour:{{hour}}; minute:{{minute}}; second:{{second}}; iso:{{iso}}; yearTwoDigit:{{yearTwoDigit}}; monthTwoDigit:{{monthTwoDigit}}; dayTwoDigit:{{dayTwoDigit}}; hourTwoDigit:{{hourTwoDigit}}; hour12:{{hour12}}; minuteTwoDigit:{{minuteTwoDigit}}; secondTwoDigit:{{secondTwoDigit}}; dayPeriod:{{dayPeriod}};
@@ -107,8 +107,8 @@ zh-tw | Chinese Traditional
   </mip-date-display>
 
   <!-- display with timestamp-ms -->
-  <mip-date-display timestamp-ms="1556537592614">
-      <h2>timestamp-ms: 1556537593214</h2>
+  <mip-date-display timestamp-ms="1556537583214">
+      <h2>timestamp-ms: 1556537583214</h2>
       <template type="mip-mustache">
          <div>
         year:{{year}}; month:{{month}}; monthName:{{monthName}}; day:{{day}}; dayName:{{dayName}}; dayNameShort:{{dayNameShort}}; hour:{{hour}}; minute:{{minute}}; second:{{second}}; iso:{{iso}}; yearTwoDigit:{{yearTwoDigit}}; monthTwoDigit:{{monthTwoDigit}}; dayTwoDigit:{{dayTwoDigit}}; hourTwoDigit:{{hourTwoDigit}}; hour12:{{hour12}}; minuteTwoDigit:{{minuteTwoDigit}}; secondTwoDigit:{{secondTwoDigit}}; dayPeriod:{{dayPeriod}};
@@ -117,8 +117,8 @@ zh-tw | Chinese Traditional
   </mip-date-display>
 
   <!-- display with timestamp-seconds -->
-  <mip-date-display timestamp-seconds="1556537592">
-      <h2>timestamp-seconds: 1556537593</h2>
+  <mip-date-display timestamp-seconds="1556537583">
+      <h2>timestamp-seconds: 1556537583</h2>
       <template type="mip-mustache">
          <div>
         year:{{year}}; month:{{month}}; monthName:{{monthName}}; day:{{day}}; dayName:{{dayName}}; dayNameShort:{{dayNameShort}}; hour:{{hour}}; minute:{{minute}}; second:{{second}}; iso:{{iso}}; yearTwoDigit:{{yearTwoDigit}}; monthTwoDigit:{{monthTwoDigit}}; dayTwoDigit:{{dayTwoDigit}}; hourTwoDigit:{{hourTwoDigit}}; hour12:{{hour12}}; minuteTwoDigit:{{minuteTwoDigit}}; secondTwoDigit:{{secondTwoDigit}}; dayPeriod:{{dayPeriod}};
@@ -127,8 +127,8 @@ zh-tw | Chinese Traditional
   </mip-date-display>
 
   <!-- display with timestamp-seconds and offset-seconds -->
-  <mip-date-display timestamp-seconds="1556537592" offset-seconds="600">
-      <h2>timestamp-seconds: 1556537593; offset-seconds: 600</h2>
+  <mip-date-display timestamp-seconds="1556537583" offset-seconds="600">
+      <h2>timestamp-seconds: 1556537583; offset-seconds: 600</h2>
       <template type="mip-mustache">
          <div>
         year:{{year}}; month:{{month}}; monthName:{{monthName}}; day:{{day}}; dayName:{{dayName}}; dayNameShort:{{dayNameShort}}; hour:{{hour}}; minute:{{minute}}; second:{{second}}; iso:{{iso}}; yearTwoDigit:{{yearTwoDigit}}; monthTwoDigit:{{monthTwoDigit}}; dayTwoDigit:{{dayTwoDigit}}; hourTwoDigit:{{hourTwoDigit}}; hour12:{{hour12}}; minuteTwoDigit:{{minuteTwoDigit}}; secondTwoDigit:{{secondTwoDigit}}; dayPeriod:{{dayPeriod}};
