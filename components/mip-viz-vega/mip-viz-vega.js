@@ -146,7 +146,7 @@ export default class MipVizVega extends CustomElement {
     this.element.appendChild(this.container)
     window.require.config({
       paths: {
-        'd3': 'http://bos.nj.bpc.baidu.com/mms-res/d3/d3.min',
+        'd3': 'https://bos.nj.bpc.baidu.com/mms-res/d3/d3.min',
         'vega': 'https://bos.nj.bpc.baidu.com/mms-res/vega/vega.min'
       }
     })
