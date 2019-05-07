@@ -10,7 +10,7 @@
 
 ## 说明
 
-基于 vega 的 mip 可视化组件，支持通用的纯 JSON 配置的简单图表，mip-viz-vega 采用的是 vega@2.6.1 版本：https://github.com/vega/vega/tree/v2.6.1 [Lisense:BSD](https://github.com/vega/vega/blob/v2.6.1/LICENSE)
+基于 vega 的 mip 可视化组件，支持通用的纯 JSON 配置的简单图表，mip-viz-vega 采用的是 vega@2.6.1 版本：https://github.com/vega/vega/tree/v5.3.5 [Lisense:BSD](https://github.com/vega/vega/blob/v5.3.5/LICENSE)
 
 ## 示例
 
@@ -18,83 +18,71 @@
 <h1>Vega 可视化</h1>
 
 <h2>1、响应式大小、从远程获取图表数据</h2>
-<mip-viz-vega id="charts-1" width="400" height="200" layout="responsive" src="./chart-data.json">
+<mip-viz-vega id="charts-1" width="400" height="200" layout="responsive" src="./bar.json">
 </mip-viz-vega>
 
 <h2>2、响应式布局，从本地的 script JSON 中获取数据</h2>
 <mip-viz-vega id="charts-2" width="400" height="400" layout="responsive">
   <script type="application/json">
    {
-      "width": 500,
-      "height": 200,
-      "padding": 20,
+      "$schema": "https://vega.github.io/schema/vega/v5.json",
+      "width": 400,
+      "height": 400,
+
       "data": [
         {
           "name": "table",
-          "values": [
-            {"x": 0, "y": 28, "c":0}, {"x": 0, "y": 55, "c":1},
-            {"x": 1, "y": 43, "c":0}, {"x": 1, "y": 91, "c":1},
-            {"x": 2, "y": 81, "c":0}, {"x": 2, "y": 53, "c":1},
-            {"x": 3, "y": 19, "c":0}, {"x": 3, "y": 87, "c":1},
-            {"x": 4, "y": 52, "c":0}, {"x": 4, "y": 48, "c":1},
-            {"x": 5, "y": 24, "c":0}, {"x": 5, "y": 49, "c":1},
-            {"x": 6, "y": 87, "c":0}, {"x": 6, "y": 66, "c":1},
-            {"x": 7, "y": 17, "c":0}, {"x": 7, "y": 27, "c":1},
-            {"x": 8, "y": 68, "c":0}, {"x": 8, "y": 16, "c":1},
-            {"x": 9, "y": 49, "c":0}, {"x": 9, "y": 15, "c":1}
-          ],
-          "transform": [
-            {
-              "type": "stack",
-              "groupby": ["x"],
-              "sort": {"field": "c"},
-              "field": "y"
-            }
-          ]
+          "values": [12, 23, 47, 6, 52, 19],
+          "transform": [{"type": "pie", "field": "data"}]
         }
       ],
+
       "scales": [
         {
-          "name": "x",
-          "type": "band",
-          "range": "width",
-          "domain": {"data": "table", "field": "x"}
-        },
-        {
-          "name": "y",
-          "type": "linear",
-          "range": "height",
-          "nice": true, "zero": true,
-          "domain": {"data": "table", "field": "y1"}
-        },
-        {
-          "name": "color",
-          "type": "ordinal",
-          "range": "category",
-          "domain": {"data": "table", "field": "c"}
+          "name": "r",
+          "type": "sqrt",
+          "domain": {"data": "table", "field": "data"},
+          "zero": true,
+          "range": [20, 100]
         }
       ],
-      "axes": [
-        {"orient": "bottom", "scale": "x", "zindex": 1},
-        {"orient": "left", "scale": "y", "zindex": 1}
-      ],
+
       "marks": [
         {
-          "type": "rect",
+          "type": "arc",
           "from": {"data": "table"},
           "encode": {
             "enter": {
-              "x": {"scale": "x", "field": "x"},
-              "width": {"scale": "x", "band": 1, "offset": -1},
-              "y": {"scale": "y", "field": "y0"},
-              "y2": {"scale": "y", "field": "y1"},
-              "fill": {"scale": "color", "field": "c"}
+              "x": {"field": {"group": "width"}, "mult": 0.5},
+              "y": {"field": {"group": "height"}, "mult": 0.5},
+              "startAngle": {"field": "startAngle"},
+              "endAngle": {"field": "endAngle"},
+              "innerRadius": {"value": 20},
+              "outerRadius": {"scale": "r", "field": "data"},
+              "stroke": {"value": "#fff"}
             },
             "update": {
-              "fillOpacity": {"value": 1}
+              "fill": {"value": "#ccc"}
             },
             "hover": {
-              "fillOpacity": {"value": 0.5}
+              "fill": {"value": "pink"}
+            }
+          }
+        },
+
+        {
+          "type": "text",
+          "from": {"data": "table"},
+          "encode": {
+            "enter": {
+              "x": {"field": {"group": "width"}, "mult": 0.5},
+              "y": {"field": {"group": "height"}, "mult": 0.5},
+              "radius": {"scale": "r", "field": "data", "offset": 8},
+              "theta": {"signal": "(datum.startAngle + datum.endAngle)/2"},
+              "fill": {"value": "#000"},
+              "align": {"value": "center"},
+              "baseline": {"value": "middle"},
+              "text": {"field": "data"}
             }
           }
         }
@@ -103,20 +91,20 @@
   </script>
 </mip-viz-vega>
 
-<h2>3、固定高度大小的饼图，使用远程数据，并使用指定的图片进行 placeHolder 占位</h2>
-<mip-viz-vega id="charts-3" use-data-width height="500" layout="fixed-height" src="./pie-data.json">
+<h2>3、使用远程数据，并使用指定的图片进行 placeHolder 占位</h2>
+<mip-viz-vega id="charts-3" use-data-width height="500" layout="fixed-height" src="./edge-bundling.json">
   <mip-img placeholder height="500" layout="fixed-height" src="https://placehold.it/400x500?text=vega">
   </mip-img>
 </mip-viz-vega>
 
 <h2>4、可以指定长宽比的响应式图表，从远程获取数据</h2>
-<mip-viz-vega id="charts-4" width="2" height="1.5" layout="responsive" src="./chart-data.json">
+<mip-viz-vega id="charts-4" width="2" height="1.5" layout="responsive" src="./binned-scatter-plot.json">
 </mip-viz-vega>
 
 <h2>5、在 lightbox 中响应式展示图表</h2>
 <button on="tap:mip-lightbox.toggle">显示图表</button>
 <mip-lightbox id="mip-lightbox" layout="nodisplay">
-  <mip-viz-vega id="charts-5" width="400" height="400" layout="responsive" src="./chart-data.json">
+  <mip-viz-vega id="charts-5" width="400" height="400" layout="responsive" src="./sunbrush.json">
   </mip-viz-vega>
 </mip-lightbox>
 ```
@@ -166,4 +154,4 @@
 
 ### data
 
-图表的数据，参照 [vega 文档](https://vega.github.io/vega/)
+图表的数据配置可以参照 [vega 文档](https://vega.github.io/vega/)

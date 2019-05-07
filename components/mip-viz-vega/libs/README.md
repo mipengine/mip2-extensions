@@ -18,8 +18,8 @@ License File: https://github.com/d3/d3-geo-projection/blob/v0.2.16/LICENSE
 
 ## vega.min.js
 
-URL: https://github.com/vega/vega/tree/v2.6.1
+URL: https://github.com/vega/vega/tree/v5.3.5
 License: BSD
-License File: https://github.com/vega/vega/blob/v2.6.1/LICENSE
+License File: https://github.com/vega/vega/blob/v5.3.5/LICENSE
 
 说明：vega.min.js 未做修改

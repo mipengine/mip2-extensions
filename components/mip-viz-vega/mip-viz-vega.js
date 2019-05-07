@@ -108,15 +108,23 @@ export default class MipVizVega extends CustomElement {
   }
 
   /**
-   * 引入 vega 库
+   * 引入 D3 库（由于兼容 mip1，只能通过 amd 方式引入）
    */
-  loadVega () {
+  loadD3 () {
     return new Promise(resolve => {
-      window.require(['d3', 'vega'], (d3, vega) => {
-        this.vega = vega
-        resolve(vega)
+      window.require(['d3'], d3 => {
+        resolve(d3)
       })
     })
+  }
+
+  /**
+   * 引入 vega 库
+   */
+  async loadVega () {
+    await import('./libs/vega.min.js')
+    await import('./libs/d3-geo.min.js')
+    this.vega = window.vega
   }
 
   /**
@@ -125,12 +133,10 @@ export default class MipVizVega extends CustomElement {
   async layoutCallback () {
     this.initialize()
     try {
+      await this.loadD3()
       await this.loadVega()
       await this.loadData()
       this.measuredBox()
-      if (this.hasGeoProjection()) {
-        await import('./libs/d3-geo.min.js')
-      }
       await this.renderGraph()
     } catch (err) {
       logger.warn(this.element, err)
@@ -146,8 +152,7 @@ export default class MipVizVega extends CustomElement {
     this.element.appendChild(this.container)
     window.require.config({
       paths: {
-        'd3': 'https://bos.nj.bpc.baidu.com/mms-res/d3/d3.min',
-        'vega': 'https://bos.nj.bpc.baidu.com/mms-res/vega/vega.min'
+        'd3': 'https://bos.nj.bpc.baidu.com/mms-res/d3/d3.min'
       }
     })
 
@@ -167,6 +172,11 @@ export default class MipVizVega extends CustomElement {
     this.useDataHeight = this.element.hasAttribute('use-data-height')
     this.dataWidth = viewport.getWidth()
     this.dataHeight = viewport.getHeight()
+
+    window.onresize = () => {
+      this.measuredBox()
+      this.renderGraph()
+    }
   }
 
   /**
@@ -243,81 +253,56 @@ export default class MipVizVega extends CustomElement {
   /**
    * 处理留白的配置数据
    *
-   * @param   {string} widthOrHeight 指定宽还是高
-   * @returns {number} 宽度或者高度留白的数值
+   * @returns {Object} 宽度或者高度留白的数值
    */
-  getDataPadding (widthOrHeight) {
+  getDataPadding () {
     let p = this.padding
+    let left = 0
+    let right = 0
+    let top = 0
+    let bottom = 0
 
-    if (typeof p === 'number') {
-      return p * 2
+    if (p && typeof p === 'number') {
+      left = right = top = bottom = p
+      return { left: p, right: p, top: p, bottom: p }
+    } else if (typeof p === 'object') {
+      left = p.left || 0
+      right = p.right || 0
+      top = p.top || 0
+      bottom = p.bottom || 0
     }
 
-    if (typeof p === 'object') {
-      if (widthOrHeight === 'width') {
-        return (p.left || 0) + (p.right || 0)
-      } else if (widthOrHeight === 'height') {
-        return (p.top || 0) + (p.bottom || 0)
-      }
-    }
-
-    return 0
-  }
-
-  /**
-   * 判断是否要引入 geoProjection
-   */
-  hasGeoProjection () {
-    let datas = this.data.data
-
-    if (!(datas && datas.length > 0)) {
-      return false
-    }
-
-    for (let data of datas) {
-      let transforms = data.transform
-      if (!(transforms && transforms.length > 0)) {
-        return false
-      }
-      for (let transform of transforms) {
-        if (transform.type === 'geopath') {
-          return true
-        }
-      }
-    }
-
-    return false
+    return { left, right, top, bottom }
   }
 
   /**
    * 渲染图表
    */
   renderGraph () {
-    let parsePromise = new Promise((resolve, reject) => {
-      this.vega.parse.spec(this.data, (error, chartFactory) => {
-        if (error) {
-          reject(error)
-        }
-        resolve(chartFactory)
-      })
-    })
-
-    return parsePromise.then(chartFactory => {
-      let chart = this.chart = chartFactory({
-        el: this.container
-      })
-
-      if (!this.useDataWidth) {
-        let w = this.measuredWidth - this.getDataPadding('width')
-        chart.width(w)
+    this.chart = new this.vega.View(
+      this.vega.parse(this.data),
+      {
+        renderer: 'svg',
+        container: this.container,
+        hover: true
       }
-      if (!this.useDataHeight) {
-        let h = this.measuredHeight - this.getDataPadding('height')
-        chart.height(h)
-      }
+    )
+      .width(+this.measuredWidth)
+      .height(+this.measuredHeight)
+      .padding(this.getDataPadding())
+      .runAsync()
 
-      chart.viewport([this.measuredWidth, this.measuredHeight])
-      chart.update()
-    })
+    // 对于指定固定宽高的情况特殊处理一下
+    let svgEle = this.element.querySelector('svg')
+
+    if (this.useDataHeight) {
+      svgEle.style.height = `${this.measuredHeight}px`
+      svgEle.parentNode.style.display = 'block'
+    }
+
+    if (this.useDataWidth) {
+      svgEle.style.width = `${this.measuredWidth}px`
+      svgEle.parentNode.style.display = 'block'
+    }
   }
 }
