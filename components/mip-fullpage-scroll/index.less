@@ -1,0 +1,29 @@
+mip-fullpage-scroll {
+  // .wrapper {
+  //   margin: 0 auto;
+  //   text-align: center;
+  // }
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+
+  #pagebox {
+    top: 0;
+    left: 0;
+    position: relative;
+
+    &.ChangeAnimate {
+      transition: all 0.5s linear;
+    }
+
+    &.lr .section {
+      float: left;
+    }
+
+    .section {
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+    }
+  }
+}
