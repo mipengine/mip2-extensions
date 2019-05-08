@@ -9,6 +9,8 @@ import './mip-viz-vega.less'
 const { CustomElement, util, viewport } = MIP
 const logger = util.log('mip-viz-vega')
 
+let isDepsLoaded = false
+
 export default class MipVizVega extends CustomElement {
   constructor (element) {
     super(element)
@@ -124,7 +126,6 @@ export default class MipVizVega extends CustomElement {
   async loadVega () {
     await import('./libs/vega.min.js')
     await import('./libs/d3-geo.min.js')
-    this.vega = window.vega
   }
 
   /**
@@ -133,8 +134,13 @@ export default class MipVizVega extends CustomElement {
   async layoutCallback () {
     this.initialize()
     try {
-      await this.loadD3()
-      await this.loadVega()
+      // 保证第三方资源只被加载一次
+      if (!isDepsLoaded) {
+        await this.loadD3()
+        await this.loadVega()
+        isDepsLoaded = true
+      }
+      this.vega = window.vega
       await this.loadData()
       this.measuredBox()
       await this.renderGraph()
