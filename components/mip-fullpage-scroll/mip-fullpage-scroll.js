@@ -2,7 +2,7 @@ import './index.less'
 
 const {
   CustomElement,
-  util //,
+  util
   // viewer,
   // viewport
 } = MIP
