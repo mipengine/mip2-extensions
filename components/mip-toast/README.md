@@ -95,19 +95,9 @@
 
 默认值：2.5
 
-## 向 toast 组件抛出事件
-
-抛出事件 show 或 hidden 事件 eg: this.$emit('show') eg: this.$emit('hidden')
-
-静态传参数：直接在 toast 组件里 info-text 后边加字符串 eg: this.$emit('show')
-
-动态传参数：抛出 show 事件可以传参数，传的参数就是想要显示的参数 eg: this.$emit('show', showString)
-
-[详情 demo 请看](https://caoru828.github.io/my_json/mip-test-demo/)
-
 ## 接收事件
 
-### show(第二个show)
+### show/hidden
 
 每次其他组件触发抛出事件后，触发 `mip-toast` 的 `show` 事件，并传当前状态是显示
 
