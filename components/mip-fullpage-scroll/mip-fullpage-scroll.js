@@ -2,7 +2,7 @@ import './index.less'
 
 const {
   CustomElement,
-  util,
+  util //,
   // viewer,
   // viewport
 } = MIP
@@ -18,7 +18,7 @@ export default class MIPFullpageScroll extends CustomElement {
     this.pagebox = document.getElementById('pagebox')
     this.allpages = this.element.getElementsByClassName('section').length
     this.changefun = this.element.getAttribute('changefun') === null ? 'ud' : this.element.getAttribute('changefun')
-    
+
     // 关于外框尺寸
     // this.unit = this.element.getAttribute('unit') == undefined ? 'v' : this.element.getAttribute('unit')
     // this.width = this.element.getAttribute('width') == undefined ? '100' : this.element.getAttribute('width')
