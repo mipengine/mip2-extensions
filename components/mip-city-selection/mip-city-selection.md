@@ -257,7 +257,7 @@ mip-city-selection 分组选择组件，可用于城市分组，英文名分组�
 
 ## 抛出事件
 
-### ready
+### citySelected
 
 每次触发抛事件后，抛出 `citySelected` 事件，并通过回调透传 JSON 数据。
 
