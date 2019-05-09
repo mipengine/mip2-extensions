@@ -1,4 +1,11 @@
+/**
+ * @file mip-toast 组件
+ * @author yanshi
+ */
+
 import './mip-toast.less'
+
+/* global MIP */
 
 const {CustomElement} = MIP
 
@@ -23,23 +30,21 @@ export default class MIPToast extends CustomElement {
   }
 
   update () {
-    const {closeTime, infoIconSrc, autoClose} = this.props
+    const {closeTime, infoIconSrc} = this.props
 
-    if (!!closeTime && closeTime !== 2500) {
-      this.showTime = closeTime * 1000
-    }
+    this.showTime = closeTime * 1000
+
     if (!infoIconSrc) {
       this.show = false
     } else {
       this.isBlock = true
       this.hasPic = true
     }
-    if (autoClose) {
-      setTimeout(() => {
-        this.close = false
-        this.render()
-      }, this.showTime)
-    }
+    setTimeout(() => {
+      this.close = false
+      this.render()
+    }, this.showTime)
+
     this.render()
   }
 
@@ -72,10 +77,13 @@ export default class MIPToast extends CustomElement {
     wrapper.appendChild(fixed)
 
     fixed.setAttribute('type', 'top')
+    fixed.setAttribute('still', true)
     fixed.classList.add(station)
+
     if (!this.close) {
       fixed.style.display = 'none'
     }
+
     fixed.appendChild(toastWrapper)
 
     if (this.hasPic) {
@@ -111,13 +119,9 @@ MIPToast.props = {
     type: String,
     default: ''
   },
-  autoClose: {
-    type: Boolean,
-    default: true
-  },
   closeTime: {
     type: Number,
-    default: 2500
+    default: 3
   },
   station: {
     type: String,
