@@ -3,24 +3,22 @@ import './index.less'
 const {
   CustomElement,
   util,
-  viewer,
-  viewport
+  // viewer,
+  // viewport
 } = MIP
 const Gesture = util.Gesture
 
 export default class MIPFullpageScroll extends CustomElement {
-
   // 初始化
   connectedCallback () {
-
     // 引入API
     this.gesture = new Gesture(this.element)
 
     // 获取标签参数
     this.pagebox = document.getElementById('pagebox')
     this.allpages = this.element.getElementsByClassName('section').length
-    this.changefun = this.element.getAttribute('changefun') == undefined ? 'ud' : this.element.getAttribute('changefun')
-
+    this.changefun = this.element.getAttribute('changefun') === null ? 'ud' : this.element.getAttribute('changefun')
+    
     // 关于外框尺寸
     // this.unit = this.element.getAttribute('unit') == undefined ? 'v' : this.element.getAttribute('unit')
     // this.width = this.element.getAttribute('width') == undefined ? '100' : this.element.getAttribute('width')
@@ -35,29 +33,28 @@ export default class MIPFullpageScroll extends CustomElement {
     if (this.changefun === 'lr') {
       this.pagebox.classList.add('lr')
       this.pageboxwidth = 'width:' + this.allpages * 100 + 'vw;'
-    }
-    else{
+    } else {
       this.pageboxwidth = ''
     }
 
     // 设定导航点
     let mainid = this.element.getAttribute('id')
     let indexDot = '<div class="navdots">'
-    for(let i = 1;i < this.allpages; i++){
-      indexDot += '<div class="navdot" on="tap:' + mainid + '.ChangeTo(' + ( i - 1 ) + ')"></div>'
+    for (let i = 1; i < this.allpages; i++) {
+      indexDot += '<div class="navdot" on="tap:' + mainid + '.ChangeTo(' + (i - 1) + ')"></div>'
     }
     indexDot += '</div>'
     let index = util.dom.create(indexDot)
-    util.dom.insert(this.element,index)
+    util.dom.insert(this.element, index)
   }
 
   // 切换函数
   ChangeTo (event, index) {
     if (this.changefun === 'ud') {
-      (e => e.style.cssText = 'top:-' + index * 100 + 'vh')(this.pagebox)
+      this.pagebox.style.cssText = 'top:-' + index * 100 + 'vh'
     }
     if (this.changefun === 'lr') {
-      (e => e.style.cssText = this.pageboxwidth + 'left:-' + index * 100 + 'vw;')(this.pagebox)
+      this.pagebox.style.cssText = this.pageboxwidth + 'left:-' + index * 100 + 'vw;'
     }
   }
 
@@ -80,13 +77,13 @@ export default class MIPFullpageScroll extends CustomElement {
 
     // 滑动事件监听
     this.gesture.on('swipe', function (event, data) {
-        if (data.swipeDirection === 'up' || data.swipeDirection === 'left') {
-          if (nowpage < allpages - 1) nowpage++
-        }
-        if (data.swipeDirection === 'down' || data.swipeDirection === 'right') {
-          if (nowpage > 0) nowpage--
-        }
-      mainclass.ChangeTo(event,nowpage)
+      if (data.swipeDirection === 'up' || data.swipeDirection === 'left') {
+        if (nowpage < allpages - 1) nowpage++
+      }
+      if (data.swipeDirection === 'down' || data.swipeDirection === 'right') {
+        if (nowpage > 0) nowpage--
+      }
+      mainclass.ChangeTo(event, nowpage)
     })
 
     // 事件绑定
