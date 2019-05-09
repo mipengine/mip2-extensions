@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    .mip-modal-dialog-buttons {
+      display: -webkit-box;
+      display: -ms-flexbos;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: reverse;
+      -ms-flex-direction: row-reverse;
+      flex-direction: row-reverse;
+    }
+
+    .mip-modal-dialog-button {
+      margin-left: 8px;
+      border-radius: 4px;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
+      line-height: 1.499;
+      font-weight: 400;
+      font-size: 14px;
+      color: rgba(0, 0, 0, .65);
+    }
+
+    .mip-modal-dialog-button-primary {
+      border-color: #1890ff;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
+      color: #fff;
+      background-color: #1890ff;
+    }
+  </style>
+</head>
+<body>
+  <mip-data>
+    <script type="application/json">
+      {"visible": false}
+    </script>
+  </mip-data>
+  <mip-modal
+    title="Basic Modal"
+    m-bind:visible="visible"
+    on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
+  >
+    <template slot="header">
+      This is a title
+    </template>
+    <template slot="body">
+      <p>Some contents...</p>
+      <p>Some contents...</p>
+      <p>Some contents...</p>
+    </template>
+  </mip-modal>
+  <button
+    class="mip-modal-dialog-button mip-modal-dialog-button-primary"
+    on="tap:MIP.setData({visible: true})"
+  >
+    打开模态框
+  </button>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-dialog/mip-dialog.js"></script>
+  <script src="/mip-modal/mip-modal.js"></script>
+</body>
+</html>
