@@ -15,7 +15,7 @@
 1、弹出框 `pattern="alert"` 只有确认按钮
 
 ```html
-<button id="confirmTest" on="tap:confirm.show"></button>
+<button id="confirmTest" on="tap:confirm.show">打开弹窗</button>
 <mip-confirm
   id= "confirm"
   pattern="alert"
@@ -28,7 +28,7 @@
 2、弹出框 `pattern="confirm"` 有确认按钮和取消按钮
 
 ```html
-<button id="confirmTest" on="tap:confirm.show"></button>
+<button id="confirmTest" on="tap:confirm.show">打开弹窗</button>
 <mip-test id="confirmTest"></mip-test>
 <mip-confirm
   id= "confirm"

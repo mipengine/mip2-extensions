@@ -17,7 +17,7 @@
 1、弹出框 只弹出文字（不传 info-icon-src）
 
 ```html
-<button on="tap:demo.show"></mip-test>
+<button on="tap:demo.show">打开 toast</button>
 <mip-toast
   id= "demo"
   info-text="默认提示框"
@@ -29,7 +29,7 @@
 2、弹出框 弹出带图和文字
 
 ```html
-<button on="tap:demo.show"></button>
+<button on="tap:demo.show">打开 toast</button>
 <mip-toast
   id= "demo"
   info-icon-src="https://www.mipengine.org/static/img/sample_mip_logo.png"
