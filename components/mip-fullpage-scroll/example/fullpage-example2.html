@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    /* 自定义样式 */
+      *{
+        box-sizing: border-box;
+      }
+      /* 测试样式 */
+      mip-fullpage-scroll{
+        background: red;
+      }
+      /* 针对导航点的样式配置 */
+      .navdots{
+        position: absolute;
+        bottom: 10%;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+      }
+      .navdot{
+        height: 20px;
+        width: 20px;
+        border: 1px solid black;
+        border-radius: 10px;
+        float: left;
+      }
+
+      /* 页面整体导航样式 */
+      .mainmenu{
+        background: black;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        z-index: 100;
+      }
+      .backmenu{
+        background: black;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        position: absolute;
+        right: 10px;
+        top: 100px;
+        z-index: 100;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mainmenu" on="tap:c-test.MoveTo({top:0,left:'-100px'})"> menu </div>
+    <div class="backmenu" on="tap:c-test.BackToDefault"> back(请点击menu后使用观察效果) </div>
+    <mip-fullpage-scroll id="c-test">
+      <div id="pagebox">
+        <div class="section">1</div>
+        <div class="section">2</div>
+        <div class="section">3</div>
+        <div class="section">4</div>
+        <div class="section">5</div>
+        <div class="section">6</div>
+      </div>
+    </mip-fullpage-scroll>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-fullpage-scroll/mip-fullpage-scroll.js"></script>
+  </body>
+</html>
