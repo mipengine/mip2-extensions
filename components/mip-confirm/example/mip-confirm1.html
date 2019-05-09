@@ -7,11 +7,22 @@
     <link rel="canonical" href="对应的原页面地址">
     <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
     <style mip-custom>
+      button {
+        display: block;
+        margin: 20px auto;
+        width: 120px;
+        height: 50px;
+        line-height: 50px;
+        font-size: 14px;
+        background: blue;
+        color: #fff;
+      }
     </style>
   </head>
   <body>
     <div>
-     <mip-test id="confirmTest"  on="show:confirm.show"></mip-test>
+      <button on="tap:confirm.show">打开弹窗</button>
+      <mip-test id="confirmTest"></mip-test>
       <mip-confirm
         id= "confirm"
         pattern="confirm"
@@ -23,6 +34,6 @@
     </div>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="/mip-confirm/mip-confirm.js"></script>
-    <script src="https://caoru828.github.io/my_json/mip-test/mip-test.js"></script>
+    <script src="./mip-test.js"></script>
   </body>
 </html>

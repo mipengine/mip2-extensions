@@ -225,7 +225,7 @@ export default class MIPCitySelection extends CustomElement {
    */
   renderCityNav (wrapper) {
     let listData = this.list
-    let html = [`<mip-fixed class="mip-city-selection-sidebar-wrapper" type="right">
+    let html = [`<mip-fixed still class="mip-city-selection-sidebar-wrapper" type="right">
       <div class="mip-city-selection-sidebar">`
     ]
 

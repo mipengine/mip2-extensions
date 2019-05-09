@@ -17,10 +17,7 @@
 1、弹出框 只弹出文字（不传 info-icon-src）
 
 ```html
-<!-- mip-test 作为测试组件，模拟接收和抛出事件 -->
-<mip-test on="show:demo.show"></mip-test>
-<!-- mip-test 作为测试组件，模拟接收和抛出事件 -->
-
+<button on="tap:demo.show"></mip-test>
 <mip-toast
   id= "demo"
   info-text="默认提示框"
@@ -28,17 +25,12 @@
   auto-close = "true"
 >
 </mip-toast>
-  <!--  测试组件，模拟接收和抛出事件 -->
-  <script src="https://caoru828.github.io/my_json/mip-test/mip-test.js"></script>
-  <!-- 测试组件，模拟接收和抛出事件 -->
 ```
 
 2、弹出框 弹出带图和文字
 
 ```html
-<!-- mip-test 作为测试组件，模拟接收和抛出事件 -->
-<mip-test on="show:demo.show"></mip-test>
-<!-- mip-test 作为测试组件，模拟接收和抛出事件 -->
+<button on="tap:demo.show"></button>
 <mip-toast
   id= "demo"
   info-icon-src="https://www.mipengine.org/static/img/sample_mip_logo.png"
@@ -47,9 +39,6 @@
   auto-close = "true"
 >
 </mip-toast>
-<!-- 测试组件，模拟接收和抛出事件 -->
-  <script src="https://caoru828.github.io/my_json/mip-test/mip-test.js"></script>
-<!-- 测试组件，模拟接收和抛出事件 -->
 ```
 
 ## 属性
@@ -76,7 +65,6 @@
 
 默认值：""
 
-
 ### info-text
 
 说明：提示框内容
@@ -96,16 +84,6 @@
 类型 ：`String`
 
 默认值："center"
-
-### auto-close
-
-说明：是否自动关闭
-
-必选项：否
-
-类型 ：`Boolean`
-
-默认值：true
 
 ### close-time
 
@@ -131,8 +109,8 @@
 
 ### show(第二个show)
 
-每次其他组件触发抛出事件后，触发`mip-toast`的`show`事件，并传当前状态是显示
+每次其他组件触发抛出事件后，触发 `mip-toast` 的 `show` 事件，并传当前状态是显示
 
-注意，每次其他组件触发抛出事件后，也可以触发`mip-toast`的`hidden`事件，并传当前状态是隐藏
+注意，每次其他组件触发抛出事件后，也可以触发 `mip-toast` 的 `hidden` 事件，并传当前状态是隐藏
 
 组件间通信请看文档 https://www.mipengine.org/doc/3-widget/6-help/3-mip-normal.html
