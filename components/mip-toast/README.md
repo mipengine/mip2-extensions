@@ -22,7 +22,6 @@
   id= "demo"
   info-text="默认提示框"
   station = "top"
-  auto-close = "true"
 >
 </mip-toast>
 ```
@@ -36,7 +35,6 @@
   info-icon-src="https://www.mipengine.org/static/img/sample_mip_logo.png"
   info-text="最多七个中文字"
   station = "top"
-  auto-close = "true"
 >
 </mip-toast>
 ```
