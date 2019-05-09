@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>可视化图表实例</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    /* 自定义样式 */
+    h2 {
+      margin: 40px 0 20px 0;
+    }
+    button {
+      display: block;
+      margin: 30px auto;
+      height: 50px;
+      width: 100px;
+      background: blue;
+      color: #fff;
+      text-align: center;
+      outline: none;
+    }
+    mip-viz-vega {
+      background: #fff;
+    }
+    .mip-fill-content {
+      overflow: scroll
+    }
+    </style>
+  </head>
+  <body>
+    <h1>mip-viz-vega 可视化</h1>
+
+    <h2>1、响应式大小、从远程获取图表数据</h2>
+    <mip-viz-vega id="charts-1" width="400" height="200" layout="responsive" src="./bar.json">
+    </mip-viz-vega>
+
+    <h2>2、响应式布局，从本地的 script JSON 中获取数据</h2>
+    <mip-viz-vega id="charts-2" width="400" height="400" layout="responsive">
+      <script type="application/json">
+        {
+          "$schema": "https://vega.github.io/schema/vega/v5.json",
+          "width": 400,
+          "height": 400,
+
+          "data": [
+            {
+              "name": "table",
+              "values": [12, 23, 47, 6, 52, 19],
+              "transform": [{"type": "pie", "field": "data"}]
+            }
+          ],
+
+          "scales": [
+            {
+              "name": "r",
+              "type": "sqrt",
+              "domain": {"data": "table", "field": "data"},
+              "zero": true,
+              "range": [20, 100]
+            }
+          ],
+
+          "marks": [
+            {
+              "type": "arc",
+              "from": {"data": "table"},
+              "encode": {
+                "enter": {
+                  "x": {"field": {"group": "width"}, "mult": 0.5},
+                  "y": {"field": {"group": "height"}, "mult": 0.5},
+                  "startAngle": {"field": "startAngle"},
+                  "endAngle": {"field": "endAngle"},
+                  "innerRadius": {"value": 20},
+                  "outerRadius": {"scale": "r", "field": "data"},
+                  "stroke": {"value": "#fff"}
+                },
+                "update": {
+                  "fill": {"value": "#ccc"}
+                },
+                "hover": {
+                  "fill": {"value": "pink"}
+                }
+              }
+            },
+
+            {
+              "type": "text",
+              "from": {"data": "table"},
+              "encode": {
+                "enter": {
+                  "x": {"field": {"group": "width"}, "mult": 0.5},
+                  "y": {"field": {"group": "height"}, "mult": 0.5},
+                  "radius": {"scale": "r", "field": "data", "offset": 8},
+                  "theta": {"signal": "(datum.startAngle + datum.endAngle)/2"},
+                  "fill": {"value": "#000"},
+                  "align": {"value": "center"},
+                  "baseline": {"value": "middle"},
+                  "text": {"field": "data"}
+                }
+              }
+            }
+          ]
+        }
+      </script>
+    </mip-viz-vega>
+    <h2>3、固定高度，指定任意宽度，使用远程数据，并使用指定的图片进行 placeHolder 占位</h2>
+    <mip-viz-vega id="charts-3" use-data-width height="720" layout="fixed-height" src="./edge-bundling.json">
+      <mip-img placeholder height="720" layout="fixed-height" src="https://placehold.it/400x500?text=Vega">
+      </mip-img>
+    </mip-viz-vega>
+
+    <h2>4、可以指定长宽比的响应式图表，从远程获取数据</h2>
+    <mip-viz-vega id="charts-4" width="2" height="1.5" layout="responsive" src="./binned-scatter-plot.json">
+    </mip-viz-vega>
+
+    <h2>5、在 lightbox 中响应式展示图表</h2>
+    <button on="tap:mip-lightbox.toggle">显示图表</button>
+    <mip-lightbox id="mip-lightbox" layout="nodisplay">
+      <mip-viz-vega id="charts-5" width="400" height="400" layout="responsive" src="./sunburst.json">
+      </mip-viz-vega>
+    </mip-lightbox>
+
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-viz-vega/mip-viz-vega.js"></script>
+    <script src="https://c.mipcdn.com/static/v2/mip-lightbox/mip-lightbox.js"></script>
+  </body>
+</html>
