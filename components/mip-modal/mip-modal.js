@@ -37,6 +37,16 @@ const propagatedProps = {
 const ATTRIBUTES_TO_PROPAGATE = Object.keys(propagatedProps).map(hyphenate)
 
 export default class MIPModal extends CustomElement {
+  static props = {
+    ...propagatedProps,
+    title: {
+      default: ''
+    },
+    content: {
+      default: ''
+    }
+  }
+
   static get observedAttributes () {
     return Object.keys(MIPModal.props).map(hyphenate)
   }
@@ -45,12 +55,7 @@ export default class MIPModal extends CustomElement {
     super(element)
 
     /** @type {Record<string, HTMLElement>} */
-    this.elements = null
-
-    this.propagateAttribute = this.propagateAttribute.bind(this)
-    this.renderHeader = this.renderHeader.bind(this)
-    this.renderBody = this.renderBody.bind(this)
-    this.renderFooter = this.renderFooter.bind(this)
+    this.refs = null
   }
 
   buildCallback () {
@@ -65,8 +70,8 @@ export default class MIPModal extends CustomElement {
     ATTRIBUTES_TO_PROPAGATE.includes(name) && this.propagateAttribute(name)
   }
 
-  propagateAttribute (attrName) {
-    const {$dialog} = this.elements
+  propagateAttribute = (attrName) => {
+    const {$dialog} = this.refs
 
     if (!this.element.hasAttribute(attrName)) {
       $dialog.removeAttribute(attrName)
@@ -82,7 +87,7 @@ export default class MIPModal extends CustomElement {
   }
 
   propagateSlotIfAbsent (name, render) {
-    const {$dialog} = this.elements
+    const {$dialog} = this.refs
 
     if ($dialog.querySelector(`template[slot="${name}"]`)) {
       return
@@ -91,35 +96,24 @@ export default class MIPModal extends CustomElement {
     const template = document.createElement('template')
 
     template.setAttribute('slot', name)
-    template.innerHTML = render()
+    template.innerHTML = render(this.props)
 
     $dialog.appendChild(template)
   }
 
-  renderHeader () {
-    const {title} = this.props
+  renderHeader = ({title}) => `<div class="${cx('title')}">${title}</div>`
 
-    return `<div class="${cx('title')}">${title}</div>`
-  }
+  renderBody = ({content}) => content
 
-  renderBody () {
-    const {content} = this.props
-
-    return content
-  }
-
-  renderFooter () {
-    const {okText, cancelText} = this.props
-
-    return `<div class="${cx('buttons')}">` +
-        `<button type="button" class="${cx('button')} ${cx('button-primary')} ${cx('ok-button')}">` +
-          `<span class="${cx('button-text')}">${okText}</span>` +
-        '</button>' +
-        `<button type="button" class="${cx('button')} ${cx('cancel-button')}">` +
-          `<span class="${cx('button-text')}">${cancelText}</span>` +
-        '</button>' +
-      '</div>'
-  }
+  renderFooter = ({okText, cancelText}) =>
+    `<div class="${cx('buttons')}">` +
+      `<button ref="okButton" type="button" class="${cx('button')} ${cx('button-primary')} ${cx('ok-button')}">` +
+        `<span class="${cx('button-text')}">${okText}</span>` +
+      '</button>' +
+      `<button ref="cancelButton" type="button" class="${cx('button')} ${cx('cancel-button')}">` +
+        `<span class="${cx('button-text')}">${cancelText}</span>` +
+      '</button>' +
+    '</div>'
 
   render () {
     const {innerHTML} = this.element
@@ -129,7 +123,7 @@ export default class MIPModal extends CustomElement {
     $dialog.setAttribute('type', 'modal')
     $dialog.innerHTML = innerHTML
 
-    this.elements = {
+    this.refs = {
       $dialog
     }
 
@@ -140,16 +134,6 @@ export default class MIPModal extends CustomElement {
     this.propagateSlotIfAbsent('footer', this.renderFooter)
 
     this.element.appendChild($dialog)
-  }
-}
-
-MIPModal.props = {
-  ...propagatedProps,
-  title: {
-    default: ''
-  },
-  content: {
-    default: ''
   }
 }
 
