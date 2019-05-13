@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * @fileoverview
  * - Using the 'QRCode for Javascript library'
