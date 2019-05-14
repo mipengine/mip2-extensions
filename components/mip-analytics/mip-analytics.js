@@ -3,7 +3,7 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
-import dataPicker from './data-picker'
+import dataCollection from './data-collection'
 import vendors from './vendors'
 
 /* global MIP, Image */
@@ -226,7 +226,7 @@ export default class MIPAnalytics extends MIP.CustomElement {
    */
   valReplace (str, vars) {
     vars = vars || {}
-    util.fn.extend(vars, this.mipSpeedInfo, dataPicker())
+    util.fn.extend(vars, this.mipSpeedInfo, dataCollection())
 
     return str.replace(/(\${[\w\d_]+})/g, $1 => {
       let key = $1.substring(2, $1.length - 1).trim()
