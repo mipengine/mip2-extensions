@@ -63,7 +63,7 @@ export default class MIPStoryProgress {
     const muteStats = decodeStatsInfo('click', [
       '_trackEvent', '音频静音按钮', '点击', window.location.href
     ])
-    return `<span class="mip-stoy-audio" data-stats-baidu-obj="${muteStats}"></span>`
+    return `<span class="mip-story-audio" data-stats-baidu-obj="${muteStats}"></span>`
   }
 
   /**

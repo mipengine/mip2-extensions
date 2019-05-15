@@ -329,7 +329,7 @@ export default class MIPStoryService {
   }
 
   /**
-   * 点击导航
+   * 点击页面处理
    *
    * @param {Event} e 事件对象
    */
@@ -342,7 +342,7 @@ export default class MIPStoryService {
     const shareArea = storyEle.querySelector('.mip-story-share')
     const cancelBtn = storyEle.querySelector('.mip-story-share-cancel')
     const back = 'mip-story-close'
-    const audio = storyEle.querySelector('.mip-stoy-audio')
+    const audio = storyEle.querySelector('.mip-story-audio')
     const recommend = storyEle.querySelector('.recommend-wrap')
     const shareAreaShow = storyEle.querySelector('.mip-story-share-show')
     if (!dom.contains(shareArea, e.target) && shareAreaShow) {
@@ -396,7 +396,6 @@ export default class MIPStoryService {
         // 关闭结尾页-只有点击交互的时候触发
         this.clickSwitch.goBack()
       }
-
       return
     } else if (dom.contains(shareArea, e.target)) {
       // 分享点击

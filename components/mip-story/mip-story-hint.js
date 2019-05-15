@@ -33,7 +33,7 @@ export default class MIPStoryHint {
           <div class="mip-story-hint-right"></div>
         </div>
         <div class="mip-story-hint-rotate">
-          <mip-img src="https://www.mipengine.org/static/img/mip-story/mip-story-rotate.png"></mip-img>
+          <div class="mip-story-hint-img"></div>
           <p>为了更好的体验，请将手机横过来</p>
           <div class="mip-story-qrcode"></div>
         </div>

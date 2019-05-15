@@ -1,3 +1,4 @@
+import 'web-animations-js/web-animations.min.js'
 import './mip-story.less'
 import './mip-story-view'
 import './mip-story-layer'
