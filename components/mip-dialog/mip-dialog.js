@@ -1,8 +1,10 @@
 import './mip-dialog.less'
 
-const {CustomElement, util: {string: {hyphenate}}, viewer} = MIP
+const {CustomElement, templates, util: {fn: {memoize}, string: {hyphenate}}, viewer} = MIP
 
 const TAG = 'mip-dialog'
+
+const SLOTS = ['header', 'body', 'footer']
 
 const KEYCODES = {
   TAB: 9,
@@ -62,7 +64,7 @@ export default class MIPDialog extends CustomElement {
     this.disconnect()
   }
 
-  cx = (suffix) => {
+  cx = memoize((suffix) => {
     if (Array.isArray(suffix)) {
       return suffix.map(this.cx).join(' ')
     }
@@ -75,7 +77,7 @@ export default class MIPDialog extends CustomElement {
     const prefix = type ? `mip-${type}-dialog` : TAG
 
     return suffix ? `${prefix}-${suffix}` : prefix
-  }
+  })
 
   toggleMask () {
     const {$container} = this.refs
@@ -105,6 +107,12 @@ export default class MIPDialog extends CustomElement {
    * @param {Event} event object.
    */
   handleOk = (event) => {
+    const {$okButton} = this.refs
+
+    if (event.target !== $okButton) {
+      return
+    }
+
     viewer.eventAction.execute('ok', this.element, event)
   }
 
@@ -112,6 +120,13 @@ export default class MIPDialog extends CustomElement {
    * @param {Event} event object.
    */
   handleCancel = (event) => {
+    const {target} = event
+    const {$container, $cancelButton} = this.refs
+
+    if (target !== $container && target !== $cancelButton) {
+      return
+    }
+
     viewer.eventAction.execute('cancel', this.element, event)
   }
 
@@ -119,10 +134,9 @@ export default class MIPDialog extends CustomElement {
    * @param {MouseEvent} event object.
    */
   handleMaskClick = (event) => {
-    const {target, currentTarget} = event
     const {maskClosable} = this.props
 
-    target === currentTarget && maskClosable && this.handleCancel(event)
+    maskClosable && this.handleCancel(event)
   }
 
   /**
@@ -142,11 +156,11 @@ export default class MIPDialog extends CustomElement {
   }
 
   bindEvents () {
-    const {$container, $okButton, $cancelButton} = this.refs
+    const {$container} = this.refs
 
-    $container && $container.addEventListener('click', this.handleMaskClick)
-    $okButton && $okButton.addEventListener('click', this.handleOk)
-    $cancelButton && $cancelButton.addEventListener('click', this.handleCancel)
+    $container.addEventListener('click', this.handleMaskClick)
+    $container.addEventListener('click', this.handleOk)
+    $container.addEventListener('click', this.handleCancel)
     document.addEventListener('keydown', this.handleKeyDown)
   }
 
@@ -170,17 +184,26 @@ export default class MIPDialog extends CustomElement {
     document.body.removeChild($portal)
   }
 
-  renderSlot (name) {
+  getSlotContainer = name => `<div ref="${name}" class="${this.cx(name)}"></div>`
+
+  renderSlot = async (name) => {
+    const {[`$${name}`]: container} = this.refs
     const {[`${name}$`]: slot} = this.slots
 
-    if (!slot) {
-      return ''
+    if (!container || !slot) {
+      return
     }
 
-    return `<div class="${this.cx(name)}">${slot}</div>`
+    container.innerHTML = slot.getAttribute('type') === 'mip-mustache'
+      ? await templates.render(slot, slot.scope)
+      : slot.innerHTML
+
+    container.querySelectorAll('[ref]').forEach((element) => {
+      this.refs[`$${element.getAttribute('ref')}`] = element
+    })
   }
 
-  render () {
+  async render () {
     const {visible, mask, forceRender} = this.props
 
     if (!visible && !forceRender) {
@@ -190,7 +213,7 @@ export default class MIPDialog extends CustomElement {
     this.slots = [...this.element.querySelectorAll('template[slot]')]
       .reduce((slots, element) => ({
         ...slots,
-        [`${element.getAttribute('slot')}$`]: element.innerHTML
+        [`${element.getAttribute('slot')}$`]: element
       }), {})
 
     const $portal = document.createElement('div')
@@ -199,9 +222,7 @@ export default class MIPDialog extends CustomElement {
       `<div ref="container" class="${this.cx(['container', {containerHidden: !visible, mask}])}">` +
         `<div class="${this.cx()}">` +
           `<div class="${this.cx('content')}">` +
-            this.renderSlot('header') +
-            this.renderSlot('body') +
-            this.renderSlot('footer') +
+            SLOTS.map(this.getSlotContainer).join('') +
           '</div>' +
         '</div>' +
       '</div>'
@@ -213,6 +234,8 @@ export default class MIPDialog extends CustomElement {
         ...refs,
         [`$${element.getAttribute('ref')}`]: element
       }), {$portal})
+
+    await Promise.all(SLOTS.map(this.renderSlot))
 
     this.bindEvents()
     this.connect()

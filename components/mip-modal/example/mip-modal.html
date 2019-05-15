@@ -42,14 +42,14 @@
     </script>
   </mip-data>
   <mip-modal
-    title="Basic Modal"
+    title="基本模态框"
     m-bind:visible="visible"
     on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
   >
     <template slot="body">
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
+      <p>一些内容……</p>
+      <p>一些内容……</p>
+      <p>一些内容……</p>
     </template>
   </mip-modal>
   <button
@@ -58,7 +58,9 @@
   >
     打开模态框
   </button>
+
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="http://localhost:8111/mip-mustache/mip-mustache.js"></script>
   <script src="/mip-dialog/mip-dialog.js"></script>
   <script src="/mip-modal/mip-modal.js"></script>
 </body>

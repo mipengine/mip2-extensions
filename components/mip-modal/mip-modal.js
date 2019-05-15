@@ -22,12 +22,6 @@ const propagatedProps = {
     type: Boolean,
     default: true
   },
-  okText: {
-    default: '确定'
-  },
-  cancelText: {
-    default: '取消'
-  },
   keyboard: {
     type: Boolean,
     default: true
@@ -35,6 +29,20 @@ const propagatedProps = {
 }
 
 const ATTRIBUTES_TO_PROPAGATE = Object.keys(propagatedProps).map(hyphenate)
+
+const defaultSlots = {
+  header: `<div class="${cx('title')}">{{title}}</div>`,
+  body: '{{content}}',
+  footer:
+    `<div class="${cx('buttons')}">` +
+      `<button ref="okButton" type="button" class="${cx('button')} ${cx('button-primary')} ${cx('ok-button')}">` +
+        `<span class="${cx('button-text')}">{{okText}}</span>` +
+      '</button>' +
+      `<button ref="cancelButton" type="button" class="${cx('button')} ${cx('cancel-button')}">` +
+        `<span class="${cx('button-text')}">{{cancelText}}</span>` +
+      '</button>' +
+    '</div>'
+}
 
 export default class MIPModal extends CustomElement {
   static props = {
@@ -44,6 +52,12 @@ export default class MIPModal extends CustomElement {
     },
     content: {
       default: ''
+    },
+    okText: {
+      default: '确定'
+    },
+    cancelText: {
+      default: '取消'
     }
   }
 
@@ -66,54 +80,52 @@ export default class MIPModal extends CustomElement {
     if (!this.element.isBuilt()) {
       return
     }
-
-    ATTRIBUTES_TO_PROPAGATE.includes(name) && this.propagateAttribute(name)
-  }
-
-  propagateAttribute = (attrName) => {
     const {$dialog} = this.refs
 
+    ATTRIBUTES_TO_PROPAGATE.includes(name) && this.propagateAttribute($dialog, name)
+  }
+
+  /**
+   * @param {HTMLElement} target element to propagate.
+   * @param {string} attrName of current element.
+   */
+  propagateAttribute = (target, attrName) => {
     if (!this.element.hasAttribute(attrName)) {
-      $dialog.removeAttribute(attrName)
+      target.removeAttribute(attrName)
 
       return
     }
 
-    $dialog.setAttribute(attrName, this.element.getAttribute(attrName))
+    target.setAttribute(attrName, this.element.getAttribute(attrName))
   }
 
-  propagateAttributes () {
-    ATTRIBUTES_TO_PROPAGATE.forEach(this.propagateAttribute)
+  /**
+   * @param {HTMLElement} target element to propagate.
+   * @param {string[]} attributes to propagate.
+   */
+  propagateAttributes (target, attributes) {
+    attributes.forEach(this.propagateAttribute.bind(this, target))
   }
 
-  propagateSlotIfAbsent (name, render) {
-    const {$dialog} = this.refs
-
-    if ($dialog.querySelector(`template[slot="${name}"]`)) {
+  /**
+   * @param {HTMLElement} target element to propagate.
+   * @param {string} name of slot.
+   * @param {string} html template of slot
+   */
+  propagateSlotIfAbsent (target, name, html = defaultSlots[name]) {
+    if (target.querySelector(`template[slot="${name}"]`)) {
       return
     }
 
     const template = document.createElement('template')
 
+    template.setAttribute('type', 'mip-mustache')
     template.setAttribute('slot', name)
-    template.innerHTML = render(this.props)
+    template.scope = this.props
+    template.innerHTML = html
 
-    $dialog.appendChild(template)
+    target.appendChild(template)
   }
-
-  renderHeader = ({title}) => `<div class="${cx('title')}">${title}</div>`
-
-  renderBody = ({content}) => content
-
-  renderFooter = ({okText, cancelText}) =>
-    `<div class="${cx('buttons')}">` +
-      `<button ref="okButton" type="button" class="${cx('button')} ${cx('button-primary')} ${cx('ok-button')}">` +
-        `<span class="${cx('button-text')}">${okText}</span>` +
-      '</button>' +
-      `<button ref="cancelButton" type="button" class="${cx('button')} ${cx('cancel-button')}">` +
-        `<span class="${cx('button-text')}">${cancelText}</span>` +
-      '</button>' +
-    '</div>'
 
   render () {
     const {innerHTML} = this.element
@@ -123,15 +135,17 @@ export default class MIPModal extends CustomElement {
     $dialog.setAttribute('type', 'modal')
     $dialog.innerHTML = innerHTML
 
-    this.refs = {
-      $dialog
-    }
+    this.propagateAttributes($dialog, ATTRIBUTES_TO_PROPAGATE)
 
-    this.propagateAttributes()
+    this.propagateSlotIfAbsent($dialog, 'header')
+    this.propagateSlotIfAbsent($dialog, 'body')
+    this.propagateSlotIfAbsent($dialog, 'footer')
 
-    this.propagateSlotIfAbsent('header', this.renderHeader)
-    this.propagateSlotIfAbsent('body', this.renderBody)
-    this.propagateSlotIfAbsent('footer', this.renderFooter)
+    this.refs = [...$dialog.querySelectorAll('[ref]')]
+      .reduce((refs, element) => ({
+        ...refs,
+        [`$${element.getAttribute('ref')}`]: element
+      }), {$dialog})
 
     this.element.appendChild($dialog)
   }
