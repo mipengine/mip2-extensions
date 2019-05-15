@@ -62,16 +62,16 @@ export const MIN_RECOMMEND_NUMS = 4
 export const BOOKEND_DEFAULT_RECOMMEND = [
   {
     'cover': 'https://mipstatic.baidu.com/static/mip-static/mip-story/static/img/rec1.jpg',
-    'url': 'https://m.baidu.com/paw/c/m.news18a.com/special/mobile/special_1031.shtml?story=1&word=%E8%BF%88%E5%B7%B4%E8%B5%AB%E6%A6%82%E5%BF%B5%E8%BD%A6&title=%E8%BF%88%E5%B7%B4%E8%B5%AB%E6%A6%82%E5%BF%B5%E8%BD%A6&lid=8305767886715286272&referlid=8305767886715286272&ms=1&frsrcid=37224&frorder=2',
+    'url': 'https://m.news18a.com/special/mobile/special_1031.shtml',
     'title': '未来汽车新概念：我真的心动了',
     'from': '网通社汽车',
     'fromUrl': ''
   },
   {
-    'cover': 'https://mipstatic.baidu.com/static/mip-static/mip-story/static/img/rec2.jpg',
-    'url': 'http://story.soogif.com/story/access/41',
-    'title': '梅西丢球：盘点世界杯十大罚球时刻',
-    'from': 'SOOGIF',
+    'cover': 'https://mipstatic.baidu.com/static/mip-static/mip-story/story-film/imgs/2.jpg',
+    'url': 'https://mipstatic.baidu.com/static/mip-static/mip-story/story-film/figure-the-queen.html',
+    'title': '走进《我，花样女王》',
+    'from': '',
     'fromUrl': ''
   },
   {
