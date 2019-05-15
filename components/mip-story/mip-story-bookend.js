@@ -35,8 +35,8 @@ export default class MIPStoryBackEnd {
     const closeBtnHTML = this.renderCloseBtn()
     const html = `
       <aside class="mip-backend" page-role="${PAGE_ROLE.sharePage}">
-        <mip-fixed type="top" class="mip-backend-control">${closeBtnHTML}${shareBtnHTML}</mip-fixed>
-        <div class="mip-backend-outer" style="">
+        <div class="mip-backend-control">${closeBtnHTML}${shareBtnHTML}</div>
+        <div class="mip-backend-outer">
           <div class="mip-backend-background" style="background-image: url(${share.background})"></div>
           <div class="recommend-item recommend-now">
             <div class="mip-backend-preview"
