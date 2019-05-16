@@ -160,8 +160,8 @@ export default class MIPStorySliderSwitch {
     this.clearStyle()
     nextEle = storyContain[this.nextIndex]
     preEle = storyContain[this.preIndex]
-    this.setViewStatus(true, ACTIVE, nextEle)
-    this.setViewStatus(true, ACTIVE, preEle)
+    this.setViewState(true, ACTIVE, nextEle)
+    this.setViewState(true, ACTIVE, preEle)
 
     // 初始化上一页、下一页的位置
     if (this.currentIndex !== this.viewLength - 1) {
@@ -428,16 +428,16 @@ export default class MIPStorySliderSwitch {
     // 清除当前所有view已有的样式
     this.clearStyle()
     if (this.preIndex !== this.currentIndex) {
-      this.setViewStatus(true, ACTIVE, preEle)
+      this.setViewState(true, ACTIVE, preEle)
       this.setSliderPosition(preEle, isPre, null)
     }
 
     if (this.nextIndex !== this.currentIndex) {
-      this.setViewStatus(true, ACTIVE, nextEle)
+      this.setViewState(true, ACTIVE, nextEle)
       this.setSliderPosition(nextEle, !isPre, null)
     }
 
-    this.setViewStatus(true, CURRENT, currentEle)
+    this.setViewState(true, CURRENT, currentEle)
     this.setSliderPosition(currentEle, null, 0)
     this.resetSlideEndViewCB({
       preIndex: this.preIndex,
@@ -550,14 +550,14 @@ export default class MIPStorySliderSwitch {
         }
         this.setPreload(i)
         // 设置当前页面为current状态
-        this.setViewStatus(true, CURRENT, currentPage)
+        this.setViewState(true, CURRENT, currentPage)
       } else {
         // 清除非当前页的current状态，确保只有一个current页
-        this.setViewStatus(false, CURRENT, currentPage)
+        this.setViewState(false, CURRENT, currentPage)
       }
       // 如果当前页面原先为active状态则清除
       if (this.hasStatus(ACTIVE, currentPage)) {
-        this.setViewStatus(false, ACTIVE, currentPage)
+        this.setViewState(false, ACTIVE, currentPage)
       }
     }
   }
@@ -576,6 +576,7 @@ export default class MIPStorySliderSwitch {
     const stateIndex = index >= maxIndex ? maxIndex : index
     // 更新页面索引状态
     storyState.setState(stateIndex)
+    // 对封底页图片预加载
     if (maxIndex >= this.viewLength - 2) {
       const storyImgs = storyContain[this.viewLength].querySelectorAll('mip-story-img')
       for (let index = 0; index < storyImgs.length; index++) {
@@ -611,7 +612,7 @@ export default class MIPStorySliderSwitch {
     const storyContain = this.storyContain
     for (let i = 0; i < storyContain.length; i++) {
       if (this.hasStatus(STYLE, storyContain[i])) {
-        this.setViewStatus(false, STYLE, this.storyContain[i])
+        this.setViewState(false, STYLE, this.storyContain[i])
         storyContain[i].removeAttribute(STYLE)
       }
     }
@@ -636,7 +637,7 @@ export default class MIPStorySliderSwitch {
    * @param {string} viewState 页面状态
    * @param {HTMLElement} viewEle 页面元素
    */
-  setViewStatus (isSetState, viewState, viewEle) {
+  setViewState (isSetState, viewState, viewEle) {
     if (viewEle && viewState) {
       if (isSetState) {
         viewEle.setAttribute(viewState, '')

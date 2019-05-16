@@ -277,14 +277,13 @@ export default class MIPStoryService {
    */
   replay () {
     if (this.switchPageType === SWITCHTYPES.click) {
-      this.clickSwitch = null
-      this.createClickSwitch()
+      this.clickSwitch.initViewForSwitch('reset')
       this.clickSwitch.closeBookEnd()
       this.share.hideShareLayer()
-      return
+    } else {
+      this.slideSwitch.initViewForSlider('reset')
+      this.replayBookEnd()
     }
-    this.slideSwitch.initViewForSlider('reset')
-    this.replayBookEnd()
   }
 
   replayBookEnd () {

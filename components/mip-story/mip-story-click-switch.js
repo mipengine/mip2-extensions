@@ -2,12 +2,14 @@
  * @file mip-story-click-switch 组件
  * @description 点击翻页
  */
+import { PAGE_STATE } from './constants'
+import storyState from './state'
 const { util } = MIP
 const {
   Gesture,
   dom
 } = util
-const CURRENT = 'current'
+const CURRENT = PAGE_STATE.current
 
 export default class MIPStoryClickSwitch {
   constructor (param) {
@@ -18,10 +20,15 @@ export default class MIPStoryClickSwitch {
     this.hint = storyInstance.hint
     this.storyContain = storyInstance.storyContain
     this.storyViews = storyInstance.storyViews
+    this.bookEndElement = this.storyContain[this.storyContain.length - 1]
     this.showDampingCB = param.showDamping
     this.resetClickEndStatusCB = param.resetClickEndStatus
     this.isShowSwitchLayerCB = param.showSwitchLayer
-    this.preIndex = this.currentIndex = this.nextIndex = 0
+    // 页面 state
+    const pageState = storyState.getPageStateIndex(this.storyViews.length)
+    this.preIndex = pageState[0]
+    this.currentIndex = pageState[1]
+    this.nextIndex = pageState[2]
   }
 
   build () {
@@ -31,9 +38,23 @@ export default class MIPStoryClickSwitch {
 
   /**
    * 初始化页面切换
+   *
+   * @param {string} type 初始化类型
    */
-  initViewForSwitch () {
-    this.switchTo({status: 1, notIncrease: 1})
+  initViewForSwitch (type) {
+    if (type === 'reset') {
+      this.preIndex = this.currentIndex = 0
+      this.nextIndex = 1
+      storyState.setState(0)
+    }
+    // 设置当前页面为 current
+    this.setViewState(true, CURRENT, this.storyContain[this.currentIndex])
+    this.setViewState(true, 'preload', this.storyContain[this.nextIndex])
+    // 对封底页图片预加载
+    const storyImgs = this.bookEndElement.querySelectorAll('mip-story-img')
+    for (let index = 0; index < storyImgs.length; index++) {
+      storyImgs[index].setAttribute('preload', '')
+    }
   }
 
   /**
@@ -60,45 +81,37 @@ export default class MIPStoryClickSwitch {
    *
    * @param {Object} data 配置选项
    * @param {number} data.status 1 向右切换，0 向左切换
-   * @param {number} data.notIncrease
    */
   switchTo (data) {
+    const switchLeft = data.status === 0
+    const switchRight = data.status === 1
     this.hint.hideDamping()
     this.hint.hideSystemLater()
-    if (data.status === 0 && this.currentIndex <= 0) {
-      // 向左切换至第一页
+    // 向左切换至第一页
+    if (switchLeft && this.currentIndex <= 0) {
       this.showDampingCB()
       return
-    } else if (!data.notIncrease && data.status === 1 &&
-      this.currentIndex + 1 >= this.storyViews.length) {
-      // 向右切换至封底页
+    }
+    // 向右切换至封底页
+    if (switchRight && this.currentIndex + 1 >= this.storyViews.length) {
       this.setViewState(false, CURRENT, this.storyViews[this.currentIndex])
       this.showBookEnd()
       return
     }
-
-    if (!data.notIncrease) {
-      data.status === 1 ? this.currentIndex++ : this.currentIndex--
+    // 更新页面索引
+    if (switchRight) {
+      this.preIndex = this.currentIndex
+      this.currentIndex = this.currentIndex + 1
+      this.nextIndex = this.currentIndex + 1 >= this.storyContain.length ? this.currentIndex : this.currentIndex + 1
+      this.storyContain[this.nextIndex].setAttribute('preload', '')
+    } else {
+      this.nextIndex = this.currentIndex
+      this.currentIndex = this.currentIndex - 1
+      this.preIndex = this.preIndex - 1 < 0 ? this.preIndex : this.preIndex - 1
+      this.storyContain[this.preIndex].setAttribute('preload', '')
     }
-    // 重新设置页面状态
-    const currentEle = this.storyViews[this.currentIndex]
-    const preEle = this.storyViews[this.preIndex]
-    if (this.currentIndex !== this.preIndex) {
-      this.setViewState(false, CURRENT, preEle)
-    }
-    this.setViewState(true, CURRENT, currentEle)
-
-    const index = {
-      preIndex: this.preIndex,
-      currentIndex: this.currentIndex,
-      status: data.status
-    }
-    this.resetClickEndStatusCB(index)
-    this.preIndex = this.currentIndex
-    // 右翻
-    if (!data.notIncrease) {
-      this.isShowSwitchLayerCB(data.status)
-    }
+    storyState.setState(this.currentIndex)
+    this.resetViewForSwitch(data)
   }
 
   /**
@@ -120,6 +133,34 @@ export default class MIPStoryClickSwitch {
   }
 
   /**
+   * 重新设置页面状态
+   *
+   * @param {string} data 配置选项
+   */
+  resetViewForSwitch (data) {
+    const currentEle = this.storyViews[this.currentIndex]
+    const preEle = this.storyViews[this.preIndex]
+    const nextEle = this.storyViews[this.nextIndex]
+
+    // 清除上一页 current 的状态
+    if (this.preIndex !== this.currentIndex) {
+      this.setViewState(false, CURRENT, preEle)
+    }
+    // 清除下一页 current 的状态
+    if (this.nextIndex !== this.currentIndex) {
+      this.setViewState(false, CURRENT, nextEle)
+    }
+    // 设置当前页面为current状态
+    this.setViewState(true, CURRENT, currentEle)
+    this.resetClickEndStatusCB({
+      preIndex: this.preIndex,
+      currentIndex: this.currentIndex,
+      status: data.status
+    })
+    this.isShowSwitchLayerCB(data.status)
+  }
+
+  /**
    * 关闭封底页
    */
   goBack () {
@@ -131,9 +172,8 @@ export default class MIPStoryClickSwitch {
    * 展示封底页
    */
   showBookEnd () {
-    const ele = this.storyContain[this.storyContain.length - 1]
-    this.setViewState(true, CURRENT, ele)
-    const eleAnimation = ele.animate([
+    this.setViewState(true, CURRENT, this.bookEndElement)
+    const eleAnimation = this.bookEndElement.animate([
       {transform: 'translate3D(0, 100%, 0)', opacity: 0},
       {transform: 'translate3D(0, 0, 0)', opacity: 1}
     ], {
@@ -148,9 +188,8 @@ export default class MIPStoryClickSwitch {
    * 关闭封底页
    */
   closeBookEnd () {
-    const ele = this.storyContain[this.storyContain.length - 1]
-    this.setViewState(true, CURRENT, ele)
-    const eleAnimation = ele.animate([
+    this.setViewState(false, CURRENT, this.bookEndElement)
+    const eleAnimation = this.bookEndElement.animate([
       {transform: 'translate3D(0, 0, 0)', opacity: 1},
       {transform: 'translate3D(0, 100%, 0)', opacity: 0}
     ], {
