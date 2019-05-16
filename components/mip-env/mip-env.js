@@ -3,13 +3,16 @@
  * @author html5david
  * @time 2018.11.19
  */
-let {
-  CustomElement,
-  util
-} = MIP
-let { platform } = util
 
-// 所支持的cache和分发平台
+/* global MIP, location */
+
+const { CustomElement, util } = MIP
+const { platform } = util
+const logger = util.log('mip-env')
+
+/**
+ * 所支持的cache和分发平台
+ */
 const ALLOW_DP_OR_CACHE = {
   sm: [ // 神马搜索平台(sm.cn)
     '.sm-tc.cn',
@@ -156,49 +159,49 @@ function osOk (sourceOsArr) {
   })
 }
 
-/**
- * @function scopeOk 检测scope是否合规
- * @param {string} scope scope json字符串
- * @returns {boolean} true/false
- */
-function scopeOk (scope) {
-  const checkFuns = {
-    cache: cacheOk,
-    dp: dpOk,
-    ua: uaOk,
-    os: osOk
-  }
+export default class MipEnv extends CustomElement {
+  /**
+   * @function scopeOk 检测scope是否合规
+   * @param {string} scope scope json字符串
+   * @returns {boolean} true/false
+   */
+  scopeOk (scope) {
+    const ele = this.element
+    const checkFuns = {
+      cache: cacheOk,
+      dp: dpOk,
+      ua: uaOk,
+      os: osOk
+    }
 
-  if (!scope) {
-    console.warn('require scope param')
-    return false
-  }
-
-  const scopeJson = util.jsonParse(scope)
-  const keys = Object.keys(scopeJson)
-  if (!util.fn.isPlainObject(scopeJson) || keys.length === 0) {
-    console.error('require scope param is json')
-    return false
-  }
-
-  for (const key of keys) {
-    const param = (scopeJson[key]).toString().toLowerCase()
-    // 将value值拆分为带有!与不带有!组
-    const value = splitScopeValue(param)
-    if (!checkFuns[key] || !checkFuns[key](value)) {
-      console.warn(key + ' error')
+    if (!scope) {
+      logger.warn(ele, '请提供 scope 参数')
       return false
     }
-  }
-  console.log('all right')
-  return true
-}
 
-export default class MipEnv extends CustomElement {
+    const scopeJson = util.jsonParse(scope)
+    const keys = Object.keys(scopeJson)
+    if (!util.fn.isPlainObject(scopeJson) || keys.length === 0) {
+      logger.warn(ele, 'scope 参数不是正确的 JSON！')
+      return false
+    }
+
+    for (const key of keys) {
+      const param = (scopeJson[key]).toString().toLowerCase()
+      // 将value值拆分为带有!与不带有!组
+      const value = splitScopeValue(param)
+      if (!checkFuns[key] || !checkFuns[key](value)) {
+        // logger.warn(ele, key + ' 配置错误！')
+        return false
+      }
+    }
+    return true
+  }
+
   connectedCallback () {
     const element = this.element
     const scope = element.getAttribute('scope')
-    const isOk = scopeOk(scope) // 检测scope是否合规
+    const isOk = this.scopeOk(scope) // 检测scope是否合规
     const id = element.getAttribute('targetId')
     const targetDom = id !== '' ? document.documentElement.querySelector('#' + id) : null
     if (!isOk) {
