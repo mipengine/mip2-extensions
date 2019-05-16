@@ -278,7 +278,7 @@ export default class MIPStoryService {
   replay () {
     if (this.switchPageType === SWITCHTYPES.click) {
       this.clickSwitch = null
-      this.clickSwitch()
+      this.createClickSwitch()
       this.clickSwitch.closeBookEnd()
       this.share.hideShareLayer()
       return

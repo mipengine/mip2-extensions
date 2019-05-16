@@ -34,8 +34,6 @@ let isPageOneViewed = false
 // 是否已访问分享页
 let isSharePageViewed = false
 
-// 是否兼容 touch
-const hasTouch = 'ontouchstart' in window
 let dragStartBind = null
 let dragMoveBind = null
 let dragEndBind = null
@@ -50,15 +48,10 @@ function dragStart (e) {
   if (this.moveFlag) {
     return
   }
-  const touch = hasTouch ? e.targetTouches[0] || e.changedTouches[0] : e
+  const touch = e.targetTouches[0] || e.changedTouches[0]
   this.touchstartX = touch.pageX
   this.touchstartY = touch.pageY
   this.sliderStartCB(e)
-
-  // 绑定事件
-  this.storyElement.addEventListener('mousemove', dragMoveBind)
-  this.storyElement.addEventListener('mouseup', dragEndBind)
-  this.storyElement.addEventListener('mouseout', dragEndBind)
 }
 
 /**
@@ -86,11 +79,6 @@ function dragMove (e) {
  * @param {Event} e 事件对象
  */
 function dragEnd (e) {
-  // 解绑事件
-  this.storyElement.removeEventListener('mousemove', dragMoveBind)
-  this.storyElement.removeEventListener('mouseup', dragEndBind)
-  this.storyElement.removeEventListener('mouseout', dragEndBind)
-
   // 特殊处理，分享页更多小故事滚动，禁止翻页滚动
   if (dom.contains(this.recommend, e.target)) {
     return
@@ -100,8 +88,7 @@ function dragEnd (e) {
   if (this.moveFlag) {
     return
   }
-
-  const touch = hasTouch ? e.targetTouches[0] || e.changedTouches[0] : e
+  const touch = e.targetTouches[0] || e.changedTouches[0]
   this.touchendX = touch.pageX
   this.touchendY = touch.pageY
 
@@ -211,12 +198,7 @@ export default class MIPStorySliderSwitch {
    * 开始滑动时事件监听
    */
   sliderStart () {
-    if (hasTouch) {
-      this.storyElement.addEventListener('touchstart', dragStartBind)
-    } else {
-      this.storyElement.classList.add('mip-story-pc')
-      this.storyElement.addEventListener('mousedown', dragStartBind)
-    }
+    this.storyElement.addEventListener('touchstart', dragStartBind)
   }
 
   /**
@@ -526,7 +508,7 @@ export default class MIPStorySliderSwitch {
   getMoveData (e) {
     const screenWidth = viewport.getWidth()
     const screenHeight = viewport.getHeight()
-    const touch = hasTouch ? e.targetTouches[0] || e.changedTouches[0] : e
+    const touch = e.targetTouches[0] || e.changedTouches[0]
     const moveX = touch.pageX - this.touchstartX
     const moveY = touch.pageY - this.touchstartY
 

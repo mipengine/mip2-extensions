@@ -49,7 +49,7 @@ export default class MIPStoryBackEnd {
             <div class="recommend-detail">
               <p class="mip-backend-description">${share.title}</p>
               <span class="mip-backend-info" data-stats-baidu-obj="${originInfoStats}">
-                <a href="${share.fromUrl}">'${share.from}</a>
+                <a href="${share.fromUrl}">${share.from}</a>
               </span>
             </div>
           </div>
