@@ -70,6 +70,9 @@ export default class MIPModal extends CustomElement {
 
     /** @type {Record<string, HTMLElement>} */
     this.refs = null
+
+    /** @type {Record<string, HTMLTemplateElement} */
+    this.slots = null
   }
 
   buildCallback () {
@@ -80,9 +83,11 @@ export default class MIPModal extends CustomElement {
     if (!this.element.isBuilt()) {
       return
     }
+
     const {$dialog} = this.refs
 
     ATTRIBUTES_TO_PROPAGATE.includes(name) && this.propagateAttribute($dialog, name)
+    Object.values(this.slots).forEach(this.propagateSlotScope)
   }
 
   /**
@@ -121,10 +126,13 @@ export default class MIPModal extends CustomElement {
 
     template.setAttribute('type', 'mip-mustache')
     template.setAttribute('slot', name)
-    template.scope = this.props
     template.innerHTML = html
 
     target.appendChild(template)
+  }
+
+  propagateSlotScope = (target) => {
+    target.scope = this.props
   }
 
   render () {
@@ -146,6 +154,14 @@ export default class MIPModal extends CustomElement {
         ...refs,
         [`$${element.getAttribute('ref')}`]: element
       }), {$dialog})
+
+    this.slots = [...$dialog.querySelectorAll('template[slot]')]
+      .reduce((slots, element) => ({
+        ...slots,
+        [`${element.getAttribute('slot')}$`]: element
+      }), {})
+
+    Object.values(this.slots).forEach(this.propagateSlotScope)
 
     this.element.appendChild($dialog)
   }

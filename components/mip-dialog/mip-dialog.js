@@ -50,6 +50,8 @@ export default class MIPDialog extends CustomElement {
 
     /** @type {Record<string, HTMLTemplateElement} */
     this.slots = null
+
+    this.openTime = Date.now()
   }
 
   connectedCallback () {
@@ -94,6 +96,12 @@ export default class MIPDialog extends CustomElement {
   }
 
   handleVisibleChange () {
+    const {visible} = this.props
+
+    if (visible) {
+      this.openTime = Date.now()
+    }
+
     this.refs ? this.toggleDialog() : this.render()
   }
 
@@ -121,22 +129,14 @@ export default class MIPDialog extends CustomElement {
    */
   handleCancel = (event) => {
     const {target} = event
+    const {maskClosable} = this.props
     const {$container, $cancelButton} = this.refs
 
-    if (target !== $container && target !== $cancelButton) {
+    if ((target !== $container || !maskClosable || Date.now() - this.openTime < 300) && target !== $cancelButton) {
       return
     }
 
     viewer.eventAction.execute('cancel', this.element, event)
-  }
-
-  /**
-   * @param {MouseEvent} event object.
-   */
-  handleMaskClick = (event) => {
-    const {maskClosable} = this.props
-
-    maskClosable && this.handleCancel(event)
   }
 
   /**
@@ -158,7 +158,6 @@ export default class MIPDialog extends CustomElement {
   bindEvents () {
     const {$container} = this.refs
 
-    $container.addEventListener('click', this.handleMaskClick)
     $container.addEventListener('click', this.handleOk)
     $container.addEventListener('click', this.handleCancel)
     document.addEventListener('keydown', this.handleKeyDown)
@@ -203,6 +202,10 @@ export default class MIPDialog extends CustomElement {
     })
   }
 
+  renderSlots () {
+    return Promise.all(SLOTS.map(this.renderSlot))
+  }
+
   async render () {
     const {visible, mask, forceRender} = this.props
 
@@ -215,6 +218,13 @@ export default class MIPDialog extends CustomElement {
         ...slots,
         [`${element.getAttribute('slot')}$`]: element
       }), {})
+
+    Object.keys(this.slots).forEach(name => Object.defineProperty(this.slots[name], 'scope', {
+      get () {},
+      set () {
+        this.renderSlot(name)
+      }
+    }))
 
     const $portal = document.createElement('div')
 
@@ -235,7 +245,7 @@ export default class MIPDialog extends CustomElement {
         [`$${element.getAttribute('ref')}`]: element
       }), {$portal})
 
-    await Promise.all(SLOTS.map(this.renderSlot))
+    await this.renderSlots()
 
     this.bindEvents()
     this.connect()
