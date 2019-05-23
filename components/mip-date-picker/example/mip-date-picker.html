@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    mip-date-picker {
+      margin: 20px
+    }
+
+    h2{
+      margin: 40px 20px 0 20px;
+    }
+
+    p {
+      margin-bottom: 10px;
+    }
+
+    input {
+      display: inline-block !important;
+      border: 1px solid #ccc;
+      width: 100px;
+      height: 24px;
+      line-height: 24px;
+      padding-left: 5px;
+      outline: none;
+    }
+
+    .block,
+    form {
+      margin-left: 20px;
+    }
+
+    button,
+    input[type="submit"] {
+      background: #0055a0;
+      color: #fff;
+      padding: 0 10px;
+      margin-left: 5px;
+      height: 26px;
+      width: auto;
+      line-height: 26px;
+      border: 0;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>简单的时间选择</h2>
+  <mip-date-picker id="simple-date-picker"
+    type="single"
+    mode="overlay"
+    layout="container"
+    on="select:MIP.setData({
+      date1: event.date,
+      dateType1: event.id
+    })"
+    format="YYYY-MM-DD"
+    open-after-select
+    input-selector="[name=date1]"
+    class="example-picker space-between"
+  >
+    <div class="icon-input"></div>
+    <input name="date1" placeholder="选择日期">
+    <button on="tap:simple-date-picker.clear">清除</button>
+    <button on="tap:simple-date-picker.today">今天</button>
+    <button on="tap:simple-date-picker.today(offset=1)">明天</button>
+    <template type="mip-mustache" info-template>
+      <span m-text="date1 != null ? '您选择了：' + date1 + '.' : '请选择'">请选择</span>
+    </template>
+  </mip-date-picker>
+
+  <!-- <h2>自定义时间标注</h2>
+  <mip-date-picker id="simple-date-picker-2"
+    type="single"
+    mode="overlay"
+    layout="container"
+    on="select:MIP.setData({
+      date2: event.date,
+      dateType2: event.id
+    })"
+    locale="en"
+    format="YYYY-MM-DD"
+    open-after-select
+    input-selector="[name=date2]"
+    class="example-picker space-between">
+    <input class="border-none p0" name="date2" placeholder="选择日期" />
+    <button on="tap: simple-date-picker-2.clear">清除</button>
+    <template type="mip-mustache" date-template dates="FREQ=WEEKLY;DTSTART=20180101T000000Z;INTERVAL=2;WKST=SU;BYDAY=TU" id="tacos2">
+      <span>🌮</span>
+      <span class="taco-tuesday"></span>
+    </template>
+    <template type="mip-mustache" info-template>
+      <span m-text="date2 ? '您选择了：' + date2 + '.' +
+        (dateType2 == 'tacos2' ? 'Taco 周二快乐!' : '') : ''">请选择</span>
+    </template>
+  </mip-date-picker>
+
+  <h2>选择起始和结束的时间</h2>
+  <mip-date-picker id="range-date-picker"
+    type="range"
+    mode="overlay"
+    on="select:MIP.setData({
+      dates: event.dates,
+      startDate: event.start,
+      endDate: event.end
+    })"
+    format="YYYY-MM-DD"
+    open-after-select
+    min="2017-10-26"
+    start-input-selector="#range-start"
+    end-input-selector="#range-end"
+    class="example-picker space-between"
+  >
+    <input id="range-start" placeholder="开始日期">
+    <input id="range-end" placeholder="结束日期">
+    <button on="tap:range-date-picker.clear">清除</button>
+    <template type="mip-mustache" info-template>
+      <span m-text="(startDate && endDate ? '您选择的开始日期：' + startDate.date + '，结束日期：' + endDate.date : '请选择')">请选择</span>
+    </template>
+  </mip-date-picker>
+
+  <h2>指定第三方配置</h2>
+  <mip-date-picker id="src-picker"
+    type="single"
+    mode="overlay"
+    layout="container"
+    format="YYYY-MM-DD"
+    src="./config.json"
+    input-selector="#src-input"
+    class="example-picker space-between"
+  >
+    <input id="src-input" placeholder="请选择日期">
+    <button on="tap: src-picker.clear">清除</button>
+    <template type="mip-mustache" date-template id="spooky">
+      <span>🙀</span>
+    </template>
+  </mip-date-picker>
+
+  <h2>直接展示日历</h2>
+  <mip-date-picker id="static-picker"
+    type="single"
+    mode="static"
+    layout="fixed-height"
+    height="360"
+    format="YYYY-MM-DD"
+    input-selector="#static-picker-input">
+  </mip-date-picker>
+
+  <h2>特殊日期高亮显示</h2>
+  <mip-date-picker id="simple-date-picker-3"
+    type="single"
+    mode="static"
+    layout="fixed-height"
+    height="360"
+    on="select:MIP.setData({
+      date3: event.date ? event.date : ''
+    })"
+    locale="en"
+    format="YYYY-MM-DD"
+    highlighted="FREQ=WEEKLY;WKST=SU;BYDAY=TH"
+    blocked="FREQ=WEEKLY;WKST=SU;BYDAY=SA,SU"
+  ></mip-date-picker>
+
+  <h2>Allow-blocked-dates attribute</h2>
+  <mip-date-picker id="simple-date-picker-4"
+    type="range"
+    mode="static"
+    layout="fixed-height"
+    height="360"
+    on="select:AMP.setState({date4: event.date ? event.date : ''})"
+    locale="en"
+    format="YYYY-MM-DD"
+    allow-blocked-ranges
+    highlighted="FREQ=WEEKLY;WKST=SU;BYDAY=TH"
+    blocked="FREQ=WEEKLY;WKST=SU;BYDAY=SA,SU"
+  ></mip-date-picker>
+
+  <h2>Lightbox 打开</h2>
+  <div class="block">
+    <p>请选择您的旅行日期</p>
+    <input id="lb-start" placeholder="开始日期" on="tap:lb.open" role="textbox" tabindex="0">
+    <input id="lb-end" placeholder="结束日期" on="tap:lb.open" role="textbox" tabindex="0">
+    <button on="tap:lb-picker.clear">清除</button>
+    <mip-lightbox id="lb" layout="nodisplay">
+      <button on="tap:lb.close" tabindex="0">清除</button>
+      <div class="align-content-center">
+        <mip-date-picker id="lb-picker"
+          type="range"
+          mode="static"
+          layout="fixed-height"
+          height="360"
+          format="MM/DD/YYYY"
+          on="activate:lb.open,deactivate:lb.close"
+          start-input-selector="#lb-start"
+          end-input-selector="#lb-end"></mip-date-picker>
+      </div>
+    </mip-lightbox>
+  </div>
+
+  <h2>全屏打开</h2>
+  <div class="block">
+    <p>请选择您的旅行时间</p>
+    <input id="lb-fullscreen-start" placeholder="开始日期" on="tap:lb-fullscreen.open" role="textbox" tabindex="0">
+    <input id="lb-fullscreen-end" placeholder="结束日期" on="tap:lb-fullscreen.open" role="textbox" tabindex="0">
+    <button on="tap:lb-fullscreen-picker.clear">清除</button>
+    <mip-lightbox id="lb-fullscreen"
+      layout="nodisplay"
+      scrollable>
+      <button on="tap:lb-fullscreen.close" tabindex="0">关闭</button>
+      <mip-date-picker id="lb-fullscreen-picker"
+        fullscreen
+        layout="fill"
+        mode="static"
+        type="range"
+        number-of-months="12"
+        format="MM/DD/YYYY"
+        on="activate:lb-fullscreen.open, deactivate:lb-fullscreen.close;"
+        start-input-selector="#lb-fullscreen-start"
+        end-input-selector="#lb-fullscreen-end"
+      ></mip-date-picker>
+    </mip-lightbox>
+  </div>
+
+  <h2>和 Form 表单结合</h2>
+  <form method="post"
+    action-xhr="/components/mip-form/submit-form-xhr"
+    target="_top">
+    <mip-date-picker id="form-picker"
+      type="single"
+      mode="static"
+      layout="fixed-height"
+      height="360"
+      format="YYYY-MM-DD">
+    </mip-date-picker>
+    <input type="submit">
+    <div submit-success>
+      <template type="mip-mustache">
+        Success! Thanks for trying the <code>mip-form</code> demo!
+      </template>
+    </div>
+    <div submit-error>
+      <template type="mip-mustache">
+        Error!
+      </template>
+    </div>
+  </form>
+
+  <h2>和 mip-bind 结合使用</h2>
+  <div class="block">
+    <mip-data id="binding">
+      <script type="application/json">
+        {
+          "min": "",
+          "max": ""
+        }
+      </script>
+    </mip-data>
+    <input on="change:MIP.setData({binding: {min: event.value}})" placeholder="最小日期">
+    <input on="change:MIP.setSetData({binding: {max: event.value}})" placeholder="最大日期">
+    <mip-date-picker id="bind-picker"
+      type="single"
+      mode="static"
+      layout="fixed-height"
+      height="360"
+      format="MM/DD/YYYY"
+      [min]="binding.min"
+      [max]="binding.max">
+    </mip-date-picker>
+  </div> -->
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-date-picker/mip-date-picker.js"></script>
+</body>
+</html>
