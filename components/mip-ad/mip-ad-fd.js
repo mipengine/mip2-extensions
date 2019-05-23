@@ -37,7 +37,8 @@ function loadSubScript (el) {
 /**
  * 获取广告位 url
  *
- * @param  {string} id 广告位 id
+ * @param   {string} id 广告位 id
+ * @returns {string}    广告位 url
  */
 function getPlaceUrl (id) {
   let str = id.toString()
@@ -58,9 +59,10 @@ function getPlaceUrl (id) {
 /**
  * 字符串截取
  *
- * @param  {string} str   被截取的字符串
- * @param  {number} start 截取的起点位置
- * @param  {number} len   截取的长度
+ * @param   {string} str   被截取的字符串
+ * @param   {number} start 截取的起点位置
+ * @param   {number} len   截取的长度
+ * @returns {string}       截取的结果
  */
 function substr (str, start, len) {
   if (start < 0) {
