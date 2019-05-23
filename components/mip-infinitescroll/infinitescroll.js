@@ -5,7 +5,7 @@
  */
 
 let { viewport, util } = MIP
-let { css, rect, dom } = util
+let { css, dom } = util
 
 // 外部数据状态 0-无数据 1-默认(数据情况未知) 2-请求中 3-请求失败(网络原因)
 const STATUS_NODATA = 0
@@ -71,15 +71,13 @@ export default class InfiniteScroll {
     if (this.options.firstResult.length) {
       this.scrollPageCache.content = this.scrollPageCache.content.concat(this._separatePage(this.options.firstResult))
       this.options.$result.innerHTML = this._wrapPageParentDom(this.scrollPageCache.content[0], 0)
-      this.scrollPageCache.topPosition.push(rect.getElementRect(this.options.$result).top)
+      this.scrollPageCache.topPosition.push(this.options.$result.offsetTop)
     }
 
     // 初始化全局环境变量 && resize时重新获取环境变量
     this.refresh()
     let eventSpace = this.eventSpace
-    window.addEventListener('resize' + eventSpace, () => {
-      this.refresh()
-    })
+    window.addEventListener('resize' + eventSpace, this.refresh)
 
     // 翻滚吧
     this._bindScroll()
@@ -93,7 +91,7 @@ export default class InfiniteScroll {
   /**
    * 重新获取环境变量
    */
-  refresh () {
+  refresh = () => {
     // 若为暂停状态,什么也不做
     if (this.state === 'pause') {
       return
@@ -110,7 +108,7 @@ export default class InfiniteScroll {
   destroy () {
     // 注销resize事件
     let eventSpace = this.eventSpace
-    window.removeEventListener('resize' + eventSpace)
+    window.removeEventListener('resize' + eventSpace, this.refresh)
     // 注销loading上的点击事件
     this.options.$loading.removeEventListener('click' + eventSpace)
     // 删除cache数据
@@ -192,7 +190,7 @@ export default class InfiniteScroll {
       }
 
       // 到底了
-      if (this.currentScrollTop >= this.scrollerHeight - this.wrapperHeight - this.options.bufferHeightPx) {
+      if (this.currentScrollTop >= this._getScrollerHeight() - this.wrapperHeight - this.options.bufferHeightPx) {
         this._scrollBottomFn()
         // 执行回调
         this.options.onScrollBottom && this.options.onScrollBottom()
@@ -213,7 +211,7 @@ export default class InfiniteScroll {
     })
 
     // 若初始即不满一屏,trigger scroll事件触发加载
-    if (this.currentScrollTop >= this.scrollerHeight - this.wrapperHeight - this.options.bufferHeightPx) {
+    if (this.currentScrollTop >= this._getScrollerHeight() - this.wrapperHeight - this.options.bufferHeightPx) {
       viewport.trigger('scroll')
     }
   }
@@ -286,7 +284,7 @@ export default class InfiniteScroll {
     // 更新变量
     this.currentLoadPage = pn
     this.scrollerHeight = this._getScrollerHeight()
-    this.scrollPageCache.topPosition.push(rect.getElementRect(domNewPage).top)
+    this.scrollPageCache.topPosition.push(domNewPage.offsetTop)
   }
 
   _getScrollerHeight () {
@@ -311,20 +309,20 @@ export default class InfiniteScroll {
     // todo:这里应该还有优化空间
     if (domResultElement.length) {
       // 恢复:在应该被显示的dom中选出所有带回收标记标签的元素执行恢复操作
-      domShouldShowElement.forEach(function () {
-        if (this.classList.contains(recycleClass)) {
-          this.innerHTML = this.scrollPageCache.content[this.getAttribute('data-page')]
-          this.classList.remove(recycleClass)
+      domShouldShowElement.forEach((element) => {
+        if (element.classList.contains(recycleClass)) {
+          element.innerHTML = this.scrollPageCache.content[element.getAttribute('data-page')]
+          element.classList.remove(recycleClass)
         }
-      }, this)
+      })
       // 清理:选出所有不应该被显示的dom,并排除已有回收标记标签的元素,执行清理操作
       let recycleClassElement = document.querySelectorAll('.' + recycleClass)
-      domResultElement.removeChild(domShouldShowElement)
-      domResultElement.removeChild(recycleClassElement)
-      domResultElement.forEach(function () {
-        rect.getElementRect(this).height = 0
-        this.classList.add(recycleClass)
-      }, this)
+      domResultElement
+        .filter(element => domShouldShowElement.indexOf(element) === -1 && recycleClassElement.indexOf(element) === -1)
+        .forEach((element) => {
+          element.innerHTML = ''
+          this.classList.add(recycleClass)
+        })
       // 这里有可能导致整体高度变化,需要重新更新高度
       this.scrollerHeight = this._getScrollerHeight()
     }

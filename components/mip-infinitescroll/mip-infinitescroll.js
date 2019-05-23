@@ -68,42 +68,40 @@ export default class MipInfiniteScroll extends CustomElement {
     this.url = this.getUrl(src)
 
     // 异步请求返回后，解析数据，使用mustache 渲染插入页面
-    let self = this
-    this.pushResult = function (rn, status) {
+    this.pushResult = async (rn, status) => {
       // 异步获取数据示例
-      let defer = new Promise(function (resolve, reject) {
-        if (rn > self.params.rn) {
-          resolve('NULL')
-          return
-        }
-        window.fetchJsonp(self.url, {
-          jsonpCallback: 'callback',
-          timeout: self.params.timeout
-        }).then(function (res) {
-          return res.json()
-        }).then(function (data) {
-          // 数据加载成功，请求返回
-          if (data && parseInt(data.status, 10) === 0 && data.data) {
-            if (rn > self.params.rn || !data.data.items || !data.data.items.length) {
-              resolve('NULL')
-              return
-            }
+      if (rn > this.params.rn) {
+        return 'NULL'
+      }
 
-            templates.render(self.element, data.data.items).then(function (htmls) {
-              resolve(htmls)
-              self.params.pn++
-              self.url = self.getUrl(src)
-            }, function () {
-              // 模板失败时，显示“renderTplFailHtml（渲染模板失败）”
-              reject(new Error(self.params.renderTplFailHtml))
-            })
-          }
-        }, function () {
-          // 数据加载失败或超时，显示“loadFailHtml（加载超时）”
-          reject(new Error(self.params.loadFailHtml))
+      let data
+      try {
+        const res = await window.fetchJsonp(this.url, {
+          jsonpCallback: 'callback',
+          timeout: this.params.timeout
         })
-      })
-      return defer
+        data = await res.json()
+      } catch (e) {
+        throw new Error(this.params.loadFailHtml)
+      }
+      // 数据加载成功，请求返回
+      if (data && parseInt(data.status, 10) === 0 && data.data) {
+        if (rn > this.params.rn || !data.data.items || !data.data.items.length) {
+          return 'NULL'
+        }
+
+        let htmls
+        try {
+          htmls = await templates.render(this.element, data.data.items)
+        } catch (e) {
+          throw new Error(this.params.renderTplFailHtml)
+        }
+
+        this.params.pn++
+        this.url = this.getUrl(src)
+        return htmls
+      }
+      return 'NULL'
     }
 
     this.infiniteScroll = new InfiniteScroll({
