@@ -21,7 +21,11 @@ export default function render (el) {
   }
 }
 
-// 加载广告位js
+/**
+ * 加载广告位 js
+ *
+ * @param  {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
+ */
 function loadSubScript (el) {
   let id = parseInt(el.getAttribute('data-id'), 10)
   let src = getPlaceUrl(id)
@@ -30,24 +34,34 @@ function loadSubScript (el) {
   el.appendChild(scri)
 }
 
-// 获取广告位url
+/**
+ * 获取广告位 url
+ *
+ * @param  {string} id 广告位 id
+ */
 function getPlaceUrl (id) {
   let str = id.toString()
-  let fileName = 'ggw_' + id + '.js'
+  let fileName = `ggw_${id}.js`
   let dir = ''
   let count = 9
 
   if (str.length < count) {
-    str = '000000000' + str
+    str = `000000000${str}`
   }
 
   str = substr(str, -count)
   dir = str.substring(3, 6) + '/'
 
-  return 'https://static.tj.familydoctor.com.cn/c/a/' + dir + fileName
+  return `https://static.tj.familydoctor.com.cn/c/a/${dir + fileName}`
 }
 
-// 字符串截取
+/**
+ * 字符串截取
+ *
+ * @param  {string} str   被截取的字符串
+ * @param  {number} start 截取的起点位置
+ * @param  {number} len   截取的长度
+ */
 function substr (str, start, len) {
   if (start < 0) {
     start = str.length + start
