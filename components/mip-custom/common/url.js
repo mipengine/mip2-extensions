@@ -40,6 +40,15 @@ const getHashParams = () => {
   // pc标识字段
   params.fromSite = data.getHashData('fromSite')
 
+  // 结果页透传字段
+  const RESULT_PARMAS_HASH = ['searchFrom', 'fenlei', 'order']
+  for (let i = 0; i < RESULT_PARMAS_HASH.length; i++) {
+    let currentKey = RESULT_PARMAS_HASH[i]
+    if (data.getHashData(currentKey)) {
+      params[currentKey] = data.getHashData(currentKey)
+    }
+  }
+
   return params
 }
 
