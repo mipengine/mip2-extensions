@@ -6,6 +6,7 @@ const {CustomElement, registerService, util: {string: {hyphenate}}} = MIP
 
 const TAG = 'mip-modal'
 const CLASSNAME_PREFIX = `${TAG}-dialog`
+const SLOTS = ['header', 'body', 'footer']
 
 /**
  * @param {string} suffix of class name.
@@ -65,15 +66,11 @@ export default class MIPModal extends CustomElement {
     return Object.keys(MIPModal.props).map(hyphenate)
   }
 
-  constructor (element) {
-    super(element)
+  /** @type {Record<string, HTMLElement>} */
+  refs = null
 
-    /** @type {Record<string, HTMLElement>} */
-    this.refs = null
-
-    /** @type {Record<string, HTMLTemplateElement} */
-    this.slots = null
-  }
+  /** @type {Record<string, HTMLTemplateElement>} */
+  slots = {}
 
   buildCallback () {
     this.render()
@@ -84,41 +81,43 @@ export default class MIPModal extends CustomElement {
       return
     }
 
-    const {$dialog} = this.refs
-
-    ATTRIBUTES_TO_PROPAGATE.includes(name) && this.propagateAttribute($dialog, name)
-    Object.values(this.slots).forEach(this.propagateSlotScope)
+    ATTRIBUTES_TO_PROPAGATE.includes(name) && this.propagateAttribute(name)
+    SLOTS.forEach(this.propagateSlotScope)
   }
 
   /**
-   * @param {HTMLElement} target element to propagate.
    * @param {string} attrName of current element.
    */
-  propagateAttribute = (target, attrName) => {
+  propagateAttribute = (attrName) => {
+    const {$dialog} = this.refs
+
     if (!this.element.hasAttribute(attrName)) {
-      target.removeAttribute(attrName)
+      $dialog.removeAttribute(attrName)
 
       return
     }
 
-    target.setAttribute(attrName, this.element.getAttribute(attrName))
+    $dialog.setAttribute(attrName, this.element.getAttribute(attrName))
   }
 
   /**
-   * @param {HTMLElement} target element to propagate.
    * @param {string[]} attributes to propagate.
    */
-  propagateAttributes (target, attributes) {
-    attributes.forEach(this.propagateAttribute.bind(this, target))
+  propagateAttributes (attributes) {
+    attributes.forEach(this.propagateAttribute)
   }
 
   /**
-   * @param {HTMLElement} target element to propagate.
    * @param {string} name of slot.
    * @param {string} html template of slot
    */
-  propagateSlotIfAbsent (target, name, html = defaultSlots[name]) {
-    if (target.querySelector(`template[slot="${name}"]`)) {
+  propagateSlotIfAbsent (name, html = defaultSlots[name]) {
+    const {$dialog} = this.refs
+    const slotKey = `${name}$`
+
+    this.slots[slotKey] = $dialog.querySelector(`template[slot="${name}"]`)
+
+    if (this.slots[slotKey]) {
       return
     }
 
@@ -128,11 +127,22 @@ export default class MIPModal extends CustomElement {
     template.setAttribute('slot', name)
     template.innerHTML = html
 
-    target.appendChild(template)
+    this.slots[slotKey] = template
+
+    $dialog.appendChild(template)
   }
 
-  propagateSlotScope = (target) => {
-    target.scope = this.props
+  propagateSlotScope = (name) => {
+    const {$dialog} = this.refs
+    const {[`${name}$`]: slot} = this.slots
+
+    slot.scope = this.props
+    $dialog.customElement.renderSlot(name)
+  }
+
+  propagateSlot = (name) => {
+    this.propagateSlotIfAbsent(name)
+    this.propagateSlotScope(name)
   }
 
   render () {
@@ -143,25 +153,17 @@ export default class MIPModal extends CustomElement {
     $dialog.setAttribute('type', 'modal')
     $dialog.innerHTML = innerHTML
 
-    this.propagateAttributes($dialog, ATTRIBUTES_TO_PROPAGATE)
+    this.refs = {$dialog}
 
-    this.propagateSlotIfAbsent($dialog, 'header')
-    this.propagateSlotIfAbsent($dialog, 'body')
-    this.propagateSlotIfAbsent($dialog, 'footer')
+    this.propagateAttributes(ATTRIBUTES_TO_PROPAGATE)
+
+    SLOTS.forEach(this.propagateSlot)
 
     this.refs = [...$dialog.querySelectorAll('[ref]')]
       .reduce((refs, element) => ({
         ...refs,
         [`$${element.getAttribute('ref')}`]: element
-      }), {$dialog})
-
-    this.slots = [...$dialog.querySelectorAll('template[slot]')]
-      .reduce((slots, element) => ({
-        ...slots,
-        [`${element.getAttribute('slot')}$`]: element
-      }), {})
-
-    Object.values(this.slots).forEach(this.propagateSlotScope)
+      }), this.refs)
 
     this.element.appendChild($dialog)
   }
