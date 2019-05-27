@@ -6,12 +6,12 @@ const TAG = 'mip-dialog'
 
 const SLOTS = ['header', 'body', 'footer']
 
-const KEYCODES = {
+const KeyCodes = {
   TAB: 9,
   ESC: 27
 }
 
-const CLASSNAMES = {
+const ClassNames = {
   CONTAINER: 'container',
   HIDDEN: 'hidden',
   MASK: 'mask',
@@ -89,7 +89,7 @@ export default class MIPDialog extends CustomElement {
     const {$container} = this.refs
 
     mask && this.toggleMask()
-    $container.classList.toggle(this.cx(CLASSNAMES.HIDDEN))
+    $container.classList.toggle(this.cx(ClassNames.HIDDEN))
   }
 
   handleVisibleChange () {
@@ -158,7 +158,7 @@ export default class MIPDialog extends CustomElement {
       return
     }
 
-    if (keyboard && event.keyCode === KEYCODES.ESC) {
+    if (keyboard && event.keyCode === KeyCodes.ESC) {
       event.stopPropagation()
       this.triggerCancel(event)
     }
@@ -238,11 +238,11 @@ export default class MIPDialog extends CustomElement {
 
     const template =
       `<div ref="container" class="${this.cx([
-        CLASSNAMES.CONTAINER,
-        {[CLASSNAMES.HIDDEN]: !visible, [CLASSNAMES.MASK]: mask}
+        ClassNames.CONTAINER,
+        {[ClassNames.HIDDEN]: !visible, [ClassNames.MASK]: mask}
       ])}">` +
         `<div class="${this.cx()}">` +
-          `<div class="${this.cx(CLASSNAMES.CONTENT)}">` +
+          `<div class="${this.cx(ClassNames.CONTENT)}">` +
             SLOTS.map(this.getSlotContainer).join('') +
           '</div>' +
         '</div>' +
