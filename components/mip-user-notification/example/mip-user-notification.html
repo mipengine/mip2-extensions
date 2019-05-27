@@ -21,7 +21,19 @@
   </div>
   </mip-user-notification>
 
-  <mip-map on="getPositionFailed:myUserNotification1.getLocationComplete getPositionComplete:myUserNotification1.getLocationComplete" id="myMap">
+  <mip-user-notification
+  id="myUserNotification1" 
+  layout="nodisplay"
+  class="mip-hidden"
+  data-persist-dismissal="false"
+  >
+  <div style="border: 1px solid yellow">
+    data-persist-dismissal="false"，刷新永远显示
+    <button style="float: right;background-color: lightblue" on="tap:myUserNotification1.dismiss">接受</button>
+  </div>
+  </mip-user-notification>
+
+  <mip-map on="getPositionFailed:myUserNotification2.getLocationComplete getPositionComplete:myUserNotification2.getLocationComplete" id="myMap">
       <script type="application/json">
         {
           "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
@@ -31,7 +43,7 @@
   </mip-map>
 
   <mip-user-notification
-    id="myUserNotification1" 
+    id="myUserNotification2" 
     layout="nodisplay"
     class="mip-hidden"
     data-show-if-geo="true"
@@ -46,12 +58,12 @@
     </script>
     <div style="border: 1px solid red">
       根据位置显示：mip2 有更多好用功能 ~
-      <button style="float: right;background-color: lightblue" on="tap:myUserNotification1.dismiss">接受</button>
+      <button style="float: right;background-color: lightblue" on="tap:myUserNotification2.dismiss">接受</button>
     </div>
   </mip-user-notification>
 
   <mip-user-notification
-  id="myUserNotification2" 
+  id="myUserNotification3" 
   layout="nodisplay"
   class="mip-hidden"
   data-show-if-href="./data.json"
@@ -59,7 +71,20 @@
   >
   <div style="border: 1px solid blue">
     根据 data-show-if-href 返回显示：快快更新吧~
-    <button style="float: right;background-color: lightblue" on="tap:myUserNotification2.dismiss">接受</button>
+    <button style="float: right;background-color: lightblue" on="tap:myUserNotification3.dismiss">接受</button>
+  </div>
+  </mip-user-notification>
+
+  <mip-user-notification
+  id="myUserNotification4" 
+  layout="nodisplay"
+  class="mip-hidden"
+  enctype="application/x-www-form-urlencoded"
+  data-dismiss-href="./data.json"
+  >
+  <div style="border: 1px solid orange">
+    post方法的content-type为"application/x-www-form-urlencoded"
+    <button style="float: right;background-color: lightblue" on="tap:myUserNotification4.dismiss">接受</button>
   </div>
   </mip-user-notification>
 
