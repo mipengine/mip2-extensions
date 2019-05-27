@@ -1,3 +1,4 @@
+import './mip-user-notification.less'
 import NotificationUiManager from './user-notification-ui-maneger'
 import UserNotificationManager from './user-notification-maneger'
 
