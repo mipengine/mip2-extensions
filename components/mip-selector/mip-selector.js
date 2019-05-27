@@ -98,11 +98,11 @@ export default class MIPSelector extends CustomElement {
 
     let el = event.target
 
-    while (!el.hasAttribute('option')) {
+    while (el && el !== document && !el.hasAttribute('option')) {
       el = el.parentNode
     }
 
-    el && this.onOptionPicked(el)
+    el && el !== document && this.onOptionPicked(el)
   }
 
   /**
