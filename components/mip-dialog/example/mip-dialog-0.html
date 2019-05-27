@@ -7,27 +7,33 @@
   <title>Document</title>
   <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <style mip-custom>
-    .mip-modal-dialog-buttons {
-      display: -webkit-box;
-      display: -ms-flexbos;
-      display: flex;
-      -webkit-box-orient: horizontal;
-      -webkit-box-direction: reverse;
-      -ms-flex-direction: row-reverse;
-      flex-direction: row-reverse;
-    }
-
-    .mip-modal-dialog-button {
+    .mip-dialog-button {
+      appearance: button;
+      height: 32px;
+      padding: 0 15px;
       margin-left: 8px;
+      border: 1px solid #d9d9d9;
       border-radius: 4px;
       box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
+      outline: 0;
       line-height: 1.499;
       font-weight: 400;
       font-size: 14px;
+      text-align: center;
+      white-space: nowrap;
       color: rgba(0, 0, 0, .65);
+      background-color: #fff;
+      background-image: none;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
     }
 
-    .mip-modal-dialog-button-primary {
+    .mip-dialog-button-text {
+      pointer-events: none;
+    }
+
+    .mip-dialog-button-primary {
       border-color: #1890ff;
       text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
       color: #fff;
@@ -41,22 +47,27 @@
       {"visible": false}
     </script>
   </mip-data>
-  <mip-modal
-    title="基本模态框"
-    content="一些基本内容……"
+  <mip-dialog
     m-bind:visible="visible"
     on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
   >
-  </mip-modal>
+    <template slot="header">
+      <h3>基本对话框</h3>
+    </template>
+    <template slot="body">
+      <p>一些内容……</p>
+      <p>一些内容……</p>
+      <p>一些内容……</p>
+    </template>
+  </mip-dialog>
   <button
-    class="mip-modal-dialog-button mip-modal-dialog-button-primary"
+    class="mip-dialog-button mip-dialog-button-primary"
     on="tap:MIP.setData({visible: true})"
   >
-    打开基本模态框
+    打开基本对话框
   </button>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
   <script src="http://localhost:8111/mip-mustache/mip-mustache.js"></script>
   <script src="/mip-dialog/mip-dialog.js"></script>
-  <script src="/mip-modal/mip-modal.js"></script>
 </body>
 </html>

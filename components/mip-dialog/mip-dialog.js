@@ -11,11 +11,15 @@ const KEYCODES = {
   ESC: 27
 }
 
+const CLASSNAMES = {
+  CONTAINER: 'container',
+  HIDDEN: 'hidden',
+  MASK: 'mask',
+  CONTENT: 'content'
+}
+
 export default class MIPDialog extends CustomElement {
   static props = {
-    type: {
-      default: ''
-    },
     visible: {
       type: Boolean,
       default: false
@@ -71,10 +75,7 @@ export default class MIPDialog extends CustomElement {
       return this.cx(Object.keys(suffix).filter(key => suffix[key]).map(hyphenate))
     }
 
-    const {type} = this.props
-    const prefix = type ? `mip-${type}-dialog` : TAG
-
-    return suffix ? `${prefix}-${suffix}` : prefix
+    return suffix ? `${TAG}-${suffix}` : TAG
   })
 
   toggleMask () {
@@ -88,7 +89,7 @@ export default class MIPDialog extends CustomElement {
     const {$container} = this.refs
 
     mask && this.toggleMask()
-    $container.classList.toggle(this.cx('container-hidden'))
+    $container.classList.toggle(this.cx(CLASSNAMES.HIDDEN))
   }
 
   handleVisibleChange () {
@@ -107,6 +108,14 @@ export default class MIPDialog extends CustomElement {
     this.refs && visible && this.toggleMask()
   }
 
+  triggerOk (event) {
+    viewer.eventAction.execute('ok', this.element, event)
+  }
+
+  triggerCancel (event) {
+    viewer.eventAction.execute('cancel', this.element, event)
+  }
+
   /**
    * @param {Event} event object.
    */
@@ -114,11 +123,11 @@ export default class MIPDialog extends CustomElement {
     const {target} = event
     const {$okButton} = this.refs
 
-    if (!$okButton.contains(target)) {
+    if (!$okButton || !$okButton.contains(target)) {
       return
     }
 
-    viewer.eventAction.execute('ok', this.element, event)
+    this.triggerOk(event)
   }
 
   /**
@@ -129,11 +138,14 @@ export default class MIPDialog extends CustomElement {
     const {maskClosable} = this.props
     const {$container, $cancelButton} = this.refs
 
-    if ((target !== $container || !maskClosable || Date.now() - this.openTime < 300) && !$cancelButton.contains(target)) {
+    if (
+      (target !== $container || !maskClosable || Date.now() - this.openTime < 300) &&
+      (!$cancelButton || !$cancelButton.contains(target))
+    ) {
       return
     }
 
-    viewer.eventAction.execute('cancel', this.element, event)
+    this.triggerCancel(event)
   }
 
   /**
@@ -148,7 +160,7 @@ export default class MIPDialog extends CustomElement {
 
     if (keyboard && event.keyCode === KEYCODES.ESC) {
       event.stopPropagation()
-      this.handleCancel(event)
+      this.triggerCancel(event)
     }
   }
 
@@ -190,7 +202,13 @@ export default class MIPDialog extends CustomElement {
     const {[`$${name}`]: container} = this.refs
     const {[`${name}$`]: slot} = this.slots
 
-    if (!container || !slot) {
+    if (!container) {
+      return
+    }
+
+    if (!slot) {
+      container.classList.toggle('mip-dialog-hidden')
+
       return
     }
 
@@ -219,9 +237,12 @@ export default class MIPDialog extends CustomElement {
     const $portal = document.createElement('div')
 
     const template =
-      `<div ref="container" class="${this.cx(['container', {containerHidden: !visible, mask}])}">` +
+      `<div ref="container" class="${this.cx([
+        CLASSNAMES.CONTAINER,
+        {[CLASSNAMES.HIDDEN]: !visible, [CLASSNAMES.MASK]: mask}
+      ])}">` +
         `<div class="${this.cx()}">` +
-          `<div class="${this.cx('content')}">` +
+          `<div class="${this.cx(CLASSNAMES.CONTENT)}">` +
             SLOTS.map(this.getSlotContainer).join('') +
           '</div>' +
         '</div>' +

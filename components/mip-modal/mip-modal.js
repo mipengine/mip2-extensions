@@ -150,7 +150,6 @@ export default class MIPModal extends CustomElement {
     const $dialog = document.createElement('mip-dialog')
 
     this.element.innerHTML = ''
-    $dialog.setAttribute('type', 'modal')
     $dialog.innerHTML = innerHTML
 
     this.refs = {$dialog}
