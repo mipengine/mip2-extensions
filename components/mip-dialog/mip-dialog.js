@@ -81,7 +81,7 @@ export default class MIPDialog extends CustomElement {
   toggleMask () {
     const {$container} = this.refs
 
-    $container.classList.toggle(this.cx('mask'))
+    $container.classList.toggle(this.cx(ClassNames.MASK))
   }
 
   toggleDialog () {
@@ -207,7 +207,7 @@ export default class MIPDialog extends CustomElement {
     }
 
     if (!slot) {
-      container.classList.toggle('mip-dialog-hidden')
+      container.classList.add(this.cx(ClassNames.HIDDEN))
 
       return
     }
@@ -215,6 +215,14 @@ export default class MIPDialog extends CustomElement {
     container.innerHTML = slot.getAttribute('type') === 'mip-mustache'
       ? await templates.render(slot, slot.scope)
       : slot.innerHTML
+
+    if (!container.innerHTML) {
+      container.classList.add(this.cx(ClassNames.HIDDEN))
+
+      return
+    }
+
+    container.classList.remove(this.cx(ClassNames.HIDDEN))
 
     container.querySelectorAll('[ref]').forEach((element) => {
       this.refs[`$${element.getAttribute('ref')}`] = element

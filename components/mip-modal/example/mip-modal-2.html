@@ -23,6 +23,25 @@
       color: #fff;
       background-color: #1890ff;
     }
+
+    .mip-input {
+      width: 100%;
+      height: 32px;
+      padding: 4px 11px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: rgba(0, 0, 0, .65);
+      background-color: #fff;
+      transition: border-color .3s;
+    }
+
+    .mip-input:focus {
+      border-color: #40a9ff;
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, .2);
+      outline: 0;
+    }
   </style>
 </head>
 <body>
@@ -32,37 +51,29 @@
     </script>
   </mip-data>
   <mip-modal
-    title="自定义页脚"
+    title="表单模态框"
     m-bind:visible="visible"
-    ok-text="允许"
-    cancel-text="拒绝"
-    on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
+    on="ok:form.submit cancel:MIP.setData({visible: false})"
   >
     <template slot="body">
-      <p>一些内容……</p>
-      <p>一些内容……</p>
-      <p>一些内容……</p>
-      <p>一些内容……</p>
-      <p>一些内容……</p>
-    </template>
-    <template type="mip-mustache" slot="footer">
-      <div class="mip-modal-dialog-buttons">
-        <button ref="okButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-ok-button">
-          <span class="mip-modal-dialog-ok-text">{{okText}}</span>
-        </button>
-        <button ref="cancelButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-button-primary mip-modal-dialog-cancel-button">
-          <span class="mip-modal-dialog-cancel-text">{{cancelText}}</span>
-        </button>
-      </div>
+      <mip-form
+        id="form"
+        method="get"
+        fetch-url="./form.json"
+        on="submitSuccess:MIP.setData({visible: false})"
+      >
+        <input type="text" name="name" placeholder="姓名" class="mip-input">
+      </mip-form>
     </template>
   </mip-modal>
   <button
     class="mip-modal-dialog-button mip-modal-dialog-button-primary"
     on="tap:MIP.setData({visible: true})"
   >
-    打开自定义页脚模态框
+    打开表单模态框
   </button>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-form/mip-form.js"></script>
   <script src="/mip-mustache/mip-mustache.js"></script>
   <script src="/mip-dialog/mip-dialog.js"></script>
   <script src="/mip-modal/mip-modal.js"></script>
