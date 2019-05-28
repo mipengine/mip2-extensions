@@ -64,7 +64,7 @@ export default class MIPUserNotification extends CustomElement {
     if (this.showIfGeo) {
       this.geoPromise = new Promise(resolve => {
         this.addEventAction('getLocationComplete', res => {
-          resolve(this.shouldShowInCity(res))
+          this.shouldShowInCity(res).then(resolve)
         })
         viewer.eventAction.execute('notificationLoaded', this.element)
       })
@@ -125,7 +125,7 @@ export default class MIPUserNotification extends CustomElement {
       }
       if (this.geoPromise) {
         // 查看定位配置
-        return this.showIfGeo
+        return this.geoPromise
       }
       // 默认显示通知
       return true
