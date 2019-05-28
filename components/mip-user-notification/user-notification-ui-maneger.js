@@ -41,14 +41,13 @@ export default class NotificationUiManager {
       this.queueEmptyHandler()
     }
     this.queueSize += 1
-    const promise = this.queuePromise.then(() => {
-      return show().then(() => {
-        this.queueSize--
+    const promise = this.queuePromise.then(show)
+      .then(() => {
+        this.queueSize -= 1
         if (this.queueSize === 0) {
           this.queueEmptyHandler()
         }
       })
-    })
     this.queuePromise = promise
     return promise
   }

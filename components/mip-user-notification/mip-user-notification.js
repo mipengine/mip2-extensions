@@ -16,9 +16,9 @@ export default class MIPUserNotification extends CustomElement {
   constructor (element) {
     super(element)
     this.elementId = null
-    const deferred = new Deferred()
-    this.dialogPromise = deferred.promise
-    this.dialogResolve = deferred.resolve
+    const {promise, resolve} = new Deferred()
+    this.dialogPromise = promise
+    this.dialogResolve = resolve
     this.dismissHref = null
     this.persistDismissal = false
     this.showIfHref = null
