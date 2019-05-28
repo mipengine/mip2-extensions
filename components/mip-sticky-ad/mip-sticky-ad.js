@@ -25,8 +25,12 @@ function removeAlphaFromColor (rgb) {
 
 export default class MIPStickyAd extends MIP.CustomElement {
   build () {
-    this.show = this.show.bind(this)
     const ele = this.element
+    if (ele.getAttribute('layout') !== 'nodisplay') {
+      log.error('必须设置 layout 属性为 nodisplay')
+      return
+    }
+
     ele.classList.add('i-miphtml-sticky-ad-layout')
     const children = ele.children
     if (children.length !== 1 || children[0].tagName !== 'MIP-AD') {
@@ -48,6 +52,7 @@ export default class MIPStickyAd extends MIP.CustomElement {
     closeButton.addEventListener('click', this.close.bind(this))
     ele.appendChild(closeButton)
 
+    this.show = this.show.bind(this)
     setTimeout(() => {
       viewport.on('scroll', this.show)
     })
@@ -59,7 +64,7 @@ export default class MIPStickyAd extends MIP.CustomElement {
   }
 
   show () {
-    let ele = this.element
+    const ele = this.element
     const scrollTop = viewport.getScrollTop()
 
     let display = () => {
@@ -67,10 +72,13 @@ export default class MIPStickyAd extends MIP.CustomElement {
       css(ele, 'display', '')
       updatePaddingBottom(ele.offsetHeight)
       this.forceOpacity(window.getComputedStyle(ele)['backgroundColor'])
+      setTimeout(() => {
+        viewport.off('scroll', this.show)
+      })
     }
 
+    // 取 1 兼容 iOS
     if (scrollTop > 1) {
-      viewport.off('scroll', this.show)
       if (this.ad.isBuilt()) {
         display()
       } else {
@@ -96,11 +104,8 @@ export default class MIPStickyAd extends MIP.CustomElement {
     css(this.element, 'background-color', newColor)
   }
 
-  unlayoutCallback () {
-    updatePaddingBottom(0)
-  }
-
   disconnectedCallback () {
     viewport.off('scroll', this.show)
+    updatePaddingBottom(0)
   }
 }
