@@ -16,58 +16,58 @@
 
 * `layout="nodisplay"` 和 `class="mip-hidden"` 是必写项，否则刷新页面会发生闪动。
 
-组件的显示与否可以通过 3 中方式进行控制：
+组件的显示与否可以通过 3 种方式进行控制：
 
-1. 添加 `data-show-if-href` 属性。那么，组件渲染之前会先向服务器询问是否需要显示，根据返回结果控制现实与否。
+1. 添加 `data-show-if-href` 属性。那么，组件渲染之前会先向服务器询问是否需要显示，根据返回结果控制显示与否。
 
 2. 添加省市配置。配置在  `showIn` 城市中的用户会收到通知，配置在 `notShowIn` 城市中的用户收不到通知。没出现在上述两个配置中的城市，默认显示。配置举例如下：
 
 ```html
 <script type="application/json">
-      {
-        "notShowIn": [ "北京", "新疆", "西藏"],
-        "showIn": [ "山东", "上海"]
-      }
+  {
+    "notShowIn": [ "北京", "新疆", "西藏"],
+    "showIn": [ "山东", "上海"]
+  }
 </script>
 ```
 省市名称支持简写和全称，如果写全称请保证书写正确。
 
 >注意：该功能的使用需要结合 mip-map 组件，通过 mip-map 获得用户的定位信息。mip-map 使用配置如下:
 
-在 mip-map 组件中需要设置 `getPositionFailed` 和 `getPositionFailed` 事件的回调，用于在获取位置成功后通知 mip-user-notification 组件根据位置信息进行显示，两个回调均需设置。如果在一个页面中添加的多个消息通知组件都需要使用定位信息，则以空格分开，每个组件均需指定 `getPositionFailed` 和 `getPositionFailed` 事件的回调。
+在 mip-map 组件中需要设置 `getPositionFailed` 和 `getPositionComplete` 事件的回调，用于在获取位置失败或成功后通知 mip-user-notification 组件根据位置信息进行显示，两个回调均需设置。如果在一个页面中添加的多个消息通知组件都需要使用定位信息，则以空格分开，每个组件均需指定 `getPositionFailed` 和 `getPositionComplete` 事件的回调。
 ```html
-  <mip-map on="getPositionFailed:myUserNotification.getLocationComplete getPositionComplete:myUserNotification.getLocationComplete" id="myMap">
-      <script type="application/json">
-        {
-          "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
-          "hideMap": true
-        }
-      </script>
-  </mip-map>
+<mip-map on="getPositionFailed:myUserNotification.getLocationComplete getPositionComplete:myUserNotification.getLocationComplete" id="myMap">
+  <script type="application/json">
+    {
+      "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
+      "hideMap": true
+    }
+  </script>
+</mip-map>
 ```
 
 同时，需在 mip-user-notification 组件中指定 `data-show-if-geo` 为 `true`，指定 mip-user-notification 组件 `on="notificationLoaded:myMap.getLocal"`，即在 load 完成后触发 mip-map 的定位功能，
 
 ```html
-  <mip-user-notification
-    id="myUserNotification" 
-    layout="nodisplay"
-    class="mip-hidden"
-    data-show-if-geo="true"
-    on="notificationLoaded:myMap.getLocal"
-    data-dismiss-href="http://localhost:8081/jsonp-test"
-    >
-    <script type="application/json">
-      {
-        "notShowIn": [ "北京", "新疆", "西藏"],
-        "showIn": [ "山东", "上海"]
-      }
-    </script>
-    <div style="border: 1px solid red">
-      请尽快从 mip1 更新到 mip2 ~
-      <button style="float: right" on="tap:myUserNotification.dismiss">接受</button>
-    </div>
-  </mip-user-notification>
+<mip-user-notification
+  id="myUserNotification" 
+  layout="nodisplay"
+  class="mip-hidden"
+  data-show-if-geo="true"
+  on="notificationLoaded:myMap.getLocal"
+  data-dismiss-href="http://localhost:8081/jsonp-test"
+  >
+  <script type="application/json">
+    {
+      "notShowIn": [ "北京", "新疆", "西藏"],
+      "showIn": [ "山东", "上海"]
+    }
+  </script>
+  <div style="border: 1px solid red">
+    请尽快从 mip1 更新到 mip2 ~
+    <button style="float: right" on="tap:myUserNotification.dismiss">接受</button>
+  </div>
+</mip-user-notification>
 ```
 
 3. 读取本地缓存中用户上一次操作。当用户 dismiss 消息通知时，这一结果会以 `notification:yourNotificationId` 为 `key` 存储在浏览器缓存中，当用户再次打开站点，组件会优先读取缓存数据，一旦用户 dismiss 过，`notification:yourNotificationId` 为 `true`，以后就不再显示该条通知。
@@ -83,12 +83,12 @@
 
 ```html
 <mip-user-notification
-    layout="nodisplay"
-    id="mip-user-notification1"
-    data-show-if-href="https://foo.com/api/show-api?timestamp=TIMESTAMP"
-    data-dismiss-href="https://foo.com/api/dismissed">
-    通过下方的 on 事件支持用户手动忽略消息。
-   <button on="tap:mip-user-notification1.dismiss">已收到</button>
+  layout="nodisplay"
+  id="mip-user-notification1"
+  data-show-if-href="https://foo.com/api/show-api?timestamp=TIMESTAMP"
+  data-dismiss-href="https://foo.com/api/dismissed">
+  通过下方的 on 事件支持用户手动忽略消息。
+  <button on="tap:mip-user-notification1.dismiss">已收到</button>
 </mip-user-notification>
 ```
 
@@ -96,7 +96,7 @@
 
 ### data-show-if-href
 
-说明：消息通知显示前调用，在指定了此 url 之后，MIP 会向指定的 url 发出跨域的 get 请求，通过请求返回的值决定消息通知现实与否。不可和 `data-show-if-geo` 同时存在，二者选一。
+说明：消息通知显示前调用，在指定了此 url 之后，MIP 会向指定的 url 发出跨域的 get 请求，通过请求返回的值决定消息通知显示与否。不可和 `data-show-if-geo` 同时存在，二者选一。
 
 必选项：否
 

@@ -1,9 +1,9 @@
 export default class NotificationUiManager {
   constructor () {
-    this.queueSize_ = 0
-    this.queuePromise_ = Promise.resolve()
-    this.queueEmptyHandler_ = () => {} // Make this an observable if requested
-    this.queueNotEmptyHandler_ = () => {}
+    this.queueSize = 0
+    this.queuePromise = Promise.resolve()
+    this.queueEmptyHandler = () => {} // Make this an observable if requested
+    this.queueNotEmptyHandler = () => {}
   }
 
   /**
@@ -12,8 +12,8 @@ export default class NotificationUiManager {
    * @param {function()} handler UI 队列为空调用
    */
   onQueueEmpty (handler) {
-    this.queueEmptyHandler_ = handler
-    if (this.queueSize_ === 0) {
+    this.queueEmptyHandler = handler
+    if (this.queueSize === 0) {
       handler()
     }
   }
@@ -24,8 +24,8 @@ export default class NotificationUiManager {
    * @param {function()} handler UI 队列不为空调用
    */
   onQueueNotEmpty (handler) {
-    this.queueNotEmptyHandler_ = handler
-    if (this.queueSize_ > 0) {
+    this.queueNotEmptyHandler = handler
+    if (this.queueSize > 0) {
       handler()
     }
   }
@@ -37,19 +37,19 @@ export default class NotificationUiManager {
    * @returns {!Promise} 异步返回
    */
   registerUI (show) {
-    if (this.queueSize_ === 0) {
-      this.queueEmptyHandler_()
+    if (this.queueSize === 0) {
+      this.queueEmptyHandler()
     }
-    this.queueSize_++
-    const promise = this.queuePromise_.then(() => {
+    this.queueSize += 1
+    const promise = this.queuePromise.then(() => {
       return show().then(() => {
-        this.queueSize_--
-        if (this.queueSize_ === 0) {
-          this.queueEmptyHandler_()
+        this.queueSize--
+        if (this.queueSize === 0) {
+          this.queueEmptyHandler()
         }
       })
     })
-    this.queuePromise_ = promise
+    this.queuePromise = promise
     return promise
   }
 }

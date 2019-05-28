@@ -7,9 +7,8 @@ const SERVICE_ID = 'mip-user-notification-manager'
 const {CustomElement, util, viewer, Services} = MIP
 const Deferred = util.Deferred
 const {error, log} = util.log('mip-user-notification')
-const {fetch} = window
 const CustomStorage = util.customStorage
-const Storage = new CustomStorage(0)
+const storage = new CustomStorage(0)
 const MIP_HIDDEN_CLASS = 'mip-hidden'
 const MIP_ACTIVE_CLASS = 'mip-active'
 
@@ -40,6 +39,9 @@ export default class MIPUserNotification extends CustomElement {
     })
   }
 
+  /**
+   * 覆盖 nodisplay 的 display: 'none', 通过 shouldShow 控制显示
+   */
   handleNodisplayToClassHideen () {
     // 覆盖 nodisplay 的 display: 'none'
     util.css(this.element, { display: '' })
@@ -47,6 +49,9 @@ export default class MIPUserNotification extends CustomElement {
     this.toggle(false)
   }
 
+  /**
+   * 获取元素属性并校验
+   */
   getElementAttribute () {
     this.elementId = this.element.id
     if (!this.elementId) {
@@ -67,7 +72,7 @@ export default class MIPUserNotification extends CustomElement {
 
     this.showIfHref = this.element.getAttribute('data-show-if-href')
     if (this.showIfHref) {
-      this.assertHttpsUrl(this.showIfHref, this.element)
+      this.assertHttpsUrl(this.showIfHref)
     }
 
     if (!!this.showIfHref + !!this.showIfGeo > 1) {
@@ -76,15 +81,21 @@ export default class MIPUserNotification extends CustomElement {
 
     this.dismissHref = this.element.getAttribute('data-dismiss-href')
     if (this.dismissHref) {
-      this.assertHttpsUrl(this.dismissHref, this.element)
+      this.assertHttpsUrl(this.dismissHref)
     }
 
     const persistDismissal = this.element.getAttribute('data-persist-dismissal')
-    this.persistDismissal = (persistDismissal !== 'false' && persistDismissal !== 'no')
+    this.persistDismissal = persistDismissal !== 'false' && persistDismissal !== 'no'
 
-    this.enctype = this.element.getAttribute('enctype') || 'application/jsoncharset=utf-8'
+    this.enctype = this.element.getAttribute('enctype') || 'application/json;charset=utf-8'
   }
 
+  /**
+   * 根据 html 配置和定位信息判断当前城市是否应显示通知
+   *
+   * @param {Object} res mip-map getLocal 返回的位置信息
+   * @returns {Promise<boolean>} 当前城市是否应显示通知
+   */
   shouldShowInCity (res) {
     const {notShowIn, showIn} = this.props
     const province = res.address.province
@@ -100,6 +111,9 @@ export default class MIPUserNotification extends CustomElement {
     return Promise.resolve(shouldShow ? true : !shouldNotShow)
   }
 
+  /**
+   * 是否应显示通知
+   */
   shouldShow () {
     return this.isDismissed().then(dismissed => {
       if (dismissed) {
@@ -118,20 +132,26 @@ export default class MIPUserNotification extends CustomElement {
     })
   }
 
+  /**
+   * 按照配置和本地存储信息觉得是否不应当消息消息通知
+   */
   isDismissed () {
     if (!this.persistDismissal) {
       return Promise.resolve(false)
     }
-    let dismissedStorage = Storage.get(this.storageKey)
+    let dismissedStorage = storage.get(this.storageKey)
     return Promise.resolve(dismissedStorage === 'true')
   }
 
+  /**
+   * 渲染元素
+   */
   show () {
     let fixed = document.createElement('mip-fixed')
     fixed.setAttribute('type', 'bottom')
     fixed.setAttribute('id', `notification-fixed-${this.elementId}`)
     let content = this.element.children
-    Array.from(content).forEach(element => {
+    ;[...content].forEach(element => {
       if (element.nodeName !== 'SCRIPT') {
         fixed.appendChild(element)
       }
@@ -150,9 +170,6 @@ export default class MIPUserNotification extends CustomElement {
    * @param  {boolean} isShow 是否显示
    */
   toggle (isShow) {
-    if (isShow === undefined) {
-      isShow = this.element.hasAttribute('hidden')
-    }
     if (isShow) {
       this.element.classList.remove(MIP_HIDDEN_CLASS)
       this.element.classList.add(MIP_ACTIVE_CLASS)
@@ -164,6 +181,9 @@ export default class MIPUserNotification extends CustomElement {
     }
   }
 
+  /**
+   * 向服务端发请求询问时候显示通知
+   */
   shouldShowViaXhr () {
     return this.getShowEndpoint()
       .then(this.onGetShowEndpointSuccess.bind(this))
@@ -189,9 +209,8 @@ export default class MIPUserNotification extends CustomElement {
         } else {
           return data.showNotification
         }
-      }).catch(err => {
-        error(err)
       })
+      .catch(err => error(err))
   }
 
   buildGetRequestHeaders () {
@@ -220,6 +239,12 @@ export default class MIPUserNotification extends CustomElement {
     return url
   }
 
+  /**
+   * 处理服务器返回的结果
+   *
+   * @param {boolean} isShowNotification 是否显示消息通知
+   * @returns {Promise<boolean>} 根据服务器返回结果，是否显示消息通知
+   */
   onGetShowEndpointSuccess (isShowNotification) {
     if (typeof isShowNotification !== 'boolean') {
       error('showNotification 应为 boolean 类型')
@@ -230,12 +255,16 @@ export default class MIPUserNotification extends CustomElement {
     return Promise.resolve(isShowNotification)
   }
 
+  /**
+   * 用户已读消息后，隐藏消息通知并将用户操作存储在本地
+   * 如果配置了 ‘data-dismiss-href’, 则向配置的 url 发起 post 请求报告用户操作
+   */
   dismiss () {
     this.toggle(false)
     this.dialogResolve()
 
     if (this.persistDismissal) {
-      Storage.set(this.storageKey, true)
+      storage.set(this.storageKey, true)
     }
     if (this.dismissHref) {
       this.postDismissEnpoint()
@@ -264,6 +293,12 @@ export default class MIPUserNotification extends CustomElement {
     }
   }
 
+  /**
+   * 检查 url 是否合法
+   *
+   * @param {string} urlString 传入的 url
+   * @returns {string} urlString
+   */
   assertHttpsUrl (urlString) {
     if (urlString === null) {
       error('url 不存在')
@@ -274,6 +309,12 @@ export default class MIPUserNotification extends CustomElement {
     return urlString
   }
 
+  /**
+   * 检查 url 是否安全
+   *
+   * @param {string} url 传入的 url
+   * @returns {boolean} url 是否安全
+   */
   isSecureUrlDeprecated (url) {
     if (typeof url === 'string') {
       url = this.parseUrlWithA(url)
@@ -289,6 +330,12 @@ export default class MIPUserNotification extends CustomElement {
     return index >= 0 && string.indexOf(suffix, index) === index
   }
 
+  /**
+   * 使用 a 标签解析 url
+   *
+   * @param {string} url 传入的 url
+   * @returns {Object} 解析后的 url
+   */
   parseUrlWithA (url) {
     let a = document.createElement('a')
     a.href = url
