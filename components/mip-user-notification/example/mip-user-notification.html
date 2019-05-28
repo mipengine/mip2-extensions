@@ -9,11 +9,11 @@
   <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
 </head>
 <body>
+  <!-- 不使用定位和服务端询问 -->
   <mip-user-notification
   id="myUserNotification" 
   layout="nodisplay"
   class="mip-hidden"
-  data-dismiss-href="./data.json"
   >
   <div style="border: 1px solid green">
     不使用定位和服务端询问：请尽快从 mip1 更新到 mip2 ~
@@ -21,6 +21,7 @@
   </div>
   </mip-user-notification>
 
+  <!-- data-persist-dismissal="false" -->
   <mip-user-notification
   id="myUserNotification1" 
   layout="nodisplay"
@@ -33,6 +34,7 @@
   </div>
   </mip-user-notification>
 
+  <!-- 根据位置显示 -->
   <mip-map on="getPositionFailed:myUserNotification2.getLocationComplete getPositionComplete:myUserNotification2.getLocationComplete" id="myMap">
       <script type="application/json">
         {
@@ -48,7 +50,6 @@
     class="mip-hidden"
     data-show-if-geo="true"
     on="notificationLoaded:myMap.getLocal"
-    data-dismiss-href="./data.json"
     >
     <script type="application/json">
       {
@@ -62,12 +63,12 @@
     </div>
   </mip-user-notification>
 
+  <!-- 根据 data-show-if-href 返回显示 -->
   <mip-user-notification
   id="myUserNotification3" 
   layout="nodisplay"
   class="mip-hidden"
   data-show-if-href="./data.json"
-  data-dismiss-href="./data.json"
   >
   <div style="border: 1px solid blue">
     根据 data-show-if-href 返回显示：快快更新吧~
@@ -75,6 +76,7 @@
   </div>
   </mip-user-notification>
 
+  <!-- enctype测试 -->
   <mip-user-notification
   id="myUserNotification4" 
   layout="nodisplay"

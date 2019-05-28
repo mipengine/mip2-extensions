@@ -129,6 +129,7 @@ export default class MIPUserNotification extends CustomElement {
   show () {
     let fixed = document.createElement('mip-fixed')
     fixed.setAttribute('type', 'bottom')
+    fixed.setAttribute('id', `notification-fixed-${this.elementId}`)
     let content = this.element.children
     Array.from(content).forEach(element => {
       if (element.nodeName !== 'SCRIPT') {
@@ -158,6 +159,8 @@ export default class MIPUserNotification extends CustomElement {
     } else {
       this.element.classList.remove(MIP_ACTIVE_CLASS)
       this.element.classList.add(MIP_HIDDEN_CLASS)
+      let notificationFixed = document.getElementById(`notification-fixed-${this.elementId}`)
+      notificationFixed && notificationFixed.classList.add(MIP_HIDDEN_CLASS)
     }
   }
 
@@ -228,8 +231,7 @@ export default class MIPUserNotification extends CustomElement {
   }
 
   dismiss () {
-    this.element.classList.remove('mip-active')
-    this.element.classList.add('mip-hidden')
+    this.toggle(false)
     this.dialogResolve()
 
     if (this.persistDismissal) {
@@ -291,7 +293,7 @@ export default class MIPUserNotification extends CustomElement {
     let a = document.createElement('a')
     a.href = url
 
-    // IE11 doesn't provide full URL components when parsing relative URLs.
+    // IE11 没有解析相对 url 的组件
     if (!a.protocol) {
       a.href = a.href
     }
@@ -308,22 +310,19 @@ export default class MIPUserNotification extends CustomElement {
       origin: null // Set below.
     }
 
-    // Some IE11 specific polyfills.
-    // 1) IE11 strips out the leading '/' in the pathname.
+    // 1) IE11 会去掉路径名中的 '/'
     if (info.pathname[0] !== '/') {
       info.pathname = '/' + info.pathname
     }
 
-    // 2) For URLs with implicit ports, IE11 parses to default ports while
-    // other browsers leave the port field empty.
+    // 2) 对于隐式端口的URL，IE11解析为默认端口，而其他浏览器将端口字段留空
     if ((info.protocol === 'http:' && info.port === 80) ||
     (info.protocol === 'https:' && info.port === 443)) {
       info.port = ''
       info.host = info.hostname
     }
 
-    // For data URI a.origin is equal to the string 'null' which is not useful.
-    // We instead return the actual origin which is the full URL.
+    // 对于数据 uri，a.origin 等于字符串'null'，这里返回原 url
     if (a.origin && a.origin !== 'null') {
       info.origin = a.origin
     } else if (info.protocol === 'data:' || !info.host) {
@@ -331,7 +330,6 @@ export default class MIPUserNotification extends CustomElement {
     } else {
       info.origin = info.protocol + '//' + info.host
     }
-    // Freeze during testing to avoid accidental mutation.
     const frozen = Object.freeze ? Object.freeze(info) : info
 
     return frozen

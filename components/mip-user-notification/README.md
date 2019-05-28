@@ -22,53 +22,53 @@
 
 2. 添加省市配置。配置在  `showIn` 城市中的用户会收到通知，配置在 `notShowIn` 城市中的用户收不到通知。没出现在上述两个配置中的城市，默认显示。配置举例如下：
 
-  ```html
-  <script type="application/json">
-        {
-          "notShowIn": [ "北京", "新疆", "西藏"],
-          "showIn": [ "山东", "上海"]
-        }
-  </script>
-  ```
-  省市名称支持简写和全称，如果写全称请保证书写正确。
+```html
+<script type="application/json">
+      {
+        "notShowIn": [ "北京", "新疆", "西藏"],
+        "showIn": [ "山东", "上海"]
+      }
+</script>
+```
+省市名称支持简写和全称，如果写全称请保证书写正确。
 
- >注意：该功能的使用需要结合 mip-map 组件，通过 mip-map 获得用户的定位信息。mip-map 使用配置如下:
+>注意：该功能的使用需要结合 mip-map 组件，通过 mip-map 获得用户的定位信息。mip-map 使用配置如下:
 
-  在 mip-map 组件中需要设置 `getPositionFailed` 和 `getPositionFailed` 事件的回调，用于在获取位置成功后通知 mip-user-notification 组件根据位置信息进行显示，两个回调均需设置。如果在一个页面中添加的多个消息通知组件都需要使用定位信息，则以空格分开，每个组件均需指定 `getPositionFailed` 和 `getPositionFailed` 事件的回调。
-  ```html
-    <mip-map on="getPositionFailed:myUserNotification.getLocationComplete getPositionComplete:myUserNotification.getLocationComplete" id="myMap">
-        <script type="application/json">
-          {
-            "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
-            "hideMap": true
-          }
-        </script>
-    </mip-map>
-  ```
-
-  同时，需在 mip-user-notification 组件中指定 `data-show-if-geo` 为 `true`，指定 mip-user-notification 组件 `on="notificationLoaded:myMap.getLocal"`，即在 load 完成后触发 mip-map 的定位功能，
-
-  ```html
-    <mip-user-notification
-      id="myUserNotification" 
-      layout="nodisplay"
-      class="mip-hidden"
-      data-show-if-geo="true"
-      on="notificationLoaded:myMap.getLocal"
-      data-dismiss-href="http://localhost:8081/jsonp-test"
-      >
+在 mip-map 组件中需要设置 `getPositionFailed` 和 `getPositionFailed` 事件的回调，用于在获取位置成功后通知 mip-user-notification 组件根据位置信息进行显示，两个回调均需设置。如果在一个页面中添加的多个消息通知组件都需要使用定位信息，则以空格分开，每个组件均需指定 `getPositionFailed` 和 `getPositionFailed` 事件的回调。
+```html
+  <mip-map on="getPositionFailed:myUserNotification.getLocationComplete getPositionComplete:myUserNotification.getLocationComplete" id="myMap">
       <script type="application/json">
         {
-          "notShowIn": [ "北京", "新疆", "西藏"],
-          "showIn": [ "山东", "上海"]
+          "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
+          "hideMap": true
         }
       </script>
-      <div style="border: 1px solid red">
-        请尽快从 mip1 更新到 mip2 ~
-        <button style="float: right" on="tap:myUserNotification.dismiss">接受</button>
-      </div>
-    </mip-user-notification>
-  ```
+  </mip-map>
+```
+
+同时，需在 mip-user-notification 组件中指定 `data-show-if-geo` 为 `true`，指定 mip-user-notification 组件 `on="notificationLoaded:myMap.getLocal"`，即在 load 完成后触发 mip-map 的定位功能，
+
+```html
+  <mip-user-notification
+    id="myUserNotification" 
+    layout="nodisplay"
+    class="mip-hidden"
+    data-show-if-geo="true"
+    on="notificationLoaded:myMap.getLocal"
+    data-dismiss-href="http://localhost:8081/jsonp-test"
+    >
+    <script type="application/json">
+      {
+        "notShowIn": [ "北京", "新疆", "西藏"],
+        "showIn": [ "山东", "上海"]
+      }
+    </script>
+    <div style="border: 1px solid red">
+      请尽快从 mip1 更新到 mip2 ~
+      <button style="float: right" on="tap:myUserNotification.dismiss">接受</button>
+    </div>
+  </mip-user-notification>
+```
 
 3. 读取本地缓存中用户上一次操作。当用户 dismiss 消息通知时，这一结果会以 `notification:yourNotificationId` 为 `key` 存储在浏览器缓存中，当用户再次打开站点，组件会优先读取缓存数据，一旦用户 dismiss 过，`notification:yourNotificationId` 为 `true`，以后就不再显示该条通知。
 
@@ -127,13 +127,13 @@ https://example/show-notification?timestamp=1234567890&elementId=notification1
 这里通过 cors 实现跨域请求，服务端返回的请求头中需设置 `Access-Control-Allow-Origin`、`Access-Control-Allow-Methods` 和 `Access-Control-Allow-Headers` 字段。比如：
 
 ```js
-res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
 
-    if ('OPTIONS' === req.method) {
-      res.send(200);
-    }
+  if ('OPTIONS' === req.method) {
+    res.send(200)
+  }
 ```
 
 ### data-dismiss-href
