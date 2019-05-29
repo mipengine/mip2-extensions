@@ -58,6 +58,14 @@ export default class MIPUserNotification extends CustomElement {
       error('mip-user-notification 元素必须有 id')
     }
 
+    if (this.element.getAttribute('layout') !== 'nodisplay') {
+      error('layout 属性必须设置为 nodisplay')
+    }
+
+    if ([...this.element.classList].indexOf('mip-hidden') < 0) {
+      error('须设置 mip-hidden 防止抖动')
+    }
+
     this.storageKey = 'mip-user-notification:' + this.elementId
 
     this.showIfGeo = this.element.getAttribute('data-show-if-geo')
