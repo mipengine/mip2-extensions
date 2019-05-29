@@ -224,7 +224,9 @@ export default class MIPDialog extends CustomElement {
 
     container.classList.remove(this.cx(ClassNames.HIDDEN))
 
-    container.querySelectorAll('[ref]').forEach((element) => {
+    const refs = [...container.querySelectorAll('[ref]')]
+
+    refs.forEach((element) => {
       this.refs[`$${element.getAttribute('ref')}`] = element
     })
   }
