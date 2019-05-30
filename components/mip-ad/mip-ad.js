@@ -13,6 +13,7 @@ import baiduWmExtRender from './mip-baidu-wm-ext'
 import adImageplusRender from './mip-ad-imageplus'
 import adSspRender from './mip-ad-ssp'
 import adBaidusspRender from './mip-ad-baidussp'
+import adFdRender from './mip-ad-fd'
 
 const {warn} = MIP.util.log('mip-ad')
 
@@ -42,7 +43,8 @@ export default class MIPAd extends MIP.CustomElement {
       'baidu-wm-ext': baiduWmExtRender,
       'ad-imageplus': adImageplusRender,
       'ad-ssp': adSspRender,
-      'ad-baidussp': adBaidusspRender
+      'ad-baidussp': adBaidusspRender,
+      'ad-fd': adFdRender
     }[type]
 
     if (renderFunc && typeof renderFunc === 'function') {
