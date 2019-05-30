@@ -195,7 +195,7 @@ export default class MIPMap extends CustomElement {
     const {location} = this.props
 
     // 配置地址
-    let address = Object.values(location).join('')
+    let address = location && Object.values(location).join('')
 
     // 没有定位信息，则使用自动定位
     if (!address || !location.city) {
