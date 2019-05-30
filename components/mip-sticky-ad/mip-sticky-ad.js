@@ -52,6 +52,15 @@ export default class MIPStickyAd extends MIP.CustomElement {
     closeButton.addEventListener('click', this.close.bind(this))
     ele.appendChild(closeButton)
 
+    // 防止 appendChild 重新 build
+    ele._built = true
+    // 将组件移到 mip-fixed 下，以修复 ios iframe scroll 和 border-bottom 问题
+    let fixed = document.createElement('mip-fixed')
+    fixed.setAttribute('type', 'bottom')
+    fixed.style.overflow = 'visible'
+    document.body.appendChild(fixed)
+    fixed.appendChild(ele)
+
     this.show = this.show.bind(this)
     setTimeout(() => {
       viewport.on('scroll', this.show)
