@@ -18,6 +18,10 @@
       background: blue;
       color: #fff;
     }
+    mip-vote {
+      display: block;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
@@ -28,6 +32,14 @@
       text="点赞"
       src="./data.json"
     >
+      <div class="mip-vote-wrapper">
+        <template type="mip-mustache">
+          <div class=".mip-vote-button">
+            <mip-img src="{{ icon }}" width="20" height="20" layout="fixed" />
+            <p>{{ text }}</p>
+          </div>
+        </template>
+      </div>
     </mip-vote>
   </div>
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>

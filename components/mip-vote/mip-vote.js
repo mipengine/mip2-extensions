@@ -38,15 +38,26 @@ export default class mipVote extends CustomElement {
   }
 
   render () {
-    let { text, icon } = this.props
-    let button = document.createElement('div')
-    let iconDom = document.createElement('mip-img')
-    let textDom = document.createElement('span')
+    let templateDom = this.element.querySelector('template[type="mip-mustache"]')
+    let wrapper = document.createElement('div')
 
-    iconDom.src = icon
-    textDom.innerHTML = text
+    this.data = this.props
 
-    button.appendChild(iconDom)
-    button.appendChild(textDom)
+    wrapper.innerHTML = templateDom.innerHTML
+
+    this.element.appendChild(wrapper)
+
+    // let { text, icon } = this.props
+    // let button = document.createElement('div')
+    // let iconDom = document.createElement('mip-img')
+    // let textDom = document.createElement('span')
+
+    // iconDom.src = icon
+    // textDom.innerHTML = text
+
+    // button.appendChild(iconDom)
+    // button.appendChild(textDom)
+
+    // this.element.appendChild(button)
   }
 }
