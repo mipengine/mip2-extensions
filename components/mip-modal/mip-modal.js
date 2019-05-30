@@ -132,6 +132,9 @@ export default class MIPModal extends CustomElement {
     $dialog.appendChild(template)
   }
 
+  /**
+   * @param {string} name of slot
+   */
   propagateSlotScope = (name) => {
     const {$dialog} = this.refs
     const {[`${name}$`]: slot} = this.slots
@@ -140,6 +143,9 @@ export default class MIPModal extends CustomElement {
     $dialog.customElement.renderSlot(name)
   }
 
+  /**
+   * @param {string} name of slot
+   */
   propagateSlot = (name) => {
     this.propagateSlotIfAbsent(name)
     this.propagateSlotScope(name)

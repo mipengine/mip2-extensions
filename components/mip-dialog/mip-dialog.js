@@ -139,7 +139,7 @@ export default class MIPDialog extends CustomElement {
     const {$container, $cancelButton} = this.refs
 
     if (
-      (target !== $container || !maskClosable || Date.now() - this.openTime < 300) &&
+      (target !== $container || !maskClosable || (!customElements.get('mip-fastclick') && Date.now() - this.openTime < 400)) &&
       (!$cancelButton || !$cancelButton.contains(target))
     ) {
       return
@@ -244,7 +244,7 @@ export default class MIPDialog extends CustomElement {
         [`${element.getAttribute('slot')}$`]: element
       }), {})
 
-    const $portal = document.createElement('div')
+    const $portal = document.createElement('mip-fastclick')
 
     const template =
       `<div ref="container" class="${this.cx([

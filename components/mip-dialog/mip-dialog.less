@@ -1,3 +1,7 @@
+@border-radius: 4px;
+
+@m-border-radius: 7px;
+
 mip-dialog {
   display: none !important;
 }
@@ -10,6 +14,9 @@ mip-dialog {
     right: 0;
     bottom: 0;
     left: 0;
+    display: flex;
+    justify-content: center;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
 
   &-hidden {
@@ -20,26 +27,20 @@ mip-dialog {
     background: rgba(0, 0, 0, 0.65);
   }
 
-  position: relative;
-  top: 100px;
-  width: 520px;
-  margin: 0 auto;
-
-  @media (max-width: 767px) {
-    max-width: calc(100vw - 16px);
-  }
-
   &-content {
     position: relative;
-    border-radius: 4px;
+    border-radius: @border-radius;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     background: #fff;
   }
 
   &-header {
+    overflow: hidden;
     padding: 16px 24px;
     border-bottom: 1px solid #e8e8e8;
-    border-radius: 4px 4px 0 0;
+    border-radius: @border-radius @border-radius 0 0;
+    font-weight: 500;
+    font-size: 16px;
     color: rgba(0, 0, 0, 0.85);
   }
 
@@ -51,8 +52,47 @@ mip-dialog {
   }
 
   &-footer {
+    overflow: hidden;
     padding: 10px 16px;
     border-top: 1px solid #e8e8e8;
-    border-radius: 0 0 4px 4px;
+    border-radius: 0 0 @border-radius @border-radius;
+  }
+
+  @media only screen and (max-width: 599px) {
+    &-container {
+      align-items: center;
+    }
+
+    width: 270px;
+  }
+
+  @media only screen and (min-width: 600px) {
+    position: relative;
+    width: 520px;
+    top: 100px;
+  }
+
+  @media only screen and (max-width: 767px) {
+    &-content {
+      text-align: center;
+    }
+
+    &-header {
+      padding: 21px 15px 0;
+      border-bottom: 0;
+      border-radius: @m-border-radius @m-border-radius 0 0;
+      font-size: 18px;
+    }
+
+    &-body {
+      padding: 15px;
+      font-size: 15px;
+      color: #888;
+    }
+
+    &-footer {
+      padding: 0;
+      border-radius: 0 0 @m-border-radius @m-border-radius;
+    }
   }
 }

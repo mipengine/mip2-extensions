@@ -5,8 +5,8 @@
 标题|内容
 ----|----
 类型|通用
-支持布局|responsive, fixed-height, fill, container, fixed
-所需脚本|<https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js></br><https://c.mipcdn.com/static/v2/mip-dialog/mip-dialog.js></br>
+支持布局|-
+所需脚本|<https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js></br><https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js></br><https://c.mipcdn.com/static/v2/mip-dialog/mip-dialog.js></br>
 <https://c.mipcdn.com/static/v2/mip-modal/mip-modal.js>
 
 ## 示例
@@ -21,21 +21,19 @@
 </mip-data>
 <mip-modal
   title="基本模态框"
+  content="一些基本内容……"
   m-bind:visible="visible"
   on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
 >
-  <template slot="body">
-    <p>一些内容……</p>
-    <p>一些内容……</p>
-    <p>一些内容……</p>
-  </template>
 </mip-modal>
-<button
-  class="mip-modal-dialog-button mip-modal-dialog-button-primary"
-  on="tap:MIP.setData({visible: true})"
->
-  打开模态框
-</button>
+<mip-fastclick>
+  <button
+    class="mip-button mip-button-primary"
+    on="tap:MIP.setData({visible: true})"
+  >
+    打开基本模态框
+  </button>
+</mip-fastclick>
 ```
 
 ## 属性

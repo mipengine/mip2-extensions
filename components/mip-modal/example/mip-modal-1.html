@@ -5,25 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <style mip-custom>
-    .mip-modal-dialog-button {
-      margin-left: 8px;
+    .mip-button {
+      appearance: button;
+      height: 32px;
+      padding: 0 15px;
+      border: 1px solid #d9d9d9;
       border-radius: 4px;
       box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
-      line-height: 1.499;
+      outline: 0;
       font-weight: 400;
       font-size: 14px;
+      line-height: 1.499;
       color: rgba(0, 0, 0, .65);
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      background-color: #fff;
+      background-image: none;
+      user-select: none;
+      touch-action: manipulation;
+      cursor: pointer;
     }
 
-    .mip-modal-dialog-button-primary {
-      border-color: #1890ff;
+    .mip-button-primary {
+      border-color: #108ee9;
       text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
       color: #fff;
-      background-color: #1890ff;
+      background-color: #108ee9;
     }
   </style>
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <script async src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script async src="https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js"></script>
+  <script async src="/mip-mustache/mip-mustache.js"></script>
+  <script async src="/mip-dialog/mip-dialog.js"></script>
+  <script async src="/mip-modal/mip-modal.js"></script>
 </head>
 <body>
   <mip-data>
@@ -47,24 +64,20 @@
     </template>
     <template type="mip-mustache" slot="footer">
       <div class="mip-modal-dialog-buttons">
-        <button ref="okButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-ok-button">
-          <span class="mip-modal-dialog-ok-text">{{okText}}</span>
-        </button>
         <button ref="cancelButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-button-primary mip-modal-dialog-cancel-button">
           <span class="mip-modal-dialog-cancel-text">{{cancelText}}</span>
+        </button>
+        <button ref="okButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-ok-button">
+          <span class="mip-modal-dialog-ok-text">{{okText}}</span>
         </button>
       </div>
     </template>
   </mip-modal>
   <button
-    class="mip-modal-dialog-button mip-modal-dialog-button-primary"
+    class="mip-button mip-button-primary"
     on="tap:MIP.setData({visible: true})"
   >
     打开自定义页脚模态框
   </button>
-  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-  <script src="/mip-mustache/mip-mustache.js"></script>
-  <script src="/mip-dialog/mip-dialog.js"></script>
-  <script src="/mip-modal/mip-modal.js"></script>
 </body>
 </html>
