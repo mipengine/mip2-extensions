@@ -43,3 +43,11 @@
 广告产品页面|对应 MIP 组件
 ----|----
 [百度图+广告](http://imageplus.baidu.com/) | [`type="ad-imageplus"`](./examples/mip-ad/mip-ad-imageplus.html)
+
+### 5. 家庭医生在线广告
+
+投放官网：[http://www.familydoctor.com.cn/aboutus/advertisingservice/](http://www.familydoctor.com.cn/aboutus/advertisingservice/)。
+
+广告产品页面|对应 MIP 组件
+----|----
+[家庭医生在线广告](http://www.familydoctor.com.cn/aboutus/advertisingservice/) | [`type="ad-fd"`](./examples/mip-ad/mip-ad-fd.html)
