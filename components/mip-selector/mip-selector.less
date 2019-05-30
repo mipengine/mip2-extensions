@@ -1,0 +1,58 @@
+mip-selector {
+  display: block;
+
+  [option] {
+    cursor: pointer;
+    outline: none;
+  }
+
+  [option][selected] {
+    cursor: auto;
+    outline: solid 1px rgba(0, 0, 0, 0.7);
+  }
+
+  [disabled] {
+    cursor: auto;
+    outline: none;
+    opacity: 0.5;
+  }
+}
+
+mip-selector[radioStyle] {
+  [option] {
+    display: flex;
+    align-items: center;
+  }
+
+  [option][selected] {
+    outline: 0;
+  }
+
+  [option][selected]::before {
+    text-align: center;
+    content: "✓";
+    color: #fff;
+    background-color: #005af0;
+  }
+
+  [option]::before {
+    transition: background 0.25s ease-in-out;
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    margin: 5px;
+    border-radius: 100%;
+    border: solid 1px #005af0;
+  }
+}
+
+mip-selector[disabled] {
+  [option],
+  [selected] {
+    cursor: auto;
+    outline: none;
+    opacity: 0.5;
+  }
+}
