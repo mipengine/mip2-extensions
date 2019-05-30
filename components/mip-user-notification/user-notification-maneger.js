@@ -37,7 +37,7 @@ export default class UserNotificationManager {
         }
       })
       .then(deferred.resolve.bind(this, userNotification))
-      .catch(() => error('Notification service failed mip-user-notification'))
+      .catch(err => error(err.message))
   }
 
   getOrCreateDeferById (id) {

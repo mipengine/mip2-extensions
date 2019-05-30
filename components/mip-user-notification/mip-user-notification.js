@@ -164,7 +164,7 @@ export default class MIPUserNotification extends CustomElement {
         fixed.appendChild(element)
       }
     })
-    this.element.childNodes.forEach(element => {
+    ;[...this.element.childNodes].forEach(element => {
       this.element.removeChild(element)
     })
     this.element.appendChild(fixed)
