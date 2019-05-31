@@ -12,7 +12,7 @@
 
 ```html
 <mip-anim width=400 height=300 src="my-gif.gif">
-  <mip-img placeholder width=400 height=300 src="my-gif-screencap.jpg">
+  <mip-img placeholder width=400 height=300 src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg">
   </mip-img>
 </mip-anim>
 ```
