@@ -8,73 +8,116 @@
     <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
     <style mip-custom>
     /* 自定义样式 */
-      #mytoggle {
-        display: none
-      }
+    #mytoggle {
+      display: none
+    }
+    button {
+      background-color: #008CB0;
+      border: none;
+      color: white;
+      padding: 5px 15px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 10px;
+      border-radius: 5px;
+      margin: 5px 0 5px 0;
+    }
     </style>
   </head>
   <body>
     <div>
       <h2>配合事件绑定</h2>
-      <mip-group-selection class="mip-hidden" on="selected:mytoggle.toggle">
+      <mip-data>
+        <script type="application/json">
+          {
+            "name": "",
+            "gender": "",
+            "age": ""
+          }
+        </script>
+      </mip-data>
+      <button on="tap:select.show">选择人物</button>
+      <mip-group-selection id="select" on="selected:mytoggle.show(1000)" closable>
         <!-- 在 application/json 中配置全部城市 -->
         <script type="application/json">
           {
             "list": [{
-              "key": "热门",
-              "cities": [
-                { "city": "北京", "pinyin": "beijing", "code": "1" },
-                { "city": "上海", "pinyin": "shanghai", "code": "2" },
-                { "city": "广州", "pinyin": "guangzhou", "code": "3" },
-                { "city": "深圳", "pinyin": "shenzhen", "code": "4" },
-                { "city": "重庆", "pinyin": "chongqing", "code": "5" }
+              "initials": "A",
+              "characters": [
+                { "name": "Adam", "gender": "male", "age": "24" },
+                { "name": "Aaron", "gender": "male", "age": "35" },
+                { "name": "Ana", "gender": "female", "age": "27" },
               ]
             }, {
-              "key": "A",
-              "cities": [
-                { "city": "澳门", "pinyin": "aomen", "code": "7" },
-                { "city": "安庆", "pinyin": "anqing", "code": "8" },
-                { "city": "安泽", "pinyin": "anze", "code": "9" }
+              "initials": "B",
+              "characters": [
+                { "name": "Brittany", "gender": "female", "age": "36" },
+                { "name": "Britney", "gender": "female", "age": "13" },
+                { "name": "Ben", "gender": "male", "age": "5" },
               ]
             }, {
-              "key": "B",
-              "cities": [
-                { "city": "宝清", "pinyin": "baoqing", "code": "10" },
-                { "city": "宝鸡", "pinyin": "baoji", "code": "11" },
-                { "city": "巴东", "pinyin": "badong", "code": "12" }
+              "initials": "C",
+              "characters": [
+                { "name": "Cameron", "gender": "male", "age": "44" },
+                { "name": "Caroline", "gender": "female", "age": "8" },
+                { "name": "Christina", "gender": "female", "age": "13" },
               ]
             }, {
-              "key": "C",
-              "cities": [
-                { "city": "重庆", "pinyin": "chongqing", "code": "13" },
-                { "city": "成都", "pinyin": "chengdu", "code": "14" },
-                { "city": "苍山", "pinyin": "cangshan", "code": "15" }
+              "initials": "D",
+              "characters": [
+                { "name": "David", "gender": "male", "age": "30" },
+                { "name": "Diego", "gender": "male", "age": "43" },
+                { "name": "Daisy", "gender": "female", "age": "13" },
               ]
             }, {
-              "key": "D",
-              "cities": [
-                { "city": "大庆", "pinyin": "daqing", "code": "16" },
-                { "city": "大理", "pinyin": "dali", "code": "17" },
-                { "city": "东莞", "pinyin": "dongguan", "code": "18" }
+              "initials": "E",
+              "characters": [
+                { "name": "Elizabeth", "gender": "female", "age": "28" },
+                { "name": "Eric", "gender": "male", "age": "20" },
+                { "name": "Evan", "gender": "male", "age": "42" },
               ]
             }, {
-              "key": "E",
-              "cities": [
-                { "city": "鄂尔多斯", "pinyin": "eerduosi", "code": "19" },
-                { "city": "峨眉山", "pinyin": "emeishan", "code": "20" }
+              "initials": "F",
+              "characters": [
+                { "name": "Fiona", "gender": "female", "age": "21" },
+                { "name": "Fay", "gender": "female", "age": "42" },
+                { "name": "Frank", "gender": "male", "age": "36" },
               ]
             }, {
-              "key": "F",
-              "cities": [
-                { "city": "阜阳", "pinyin": "fuyang", "code": "21" },
-                { "city": "福州", "pinyin": "fuzhou", "code": "22" },
-                { "city": "防城港", "pinyin": "fangchenggang", "code": "23" }
+              "initials": "G",
+              "characters": [
+                { "name": "Gavin", "gender": "male", "age": "15" },
+                { "name": "Gordon", "gender": "male", "age": "28" },
+                { "name": "Gigi", "gender": "female", "age": "41" },
               ]
             }, {
-              "key": "G",
-              "cities": [
-                { "city": "广州", "pinyin": "guangzhou", "code": "24" },
-                { "city": "贵阳", "pinyin": "guiyang", "code": "25" }
+              "initials": "H",
+              "characters": [
+                { "name": "Helen", "gender": "female", "age": "26" },
+                { "name": "Hillary", "gender": "female", "age": "12" },
+                { "name": "Henry", "gender": "male", "age": "4" },
+              ]
+            }, {
+              "initials": "I",
+              "characters": [
+                { "name": "Ivan", "gender": "male", "age": "37" },
+                { "name": "Irving", "gender": "male", "age": "47" },
+                { "name": "Isabella", "gender": "female", "age": "16" },
+              ]
+            }, {
+              "initials": "J",
+              "characters": [
+                { "name": "Jacqueline", "gender": "female", "age": "3" },
+                { "name": "James", "gender": "male", "age": "45" },
+                { "name": "Jennifer", "gender": "female", "age": "40" },
+              ]
+            }, {
+              "initials": "K",
+              "characters": [
+                { "name": "Katherine", "gender": "female", "age": "28" },
+                { "name": "Kevin", "gender": "male", "age": "23" },
+                { "name": "Kenneth", "gender": "male", "age": "11" },
               ]
             }]
           }
@@ -85,17 +128,17 @@
             <div class="mip-group-selection-content">
               {{#list}}
                 <div class="mip-group-selection-group mip-group-selection-part-letter">
-                  <div class="mip-group-selection-title" data-anchor="{{key}}">{{key}}</div>
-                  {{#cities}}
-                    <p class="mip-group-selection-item" data-code="{{code}}" data-pinyin="{{pinyin}}" data-city="{{city}}">{{city}}</p>
-                  {{/cities}}
+                  <div class="mip-group-selection-title" data-anchor="{{initials}}">{{initials}}</div>
+                  {{#characters}}
+                    <p class="mip-group-selection-item" data-age="{{age}}" data-gender="{{gender}}" data-name="{{name}}">{{name}}</p>
+                  {{/characters}}
                 </div>
               {{/list}}
             </div>
             <mip-fixed class="mip-group-selection-sidebar-wrapper" type="right" top="10px">
               <div class="mip-group-selection-sidebar">
                 {{#list}}
-                  <div class="mip-group-selection-link" data-target-anchor="{{key}}">{{key}}</div>
+                  <div class="mip-group-selection-link" data-target-anchor="{{initials}}">{{initials}}</div>
                 {{/list}}
               </div>
             </mip-fixed>
@@ -104,7 +147,11 @@
       </mip-group-selection>
       <mip-fixed bottom="10px" type="right">
         <mip-toggle id="mytoggle">
-          <p>selected!</p>
+          <p>
+            姓名：<span m-text="name" class="selected-text"></span>，
+            性别：<span m-text="gender" class="selected-text"></span>，
+            年龄：<span m-text="age" class="selected-text"></span>
+          </p>
         </mip-toggle>
       </mip-fixed>
     </div>
