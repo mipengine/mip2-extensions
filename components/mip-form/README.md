@@ -4,7 +4,7 @@
 ----|----
 类型|动态内容
 支持布局|responsive, fixed-height, fill, container, fixed
-所需脚本|https://c.mipcdn.com/static/v2/mip-form/mip-form.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-form/mip-form.js <br/> https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js
 
 ## 示例
 
@@ -102,9 +102,10 @@
 
 `mip-form` 通过 `fetch-url` 属性支持异步提交表单，配合模版组件 `mip-mustache` 可以方便的更新渲染页面。使用模版渲染更新页面方法如下：
 
-* 在 `<mip-form>` 任意子元素上声明以下响应属性
-* 在使用响应属性的元素中，通过模版 `<template type="mip-mustache"></template>` 创建对应的需要被渲染的内容
-* 服务器返回合法的 JSON 对象给 `submit-success `和 `submit-error` 用于模版渲染。注意服务器响应 header 包括 `Content-Type: application/json`
+* 在页面中引入 [mip-mustache](https://www.mipengine.org/v2/components/dynamic-content/mip-mustache.html) 组件 `<script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>`。
+* 在 `<mip-form>` 任意子元素上声明以下表格所示响应属性。
+* 在使用响应属性的元素中，通过模版 `<template type="mip-mustache"></template>` 创建对应的需要被渲染的内容。
+* 服务器返回合法的 JSON 对象给 `submit-success `和 `submit-error` 用于模版渲染。注意服务器响应 header 包括 `Content-Type: application/json`。
 
 | 属性             | 描述                                 |
 | ---------------- | ------------------------------------ |
@@ -116,9 +117,10 @@
 
 ```html
 <mip-form
-  method="get"
-  fetch-url="https://www.mipengine.org?we=123">
-  <input type="text" name="name" placeholder="姓名">
+  method="POST"
+  fetch-url="./mock.json">
+  <input type="text" name="name" placeholder="姓名" validatetarget="name" required>
+  <div target="name">输入不能为空</div>
   <input type="submit" value="提交">
   <div submitting>
     <template type="mip-mustache">
@@ -135,7 +137,7 @@
   </div>
   <div submit-error>
     <template type="mip-mustache">
-      Sorry {{name}}, 发生了一点错误
+      Sorry, 请求发生了一点错误
     </template>
   </div>
 </mip-form>
