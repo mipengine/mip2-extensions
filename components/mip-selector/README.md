@@ -14,10 +14,10 @@ mip 的一个选择器控件类型组件
 
 ```html
 <mip-selector class="sample-selector" layout="container">
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
 </mip-selector>
 ```
 
@@ -25,10 +25,10 @@ mip 的一个选择器控件类型组件
 
 ```html
 <mip-selector class="sample-selector" layout="container" multiple>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
 </mip-selector>
 ```
 
@@ -36,10 +36,10 @@ mip 的一个选择器控件类型组件
 
 ```html
 <mip-selector class="sample-selector" layout="container">
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3" disabled></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3" disabled></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
 </mip-selector>
 ```
 
@@ -47,10 +47,10 @@ mip 的一个选择器控件类型组件
 
 ```html
 <mip-selector class="sample-selector" layout="container" disabled>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
 </mip-selector>
 ```
 
@@ -74,12 +74,12 @@ mip 的一个选择器控件类型组件
 
 ```html
 <mip-selector class="sample-selector" layout="container" id="actionsSample">
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="5"></mip-img>
-  <mip-img src="http://bos.nj.bpc.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="6"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="1"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="2"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img3.png" width="60" height="60" option="3"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img4.png" width="60" height="60" option="4"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img1.png" width="60" height="60" option="5"></mip-img>
+  <mip-img src="https://boscdn.baidu.com/v1/assets/mip/temp/mip-selector-img2.png" width="60" height="60" option="6"></mip-img>
 </mip-selector>
 
 <button on="tap:actionsSample.clear">清空选项 clear()</button>
