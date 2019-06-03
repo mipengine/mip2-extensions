@@ -24,7 +24,7 @@
 ### 带 `placeholder` 的加载方式
 
 ```html
-<mip-anim layout="fixed" width=210 height=210 src="https://boscdn.bpc.baidu.com/v1/assets/mipengine/sample.gif" alt="an animation">
+<mip-anim layout="fixed" width=210 height=210 src="https://boscdn.baidu.com/v1/assets/mipengine/sample.gif" alt="an animation">
    <mip-img placeholder class="background" layout="fixed-height" width=210 height=210 src="https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
 </mip-anim>
 ```

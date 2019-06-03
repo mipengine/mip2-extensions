@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>mip-position-observer</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    .placeholder {
+      width: 100vw;
+      height: 1000px;
+    }
+    #parent {
+      border: 1px black solid;
+    }
+    .spacing {
+      width: 100vw;
+      height: 100px;
+    }
+    .test1,
+    .test2,
+    .test3,
+    .test4,
+    .test5,
+    .test6,
+    .test7,
+    .test8 {
+      background-color: brown;
+      height: 100px;
+      width: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="placeholder"></div>
+
+  <div id="parent">
+      <p>1. 黑框为目标元素：intersection-ratios="0",元素任一像素进入视口触发 enter 事件，开始动画；元素完全离开视口触发 exit 事件，动画向右定格一段距离（距离大小取决于屏幕大小）</p>
+      <div class="test1"></div>
+      <mip-animation id="anim1">
+        <script type="application/json">
+          {
+            "selector": ".test1",
+            "keyframes": [{
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(600px)"
+            }],
+            "duration": 1200
+          }
+        </script>
+      </mip-animation>
+      <mip-position-observer
+        intersection-ratios="0"
+        on="enter:anim1.start exit:anim1.seekTo(300)"
+        layout="nodisplay">
+      </mip-position-observer>
+  </div>
+
+  <div class="spacing"></div>
+
+  <div id="parent">
+      <p>2. 黑框为目标元素：intersection-ratios="0.5",目标元素有 50% 进入视口时触发 enter 事件，开始动画；目标元素在视口中剩余部分不足 50% 时触发 exit 事件，动画向右定格一段距离（距离大小取决于屏幕大小）</p>
+      <div class="test2"></div>
+      <mip-animation id="anim2">
+        <script type="application/json">
+          {
+            "selector": ".test2",
+            "keyframes": [{
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(600px)"
+            }],
+            "duration": 1200
+          }
+        </script>
+      </mip-animation>
+      <mip-position-observer
+        intersection-ratios="0.5"
+        on="enter:anim2.start exit:anim2.seekTo(300)"
+        layout="nodisplay">
+      </mip-position-observer>
+  </div>
+
+  <div class="spacing"></div>
+
+  <div id="parent">
+      <p>3. 黑框为目标元素：intersection-ratios="1",元素完全进入视口触发 enter 事件，开始动画；元素任一像素离开视口触发 exit 事件，动画向右定格一段距离（距离大小取决于屏幕大小）</p>
+      <div class="test3"></div>
+      <mip-animation id="anim3">
+        <script type="application/json">
+          {
+            "selector": ".test3",
+            "keyframes": [{
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(600px)"
+            }],
+            "duration": 1200
+          }
+        </script>
+      </mip-animation>
+      <mip-position-observer
+        intersection-ratios="1"
+        on="enter:anim3.start exit:anim3.seekTo(300)"
+        layout="nodisplay">
+      </mip-position-observer>
+  </div>
+
+  <div class="spacing"></div>
+
+  <div id="parent">
+      <p>4. 黑框为目标元素：intersection-ratios="0 1"。0 应用于视口上边缘，1 应用于视口下边缘。
+        如果目标元素从上面进入，任一元素进入视口触发`enter` 事件，开始动画；最后一元素离开视口触发 `exit` 事件，动画向右定格一段距离。
+        如果目标元素从下面进入，目标元素完全进入视口触发`enter` 事件，开始动画；目标元素任一像素离开视口时触发 `exit` 事件，动画向右定格一段距离。</p>
+      <div class="test4"></div>
+      <mip-animation id="anim4">
+        <script type="application/json">
+          {
+            "selector": ".test4",
+            "keyframes": [{
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(600px)"
+            }],
+            "duration": 1200
+          }
+        </script>
+      </mip-animation>
+      <mip-position-observer
+        intersection-ratios="0 1"
+        on="enter:anim4.start exit:anim4.seekTo(300)"
+        layout="nodisplay">
+      </mip-position-observer>
+  </div>
+
+  <div class="spacing"></div>
+
+  <div id="parent">
+      <p>5. 黑框为目标元素：intersection-ratios="1"，元素完全进入才出发scroll事件，滚动屏幕每滚动并停下来一次，动画播放一次</p>
+      <div class="test5"></div>
+      <mip-animation id="anim5">
+        <script type="application/json">
+          {
+            "selector": ".test5",
+            "keyframes": [{
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(600px)"
+            }],
+            "duration": 1200
+          }
+        </script>
+      </mip-animation>
+      <mip-position-observer
+        intersection-ratios="1"
+        on="scroll:anim5.restart"
+        layout="nodisplay">
+      </mip-position-observer>
+  </div>
+
+  <div class="spacing"></div>
+
+  <div id="parent">
+      <p>6. 红方块为目标元素，测试 target 即 id：红方块完全进入视口触发 enter 事件，动画播放；红方块任一像素离开视口触发 exit 事件，动画向右定格一段距离</p>
+      <div id="targetId" class="test6"></div>
+      <mip-animation id="anim6">
+        <script type="application/json">
+          {
+            "selector": ".test6",
+            "keyframes": [{
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(600px)"
+            }],
+            "duration": 1200
+          }
+        </script>
+      </mip-animation>
+      <mip-position-observer
+        target="targetId"
+        intersection-ratios="1"
+        on="enter:anim6.restart exit:anim6.seekTo(300)"
+        layout="nodisplay">
+      </mip-position-observer>
+  </div>
+
+  <div class="spacing"></div>
+
+  <div id="parent">
+      <p>7. 测试 viewport-margins：黑框为目标元素，黑框从上边缘进入视口，走到距离上边缘 100px 时事触发 enter 事件，动画播放；黑框走到距离下边缘 10% 的位置，再向下走触发 exit 事件，动画向右定格一段距离</p>
+      <div class="test7"></div>
+      <mip-animation id="anim7">
+        <script type="application/json">
+          {
+            "selector": ".test7",
+            "keyframes": [{
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(600px)"
+            }],
+            "duration": 1200
+          }
+        </script>
+      </mip-animation>
+      <mip-position-observer
+        intersection-ratios="1"
+        viewport-margins="100px 10vh"
+        on="enter:anim7.restart exit:anim7.seekTo(300)"
+        layout="nodisplay">
+      </mip-position-observer>
+  </div>
+
+  <div class="spacing"></div>
+
+  <div id="parent">
+      <p>8. 测试 once：enter、exit 和 scroll都只触发一次，即所有动画只触发一次。黑框为目标元素，黑框从上边缘进入视口，走到距离上边缘 100px 时事触发 enter 事件，动画播放；黑框走到距离下边缘 10% 的位置，再向下走触发 exit 事件，动画向右定格一段距离。</p>
+      <p style="font-weight: 600">注意：enter 在页面刷新之后立即触发了，从上边缘第一次进入也不会触发</p>
+      <div class="test8"></div>
+      <mip-animation id="anim8">
+        <script type="application/json">
+          {
+            "selector": ".test8",
+            "keyframes": [{
+              "transform": "translateX(0px)"
+            },
+            {
+              "transform": "translateX(600px)"
+            }],
+            "duration": 1200
+          }
+        </script>
+      </mip-animation>
+      <mip-position-observer
+        intersection-ratios="1"
+        viewport-margins="100px 10vh"
+        once
+        on="enter:anim8.restart exit:anim8.seekTo(300)"
+        layout="nodisplay">
+      </mip-position-observer>
+  </div>
+
+  <div class="placeholder"></div>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-position-observer/mip-position-observer.js"></script>
+  <script src="/mip-animation/mip-animation.js"></script>
+</body>
+</html>
