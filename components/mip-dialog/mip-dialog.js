@@ -108,10 +108,16 @@ export default class MIPDialog extends CustomElement {
     this.refs && visible && this.toggleMask()
   }
 
+  /**
+   * @param {Event} event object.
+   */
   triggerOk (event) {
     viewer.eventAction.execute('ok', this.element, event)
   }
 
+  /**
+   * @param {Event} event object.
+   */
   triggerCancel (event) {
     viewer.eventAction.execute('cancel', this.element, event)
   }
@@ -192,8 +198,14 @@ export default class MIPDialog extends CustomElement {
     document.body.removeChild($portal)
   }
 
+  /**
+   * @param {string} name of slot.
+   */
   getSlotContainer = name => `<div ref="${name}" class="${this.cx(name)}"></div>`
 
+  /**
+   * @param {string} name of slot.
+   */
   renderSlot = async (name) => {
     if (!this.refs) {
       return

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <style mip-custom>
     .mip-button {
       appearance: button;
@@ -35,7 +36,6 @@
       background-color: #108ee9;
     }
   </style>
-  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <script async src="https://c.mipcdn.com/static/v2/mip.js"></script>
   <script async src="https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js"></script>
   <script async src="/mip-mustache/mip-mustache.js"></script>
@@ -49,35 +49,25 @@
     </script>
   </mip-data>
   <mip-modal
-    title="自定义页脚"
+    title='"MIP" 想给您发送推送通知'
     m-bind:visible="visible"
-    ok-text="允许"
-    cancel-text="拒绝"
+    mask-closable="false"
+    ok-text="好"
+    cancel-text="不允许"
     on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
   >
     <template slot="body">
-      <p>一些内容……</p>
-      <p>一些内容……</p>
-      <p>一些内容……</p>
-      <p>一些内容……</p>
-      <p>一些内容……</p>
-    </template>
-    <template type="mip-mustache" slot="footer">
-      <div class="mip-modal-dialog-buttons">
-        <button ref="cancelButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-button-primary mip-modal-dialog-cancel-button">
-          <span class="mip-modal-dialog-cancel-text">{{cancelText}}</span>
-        </button>
-        <button ref="okButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-ok-button">
-          <span class="mip-modal-dialog-ok-text">{{okText}}</span>
-        </button>
-      </div>
+      <p>“通知”可能包括提醒、声音和图标。</p>
+      <p>这些可在“设置”中配置。</p>
     </template>
   </mip-modal>
-  <button
-    class="mip-button mip-button-primary"
-    on="tap:MIP.setData({visible: true})"
-  >
-    打开自定义页脚模态框
-  </button>
+  <mip-fastclick>
+    <button
+      class="mip-button mip-button-primary"
+      on="tap:MIP.setData({visible: true})"
+    >
+      必选模态框
+    </button>
+  </mip-fastclick>
 </body>
 </html>

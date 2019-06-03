@@ -1,3 +1,4 @@
+@border: 1px solid #ddd;
 @border-radius: 4px;
 
 @m-border-radius: 7px;
@@ -16,6 +17,7 @@ mip-dialog {
     left: 0;
     display: flex;
     justify-content: center;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", Helvetica, "Microsoft YaHei", Arial, sans-serif;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
 
@@ -37,7 +39,7 @@ mip-dialog {
   &-header {
     overflow: hidden;
     padding: 16px 24px;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: @border;
     border-radius: @border-radius @border-radius 0 0;
     font-weight: 500;
     font-size: 16px;
@@ -46,6 +48,7 @@ mip-dialog {
 
   &-body {
     padding: 24px;
+    border-bottom: @border;
     font-size: 14px;
     line-height: 1.5;
     word-wrap: break-word;
@@ -54,7 +57,6 @@ mip-dialog {
   &-footer {
     overflow: hidden;
     padding: 10px 16px;
-    border-top: 1px solid #e8e8e8;
     border-radius: 0 0 @border-radius @border-radius;
   }
 
@@ -79,19 +81,23 @@ mip-dialog {
 
     &-header {
       padding: 21px 15px 0;
+      margin-bottom: 15px;
       border-bottom: 0;
       border-radius: @m-border-radius @m-border-radius 0 0;
       font-size: 18px;
     }
 
     &-body {
-      padding: 15px;
-      font-size: 15px;
+      margin: 15px 0;
+      padding: 0 15px;
+      border-bottom: 0;
       color: #888;
     }
 
     &-footer {
+      margin-top: 15px;
       padding: 0;
+      border-top: @border;
       border-radius: 0 0 @m-border-radius @m-border-radius;
     }
   }

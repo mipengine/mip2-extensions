@@ -35,12 +35,12 @@ const defaultSlots = {
   header: `<div class="${cx('title')}">{{title}}</div>`,
   body: '{{content}}',
   footer:
-    `<div class="${cx('buttons')}">` +
-      `<button ref="okButton" type="button" class="${cx('button')} ${cx('button-primary')} ${cx('ok-button')}">` +
-        `<span class="${cx('button-text')}">{{okText}}</span>` +
-      '</button>' +
+    `<div class="${cx('buttons')} ${cx('buttons-horizontal')}">` +
       `<button ref="cancelButton" type="button" class="${cx('button')} ${cx('cancel-button')}">` +
         `<span class="${cx('button-text')}">{{cancelText}}</span>` +
+      '</button>' +
+      `<button ref="okButton" type="button" class="${cx('button')} ${cx('button-primary')} ${cx('ok-button')}">` +
+        `<span class="${cx('button-text')}">{{okText}}</span>` +
       '</button>' +
     '</div>'
 }
@@ -76,6 +76,9 @@ export default class MIPModal extends CustomElement {
     this.render()
   }
 
+  /**
+   * @param {string} name of changed attribute.
+   */
   attributeChangedCallback (name) {
     if (!this.element.isBuilt()) {
       return
@@ -109,7 +112,7 @@ export default class MIPModal extends CustomElement {
 
   /**
    * @param {string} name of slot.
-   * @param {string} html template of slot
+   * @param {string} html template of slot.
    */
   propagateSlotIfAbsent (name, html = defaultSlots[name]) {
     const {$dialog} = this.refs
@@ -133,7 +136,7 @@ export default class MIPModal extends CustomElement {
   }
 
   /**
-   * @param {string} name of slot
+   * @param {string} name of slot.
    */
   propagateSlotScope = (name) => {
     const {$dialog} = this.refs
@@ -144,7 +147,7 @@ export default class MIPModal extends CustomElement {
   }
 
   /**
-   * @param {string} name of slot
+   * @param {string} name of slot.
    */
   propagateSlot = (name) => {
     this.propagateSlotIfAbsent(name)

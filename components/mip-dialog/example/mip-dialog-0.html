@@ -7,39 +7,43 @@
   <title>Document</title>
   <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <style mip-custom>
-    .mip-dialog-button {
+    .mip-button {
       appearance: button;
       height: 32px;
       padding: 0 15px;
-      margin-left: 8px;
       border: 1px solid #d9d9d9;
       border-radius: 4px;
       box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
       outline: 0;
-      line-height: 1.499;
       font-weight: 400;
       font-size: 14px;
-      text-align: center;
-      white-space: nowrap;
+      line-height: 1.499;
       color: rgba(0, 0, 0, .65);
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       background-color: #fff;
       background-image: none;
-      cursor: pointer;
       user-select: none;
       touch-action: manipulation;
+      cursor: pointer;
     }
 
-    .mip-dialog-button-text {
-      pointer-events: none;
-    }
-
-    .mip-dialog-button-primary {
-      border-color: #1890ff;
+    .mip-button-primary {
+      border-color: #108ee9;
       text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
       color: #fff;
-      background-color: #1890ff;
+      background-color: #108ee9;
+    }
+
+    .mip-dialog-body {
+      padding-bottom: 15px;
     }
   </style>
+  <script async src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script async src="https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js"></script>
+  <script async src="/mip-mustache/mip-mustache.js"></script>
+  <script async src="/mip-dialog/mip-dialog.js"></script>
 </head>
 <body>
   <mip-data>
@@ -52,7 +56,7 @@
     on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
   >
     <template slot="header">
-      <h3>基本对话框</h3>
+      基本对话框
     </template>
     <template slot="body">
       <p>一些内容……</p>
@@ -60,14 +64,13 @@
       <p>一些内容……</p>
     </template>
   </mip-dialog>
-  <button
-    class="mip-dialog-button mip-dialog-button-primary"
-    on="tap:MIP.setData({visible: true})"
-  >
-    打开基本对话框
-  </button>
-  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-  <script src="http://localhost:8111/mip-mustache/mip-mustache.js"></script>
-  <script src="/mip-dialog/mip-dialog.js"></script>
+  <mip-fastclick>
+    <button
+      class="mip-button mip-button-primary"
+      on="tap:MIP.setData({visible: true})"
+    >
+      打开基本对话框
+    </button>
+  </mip-fastclick>
 </body>
 </html>

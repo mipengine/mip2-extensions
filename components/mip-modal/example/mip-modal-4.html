@@ -35,8 +35,30 @@
       color: #fff;
       background-color: #108ee9;
     }
+
+    .mip-modal-form-hint {
+      margin-bottom: 10px;
+    }
+
+    .mip-input {
+      width: 100%;
+      height: 32px;
+      margin: -1px 0;
+      padding: 4px 11px;
+      border: 1px solid #d9d9d9;
+      font-size: 14px;
+      line-height: 1.5;
+      color: rgba(0, 0, 0, .65);
+      background-color: #fff;
+      transition: border-color .3s;
+    }
+
+    .mip-input:focus {
+      outline: 0;
+    }
   </style>
   <script async src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script async src="/mip-form/mip-form.js"></script>
   <script async src="https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js"></script>
   <script async src="/mip-mustache/mip-mustache.js"></script>
   <script async src="/mip-dialog/mip-dialog.js"></script>
@@ -49,21 +71,21 @@
     </script>
   </mip-data>
   <mip-modal
-    title="打开推送通知"
+    title="登录"
     m-bind:visible="visible"
-    ok-text="去开启"
-    on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
+    on="ok:form.submit cancel:MIP.setData({visible: false})"
   >
     <template slot="body">
-      <p>有人回复你</p>
-      <p>第一时间知晓</p>
-    </template>
-    <template type="mip-mustache" slot="footer">
-      <div class="mip-modal-dialog-buttons">
-        <button ref="okButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-button-primary mip-modal-dialog-ok-button">
-          <span class="mip-modal-dialog-ok-text">{{okText}}</span>
-        </button>
-      </div>
+      <p class="mip-modal-form-hint">请输入登录信息</p>
+      <mip-form
+        id="form"
+        method="get"
+        fetch-url="./form.json"
+        on="submitSuccess:MIP.setData({visible: false})"
+      >
+        <input type="text" name="name" placeholder="姓名" class="mip-input">
+        <input type="password" name="password" placeholder="密码" class="mip-input">
+      </mip-form>
     </template>
   </mip-modal>
   <mip-fastclick>
@@ -71,7 +93,7 @@
       class="mip-button mip-button-primary"
       on="tap:MIP.setData({visible: true})"
     >
-      确认模态框
+      表单模态框
     </button>
   </mip-fastclick>
 </body>

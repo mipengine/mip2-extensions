@@ -30,7 +30,6 @@ mip-modal {
 
     &-buttons {
       display: flex;
-      flex-direction: row-reverse;
     }
 
     &-button {
@@ -40,20 +39,33 @@ mip-modal {
       font-size: 18px;
       line-height: 50px;
       border: 0;
-    }
-
-    &-button-primary {
       color: #108ee9;
 
-      &::before {
+      &:not(:first-child)::before {
         content: "";
         position: absolute;
         top: 0;
         left: 0;
-        width: 1px;
-        height: 100%;
         background-color: #ddd;
       }
+    }
+
+    &-button-primary {
+      font-weight: 500;
+    }
+
+    &-buttons-horizontal &-button:not(:first-child)::before {
+      width: 1px;
+      height: 100%;
+    }
+
+    &-buttons-vertical {
+      flex-direction: column;
+    }
+
+    &-buttons-vertical &-button:not(:first-child)::before {
+      width: 100%;
+      height: 1px;
     }
   }
 
