@@ -11,7 +11,7 @@
 
 ## 示例
 
-### 基本用法
+### 基本模态框
 
 ```html
 <mip-data>
@@ -31,7 +31,146 @@
     class="mip-button mip-button-primary"
     on="tap:MIP.setData({visible: true})"
   >
-    打开基本模态框
+    基本模态框
+  </button>
+</mip-fastclick>
+```
+
+### 必选模态框
+
+```html
+<mip-data>
+  <script type="application/json">
+    {"visible": false}
+  </script>
+</mip-data>
+<mip-modal
+  title='"MIP" 想给您发送推送通知'
+  m-bind:visible="visible"
+  mask-closable="false"
+  ok-text="好"
+  cancel-text="不允许"
+  on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
+>
+  <template slot="body">
+    <p>“通知”可能包括提醒、声音和图标。</p>
+    <p>这些可在“设置”中配置。</p>
+  </template>
+</mip-modal>
+<mip-fastclick>
+  <button
+    class="mip-button mip-button-primary"
+    on="tap:MIP.setData({visible: true})"
+  >
+    必选模态框
+  </button>
+</mip-fastclick>
+```
+
+### 确认模态框
+
+```html
+<mip-data>
+  <script type="application/json">
+    {"visible": false}
+  </script>
+</mip-data>
+<mip-modal
+  title="打开推送通知"
+  m-bind:visible="visible"
+  ok-text="去开启"
+  on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
+>
+  <template slot="body">
+    <p>有人回复你</p>
+    <p>第一时间知晓</p>
+  </template>
+  <template type="mip-mustache" slot="footer">
+    <div class="mip-modal-dialog-buttons">
+      <button ref="okButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-button-primary mip-modal-dialog-ok-button">
+        <span class="mip-modal-dialog-ok-text">{{okText}}</span>
+      </button>
+    </div>
+  </template>
+</mip-modal>
+<mip-fastclick>
+  <button
+    class="mip-button mip-button-primary"
+    on="tap:MIP.setData({visible: true})"
+  >
+    确认模态框
+  </button>
+</mip-fastclick>
+```
+
+### 垂直页脚模态框
+
+```html
+<mip-data>
+  <script type="application/json">
+    {"visible": false}
+  </script>
+</mip-data>
+<mip-modal
+  title='想给 "MIP" 一个好评么？'
+  m-bind:visible="visible"
+  ok-text="前往好评"
+  cancel-text="残忍拒绝"
+  on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
+>
+  <template type="mip-mustache" slot="footer">
+    <div class="mip-modal-dialog-buttons mip-modal-dialog-buttons-vertical">
+      <button ref="cancelButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-cancel-button">
+        <span class="mip-modal-dialog-cancel-text">{{cancelText}}</span>
+      </button>
+      <button ref="okButton" type="button" class="mip-modal-dialog-button mip-modal-dialog-button-primary mip-modal-dialog-ok-button">
+        <span class="mip-modal-dialog-ok-text">{{okText}}</span>
+      </button>
+    </div>
+  </template>
+</mip-modal>
+<mip-fastclick>
+  <button
+    class="mip-button mip-button-primary"
+    on="tap:MIP.setData({visible: true})"
+  >
+    垂直页脚模态框
+  </button>
+</mip-fastclick>
+```
+
+### 表单模态框
+
+```html
+<mip-data>
+  <script type="application/json">
+    {"visible": false}
+  </script>
+</mip-data>
+<mip-modal
+  title="登录"
+  m-bind:visible="visible"
+  on="ok:form.submit cancel:MIP.setData({visible: false})"
+>
+  <template slot="body">
+    <p class="mip-modal-form-hint">请输入登录信息</p>
+    <mip-form
+      id="form"
+      method="get"
+      fetch-url="./form.json"
+      on="submitSuccess:MIP.setData({visible: false})"
+    >
+      <input type="text" name="name" placeholder="姓名" class="mip-input">
+      <input type="password" name="password" placeholder="密码" class="mip-input">
+    </mip-form>
+  </template>
+</mip-modal>
+<mip-fastclick>
+  <button
+    class="mip-button mip-button-primary"
+    on="tap:MIP.setData({visible: true})"
+  >
+    表单模态框
   </button>
 </mip-fastclick>
 ```
@@ -64,7 +203,7 @@
 
 默认值：`true`
 
-### maskClosable
+### mask-closable
 
 说明：点击遮罩层后，是否触发 cancel 事件。
 
@@ -72,7 +211,7 @@
 
 默认值：`true`
 
-### okText
+### ok-text
 
 说明：确认按钮文字。
 
@@ -80,7 +219,7 @@
 
 默认值：`确认`
 
-### cancelText
+### cancel-text
 
 说明：取消按钮文字。
 
