@@ -1,12 +1,12 @@
-import {installPositionObserverService, POSITION_OBSERVER_SERVICE_ID} from './position-observer-service'
+import {installPositionObserverService, POSITION_OBSERVER_SERVICE_ID} from './common/position-observer-service'
 import {
   PositionObserverFidelity,
   PositionInViewportEntryDef,
   RelativePositions,
   layoutRectsRelativePos,
   LayoutRectDef
-} from './position-observer-worker'
-import {ScheduleService, SCHEDULE_SERVICE_ID} from './schedule-service'
+} from './common/position-observer-worker'
+import {ScheduleService, SCHEDULE_SERVICE_ID} from './common/schedule-service'
 const {CustomElement, util, viewer, viewport, Services} = MIP
 const rect = util.rect
 const RESIZE_THRESHOLD = 150
