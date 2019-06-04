@@ -22,9 +22,9 @@ export default class MIPGroupSelection extends CustomElement {
     this.name = el.getAttribute('name') || 'select'
     this.placeholder = el.getAttribute('placeholder') || ''
     this.id = el.dataset.id || ''
-    this.closable = el.hasAttribute('closable')
     this.field = el.getAttribute('field') || ''
     this.multiple = el.hasAttribute('multiple')
+    this.closable = this.multiple || el.hasAttribute('closable')
     this.inForm = !!dom.closest(el, 'mip-form')
     this.firstShow = true
     this.history = []
@@ -172,10 +172,11 @@ export default class MIPGroupSelection extends CustomElement {
     this.renderHistoryList()
 
     // 构造 mask
-    // this.mask = dom.create(`<mip-fixed still class="mip-group-selection-mask" type="top"></mip-fixed>`)
-    // css(this.mask, 'display', 'none')
+    this.mask = dom.create(`<mip-fixed still class="mip-group-selection-mask" type="top"></mip-fixed>`)
+    css(this.mask, 'display', 'none')
     // this.mask.onclick = this.hide
-    // el.appendChild(this.mask)
+    this.mask.addEventListener('touchend', this.hide)
+    this.element.appendChild(this.mask)
 
     // 在 mip-form 中显示为输入框
     if (this.inForm) {
@@ -197,7 +198,7 @@ export default class MIPGroupSelection extends CustomElement {
    * 修改最下方分组的样式，增加 marginBottom, 保证滚动后分组标题可以在页面最上方
    */
   modifyMarginBottom () {
-    let lastGroup = this.fixedWrapper.querySelector('.mip-group-selection-content:not(.lasted-visited):not(.selected').lastElementChild
+    const lastGroup = this.contentWrapper.querySelector('.mip-group-selection-content:not(.lasted-visited):not(.selected)').lastElementChild
     lastGroup.style.marginBottom = this.fixedWrapper.getBoundingClientRect().height - lastGroup.getBoundingClientRect().height - 10 + 'px'
   }
 
@@ -245,7 +246,6 @@ export default class MIPGroupSelection extends CustomElement {
       let itemData = e.target && e.target.dataset
       e.data = Object.assign({[TEXT]: e.target.textContent}, itemData)
       MIP.setData(e.data)
-      // e.target.setAttribute('selected', '')
       viewer.eventAction.execute('selected', this.element, e)
       this.updateHistory(e.data)
 
@@ -268,7 +268,7 @@ export default class MIPGroupSelection extends CustomElement {
       }
 
       this.selected = [e.data]
-      !this.closable && this.hide(e)
+      !this.closable && this.hide()
     })
   }
 
@@ -317,7 +317,7 @@ export default class MIPGroupSelection extends CustomElement {
 
   show () {
     css(this.fixedWrapper, 'display', '')
-    // css(this.mask, 'display', '')
+    css(this.mask, 'display', '')
     timer.delay(() => css(this.fixedWrapper, 'transform', 'translateY(0%)'))
     this.renderHistoryList()
     if (this.firstShow) {
@@ -332,7 +332,7 @@ export default class MIPGroupSelection extends CustomElement {
       display: 'none',
       transform: 'translateY(100%)'
     })
-    // css(this.mask, 'display', 'none')
+    css(this.mask, 'display', 'none')
 
     if (this.inputBox) {
       // 更新输入框的值
