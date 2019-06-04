@@ -126,9 +126,14 @@ export default class MIPGroupSelection extends CustomElement {
    */
   renderInputBox () {
     // 构造输入框
-    this.inputBox = dom.create(`<input type="text" id="${this.id}" name="${this.name}" placeholder="${this.placeholder}" autocomplete="off" required>`)
+    this.inputBox = dom.create(
+      `
+        <input class="mip-group-selection-input" type="text"
+          id="${this.id}" name="${this.name}" placeholder="${this.placeholder}" 
+          autocomplete="off" readonly required>
+      `
+    )
     this.inputBox.onclick = this.show
-    // this.form.appendChild(input)
     this.element.appendChild(this.inputBox)
 
     // 构造清空按钮
