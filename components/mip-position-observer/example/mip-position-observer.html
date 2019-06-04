@@ -200,6 +200,31 @@
   <div class="spacing"></div>
 
   <div id="parent">
+    <p>7. 测试 viewport-margins="100px 10vh" intersection-ratios="1" ：“触发视口”为真实视口上边缘“裁剪掉” 100px，下边缘“裁剪掉” 1/10视口。动画：黑框为目标元素，元素完全进入“触发视口”触发 enter 事件，开始动画；元素任一像素离开“触发视口”时触发 exit 事件，动画向右定格一段距离（距离大小取决于屏幕大小）</p>
+    <div class="test7"></div>
+    <mip-animation id="anim7">
+      <script type="application/json">
+        {
+          "selector": ".test7",
+          "keyframes": [{
+            "transform": "translateX(0px)"
+          },
+          {
+            "transform": "translateX(600px)"
+          }],
+          "duration": 1200
+        }
+      </script>
+    </mip-animation>
+    <mip-position-observer
+      intersection-ratios="1"
+      viewport-margins="100px 10vh"
+      on="enter:anim7.start exit:anim7.seekTo(300)"
+      layout="nodisplay">
+    </mip-position-observer>
+  </div>
+
+  <div id="parent">
       <p>8. 测试 once：enter、exit 和 scroll都只触发一次，即所有动画只触发一次，动画同上。黑框为目标元素，“触发视口”为真实视口上边缘“裁剪掉” 100px，下边缘“裁剪掉” 1/10视口。元素完全进入“触发视口”触发 enter 事件，开始动画；元素任一像素离开“触发视口”时触发 exit 事件，动画向右定格一段距离</p>
       <p style="font-weight: 600">注意：enter 在页面刷新之后立即触发了，从上边缘第一次进入也不会触发</p>
       <div class="test8"></div>
