@@ -30,7 +30,7 @@
 
 ### intersection-ratios
 
-说明：目标元素出现在视口指定多少的时候触发 `enter` `exit` `scroll` 事件。取值范围是 [0, 1]，默认值是 0，含义解释如下：
+说明：目标元素出现在视口多大比例的时候触发 `enter` `exit` `scroll` 事件。取值范围是 [0, 1]，默认值是 0，含义解释如下：
 
 * `intersection-ratios = 0` ，目标元素与视口交集为 0 是事件触发的临界点。目标元素的任一像素进入视口时触发 `enter` 事件，目标元素最后一像素离开视口时触发 `exit` 事件。
 
@@ -38,7 +38,7 @@
 
 * `intersection-ratios = 1` ，目标元素与视口交集为元素的 %100 大小是事件触发的临界点，即目标元素完全进入视口是临界点。目标元素全部进入视口时触发 `enter` 事件，目标元素任一像素离开视口时触发 `exit` 事件。
 
-* `intersection-ratios = 0 1` 。0 是元素从上面 `enter/exit` 时事件的触发临界点，1 是元素从下面 `enter/exit` 时事件的触发临界点。即，如果目标元素从上面进入，任一元素进入视口触发`enter` 事件，最后一元素离开视口触发 `exit` 事件。如果目标元素从下面进入，目标元素完全进入视口触发`enter` 事件，目标元素任一像素离开视口时触发 `exit` 事件。
+* `intersection-ratios = 0 1` 。0 是元素从视口上边缘进出时 `enter/exit` 事件的触发临界点，1 是元素从视口下边缘进出时 `enter/exit` 事件的触发临界点。即，如果目标元素从上面进入，任一元素进入视口触发`enter` 事件，最后一元素离开视口触发 `exit` 事件。如果目标元素从下面进入，目标元素完全进入视口触发`enter` 事件，目标元素任一像素离开视口时触发 `exit` 事件。
 
 必选项：否
 
@@ -48,7 +48,7 @@
 
 ### viewport-margins
 
-说明：指定事件触发在视口中的范围。
+说明：事件触发在视口中的指定范围。
 
 * `viewport-margins = 100px`，在距离视口上下各 100px 范围的时候触发上述事件，即“可见范围”为视口上下各减掉 100px 的范围
 
@@ -68,7 +68,7 @@
 
 必选项：否
 
-类型：类似 html 的 disabled 元素，不需要赋值，只要存在即为有效
+类型：类似 html 的 disabled 元素，不需要赋值，存在即为有效
 
 默认值：无
 
@@ -96,7 +96,7 @@
 </style>
 <div class="placeholder"></div>
 <div id="parent">
-  <p>7. 测试 viewport-margins：黑框为目标元素，黑框从上边缘进入视口，走到距离上边缘 100px 时事触发 enter 事件，动画播放；黑框走到距离下边缘 10% 的位置，再向下走触发 exit 事件，动画向右定格一段距离</p>
+  <p>7. 测试 viewport-margins="100px 10vh" intersection-ratios="1" ：“触发视口”为真实视口上边缘“裁剪掉” 100px，下边缘“裁剪掉” 1/10视口。动画：黑框为目标元素，元素完全进入“触发视口”触发 enter 事件，开始动画；元素任一像素离开“触发视口”时触发 exit 事件，动画向右定格一段距离（距离大小取决于屏幕大小）</p>
   <div class="test7"></div>
   <mip-animation id="anim7">
     <script type="application/json">
@@ -115,10 +115,10 @@
   <mip-position-observer
     intersection-ratios="1"
     viewport-margins="100px 10vh"
-    on="enter:anim7.restart exit:anim7.seekTo(300)"
+    on="enter:anim7.start exit:anim7.seekTo(300)"
     layout="nodisplay">
   </mip-position-observer>
-  </div>
+</div>
 
   <div class="spacing"></div>
 ```
