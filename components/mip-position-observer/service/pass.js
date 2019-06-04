@@ -13,7 +13,7 @@ export class Pass {
     this.scheduled = -1
     this.nextTime = 0
     this.running = false
-    this.boundPass = () => this.pass()
+    this.boundPass = this.pass.bind(this)
   }
 
   /**
