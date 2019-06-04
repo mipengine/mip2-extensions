@@ -37,7 +37,7 @@ export default class mipCounter extends CustomElement {
     let data = await res.json()
 
     if (!data || data.status !== 0) {
-      logger.wran(this.element, '接口数据错误！')
+      logger.wran(this.element, data.msg || '接口数据错误！')
     }
 
     this.data = data.data
