@@ -6,7 +6,7 @@ import {
 import {SCHEDULE_SERVICE_ID} from './schedule-service'
 
 export const POSITION_OBSERVER_SERVICE_ID = 'mip-position-observer-service'
-const {registerService, util, Services} = MIP
+const {registerService, util, Services, viewport} = MIP
 const {error} = util.log('mip-position-observer')
 const SCROLL_TIMEOUT = 500
 
@@ -67,11 +67,10 @@ export class PositionObserver {
   startCallback () {
     this.callbackStarted = true
 
-    // TODO:
-    window.addEventListener('scroll', () => {
+    viewport.on('scroll', () => {
       this.onScrollHandler()
     })
-    window.addEventListener('resize', () => {
+    viewport.on('resize', () => {
       this.onResizeHandler()
     })
   }

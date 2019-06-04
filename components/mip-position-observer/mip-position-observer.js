@@ -351,14 +351,6 @@ export default class MIPPositionObserver extends CustomElement {
     }
   }
 
-  maybeUninstallPositionObserver_ () {
-    if (this.positionObserver) {
-      const scene = this.discoverScene()
-      this.positionObserver.unobserve(scene)
-      this.positionObserver = null
-    }
-  }
-
   /**
    * dispatche `enter` 事件
    */

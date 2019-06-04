@@ -7,30 +7,30 @@ export const SCHEDULE_SERVICE_ID = 'mip-schedule-service'
 
 export class ScheduleService {
   constructor () {
-    this.raf_ = this.getRaf()
-    this.tasks_ = []
-    this.nextTasks_ = []
-    this.scheduled_ = false
-    this.boundRunScheduledTasks_ = this.runScheduledTasks_.bind(this)
+    this.raf = this.getRaf()
+    this.tasks = []
+    this.nextTasks = []
+    this.scheduled = false
+    this.boundrunScheduledTasks = this.runScheduledTasks.bind(this)
 
     /**
      * 当 doc 不可见时使用 pass 代替 raf，因为不可见时 raf 不执行
      * 只对非动画这样做，动画不可见时不需要触发任务
      * @const {!Pass}
      */
-    this.invisiblePass_ = new Pass(this.boundRunScheduledTasks_, FRAME_TIME)
+    this.invisiblePass = new Pass(this.boundrunScheduledTasks, FRAME_TIME)
 
     /**
      * 当 raf 不能工作时调用
-     * 和 invisiblePass_ 相似, 但是 backupPass_ 会执行 真正的 raf
+     * 和 invisiblePass 相似, 但是 backupPass 会执行 真正的 raf
      * @const {!Pass}
      */
-    this.backupPass_ = new Pass(this.boundRunScheduledTasks_, FRAME_TIME * 2.5)
+    this.backupPass = new Pass(this.boundrunScheduledTasks, FRAME_TIME * 2.5)
   }
 
   run (task) {
-    this.tasks_.push(task)
-    this.schedule_()
+    this.tasks.push(task)
+    this.schedule()
   }
 
   measure (measurer) {
@@ -45,27 +45,27 @@ export class ScheduleService {
    * @returns {boolean} 是否可以执行回调
    * @private
    */
-  canAnimate_ () {
+  canAnimate () {
     if (document.hidden) {
       return false
     }
     return true
   }
 
-  schedule_ () {
-    if (this.scheduled_) {
+  schedule () {
+    if (this.scheduled) {
       return
     }
-    this.scheduled_ = true
-    this.forceSchedule_()
+    this.scheduled = true
+    this.forceSchedule()
   }
 
-  forceSchedule_ () {
-    if (this.canAnimate_()) {
-      this.raf_(this.boundRunScheduledTasks_)
-      this.backupPass_.schedule()
+  forceSchedule () {
+    if (this.canAnimate()) {
+      this.raf(this.boundrunScheduledTasks)
+      this.backupPass.schedule()
     } else {
-      this.invisiblePass_.schedule()
+      this.invisiblePass.schedule()
     }
   }
 
@@ -74,18 +74,18 @@ export class ScheduleService {
    *
    * @private
    */
-  runScheduledTasks_ () {
-    this.backupPass_.cancel()
-    this.scheduled_ = false
+  runScheduledTasks () {
+    this.backupPass.cancel()
+    this.scheduled = false
     const {
-      tasks_: currentTasks
+      tasks: currentTasks
     } = this
-    this.tasks_ = this.nextTasks_
+    this.tasks = this.nextTasks
     for (let i = 0; i < currentTasks.length; i++) {
       currentTasks[i] && callTaskNoInline(currentTasks[i])
     }
-    this.nextTasks_ = currentTasks
-    this.nextTasks_.length = 0
+    this.nextTasks = currentTasks
+    this.nextTasks.length = 0
   }
 
   /**
@@ -125,7 +125,7 @@ function callTaskNoInline (callback) {
   } catch (e) {
     // 防止任务失败影响其他任务的执行
     setTimeout(() => {
-      throw error
+      throw e
     })
     return false
   }
