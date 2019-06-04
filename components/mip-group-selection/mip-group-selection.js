@@ -4,12 +4,17 @@ const {
   util,
   viewer,
   templates,
+  Services,
   CustomElement
 } = MIP
 
 const log = util.log('mip-group-selection')
-const { fixedElement } = viewer
-const { dom, css, event } = util
+const {fixedElement} = viewer
+const {dom, css, event} = util
+const CustomStorage = util.customStorage
+const storage = new CustomStorage(0)
+const timer = Services.timer()
+const TEXT = '_textContent'
 
 export default class MIPGroupSelection extends CustomElement {
   build () {
@@ -22,6 +27,9 @@ export default class MIPGroupSelection extends CustomElement {
     this.multiple = el.hasAttribute('multiple')
     this.inForm = !!dom.closest(el, 'mip-form')
     this.firstShow = true
+    this.history = []
+    this.selected = []
+    this.maxHistory = 3
 
     this.show = this.show.bind(this)
     this.hide = this.hide.bind(this)
@@ -77,48 +85,101 @@ export default class MIPGroupSelection extends CustomElement {
   }
 
   /**
+   * 渲染历史记录
+   */
+  renderHistoryList () {
+    try {
+      this.history = JSON.parse(storage.get(this.storageName)) || []
+    } catch (e) {
+      log.warn('history data is wrong!')
+    }
+    let html = ''
+    if (this.history && this.history.length) {
+      html = `<div class="mip-group-selection-content lasted-visited">
+                <div class="mip-group-selection-title">最近选择</div>`
+      this.history.forEach(item => {
+        const datasetString = this.props.map(prop => `data-${prop}="${item[prop]}"`).join(' ')
+        html += `<p class="mip-group-selection-item" ${datasetString}>${item[TEXT]}</p>`
+      })
+      html += '</div></div>'
+    }
+    this.historyWrapper.innerHTML = html
+  }
+
+  /**
+   * 模版内容移到 mip-fixed 中
+   *
+   * @param {string} html 模版代码
+   */
+  moveToFixed (html) {
+    this.fixedWrapper = dom.create(`<mip-fixed class="mip-group-selection-wrapper" type="top"></mip-fixed>`)
+    css(this.fixedWrapper, 'display', 'none')
+    this.contentWrapper = dom.create(`<div class="mip-group-selection-content-wrapper"></div>`)
+    this.contentWrapper.innerHTML = html
+    this.sidebarWrapper = this.contentWrapper.querySelector('.mip-group-selection-sidebar-wrapper')
+    this.fixedWrapper.appendChild(this.sidebarWrapper)
+    this.fixedWrapper.appendChild(this.contentWrapper)
+  }
+
+  /**
+   * 渲染输入框、清空按钮
+   */
+  renderInputBox () {
+    // 构造输入框
+    this.inputBox = dom.create(`<input type="text" id="${this.id}" name="${this.name}" placeholder="${this.placeholder}" autocomplete="off" required>`)
+    this.inputBox.onclick = this.show
+    // this.form.appendChild(input)
+    this.element.appendChild(this.inputBox)
+
+    // 构造清空按钮
+    const clearButton = dom.create('<div class="mip-group-selection-clear-button"></div>')
+    css(clearButton, {
+      top: this.inputBox.offsetTop + (this.inputBox.offsetHeight - 16) / 2 - 8 + 'px',
+      left: this.inputBox.offsetWidth - 32 + 'px',
+      display: 'none'
+    })
+    clearButton.onclick = () => {
+      this.inputBox.value = ''
+      css(clearButton, 'display', 'none')
+    }
+    this.clearButton = clearButton
+    this.element.appendChild(clearButton)
+  }
+
+  /**
    * 生成 dom，构造 mask、输入框、关闭按钮等
    *
    * @param {string} html templates 解析出来的字符串
    */
   renderHtml (html) {
-    const el = this.element
+    this.moveToFixed(html)
 
-    // 内容移到 mip-fixed 中
-    const fixed = dom.create(`<mip-fixed class="mip-group-selection-wrapper" type="top"></mip-fixed>`)
-    css(fixed, 'display', 'none')
-    fixed.innerHTML = html
-    this.fixedWrapper = fixed
+    // 根据选项元素获取所有属性字段，并生成 localStorage 名
+    const itemElement = this.contentWrapper.querySelector('.mip-group-selection-item')
+    this.props = Object.keys(itemElement.dataset)
+    this.storageName = 'groupSelection' + this.props.map(prop => prop.slice(0, 1).toUpperCase() + prop.slice(1)).join('')
+
+    // 构造已选择列表
+    if (this.multiple) {
+      const selectedWrapper = dom.create(`<div class="mip-group-selected-selected-wrapper"></div>`)
+      this.contentWrapper.insertBefore(selectedWrapper, this.contentWrapper.firstChild)
+      this.selectedWrapper = selectedWrapper
+    }
+
+    // 构造历史记录列表
+    this.historyWrapper = dom.create(`<div class="mip-group-selection-history-wrapper"></div>`)
+    this.contentWrapper.insertBefore(this.historyWrapper, this.contentWrapper.firstChild)
+    this.renderHistoryList()
 
     // 构造 mask
-    const mask = dom.create(`<mip-fixed still class="mip-group-selection-mask" type="top"></mip-fixed>`)
-    css(mask, 'display', 'none')
-    mask.onclick = this.hide
-    this.mask = mask
-    el.appendChild(mask)
+    // this.mask = dom.create(`<mip-fixed still class="mip-group-selection-mask" type="top"></mip-fixed>`)
+    // css(this.mask, 'display', 'none')
+    // this.mask.onclick = this.hide
+    // el.appendChild(this.mask)
 
-    // 在 mip-form 中
+    // 在 mip-form 中显示为输入框
     if (this.inForm) {
-      // 构造输入框
-      const input = dom.create(`<input type="text" id="${this.id}" name="${this.name}" placeholder="${this.placeholder}" autocomplete="off" readonly required>`)
-      input.onclick = this.show
-      this.inputBox = input
-      // this.form.appendChild(input)
-      el.appendChild(input)
-
-      // 构造清空按钮
-      const clear = dom.create('<div class="mip-group-selection-clear-button"></div>')
-      css(clear, {
-        top: input.offsetTop + (input.offsetHeight - 16) / 2 - 8 + 'px',
-        left: input.offsetWidth - 32 + 'px',
-        display: 'none'
-      })
-      clear.onclick = () => {
-        input.value = ''
-        css(clear, 'display', 'none')
-      }
-      this.clearButton = clear
-      el.appendChild(clear)
+      this.renderInputBox()
     }
 
     // 构造关闭按钮
@@ -126,18 +187,17 @@ export default class MIPGroupSelection extends CustomElement {
       const closeButton = document.createElement('button')
       closeButton.className = 'mip-group-selection-close-button'
       closeButton.onclick = this.hide
-      fixed.appendChild(closeButton)
+      this.fixedWrapper.appendChild(closeButton)
     }
 
-    document.body.appendChild(fixed)
+    document.body.appendChild(this.fixedWrapper)
   }
 
   /**
    * 修改最下方分组的样式，增加 marginBottom, 保证滚动后分组标题可以在页面最上方
    */
   modifyMarginBottom () {
-    let lastGroup = this.fixedWrapper.querySelector('.mip-group-selection-content').lastElementChild
-    // lastGroup.style.marginBottom = viewport.getHeight() - lastGroup.getBoundingClientRect().height - 10 + 'px'
+    let lastGroup = this.fixedWrapper.querySelector('.mip-group-selection-content:not(.lasted-visited):not(.selected').lastElementChild
     lastGroup.style.marginBottom = this.fixedWrapper.getBoundingClientRect().height - lastGroup.getBoundingClientRect().height - 10 + 'px'
   }
 
@@ -147,7 +207,7 @@ export default class MIPGroupSelection extends CustomElement {
   bindSidebarClickEvent () {
     // ios sf 环境中
     if (!MIP.standalone && util.platform.isIOS() && fixedElement._fixedLayer) {
-      // ios8 bug: mip-fixed 还没移到 fixedLayer 中，需要延迟执行
+      // ios8 mip-fixed 还没移到 fixedLayer 中，需要延迟执行
       setTimeout(() => {
         let wrapper = fixedElement._fixedLayer.querySelector('.mip-group-selection-sidebar-wrapper')
         util.event.delegate(wrapper, '.mip-group-selection-link', 'click', e => {
@@ -173,14 +233,7 @@ export default class MIPGroupSelection extends CustomElement {
    */
   scrollToAnchor (anchor) {
     const anchorElement = this.fixedWrapper.querySelector('[data-anchor=' + anchor + ']')
-    const content = this.fixedWrapper.querySelector('.mip-group-selection-content')
-    try {
-      // viewport.setScrollTop(anchorElement.offsetTop + 10)
-      content.scrollTo(0, anchorElement.offsetTop)
-    } catch (e) {}
-    // 兜底效果，再 scroll 一次
-    // viewport.setScrollTop(anchorElement.offsetTop + 10)
-    content.scrollTo(0, anchorElement.offsetTop)
+    this.contentWrapper.scrollTo(0, anchorElement.offsetTop)
   }
 
   /**
@@ -190,27 +243,83 @@ export default class MIPGroupSelection extends CustomElement {
   bindItemClickEvent () {
     event.delegate(this.fixedWrapper, '.mip-group-selection-item', 'click', e => {
       let itemData = e.target && e.target.dataset
-      e.data = itemData
+      e.data = Object.assign({[TEXT]: e.target.textContent}, itemData)
       MIP.setData(e.data)
+      // e.target.setAttribute('selected', '')
       viewer.eventAction.execute('selected', this.element, e)
+      this.updateHistory(e.data)
 
-      if (!this.inputBox) {
+      // 是否已选
+      let haveSelected = (data) => {
+        for (let i = 0; i < this.selected.length; i++) {
+          if (this.selected[i][TEXT] === data[TEXT]) {
+            return true
+          }
+        }
+        return false
+      }
+
+      if (this.multiple) {
+        if (!haveSelected(e.data)) {
+          this.selected.push(e.data)
+          this.addToSelectedList(e.data)
+        }
         return
       }
 
-      const value = this.field ? e.data[this.field] : e.data
-      if (this.multiple) {
-        this.inputBox.value += (this.inputBox.value ? ', ' : '') + value
-      } else {
-        this.inputBox.value = value
-      }
-      css(this.clearButton, 'display', 'block')
+      this.selected = [e.data]
+      !this.closable && this.hide(e)
     })
   }
 
+  /**
+   * 更新历史记录
+   *
+   * @param {Object} data 选项数据
+   */
+  updateHistory (data) {
+    let isExit = false
+    for (let i = 0; i < this.history.length; i++) {
+      if (this.history[i][TEXT] === data[TEXT]) {
+        let newest = this.history[i]
+        this.history.splice(i, 1)
+        this.history.unshift(newest)
+        isExit = true
+      }
+    }
+
+    if (!isExit) {
+      this.history.unshift(data)
+      this.history = this.history.slice(0, this.maxHistory)
+    }
+
+    storage.set(this.storageName, JSON.stringify(this.history))
+    this.renderHistoryList()
+  }
+
+  /**
+   * 添加到已选列表
+   *
+   * @param {Object} data 选项数据
+   */
+  addToSelectedList (data) {
+    if (!this.selectedList) {
+      this.selectedList = dom.create(
+        `<div class="mip-group-selection-content selected">
+          <div class="mip-group-selection-title">已选择</div>`
+      )
+      this.selectedWrapper.appendChild(this.selectedList)
+    }
+    const datasetString = this.props.map(prop => `data-${prop}="${data[prop]}"`).join(' ')
+    const item = dom.create(`<p class="mip-group-selection-item" ${datasetString}>${data[TEXT]}</p>`)
+    this.selectedList.appendChild(item)
+  }
+
   show () {
-    css(this.mask, 'display', '')
     css(this.fixedWrapper, 'display', '')
+    // css(this.mask, 'display', '')
+    timer.delay(() => css(this.fixedWrapper, 'transform', 'translateY(0%)'))
+    this.renderHistoryList()
     if (this.firstShow) {
       // 修改最下方分组的样式，增加 marginBottom, 保证滚动后分组标题可以在页面最上方
       this.modifyMarginBottom()
@@ -219,7 +328,28 @@ export default class MIPGroupSelection extends CustomElement {
   }
 
   hide () {
-    css(this.fixedWrapper, 'display', 'none')
-    css(this.mask, 'display', 'none')
+    css(this.fixedWrapper, {
+      display: 'none',
+      transform: 'translateY(100%)'
+    })
+    // css(this.mask, 'display', 'none')
+
+    if (this.inputBox) {
+      // 更新输入框的值
+      const value = this.selected.map(data => data[this.field]).join(', ')
+      this.inputBox.value = value
+      value && css(this.clearButton, 'display', 'block')
+    }
+
+    const e = new Event('close')
+    e.data = this.selected
+    viewer.eventAction.execute('close', this.element, e)
+
+    // 清空已选择列表
+    if (this.multiple) {
+      this.selectedWrapper.innerHTML = ''
+      this.selectedList = null
+    }
+    this.selected = []
   }
 }

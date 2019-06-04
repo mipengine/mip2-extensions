@@ -38,7 +38,7 @@
         </script>
       </mip-data>
       <button on="tap:select.show">选择人物</button>
-      <mip-group-selection id="select" on="selected:mytoggle.show(1000)" closable>
+      <mip-group-selection id="select" on="selected:mytoggle.show(1000)">
         <!-- 在 application/json 中配置全部城市 -->
         <script type="application/json">
           {
@@ -123,27 +123,25 @@
           }
         </script>
         <!-- 城市选择组件依赖的 DOM 结构，不建议自行删除结构 -->
-        <div class="mip-group-selection-wrapper">
-          <template type="mip-mustache">
-            <div class="mip-group-selection-content">
+        <template type="mip-mustache">
+          <div class="mip-group-selection-content">
+            {{#list}}
+              <div class="mip-group-selection-group">
+                <div class="mip-group-selection-title" data-anchor="{{initials}}">{{initials}}</div>
+                {{#characters}}
+                  <p class="mip-group-selection-item" data-age="{{age}}" data-gender="{{gender}}" data-name="{{name}}">{{name}}</p>
+                {{/characters}}
+              </div>
+            {{/list}}
+          </div>
+          <mip-fixed still class="mip-group-selection-sidebar-wrapper" type="right" top="10px">
+            <div class="mip-group-selection-sidebar">
               {{#list}}
-                <div class="mip-group-selection-group mip-group-selection-part-letter">
-                  <div class="mip-group-selection-title" data-anchor="{{initials}}">{{initials}}</div>
-                  {{#characters}}
-                    <p class="mip-group-selection-item" data-age="{{age}}" data-gender="{{gender}}" data-name="{{name}}">{{name}}</p>
-                  {{/characters}}
-                </div>
+                <div class="mip-group-selection-link" data-target-anchor="{{initials}}">{{initials}}</div>
               {{/list}}
             </div>
-            <mip-fixed still class="mip-group-selection-sidebar-wrapper" type="right" top="10px">
-              <div class="mip-group-selection-sidebar">
-                {{#list}}
-                  <div class="mip-group-selection-link" data-target-anchor="{{initials}}">{{initials}}</div>
-                {{/list}}
-              </div>
-            </mip-fixed>
-          </template>
-        </div>
+          </mip-fixed>
+        </template>
       </mip-group-selection>
       <mip-fixed bottom="10px" type="right">
         <mip-toggle id="mytoggle">
