@@ -36,7 +36,9 @@
 </head>
 
 <body>
-  <div class="placeholder"></div>
+  <div class="placeholder">
+    请向下滑动！
+  </div>
 
   <div id="parent">
       <p>1. 黑框为目标元素：intersection-ratios="0",元素任一像素进入视口触发 enter 事件，开始动画；元素完全离开视口触发 exit 事件，动画向右定格一段距离（距离大小取决于屏幕大小）</p>
@@ -198,7 +200,8 @@
   <div class="spacing"></div>
 
   <div id="parent">
-      <p>7. 测试 viewport-margins：黑框为目标元素，黑框从上边缘进入视口，走到距离上边缘 100px 时事触发 enter 事件，动画播放；黑框走到距离下边缘 10% 的位置，再向下走触发 exit 事件，动画向右定格一段距离</p>
+      <p>7. 测试 viewport-margins="100px 10vh" intersection-ratios="1" ：“触发视口”为真实视口上边缘“裁剪掉” 100px，下边缘“裁剪掉” 1/10视口。动画同上例3：
+        黑框为目标元素，元素完全进入“触发视口”触发 enter 事件，开始动画；元素任一像素离开“触发视口”时触发 exit 事件，动画向右定格一段距离（距离大小取决于屏幕大小）</p>
       <div class="test7"></div>
       <mip-animation id="anim7">
         <script type="application/json">
@@ -217,7 +220,7 @@
       <mip-position-observer
         intersection-ratios="1"
         viewport-margins="100px 10vh"
-        on="enter:anim7.restart exit:anim7.seekTo(300)"
+        on="enter:anim7.start exit:anim7.seekTo(300)"
         layout="nodisplay">
       </mip-position-observer>
   </div>
