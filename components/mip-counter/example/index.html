@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>toast 组件</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    mip-counter {
+      margin: 10px 20px;
+      text-align: center;
+    }
+    .mip-counter-button {
+      border: solid 1px #333;
+      border-radius: 3px;
+      background: #005af0;
+      color: #fff;
+      display: inline-block;
+      padding: 3px 10px;
+    }
+    mip-counter .mip-counter-button mip-img,
+    mip-counter .mip-counter-button span {
+      vertical-align: middle;
+    }
+    .mip-countet-dislike {
+      transform: rotate(180deg)
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h2>实现一个点赞的效果</h2>
+    <mip-counter
+      layout="fixed"
+      height="50"
+      width="100"
+      timeout="1000"
+      src="./data.js"
+    >
+      <div class="mip-counter-wrapper">
+        <template type="mip-mustache">
+          <div class="mip-counter-button">
+            <mip-img src="./imgs/like.png" width="20" height="20" layout="fixed"></mip-img>
+            <p>赞 {{ counter }}</p>
+          </div>
+        </template>
+      </div>
+    </mip-counter>
+
+    <h2>实现一个不喜欢的效果</h2>
+    <mip-counter
+      layout="fixed"
+      height="50"
+      width="100"
+      src="./data.js"
+    >
+      <template type="mip-mustache">
+        <div class="mip-counter-button">
+          <mip-img class="mip-countet-dislike" src="./imgs/like.png" width="20" height="20" layout="fixed"></mip-img>
+          <span>踩</span> <span>{{ counter }}</span>
+        </div>
+      </template>
+    </mip-counter>
+  </div>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-counter/mip-counter.js"></script>
+  <script src="/mip-mustache/mip-mustache.js"></script>
+</body>
+</html>
