@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=no,minimal-ui">
+  <title>mip-orientation-observer</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    .spacing {
+      width: 100vw;
+      height: 10px;
+    }
+    .test1,
+    .test2,
+    .test3,
+    .test4,
+    .test5,
+    .test6 {
+      background-color: brown;
+      height: 50px;
+      width: 50px;
+    }
+    .title {
+      font-weight: 800;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>以下所有描述中，0 度都是手机放平时的起始状态</h2>
+  <div class="spacing"></div>
+
+  <h4>alpha-range="330 30"</h4>
+  <p>
+    <span class="title">监听范围: </span>
+    <span>手机顺时针和逆时针旋转各 30 度，超过范围不触发事件，即动画无反应。</span>
+  </p>
+  <p>
+    <span class="title">操作: </span>
+    <span>逆时针向左转 30 度到达 330，顺时针向右转 30 到达 30。手机初始状态为 0，是度数 [-30, 30] 的中间值，所以动画初始是执行到一半时的状态，逆时针转动手机，alpha 值增大，方块向右移动；顺时针转动手机，alpha 值减小，方块向左。</span>
+  </p>
+  <div class="test1"></div>
+  <mip-animation id="anim1">
+    <script type="application/json">
+      {
+        "selector": ".test1",
+        "keyframes": [{
+          "transform": "translateX(0px)"
+        },
+        {
+          "transform": "translateX(200px)"
+        }],
+        "duration": 120
+      }
+    </script>
+  </mip-animation>
+  <mip-orientation-observer
+    alpha-range="330 30"
+    duration="120"
+    on="alpha:anim1.seekTo(event.seekToTime)"
+    layout="nodisplay">
+  </mip-orientation-observer>
+
+  <div class="spacing"></div>
+
+  <h4>beta-range="-30 30"</h4>
+  <p>
+    <span class="title">监听范围: </span>
+    <span>手机顶部向下旋转和向上旋转各 30 度</span>
+  </p>
+  <p>
+    <span class="title">操作: </span>
+    <span>手机顶部向上 30 度到达 30，向下 30 到达 -30。手机初始状态为 0，所以动画出于执行到一半时的状态，手机顶部向上转动，beta 值增大，方块向右移动；手机顶部向下转动，beta 值减小，方块向左。</span>
+  </p>
+  <div class="test2"></div>
+  <mip-animation id="anim2">
+    <script type="application/json">
+      {
+        "selector": ".test2",
+        "keyframes": [{
+          "transform": "translateX(0px)"
+        },
+        {
+          "transform": "translateX(200px)"
+        }],
+        "duration": 120
+      }
+    </script>
+  </mip-animation>
+  <mip-orientation-observer
+    beta-range="-30 30"
+    duration="120"
+    on="beta:anim2.seekTo(event.seekToTime)"
+    layout="nodisplay">
+  </mip-orientation-observer>
+
+  <div class="spacing"></div>
+
+  <h4>gamma-range="-30 30"</h4>
+  <p>
+    <span class="title">监听范围: </span>
+    <span>手机右侧向下旋转和向上旋转各 30 度</span>
+  </p>
+  <p>
+    <span class="title">操作: </span>
+    <span>手机右侧向下 30 度到达 30，向上 30 度到达 -30。动画初始状态为执行到一半时的状态，手机右侧向下转动，gamma 值增大，方块向右移动；手机右侧向上转动，gamma 值减小，方块向左。</span>
+  </p>
+  <div class="test3"></div>
+  <mip-animation id="anim3">
+    <script type="application/json">
+      {
+        "selector": ".test3",
+        "keyframes": [{
+          "transform": "translateX(0px)"
+        },
+        {
+          "transform": "translateX(200px)"
+        }],
+        "duration": 120
+      }
+    </script>
+  </mip-animation>
+  <mip-orientation-observer
+    gamma-range="-30 30"
+    duration="120"
+    on="gamma:anim3.seekTo(event.seekToTime)"
+    layout="nodisplay">
+  </mip-orientation-observer>
+
+  <div class="spacing"></div>
+
+  <h4>alpha-range="10 270"</h4>
+  <p>
+    <span class="title">监听范围: </span>
+    <span>手机逆时针旋转 10 度到 270 度</span>
+  </p>
+  <p>
+    <span class="title">操作: </span>
+    <span>逆时针向左转 10 度到达 10，一直旋转直到到达 270。手机初始状态为 0，不在触发范围内，动画未触发，元素处于屏幕最左边。逆时针转动手机时，触发动画。alpha 值增大，方块向右移动；顺时针转动手机，alpha 值减小，方块向左。</span>
+  </p>
+  <div class="test4"></div>
+  <mip-animation id="anim4">
+    <script type="application/json">
+      {
+        "selector": ".test4",
+        "keyframes": [{
+          "transform": "translateX(0px)"
+        },
+        {
+          "transform": "translateX(200px)"
+        }],
+        "duration": 120
+      }
+    </script>
+  </mip-animation>
+  <mip-orientation-observer
+    alpha-range="10 270"
+    duration="120"
+    on="alpha:anim4.seekTo(event.seekToTime)"
+    layout="nodisplay">
+  </mip-orientation-observer>
+
+  <div class="spacing"></div>
+
+  <h4>beta-range="30 -120"</h4>
+  <p>
+    <span class="title">监听范围: </span>
+    <span>手机顶部向上旋转 30 度到达 30，保持旋转可到达 -120</span>
+  </p>
+  <p>
+    <span class="title">操作: </span>
+    <span>手机初始状态为 0，不在触发范围内，元素处于屏幕最左边。手机顶部向上转动，保持转动，beta 值增大，方块向右移动；手机顶部向下转动，beta 值减小，方块向左。</span>
+  </p>
+  <p>
+    <span class="title">解释: </span>
+    <span>手机顶部向上旋转 30 度到达 30，一直保持方向再旋转到达 180 度（也是 -180 度，两点重合），接着旋转成负值 -180，由 -180 渐渐变大直到到达 -120。</span>
+  </p>
+  <div class="test5"></div>
+  <mip-animation id="anim5">
+    <script type="application/json">
+      {
+        "selector": ".test5",
+        "keyframes": [{
+          "transform": "translateX(0px)"
+        },
+        {
+          "transform": "translateX(200px)"
+        }],
+        "duration": 120
+      }
+    </script>
+  </mip-animation>
+  <mip-orientation-observer
+    beta-range="30 -120"
+    duration="120"
+    on="beta:anim5.seekTo(event.seekToTime)"
+    layout="nodisplay">
+  </mip-orientation-observer>
+
+  <div class="spacing"></div>
+
+  <h4>gamma-range="-60 30"</h4>
+  <p>
+    <span class="title">监听范围: </span>
+    <span>手机右侧向下旋转 30 度到和向上旋转 60度</span>
+  </p>
+  <p>
+    <span class="title">操作: </span>
+    <span>手机顶部向上转动，保持转动，beta 值增大，方块向右移动；手机顶部向下转动，beta 值减小，方块向左。</span>
+  </p>
+  <p>
+    <span class="title">解释: </span>
+    <span>手机右侧从 0 状态向下 30 度到达 30，从 0 状态向上 60 到达 -60。手机右侧向下转动，gamma 值增大，方块向右移动；手机右侧向上转动，gamma 值减小，方块向左。</span>
+  </p>
+  <div class="test6"></div>
+  <mip-animation id="anim6">
+    <script type="application/json">
+      {
+        "selector": ".test6",
+        "keyframes": [{
+          "transform": "translateX(0px)"
+        },
+        {
+          "transform": "translateX(200px)"
+        }],
+        "duration": 120
+      }
+    </script>
+  </mip-animation>
+  <mip-orientation-observer
+    gamma-range="-60 30"
+    duration="120"
+    on="gamma:anim6.seekTo(event.seekToTime)"
+    layout="nodisplay">
+  </mip-orientation-observer>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-orientation-observer/mip-orientation-observer.js"></script>
+  <script src="/mip-animation/mip-animation.js"></script>
+</body>
+</html>
