@@ -133,7 +133,7 @@ export default class MIPFullpageScroll extends CustomElement {
    */
   initNav () {
     let navWrapper = document.createElement('mip-fixed')
-    let { direction, autoplay, timeout } = this.props
+    let { direction } = this.props
 
     navWrapper.setAttribute('navigator', '')
     navWrapper.setAttribute('still', '')
@@ -152,10 +152,6 @@ export default class MIPFullpageScroll extends CustomElement {
       if (target && target.hasAttribute('navigator-item')) {
         let index = target.getAttribute('navigator-item')
         this.goTo(+index)
-        if (autoplay) {
-          clearInterval(this.timer)
-          this.timer = setInterval(() => this.next(), timeout)
-        }
       }
     })
 
@@ -179,7 +175,7 @@ export default class MIPFullpageScroll extends CustomElement {
    * @param {number} index 表示第几个 section
    */
   goTo (index) {
-    let { direction, navigateable, loop } = this.props
+    let { direction, navigateable, loop, autoplay, timeout } = this.props
     let len = this.sections.length
 
     if (loop) {
@@ -210,6 +206,11 @@ export default class MIPFullpageScroll extends CustomElement {
           item.removeAttribute('current-item')
         }
       })
+    }
+
+    if (autoplay) {
+      clearInterval(this.timer)
+      this.timer = setInterval(() => this.next(), timeout)
     }
 
     viewer.eventAction.execute('change', this.element, { index: index + 1 })
