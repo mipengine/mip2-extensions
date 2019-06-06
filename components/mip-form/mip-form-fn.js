@@ -52,17 +52,13 @@ export default class Form {
     // 表单提交
     let curEles = this.element.querySelectorAll('form')
     for (let item of curEles) {
-      item.addEventListener('submit', event => {
-        event.preventDefault()
-        this.onSubmit()
-      })
+      item.addEventListener('submit', event => this.onSubmit(event))
     }
+    this.element.customElement.addEventAction('submit', () => this.onSubmit())
     // 部分浏览器回车不触发submit
     this.element.addEventListener('keydown', event => {
       if (event.keyCode === 13) {
-        // 为了使余下浏览器不多次触发submit, 使用prevent
-        event.preventDefault()
-        this.onSubmit()
+        this.onSubmit(event)
       }
     })
 
@@ -90,9 +86,11 @@ export default class Form {
   /**
    * 点击提交按钮事件处理函数
    *
-   * @param {HTMLElement} element form节点
+   * @param {Event} event 对象
    */
-  onSubmit (element) {
+  onSubmit (event) {
+    event && event.preventDefault()
+
     const isHttp = this.url.toLowerCase().match('http://')
     const isGetMethod = this.method === 'GET'
     this.triggerCustomEvent(FORM_EVENT.SUBMIT, {})

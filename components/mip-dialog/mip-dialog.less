@@ -1,0 +1,104 @@
+@border: 1px solid #ddd;
+@border-radius: 4px;
+
+@m-border-radius: 7px;
+
+mip-dialog {
+  display: none !important;
+}
+
+.mip-dialog {
+  &-container {
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", Helvetica, "Microsoft YaHei", Arial, sans-serif;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+
+  &-hidden {
+    display: none;
+  }
+
+  &-mask {
+    background: rgba(0, 0, 0, 0.65);
+  }
+
+  &-content {
+    position: relative;
+    border-radius: @border-radius;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: #fff;
+  }
+
+  &-header {
+    overflow: hidden;
+    padding: 16px 24px;
+    border-bottom: @border;
+    border-radius: @border-radius @border-radius 0 0;
+    font-weight: 500;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.85);
+  }
+
+  &-body {
+    padding: 24px;
+    border-bottom: @border;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+
+  &-footer {
+    overflow: hidden;
+    padding: 10px 16px;
+    border-radius: 0 0 @border-radius @border-radius;
+  }
+
+  @media only screen and (max-width: 599px) {
+    &-container {
+      align-items: center;
+    }
+
+    width: 270px;
+  }
+
+  @media only screen and (min-width: 600px) {
+    position: relative;
+    width: 520px;
+    top: 100px;
+  }
+
+  @media only screen and (max-width: 767px) {
+    &-content {
+      text-align: center;
+    }
+
+    &-header {
+      padding: 21px 15px 0;
+      margin-bottom: 15px;
+      border-bottom: 0;
+      border-radius: @m-border-radius @m-border-radius 0 0;
+      font-size: 18px;
+    }
+
+    &-body {
+      margin: 15px 0;
+      padding: 0 15px;
+      border-bottom: 0;
+      color: #888;
+    }
+
+    &-footer {
+      margin-top: 15px;
+      padding: 0;
+      border-top: @border;
+      border-radius: 0 0 @m-border-radius @m-border-radius;
+    }
+  }
+}
