@@ -56,7 +56,7 @@ export default class MIPScrollbox extends CustomElement {
     scrollBoxInnerWrapper.addEventListener('scroll', updateView)
     element.addEventListener('touchmove', e => e.stopPropagation())
 
-    let scrollLeftConf = config.scroll
+    let scrollLeftConf = config.scrollLeft
     if (!isNaN(+scrollLeftConf)) {
       scrollLeft = +scrollLeftConf
     } else {
