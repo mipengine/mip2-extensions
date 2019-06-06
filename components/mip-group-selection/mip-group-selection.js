@@ -134,6 +134,7 @@ export default class MIPGroupSelection extends CustomElement {
       `
     )
     this.inputBox.onclick = this.show
+    this.inputBox.blur()
     this.element.appendChild(this.inputBox)
 
     // 构造清空按钮
@@ -239,7 +240,7 @@ export default class MIPGroupSelection extends CustomElement {
    */
   scrollToAnchor (anchor) {
     const anchorElement = this.fixedWrapper.querySelector('[data-anchor=' + anchor + ']')
-    this.contentWrapper.scrollTo(0, anchorElement.offsetTop)
+    this.contentWrapper.scrollTop = anchorElement.offsetTop
   }
 
   /**
@@ -249,7 +250,8 @@ export default class MIPGroupSelection extends CustomElement {
   bindItemClickEvent () {
     event.delegate(this.fixedWrapper, '.mip-group-selection-item', 'click', e => {
       let itemData = e.target && e.target.dataset
-      e.data = Object.assign({[TEXT]: e.target.textContent}, itemData)
+      e.data = JSON.parse(JSON.stringify(itemData))
+      e.data[TEXT] = e.target.textContent
       MIP.setData(e.data)
       viewer.eventAction.execute('selected', this.element, e)
       this.updateHistory(e.data)
@@ -343,7 +345,8 @@ export default class MIPGroupSelection extends CustomElement {
       // 更新输入框的值
       const value = this.selected.map(data => data[this.field]).join(', ')
       this.inputBox.value = value
-      value && css(this.clearButton, 'display', 'block')
+      const display = value ? 'block' : 'none'
+      css(this.clearButton, 'display', display)
     }
 
     const e = new Event('close')
