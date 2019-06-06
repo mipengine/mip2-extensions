@@ -94,6 +94,5 @@ export default class MIPScrollbox extends CustomElement {
     util.css(element.querySelector('[data-scroller]'), {
       width: width + '%'
     })
-    // element.querySelector('[data-scroller]').scrollTo(-200, 100)
   }
 }
