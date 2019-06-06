@@ -250,7 +250,10 @@ export default class MIPGroupSelection extends CustomElement {
   bindItemClickEvent () {
     event.delegate(this.fixedWrapper, '.mip-group-selection-item', 'click', e => {
       let itemData = e.target && e.target.dataset
-      e.data = JSON.parse(JSON.stringify(itemData))
+      e.data = {}
+      Object.keys(itemData).forEach(key => {
+        e.data[key] = itemData[key]
+      })
       e.data[TEXT] = e.target.textContent
       MIP.setData(e.data)
       viewer.eventAction.execute('selected', this.element, e)
