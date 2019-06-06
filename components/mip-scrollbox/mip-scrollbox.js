@@ -50,10 +50,23 @@ export default class MIPScrollbox extends CustomElement {
     // 不能用 Object.assign 不然的话 element.dataset 不能拷贝过来
     let config = util.fn.extend({}, DEFAULTS, element.dataset)
     let updateView = util.fn.throttle(() => viewport.trigger('changed'), 200)
-
+    let scrollBoxInnerWrapper = element.querySelector('[data-inner]')
+    let scrollLeft = 0
     // 绑定滚动事件触发更新视图
-    element.querySelector('[data-inner]').addEventListener('scroll', updateView)
+    scrollBoxInnerWrapper.addEventListener('scroll', updateView)
     element.addEventListener('touchmove', e => e.stopPropagation())
+
+    let scrollLeftConf = config.scroll
+    if (!isNaN(+scrollLeftConf)) {
+      scrollLeft = +scrollLeftConf
+    } else {
+      if (/^(\d*?(\.\d+)?)%$/.test(scrollLeftConf)) {
+        let percent = +scrollLeftConf.replace('%', '')
+        scrollLeft = scrollBoxInnerWrapper.scrollWidth * percent / 100
+      }
+    }
+
+    scrollBoxInnerWrapper.scrollTo((scrollLeft || 0), 0)
 
     if (config.type !== 'row') {
       return
@@ -81,6 +94,6 @@ export default class MIPScrollbox extends CustomElement {
     util.css(element.querySelector('[data-scroller]'), {
       width: width + '%'
     })
-    // element.querySelector('[data-scroller]').style.width = width + '%'
+    // element.querySelector('[data-scroller]').scrollTo(-200, 100)
   }
 }
