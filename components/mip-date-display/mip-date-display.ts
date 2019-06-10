@@ -65,12 +65,12 @@ export default class MIPDateDisplay extends CustomElement {
   private locale: string = ''
 
 
-  constructor (private element: HTMLElement) {
+  public constructor (private element: HTMLElement) {
     super(element)
     this.render = this.render.bind(this)
   }
 
-  build () {
+  public build () {
     if(!this.element.ownerDocument) {
       return
     }
@@ -144,9 +144,8 @@ export default class MIPDateDisplay extends CustomElement {
    * @param {!Date} date 目标时间
    * @param {string} locale 语言
    * @returns {!VariablesDef} VariablesDef 的类型
-   * @private
    */
-  getVariablesInUTC (date: Date, locale: string): VariablesDef {
+  private getVariablesInUTC (date: Date, locale: string): VariablesDef {
     return {
       year: date.getUTCFullYear(),
       month: date.getUTCMonth() + 1,
@@ -230,12 +229,12 @@ export default class MIPDateDisplay extends CustomElement {
   /**
    * render dom 渲染函数
    */
-  render (htmls: string) {
+  private render (htmls: string) {
     let node: HTMLElement = document.createElement('div')
     node.innerHTML = htmls
     if (!this.container) {
       return
     }
-    this.containe && this.container.appendChild(node)
+    this.container.appendChild(node)
   }
 }
