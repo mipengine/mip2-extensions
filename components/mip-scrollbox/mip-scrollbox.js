@@ -66,7 +66,7 @@ export default class MIPScrollbox extends CustomElement {
       }
     }
 
-    scrollBoxInnerWrapper.scrollTo((scrollLeft || 0), 0)
+    scrollBoxInnerWrapper.scrollLeft = scrollLeft || 0
 
     if (config.type !== 'row') {
       return
