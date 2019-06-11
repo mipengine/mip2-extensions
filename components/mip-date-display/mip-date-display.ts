@@ -57,12 +57,12 @@ interface EnhancedVariablesDef {
 
 export default class MIPDateDisplay extends CustomElement {
   private container: HTMLElement | null = null
-  private datetime: string = ''
-  private timestampSeconds: number = 0
-  private timestampMiliseconds: number = 0
-  private displayIn: string = ''
-  private offsetSeconds: number = 0
-  private locale: string = ''
+  public datetime: string = ''
+  public timestampSeconds: number = 0
+  public timestampMiliseconds: number = 0
+  public displayIn: string = ''
+  public offsetSeconds: number = 0
+  public locale: string = ''
 
 
   public constructor (private element: HTMLElement) {
