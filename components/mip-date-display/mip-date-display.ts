@@ -4,8 +4,6 @@
  *
  */
 
-/// <reference types="../.." />
-
 const {
   CustomElement,
   templates,

@@ -16,6 +16,6 @@
     "esModuleInterop": true,
     "sourceMap": true
   },
-  "include": ["components/**/*"],
+  "include": ["components/**/*", "index.d.ts"],
   "exclude": ["node_modules"]
 }
