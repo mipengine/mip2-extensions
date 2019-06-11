@@ -12,7 +12,7 @@ const {
   util
 } = MIP
 
-const {error, log} = util.log('mip-date-display')
+const {error} = util.log('mip-date-display')
 
 const DEFAULT_LOCALE: string = 'zh-cn'
 
