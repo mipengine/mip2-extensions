@@ -3,6 +3,7 @@
  * @author panwenshuang
  *
  */
+/// <reference types="../.." />
 
 const {
   CustomElement,
