@@ -114,7 +114,8 @@ const WHITELISTED_ATTRS = [
   'width',
   'height',
   'layout',
-  'ref'
+  'ref',
+  'srcset'
 ]
 
 function isValidAttr (tagName, attrName, attrValue) {
