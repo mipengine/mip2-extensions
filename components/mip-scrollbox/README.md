@@ -145,6 +145,40 @@
 </mip-scrollbox>
 ```
 
+### 指定默认的滚动距离
+
+```html
+<mip-scrollbox data-type="row" data-scroll-left="20%" class="demo3" layout="fixed-height">
+  <div data-wrapper>
+    <div data-inner>
+      <div data-scroller>
+        <div data-item>
+          <div>1的内容，span3</div>
+        </div>
+        <div data-item>
+          <div>2的内容，span3</div>
+        </div>
+        <div data-item>
+          <div>3的内容，span3</div>
+        </div>
+        <div data-item>
+          <div>4的内容，span3</div>
+        </div>
+        <div data-item>
+          <div>5的内容，span3</div>
+        </div>
+        <div data-item>
+          <div>6的内容，span3</div>
+        </div>
+        <div data-item>
+          <div>7的内容，span3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mip-scrollbox>
+```
+
 ### 不规则栅格化
 
 ```html
@@ -284,6 +318,16 @@
 类型：属性节点
 
 默认值：3
+
+### data-scroll-left
+
+说明：通过 data-scroll-left 的值指定默认聚焦的区域，可以是一个数字，也可以是一个百分比的字符串，百分比指的是滚动容器**可滚动区域长度**的比例
+
+必选项：否
+
+类型：数字|百分比字符串
+
+默认值：0
 
 ## 组件内部属性元素
 
