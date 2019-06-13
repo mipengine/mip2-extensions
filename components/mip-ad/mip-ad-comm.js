@@ -35,11 +35,13 @@ export default function render (el) {
 function renderOnlyImg (el) {
   let url = el.getAttribute('href')
   let src = el.getAttribute('src')
+  let target = el.getAttribute('target')
   let size = (el.getAttribute('data-size') || '').trim().split(' ')
   let ratio = (size[1] / size[0] * 100).toFixed(2)
   let html = `<div class="mip-ad-bannerbox" style="padding-bottom:${ratio}%;"><img src="${src}"></div>`
   let node = document.createElement('a')
 
+  target && node.setAttribute('target', target)
   node.setAttribute('href', url)
   node.classList.add('c-urljump')
   node.innerHTML = html
@@ -55,10 +57,12 @@ function renderOnlyImg (el) {
  */
 function renderNoneImg (el) {
   let url = el.getAttribute('href')
+  let target = el.getAttribute('target')
   let title = el.getAttribute('data-title')
   let html = `<div class="mip-ad-row"><div class="c-span12 c-line-clamp2">${title}</div></div>`
   let node = document.createElement('a')
 
+  target && node.setAttribute('target', target)
   node.setAttribute('href', url)
   node.className += 'c-blocka c-urljump mip-ad-box'
   node.innerHTML = html
@@ -74,6 +78,7 @@ function renderNoneImg (el) {
  */
 function renderOneImg (el) {
   let url = el.getAttribute('href')
+  let target = el.getAttribute('target')
   let src = el.getAttribute('src')
   let title = el.getAttribute('data-title')
   let size = (el.getAttribute('data-size') || '').trim().split(' ')
@@ -87,6 +92,7 @@ function renderOneImg (el) {
       <div class="c-span8 c-line-clamp2">${title}</div>
     </div>`
 
+  target && node.setAttribute('target', target)
   node.setAttribute('href', url)
   node.className += 'c-blocka c-urljump mip-ad-box'
   node.innerHTML = html
@@ -102,6 +108,7 @@ function renderOneImg (el) {
  */
 function renderMoreImg (el) {
   let url = el.getAttribute('href')
+  let target = el.getAttribute('target')
   let srcs = el.getAttribute('src').split(';')
   let dataTxt = el.getAttribute('data-txt')
   let dataAds = el.getAttribute('data-ads')
@@ -131,6 +138,7 @@ function renderMoreImg (el) {
     ].join('')
 
     let node = document.createElement('a')
+    target && node.setAttribute('target', target)
     node.setAttribute('href', url)
     node.className += 'c-blocka c-urljump mip-ad-box'
     node.innerHTML = html
