@@ -19,7 +19,7 @@
 数据设置在浏览器端：
 
 ```html
-<form>
+<mip-form>
   <mip-autocomplete filter="substring">
     <input type="text">
     <script type="application/json">
@@ -28,18 +28,18 @@
       }
     </script>
   </mip-autocomplete>
-</form>
+</mip-form>
 ```
 
 数据来自服务器端：
 
 ```html
-<form>
+<mip-form>
   <mip-autocomplete filter="substring"
     src="https://example.tips">
     <input type="text">
   </mip-autocomplete>
-</form>
+</mip-form>
 ```
 
 数据格式示例：
@@ -69,7 +69,7 @@
 
 ```html
 <h2>使用 filter-value 属性进行筛选</h2>
-<form>
+<mip-form>
   <mip-autocomplete filter="substring"
     filter-value="city">
     <input type="text">
@@ -94,14 +94,14 @@
       }
     </script>
   </mip-autocomplete>
-</form>
+</mip-form>
 ```
 
 ### 结合 `mip-mustache` 组件的 `template` 模板渲染组件使用
 
 ```html
 <h2>使用 filter-value 属性进行筛选，同时使用 template 模板渲染</h2>
-<form>
+<mip-form>
   <mip-autocomplete filter="substring"
     filter-value="city">
     <input type="text">
@@ -134,7 +134,7 @@
       </div>
     </template>
   </mip-autocomplete>
-</form>
+</mip-form>
 ```
 
 组件为 `mip-autocomplete` 下的 `input` 元素设置了默认样式，开发者可以通过覆盖 `mip-autocomplete > input` 样式进行修改。
@@ -195,16 +195,16 @@
 
 ```js
 <h2>更多功能 -- submit-on-enter="true"</h2>
-  <mip-form method="GET" fetch-url="./mock.json">
-    <mip-autocomplete filter="substring" submit-on-enter="true">
-      <input name="name">
-      <script type="application/json">
-        {
-          "items": ["apple", "orange", "banana"]
-        }
-      </script>
-    </mip-autocomplete>
-  </mip-form>
+<mip-form method="GET" fetch-url="./mock.json">
+  <mip-autocomplete filter="substring" submit-on-enter="true">
+    <input name="name">
+    <script type="application/json">
+      {
+        "items": ["apple", "orange", "banana"]
+      }
+    </script>
+  </mip-autocomplete>
+</mip-form>
 ```
 
 必选项：否
