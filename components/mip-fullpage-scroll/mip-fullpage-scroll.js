@@ -56,7 +56,10 @@ export default class MIPFullpageScroll extends CustomElement {
     let { focus } = this.props
     let ele = this.element
 
-    this.gesture = new Gesture(ele)
+    this.gesture = new Gesture(ele, {
+      preventY: true,
+      preventX: true
+    })
     this.sections = [...ele.querySelectorAll('section')]
     this.currentIndex = focus - 1
 
