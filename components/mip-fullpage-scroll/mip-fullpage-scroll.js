@@ -92,13 +92,10 @@ export default class MIPFullpageScroll extends CustomElement {
     ele.innerHTML = ''
     ele.appendChild(wrapper)
 
-    ;[...ele.querySelectorAll('section')].forEach(section => {
-      console.log(section)
-      util.css(section, {
-        width: vw + 'px',
-        height: vh + 'px'
-      })
-    })
+    ;[...ele.querySelectorAll('section')].forEach(section => util.css(section, {
+      width: vw + 'px',
+      height: vh + 'px'
+    }))
 
     if (direction === 'horizontal') {
       ele.setAttribute('direction', 'horizontal')
