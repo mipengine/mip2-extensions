@@ -7,6 +7,9 @@
     <link rel="canonical" href="对应的原页面地址">
     <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
     <style mip-custom>
+      body {
+        overflow: hidden;
+      }
       mip-fullpage-scroll [mip-fullpage-scroll-wrapper] {
         transition: all .2s ease-in-out
       }
@@ -28,15 +31,15 @@
   </head>
   <body>
     <div>
+      <mip-toast id="pauseToast" info-text="已暂停自动播放" station="center" close-time="1"></mip-toast>
+      <mip-toast id="restartToast" info-text="已开始自动播放" station="center" close-time="1"></mip-toast>
       <mip-fullpage-scroll
         navigateable
         loop
         autoplay
         focus="2"
         id="test"
-        on="change:MIP.setData({
-          currentPage: event.index
-        })"
+        on="change:MIP.setData({currentPage: event.index}) "
       >
         <section>这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容</section>
         <section>这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容</section>
@@ -59,5 +62,6 @@
     </div>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="/mip-fullpage-scroll/mip-fullpage-scroll.js"></script>
+    <script src="/mip-toast/mip-toast.js"></script>
   </body>
 </html>

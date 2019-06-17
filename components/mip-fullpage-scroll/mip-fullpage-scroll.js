@@ -7,8 +7,8 @@
 
 import './mip-fullpage-scroll.less'
 
-const { CustomElement, util, viewer } = MIP
-const { Gesture } = util
+const { CustomElement, util, viewer, viewport } = MIP
+const { Gesture, platform } = util
 
 export default class MIPFullpageScroll extends CustomElement {
   static props = {
@@ -48,6 +48,8 @@ export default class MIPFullpageScroll extends CustomElement {
 
     this.timer = null
     this.currentIndex = 0
+    this.vh = 0
+    this.vw = 0
   }
 
   build () {
@@ -71,22 +73,41 @@ export default class MIPFullpageScroll extends CustomElement {
     let { direction, navigateable } = this.props
     let wrapper = document.createElement('div')
     let ele = this.element
+    let vh = this.vh = viewport.getHeight()
+    let vw = this.vw = viewport.getWidth()
+
+    if (platform.isIOS() && platform.isBaiduApp()) {
+      // 兼容 iOS 手百的 webview 竖向高度的 Bug
+      vh = this.vh = vh - 52
+    }
 
     wrapper.setAttribute('mip-fullpage-scroll-wrapper', '')
     wrapper.innerHTML = ele.innerHTML
+    util.css(ele, {
+      width: vw + 'px',
+      height: vh + 'px'
+    })
 
     this.wrapper = wrapper
     ele.innerHTML = ''
     ele.appendChild(wrapper)
 
+    ;[...ele.querySelectorAll('section')].forEach(section => {
+      console.log(section)
+      util.css(section, {
+        width: vw + 'px',
+        height: vh + 'px'
+      })
+    })
+
     if (direction === 'horizontal') {
       ele.setAttribute('direction', 'horizontal')
       util.css(wrapper, {
-        width: this.sections.length * 100 + 'vw'
+        width: this.sections.length * vw + 'px'
       })
     } else {
       util.css(wrapper, {
-        height: this.sections.length * 100 + 'vh'
+        height: this.sections.length * vh + 'px'
       })
     }
 
@@ -99,7 +120,6 @@ export default class MIPFullpageScroll extends CustomElement {
    * 绑定组件的事件
    */
   bindEvents () {
-    let { autoplay, timeout } = this.props
     this.gesture.on('swipe', (event, data) => {
       if (data.swipeDirection === 'up' || data.swipeDirection === 'left') {
         if (this.currentIndex < this.sections.length - 1) {
@@ -111,11 +131,19 @@ export default class MIPFullpageScroll extends CustomElement {
           this.currentIndex--
         }
       }
+      this.addLoopListener()
       this.goTo(this.currentIndex)
     })
 
+    this.addLoopListener()
+  }
+
+  addLoopListener () {
+    let { autoplay, timeout } = this.props
     if (autoplay) {
+      clearInterval(this.timer)
       this.timer = setInterval(() => this.next(), timeout)
+      this.isPause = false
     }
   }
 
@@ -123,9 +151,18 @@ export default class MIPFullpageScroll extends CustomElement {
    * 注册对外暴露的事件
    */
   registerEvents () {
-    this.addEventAction('goTo', (e, index) => this.goTo(index - 1))
-    this.addEventAction('back', () => this.back())
-    this.addEventAction('next', () => this.next())
+    this.addEventAction('goTo', (e, index) => {
+      this.addLoopListener()
+      this.goTo(index - 1)
+    })
+    this.addEventAction('back', () => {
+      this.addLoopListener()
+      this.back()
+    })
+    this.addEventAction('next', () => {
+      this.addLoopListener()
+      this.next()
+    })
   }
 
   /**
@@ -175,7 +212,7 @@ export default class MIPFullpageScroll extends CustomElement {
    * @param {number} index 表示第几个 section
    */
   goTo (index) {
-    let { direction, navigateable, loop, autoplay, timeout } = this.props
+    let { direction, navigateable, loop } = this.props
     let len = this.sections.length
 
     if (loop) {
@@ -190,11 +227,11 @@ export default class MIPFullpageScroll extends CustomElement {
 
     if (direction === 'horizontal') {
       util.css(this.wrapper, {
-        left: '-' + index * 100 + 'vw'
+        left: '-' + index * this.vw + 'px'
       })
     } else {
       util.css(this.wrapper, {
-        top: '-' + index * 100 + 'vh'
+        top: '-' + index * this.vh + 'px'
       })
     }
 
@@ -206,11 +243,6 @@ export default class MIPFullpageScroll extends CustomElement {
           item.removeAttribute('current-item')
         }
       })
-    }
-
-    if (autoplay) {
-      clearInterval(this.timer)
-      this.timer = setInterval(() => this.next(), timeout)
     }
 
     viewer.eventAction.execute('change', this.element, { index: index + 1 })

@@ -1,6 +1,4 @@
 mip-fullpage-scroll {
-  width: 100vw;
-  height: 100vh;
   overflow: hidden;
 
   [mip-fullpage-scroll-wrapper] {
@@ -8,16 +6,16 @@ mip-fullpage-scroll {
     right: 0;
     position: relative;
     transition: all 0.5s linear;
+    overflow: hidden;
   }
 
   section {
-    height: 100vh;
-    width: 100vw;
     position: relative;
   }
 
   &[direction="horizontal"] section {
     float: left;
+    overflow: hidden;
   }
 
   [navigator] {
