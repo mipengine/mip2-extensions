@@ -1,0 +1,67 @@
+mip-autocomplete.autocomplete-container {
+  display: inline-block;
+}
+
+mip-autocomplete,
+mip-autocomplete > input {
+  font-family: sans-serif; /* default-ui-font-stack */
+}
+
+mip-autocomplete > input,
+.mip-autocomplete-input {
+  border-radius: 4px; /* default-ui-border-radius */
+  box-sizing: border-box;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.33);
+  border-color: rgba(0, 0, 0, 0.33);
+}
+
+.i-miphtml-autocomplete-results {
+  position: absolute;
+  top: 100%;
+  width: calc(100% + 1rem); /* 100% + input padding-left + 2 * margin-left offset */
+  min-width: calc(2em + 2rem); /* 2 chars. + 2em results padding + 2 * .5em visual offset */
+  max-height: 40vh;
+  margin-top: 0.5rem; /* default-ui-space-small */
+  margin-left: -0.5rem; /* default-ui-space-small */
+  border-radius: 4px; /* default-ui-border-radius */
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white; /* default-ui-background-color */
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5); /* default-ui-box-shadow */
+  z-index: 10;
+}
+
+.i-miphtml-autocomplete-results-up {
+  top: auto;
+  bottom: 100%;
+  margin-bottom: 0.5rem; /* default-ui-space-small */
+}
+
+.i-miphtml-autocomplete-item {
+  position: relative;
+  padding: 0.5rem 1rem; /* default-ui-space-small default-ui-space-medium */
+  cursor: pointer;
+}
+
+.i-miphtml-autocomplete-item:first-child {
+  border-radius: 4px 4px 0 0; /* default-ui-border-radiuss */
+}
+
+.i-miphtml-autocomplete-item:nth-last-child(2) {
+  border-radius: 0 0 4px 4px; /* default-ui-border-radius */
+}
+
+.i-miphtml-autocomplete-item:hover:not([data-disabled]) {
+  background-color: rgba(0, 0, 0, 0.15); /* default-ui-light-gray */
+}
+
+.i-miphtml-autocomplete-item-active:not([data-disabled]) {
+  background-color: rgba(0, 0, 0, 0.15); /* default-ui-light-gray */
+}
+
+.i-miphtml-autocomplete-item[data-disabled] {
+  color: rgba(0, 0, 0, 0.33);
+}
