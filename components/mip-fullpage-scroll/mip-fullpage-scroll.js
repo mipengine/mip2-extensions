@@ -8,7 +8,7 @@
 import './mip-fullpage-scroll.less'
 
 const { CustomElement, util, viewer, viewport } = MIP
-const { Gesture, platform } = util
+const { Gesture } = util
 
 export default class MIPFullpageScroll extends CustomElement {
   static props = {
@@ -78,11 +78,6 @@ export default class MIPFullpageScroll extends CustomElement {
     let ele = this.element
     let vh = this.vh = viewport.getHeight()
     let vw = this.vw = viewport.getWidth()
-
-    if (platform.isIOS() && platform.isBaiduApp()) {
-      // 兼容 iOS 手百的 webview 竖向高度的 Bug
-      vh = this.vh = vh - 52
-    }
 
     wrapper.setAttribute('mip-fullpage-scroll-wrapper', '')
     wrapper.innerHTML = ele.innerHTML
