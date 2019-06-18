@@ -29,7 +29,6 @@ export default class MIPAutocomplete extends CustomElement {
   private userInput: string = ''
   private activeIndex_: number = -1
   private activeElement: Element|null = null
-  // 提示信息容器元素
   private container: Element|undefined = undefined
   private templateElement: HTMLElement|null|void = null
   // 包含 <mip-autocomplete> 的 <form> 祖先上指定了 “autocomplete” 属性
