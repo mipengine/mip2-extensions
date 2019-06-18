@@ -4,11 +4,7 @@
  *
  */
 
-const {
-  CustomElement,
-  templates,
-  util
-} = MIP
+const {CustomElement, templates, util} = MIP
 
 const {error} = util.log('mip-date-display')
 
