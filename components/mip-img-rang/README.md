@@ -20,11 +20,7 @@
 
 // 代码示例
  <mip-img-rang call="height" rang="160">
-		<ul>		
-		<li><mip-img src="XXX" popup></mip-img></li>
-		<li><mip-img src="XXX" popup></mip-img></li>
-		<li><mip-img src="XXX" popup></mip-img></li>
-		</ul>
+<ul><li><mip-img src="XXX" popup></mip-img></li><li><mip-img src="XXX" popup></mip-img></li><li><mip-img src="XXX" popup></mip-img></li></ul>
 </mip-img-rang>	
 
 ## 属性 mip-img-rang
