@@ -581,7 +581,7 @@ export default class MIPAutocomplete extends CustomElement {
    * 触发 select 事件，传递数据
    */
   private fireSelectEvent(value: string) {
-    viewer.eventAction.execute('select', this.element, {value})
+    viewer.eventAction.execute('select', this.element, value)
   }
 
   /**

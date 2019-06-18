@@ -243,6 +243,32 @@ app.get('/data', function (req, res) {
 
 默认值：无
 
+## 事件
+
+事件名称 | 事件描述
+-- | --
+`select` | 提示被选中时触发，传出选中项的数据
+
+示例如下：
+
+```html
+<h2>更多功能 -- select 事件</h2>
+<mip-form method="GET" fetch-url="./mockSubmit.json" on="select:toast1.show(event.value)">
+  <mip-autocomplete filter="substring" submit-on-enter="true">
+    <input name="name">
+    <script type="application/json">
+      {
+        "items": ["apple", "orange", "banana"]
+      }
+    </script>
+  </mip-autocomplete>
+</mip-form>
+<mip-toast
+  id= "toast1"
+  station = "top">
+</mip-toast>
+```
+
 ## 示例
 
 ```html

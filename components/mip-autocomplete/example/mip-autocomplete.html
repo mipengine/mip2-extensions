@@ -181,8 +181,27 @@
     </mip-autocomplete>
   </mip-form>
 
+  <div class="space"></div>
+
+  <h2>更多功能 -- select 事件</h2>
+  <mip-form method="GET" fetch-url="./mockSubmit.json" on="select:toast1.show(event.value)">
+    <mip-autocomplete filter="substring" submit-on-enter="true">
+      <input name="name">
+      <script type="application/json">
+        {
+          "items": ["apple", "orange", "banana"]
+        }
+      </script>
+    </mip-autocomplete>
+  </mip-form>
+  <mip-toast
+    id= "toast1"
+    station = "top">
+  </mip-toast>
+
   <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
   <script src="https://c.mipcdn.com/static/v2/mip-form/mip-form.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-toast/mip-toast.js"></script>
   <script src="/mip-autocomplete/mip-autocomplete.js"></script>
   <script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
 </body>
