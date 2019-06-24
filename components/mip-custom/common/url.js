@@ -129,8 +129,8 @@ const getSourceId = () => {
  * @returns {boolean} 返回布尔值
  */
 const isFromBaidu = () => {
-  return matchDomain(window.location.href, '.baidu') ||
-    matchDomain(document.referrer, '.baidu')
+  return matchDomain(window.location.href, '.baidu.com') ||
+    matchDomain(document.referrer, '.baidu.com')
 }
 /**
  * 当前域名为 mipcdn
@@ -138,7 +138,7 @@ const isFromBaidu = () => {
  * @returns {boolean} 返回布尔值
  */
 const isMIPCdn = () => {
-  return matchDomain(window.location.href, '.mipcdn')
+  return matchDomain(window.location.href, '.mipcdn.com')
 }
 /**
  * 判断链接是否是某个域名
