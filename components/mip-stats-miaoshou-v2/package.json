@@ -1,0 +1,14 @@
+{
+  "name": "mip-stats-miaoshou-v2",
+  "version": "2.0.0",
+  "description": "妙手医生统计MIP页面浏览次数组件",
+  "contributors": [
+    {
+      "name": "liushaokai",
+      "email": "lsklamp@163.com"
+    }
+  ],
+  "engines": {
+    "mip": ">=2.0.0"
+  }
+}
