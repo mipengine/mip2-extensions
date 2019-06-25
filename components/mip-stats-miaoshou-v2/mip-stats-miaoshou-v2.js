@@ -2,20 +2,16 @@
  * @file mip-stats-miaoshou-v2 组件
  * @author
  */
+const { CustomElement } = MIP
+const { fetchJsonp } = window
 
-define(function (require) {
-    'use strict';
-
-    var customElement = require('customElement').create();
-    var fetchJsonp = require('fetch-jsonp');
-
-
-    customElement.prototype.createdCallback = function () {
-        var e = this.element;
-        var url = e.getAttribute('url');
-        var tid = e.getAttribute('tid');
-        var type = e.getAttribute('type');
-        var selectName = e.getAttribute('selectName') ? e.getAttribute('selectName') : '#view_num';
+export default class MIPStatsMiaoshouV2 extends CustomElement {
+    build () {
+        let e = this.element;
+        let url = e.getAttribute('url');
+        let tid = e.getAttribute('tid');
+        let type = e.getAttribute('type');
+        let selectName = e.getAttribute('selectName') ? e.getAttribute('selectName') : '#view_num';
 
         url = url + '?id=' + tid + '&type=' + type;
 
@@ -26,11 +22,10 @@ define(function (require) {
             return res.json();
         }).then(function (data) {
             if (data.views) {
-                var dom = e.querySelector(selectName);
+                let dom = e.querySelector(selectName);
                 dom.innerHTML = data.views + '人阅读';
             }
         });
-    };
 
-    return customElement;
-});
+    }
+}
