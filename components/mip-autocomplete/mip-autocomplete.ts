@@ -60,7 +60,7 @@ export default class MIPAutocomplete extends CustomElement {
     this.element.classList.add('autocomplete-container')
   }
 
-  public layoutCallback() {
+  public layoutCallback () {
     this.addEventListeners()
     let remoteDataPromise
     if (this.element.hasAttribute('src')) {
@@ -203,7 +203,7 @@ export default class MIPAutocomplete extends CustomElement {
     return items
   }
 
-  private inputHandler(): void {
+  private inputHandler (): void {
     if (!this.inputElement) {
       return
     }
@@ -487,7 +487,7 @@ export default class MIPAutocomplete extends CustomElement {
   /**
    * 提示信息是否显示
    */
-  private resultsShowing(): boolean {
+  private resultsShowing (): boolean {
     if (!this.container) {
       return false
     }
@@ -497,7 +497,7 @@ export default class MIPAutocomplete extends CustomElement {
   /**
    * 返回提示消息里非 disabled 的条目
    */
-  private getEnabledItems(): NodeList|null {
+  private getEnabledItems (): NodeList|null {
     if (!this.container) {
       return null
     }
@@ -507,12 +507,12 @@ export default class MIPAutocomplete extends CustomElement {
   /**
    * 在输入框里显示用户的部分输入
    */
-  private displayUserInput() {
+  private displayUserInput () {
     if (!this.inputElement) {
       return
     }
     this.inputElement.value = this.userInput
-    this.resetActiveElement()
+    this.resetActiveElement ()
   }
 
   /**
@@ -568,7 +568,7 @@ export default class MIPAutocomplete extends CustomElement {
   /**
    * 重置 active 的条目
    */
-  private resetActiveElement() {
+  private resetActiveElement () {
     if (!this.activeElement) {
       return
     }
@@ -597,7 +597,7 @@ export default class MIPAutocomplete extends CustomElement {
   /**
    * 移除 this.container 的所有子元素
    */
-  private clearAllItems() {
+  private clearAllItems () {
     if (!this.container) {
       return
     }
@@ -644,7 +644,7 @@ export default class MIPAutocomplete extends CustomElement {
   /**
    * 创建包含提示条目的 div
    */
-  private createContainer(): Element|undefined {
+  private createContainer (): Element|undefined {
     if (!this.element.ownerDocument) {
       return
     }
@@ -660,7 +660,7 @@ export default class MIPAutocomplete extends CustomElement {
   /**
    * 当 input 处在视口下半段，提示框应显示在 input 框的上面
    */
-  private shouldRenderAbove(): boolean {
+  private shouldRenderAbove (): boolean {
     const viewHeight = viewport.getHeight() || 0
     if (!this.inputElement) {
       return false
