@@ -30,7 +30,7 @@
 </div>
 ```
 
-### 自定义分享参数
+### 自定义微信分享
 
 ```html
 <div class="mip-share-container">
@@ -95,6 +95,16 @@
 类型：字符串
 
 取值范围：URL (不能带有`http://`,`https://`，示例：`//xx.yy.com/getToken`，[参考示例](http://po.baidu.com/api/wechat/token.jsonp?app_id=wxadc1a0c6b9096e89&url=https://m.baidu.com&callback=_box_jsonp1532926508317)
+
+### debug
+
+说明：开启微信环境下的 debug 调试模式
+
+必选项：否
+
+类型：Boolean
+
+> 注意：`debug` 参数只会在微信环境生效。
 
 ## 注意事项
 
