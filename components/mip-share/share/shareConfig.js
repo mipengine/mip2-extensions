@@ -191,7 +191,7 @@ function shareHandle (options, successcallback, failCallback) {
       'onMenuShareQQ',
       'onMenuShareWeibo',
       'onMenuShareQZone',
-      'updateTimelineShareData',
+      'updateAppMessageShareData',
       'updateTimelineShareData'
     ])
 
@@ -362,7 +362,7 @@ export default class ShareConfig {
   constructor (options) {
     let defaultConfig = options
     defaultConfig['channel'] = 'pageSeach'
-    defaultConfig['debug'] = false
+    // defaultConfig['debug'] = false
     sealConfig.init(defaultConfig)
   }
 

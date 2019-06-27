@@ -27,6 +27,7 @@ export default class MIPShare extends CustomElement {
       title: element.getAttribute('title') || document.title,
       url: element.getAttribute('url') || location.href,
       content: element.getAttribute('content') || '',
+      debug: element.hasAttribute('debug'),
       iconUrl: element.getAttribute('icon') || '//m.baidu.com/se/static/pmd/pmd/share/images/bdu.jpg',
       wechatAPI: element.getAttribute('wechatAPI') || BAIDUAPI
     }, element)
