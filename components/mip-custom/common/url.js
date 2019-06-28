@@ -133,12 +133,12 @@ const isFromBaidu = () => {
     matchDomain(document.referrer, '.baidu.com')
 }
 /**
- * 当前域名为 mipcdn
+ * 当前链接为 mip cache 链接
  *
  * @returns {boolean} 返回布尔值
  */
-const isMIPCdn = () => {
-  return matchDomain(window.location.href, '.mipcdn.com')
+const isCacheUrl = () => {
+  return window.MIP.util.isCacheUrl(location.href)
 }
 /**
  * 判断链接是否是某个域名
@@ -187,7 +187,7 @@ const get = (el, poi) => {
 
   // 非mip-shell增加noshell参数
   // 非百度域且不是mip cache链接打开，增加这个参数，目前小说有用
-  if (!isFromBaidu() && !isMIPCdn()) {
+  if (!isFromBaidu() && !isCacheUrl()) {
     url += '&from=noshell'
   }
   return url
