@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-calenderslide",
+    "version": "1.0.4",
+    "description": "ppkao日历加载",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

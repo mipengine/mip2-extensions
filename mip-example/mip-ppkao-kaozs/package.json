@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-kaozs",
+    "version": "1.0.0",
+    "description": "考助手头部高度",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

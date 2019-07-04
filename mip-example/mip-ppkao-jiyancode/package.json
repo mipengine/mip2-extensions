@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-jiyancode",
+    "version": "1.0.5",
+    "description": "PPkao试题jiyancode",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

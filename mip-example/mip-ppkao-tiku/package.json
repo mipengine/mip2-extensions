@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-tiku",
+    "version": "1.0.0",
+    "description": "ppkao题库选择",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

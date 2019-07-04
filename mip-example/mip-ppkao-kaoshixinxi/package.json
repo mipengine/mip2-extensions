@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-kaoshixinxi",
+    "version": "1.0.1",
+    "description": "ppkao考试信息",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

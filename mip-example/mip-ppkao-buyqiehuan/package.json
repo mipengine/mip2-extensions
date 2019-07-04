@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-buyqiehuan",
+    "version": "1.0.1",
+    "description": "价格和支付样式变换",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

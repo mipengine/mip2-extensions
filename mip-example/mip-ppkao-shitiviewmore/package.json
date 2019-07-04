@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-shitiviewmore",
+    "version": "1.0.4",
+    "description": "ppkao试题viewmore",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-fontsizechange",
+    "version": "1.0.0",
+    "description": "改变字体大小",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

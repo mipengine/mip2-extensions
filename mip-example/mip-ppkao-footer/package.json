@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-footer",
+    "version": "1.0.0",
+    "description": "ppkao移动电脑地址转换",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

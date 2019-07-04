@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkaot-changeicon",
+    "version": "1.0.1",
+    "description": "改变显示，收缩图标",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.0.1"
+    }
+}

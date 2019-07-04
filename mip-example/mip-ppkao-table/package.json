@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-table",
+    "version": "1.0.1",
+    "description": "表格滑动",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

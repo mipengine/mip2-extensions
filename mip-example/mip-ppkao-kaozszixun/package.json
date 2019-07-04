@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-kaozszixun",
+    "version": "1.0.1",
+    "description": "ppkao科目资讯",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.0.0"
+    }
+}

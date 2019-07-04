@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-showlist",
+    "version": "1.0.0",
+    "description": "显示隐藏导航",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-lightbox",
+    "version": "1.0.1",
+    "description": "全选和单选",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

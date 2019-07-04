@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-address",
+    "version": "1.0.2",
+    "description": "地区",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

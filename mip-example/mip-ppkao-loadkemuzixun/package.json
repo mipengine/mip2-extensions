@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-loadkemuzixun",
+    "version": "1.0.0",
+    "description": "ppkao加载科目资讯",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}

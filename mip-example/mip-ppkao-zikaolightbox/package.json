@@ -1,0 +1,14 @@
+{
+    "name": "mip-ppkao-zikaolightbox",
+    "version": "1.0.1",
+    "description": "选中文字",
+    "contributors": [
+        {
+            "name": "fll",
+            "email": "hello-fll@qq.com"
+        }
+    ],
+    "engines": {
+        "mip": ">=1.1.0"
+    }
+}
