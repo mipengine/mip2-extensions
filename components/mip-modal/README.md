@@ -13,36 +13,6 @@
 ### 基本模态框
 
 ```html
-<style mip-custom>
-  .mip-button {
-    appearance: button;
-    height: 32px;
-    padding: 0 15px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
-    outline: 0;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1.499;
-    color: rgba(0, 0, 0, .65);
-    text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    background-color: #fff;
-    background-image: none;
-    user-select: none;
-    touch-action: manipulation;
-    cursor: pointer;
-  }
-
-  .mip-button-primary {
-    border-color: #108ee9;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
-    color: #fff;
-    background-color: #108ee9;
-  }
-</style>
 <mip-data>
   <script type="application/json">
     {"visible": false}
@@ -68,36 +38,6 @@
 ### 必选模态框
 
 ```html
-<style mip-custom>
-  .mip-button {
-    appearance: button;
-    height: 32px;
-    padding: 0 15px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
-    outline: 0;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1.499;
-    color: rgba(0, 0, 0, .65);
-    text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    background-color: #fff;
-    background-image: none;
-    user-select: none;
-    touch-action: manipulation;
-    cursor: pointer;
-  }
-
-  .mip-button-primary {
-    border-color: #108ee9;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
-    color: #fff;
-    background-color: #108ee9;
-  }
-</style>
 <mip-data>
   <script type="application/json">
     {"visible": false}
@@ -129,36 +69,6 @@
 ### 确认模态框
 
 ```html
-<style mip-custom>
-  .mip-button {
-    appearance: button;
-    height: 32px;
-    padding: 0 15px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
-    outline: 0;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1.499;
-    color: rgba(0, 0, 0, .65);
-    text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    background-color: #fff;
-    background-image: none;
-    user-select: none;
-    touch-action: manipulation;
-    cursor: pointer;
-  }
-
-  .mip-button-primary {
-    border-color: #108ee9;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
-    color: #fff;
-    background-color: #108ee9;
-  }
-</style>
 <mip-data>
   <script type="application/json">
     {"visible": false}
@@ -195,36 +105,6 @@
 ### 垂直页脚模态框
 
 ```html
-<style mip-custom>
-  .mip-button {
-    appearance: button;
-    height: 32px;
-    padding: 0 15px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
-    outline: 0;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1.499;
-    color: rgba(0, 0, 0, .65);
-    text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    background-color: #fff;
-    background-image: none;
-    user-select: none;
-    touch-action: manipulation;
-    cursor: pointer;
-  }
-
-  .mip-button-primary {
-    border-color: #108ee9;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
-    color: #fff;
-    background-color: #108ee9;
-  }
-</style>
 <mip-data>
   <script type="application/json">
     {"visible": false}
@@ -261,57 +141,6 @@
 ### 表单模态框
 
 ```html
-<style mip-custom>
-  .mip-button {
-    appearance: button;
-    height: 32px;
-    padding: 0 15px;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
-    outline: 0;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1.499;
-    color: rgba(0, 0, 0, .65);
-    text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    background-color: #fff;
-    background-image: none;
-    user-select: none;
-    touch-action: manipulation;
-    cursor: pointer;
-  }
-
-  .mip-button-primary {
-    border-color: #108ee9;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
-    color: #fff;
-    background-color: #108ee9;
-  }
-
-  .mip-modal-form-hint {
-    margin-bottom: 10px;
-  }
-
-  .mip-input {
-    width: 100%;
-    height: 32px;
-    margin: -1px 0;
-    padding: 4px 11px;
-    border: 1px solid #d9d9d9;
-    font-size: 14px;
-    line-height: 1.5;
-    color: rgba(0, 0, 0, .65);
-    background-color: #fff;
-    transition: border-color .3s;
-  }
-
-  .mip-input:focus {
-    outline: 0;
-  }
-</style>
 <mip-data>
   <script type="application/json">
     {"visible": false}
