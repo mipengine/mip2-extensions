@@ -48,7 +48,7 @@ export default class MIPToast extends CustomElement {
     this.render()
   }
 
-  handleShow (event, info) {
+  handleShow (info) {
     const {infoText} = this.props
     this.close = true
     if (typeof info === 'string') {
