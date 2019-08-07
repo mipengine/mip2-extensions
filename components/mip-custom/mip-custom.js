@@ -13,8 +13,8 @@ import url from './common/url'
 import log from './common/log'
 import dataProcessor from './common/data'
 import renderFactory from './tplRender/renderFactory'
-import novel from './novel-feature.js'
-
+import novel from './novel/novel-feature'
+import commonMIPNovel from './novel/common-mip-novel'
 // import tools
 const {CustomElement, util} = MIP
 const {logData} = dataProcessor
@@ -115,6 +115,8 @@ export default class MipCustom extends CustomElement {
     // 参数初始化
     this.position = this.element.getAttribute('position') || ''
     this.sourceType = this.element.getAttribute('source-type') || ''
+    // 通过参数判断是否为通用 mip 的小说广告
+    this.isCommonMIPNovel = this.element.hasAttribute('novel')
     // 判断是否在mip-shell中，决定请求传递参数
     this.commonUrl = url.get(this.element)
     this.isPositionTop = getPosition(this.position) === 'top'
@@ -258,6 +260,8 @@ export default class MipCustom extends CustomElement {
     performance.fetchStart = +new Date()
     if (this.isNovel) {
       url = novel.addNovelData(url, this.novelData, this.fromSearch)
+    } else if (this.isCommonMIPNovel) {
+      url = commonMIPNovel.addNovelData(url)
     }
     // fetch
     fetch(url, {
@@ -278,6 +282,17 @@ export default class MipCustom extends CustomElement {
       if (this.isNovel && data.data.schema) {
         new Promise(resolve => {
           novel.renderWithNovelData.apply(this, [data, resolve])
+        }).then(result => {
+          this.render(result)
+          // 性能日志：按照流量 1/500 发送日志
+          log.setPerformanceLogs(performance, data)
+        }).catch(err => {
+          logger.log('失败：' + err)
+        })
+      } else if (this.isCommonMIPNovel && data.data.schema) {
+        // 通用 mip 小说广告渲染，需要先处理数据
+        new Promise(resolve => {
+          commonMIPNovel.renderWithNovelData.apply(this, [data, resolve])
         }).then(result => {
           this.render(result)
           // 性能日志：按照流量 1/500 发送日志
