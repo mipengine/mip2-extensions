@@ -9,8 +9,11 @@
 import state from '../common/state'
 import {getCurrentWindow} from '../common/util'
 import {sendWebbLog, sendTCLog} from '../common/log' // 日志
-
-const CATALOG_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/novel/api/mipinfo?' // online
+const currentWindow = getCurrentWindow()
+const {currentPage} = state(currentWindow)
+const CHAPTER_LIST_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/mip/chapterlist?' // online
+const CHAPTER_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/mip/chapterinfo?' // online
+// const CHAPTER_LIST_URL = 'http://cp01-zhangjunxing.epc.baidu.com:8600/mip/chapterlist?' // online
 const originUrl = MIP.util.getOriginalUrl()
 // const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=685640121&crid=288&fr=bdgfh&mip=1&pg=3'
 let util = MIP.util
@@ -22,7 +25,7 @@ let isReverse = false // false = 正序，从小到大，默认情况；true = �
 // 因为目录添加排序之后，当前章节可能在 this.categoryList 里找不到了，但这种情况不需要返回 matchErr 错误，所以需要记录起来。
 let lastPage
 
-// 以下字段isCatFetch=true时才有（根据RD反馈，线上其实不存在在HTML里面配置目录的书了，所以应该都走fetch了）
+// 以下字段 isCatFetch =true时才有（根据RD反馈，线上其实不存在在HTML里面配置目录的书了，所以应该都走fetch了）
 let isSplitPage
 // 记录首尾章节的信息（后端返回的对象）
 let firstChapter
@@ -116,11 +119,11 @@ class Catalog {
     let $contentTop = this.$catalogSidebar.querySelector('.mip-catalog-btn') // 上边元素
     let $catWrapper = this.$catalogSidebar.querySelector('.novel-catalog-content-wrapper')
     let $catalogContent = this.$catalogSidebar.querySelector('.novel-catalog-content')
-    let catalogs = data.data.catalog.chapters
+    let catalogs = data.data.chapters
     if (!isAppend) {
       isFirstChapterLoaded = isLatestChapterLoaded = !isSplitPage
-      firstChapter = data.data.catalog.firstChapter
-      latestChapter = data.data.catalog.latestChapter
+      firstChapter = data.data.firstChapter
+      latestChapter = data.data.latestChapter
       this.categoryList = catalogs.concat([])
     } else if (isUp) {
       this.categoryList = catalogs.concat(this.categoryList)
@@ -136,9 +139,9 @@ class Catalog {
       }
     }
     let renderCatalog = catalogs => catalogs.map(catalog => {
-      return `<div class="catalog-page" data-chapter-id="${catalog.id}">
+      return `<div class="catalog-page" data-chapter-id="${catalog.id}" data-chapter-cid="${catalog.cid}">
         <a class="mip-catalog-btn catalog-page-content"
-        mip-catalog-btn mip-link data-button-name="${catalog.name}" href="${catalog.contentUrl[0]}" replace>
+        mip-catalog-btn mip-link data-button-name="${catalog.name}" href="#" replace>
         ${catalog.name}
         </a>
       </div>`
@@ -255,28 +258,53 @@ class Catalog {
     }
     $scrollWrapper.addEventListener('scroll', catalogScrollListener)
   }
-
+  // 获取当前点击章节的 cid 后端传的那个
+  getChapterId (element) {
+    return MIP.util.dom.closest(element, '.catalog-page').getAttribute('data-chapter-cid')
+  }
+  // 获取章节的链接
+  getChapterUrl (chapterId) {
+    let cid = this.bookid + '|' + chapterId
+    let params = [
+      'app_code=wise_novel',
+      'cid=' + (cid || '')
+    ]
+    return MIP.sandbox.fetchJsonp(CHAPTER_URL + params.join('&'), {
+      jsonpCallback: 'callback'
+    }).then(res => {
+      return res.json()
+    }).then(data => {
+      if (data.errno !== 0) {
+        throw new Error(data)
+      } else {
+        return data
+      }
+    })
+  }
   // type = up / down / middle / asc / desc
   loadCategory (type) {
     isFetchLoading = true
-    let url
+    // 2019-8-7 接口发生变更，传参发生变化
+    let url = originUrl
+    let id, cid
     if (type === 'up') {
-      url = this.categoryList[0].contentUrl[0]
+      id = this.categoryList[0].id
+      cid = this.bookid + '|' + this.categoryList[0].cid
     } else if (type === 'down') {
-      url = this.categoryList[this.categoryList.length - 1].contentUrl[0]
-    } else {
-      // middle / asc / desc
-      url = originUrl
+      id = this.categoryList[this.categoryList.length - 1].id
+      cid = this.bookid + '|' + this.categoryList[this.categoryList.length - 1].cid
+    } else if (type === 'middle') {
+      id = currentPage.chapter
+      // asc / desc 是固定的最新的100章或最后的100章 不用穿 id cid
     }
     let params = [
-      'originUrl=' + encodeURIComponent(url),
-      'type=' + type
+      'originalUrl=' + encodeURIComponent(url),
+      'type=' + type,
+      'app_code=wise_novel',
+      'id=' + (id || ''),
+      'cid=' + (cid || '')
     ]
-    if (isSplitPage) {
-      params.push('forceSplit=true')
-    }
-
-    return MIP.sandbox.fetchJsonp(CATALOG_URL + params.join('&'), {
+    return MIP.sandbox.fetchJsonp(CHAPTER_LIST_URL + params.join('&'), {
       jsonpCallback: 'callback'
     }).then(res => {
       isFetchLoading = false
@@ -285,6 +313,7 @@ class Catalog {
       if (data.errno !== 0) {
         throw new Error(data)
       } else {
+        this.bookid = data.data.bid || ''
         return data
       }
     })
@@ -309,25 +338,25 @@ class Catalog {
     }
     let catalogHtml = `
       <div class="mip-shell-catalog mip-border mip-border-right">
-        <div class="novel-catalog-content-wrapper">
-          <div class="mip-catalog-btn book-catalog-info">
-            <div class="catalog-header-wrapper book-catalog-info-header">
-              <div class="book-catalog-info-title">
-                <p class="book-catalog-title-name catalog-title">${title}</p>
-                <div class="catalog-content-total-wrapper">
-                  <p class="catalog-content-total"><span>${chapterStatus}</span><span class="chapter-number">${chapterNumber}</span></p>
-                </div>
+        <div class="mip-catalog-btn book-catalog-info">
+          <div class="catalog-header-wrapper book-catalog-info-header">
+            <div class="book-catalog-info-title">
+              <p class="book-catalog-title-name catalog-title">${title}</p>
+              <div class="catalog-content-total-wrapper">
+                <p class="catalog-content-total"><span>${chapterStatus}</span><span class="chapter-number">${chapterNumber}</span></p>
               </div>
-              <div class="catalog-content-center-wrapper">
-                <div class="width-50 text-left catalog-content-center-left"><a href="#">目录</a></div>
-                <div class="width-50 text-right catalog-content-center-left">
-                  <a href="#" class="catalog-reserve">
-                    <i class="icon icon-order reverse-infor"><span class="reverse-name"> 倒序 </span></i>
-                  </a>
-                </div>
+            </div>
+            <div class="catalog-content-center-wrapper">
+              <div class="width-50 text-left catalog-content-center-left"><a href="#">目录</a></div>
+              <div class="width-50 text-right catalog-content-center-left">
+                <a href="#" class="catalog-reserve">
+                  <i class="icon icon-order reverse-infor"><span class="reverse-name"> 倒序 </span></i>
+                </a>
               </div>
             </div>
           </div>
+        </div>
+        <div class="novel-catalog-content-wrapper">
           <div class="net-err-info">
             <div class="sm_con">
               <div class="bg"></div>
@@ -345,7 +374,7 @@ class Catalog {
       this.isCatFetch = true
       this.loadCategory('middle')
         .then(data => {
-          isSplitPage = data.data.catalog.isSplitPage
+          isSplitPage = data.data.isSplitPage
           this.renderCatalogCallBack(data)
         }).catch(err => {
           isFetchLoading = false
@@ -407,6 +436,7 @@ class Catalog {
       $catalogSidebar.appendChild($catalog)
     }
     this.clickCatalogToResetReadPageNum()
+    this.clickCatalogToGoToPageUrl()
     this.bindClickCatalogMessageEvent()
     this.bindShellCatalogMessageEvent()
     this.bindPageCatalogMessageEvent()
@@ -436,6 +466,19 @@ class Catalog {
       if (novelInstance.currentPageMeta.pageType === 'page') {
         novelInstance.readPageNum = 1
       }
+    })
+  }
+  /**
+   * 只要是点击目录进入阅读页，readPageNum 重新开始记为 1.
+   *
+   * @private
+   */
+  clickCatalogToGoToPageUrl () {
+    event.delegate(document.documentElement, '.novel-catalog-content .catalog-page-content', 'click', (event) => {
+      let cid = this.getChapterId(event.target)
+      this.getChapterUrl(cid).then(data => {
+        MIP.viewer.open(data.data.url)
+      })
     })
   }
   /**
@@ -651,7 +694,7 @@ class Catalog {
         util.css(this.$catalogSidebar.querySelector('.net-err-info'), {
           display: 'none'
         })
-        isSplitPage = data.data.catalog.isSplitPage
+        isSplitPage = data.data.isSplitPage
         this.renderCatalogCallBack(data, {
           isReload: true
         })
