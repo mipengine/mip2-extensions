@@ -3,27 +3,22 @@
  * @author Miya(panwenshuang@baidu.com)
  */
 
-const {registerService} = MIP
-
 export default class MIPAio {
-  async getBox (version) {
+  getBox (version = '201602') {
     if (this.scriptPromise) {
       return this.scriptPromise
     }
-    const fileVersion = version || '201602'
     this.scriptPromise = new Promise((resolve, reject) => {
       const aioScript = document.createElement('script')
-      const srcUrl = 'http://s.bdstatic.com/common/openjs/aio.js?v=' + fileVersion
+      const srcUrl = 'https://s.bdstatic.com/common/openjs/aio.js?v=' + version
       aioScript.id = 'bd-box-sdk'
-      aioScript.onload = () => resolve()
+      aioScript.onload = () => resolve(window.Box)
       aioScript.onerror = () => reject(new Error(`脚本加载失败: ${srcUrl}`))
       aioScript.src = srcUrl
       document.head.appendChild(aioScript)
-    }).then(() => {
-      return window.Box
     })
     return this.scriptPromise
   }
 }
 
-registerService('mip-aio', MIPAio)
+MIP.registerService('mip-aio', MIPAio)
