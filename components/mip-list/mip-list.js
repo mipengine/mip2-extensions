@@ -4,9 +4,37 @@
  */
 
 const { CustomElement, templates, util } = MIP
-const { fetchJsonp } = window
+const { fetchJsonp, fetch } = window
 
 const log = util.log('mip-list')
+
+/**
+ * getUrl 获取最后拼接好的数据请求 url
+ *
+ * @param {string} src 原始 url
+ * @param {string} pnName 翻页字段名
+ * @param {number} pn 页码
+ * @returns {string} 拼接好的 url
+ */
+function getUrl (src, pnName, pn) {
+  if (!pnName || !pn) {
+    return
+  }
+  let url = src
+  if (src.indexOf('?') > 0) {
+    url += src[src.length - 1] === '?' ? '' : '&'
+    url += pnName + '=' + pn
+  } else {
+    url += '?' + pnName + '=' + pn
+  }
+  return url
+}
+
+function timeoutReject (time) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => reject(new Error('timeout')), time)
+  })
+}
 
 export default class MIPList extends CustomElement {
   static props = {
@@ -49,8 +77,8 @@ export default class MIPList extends CustomElement {
       default: false
     },
     'load-more': {
-      type: String
-      // default: ''
+      type: String,
+      default: 'auto'
     },
     'preload': {
       type: Boolean,
@@ -69,35 +97,15 @@ export default class MIPList extends CustomElement {
     // }
   }
 
-  // connectedCallback () {
-  //   this.sanitize()
-
-  //   this.pnName = this.element.getAttribute('pn-name') ||
-  //     this.element.getAttribute('pnName') ||
-  //     'pn'
-  //   this.pn = this.element.getAttribute('pn') || 1
-  //   this.timeout = this.element.getAttribute('timeout') || 5000
-  //   this.src = this.element.getAttribute('src') || ''
-  // }
-
-  // /**
-  //  * shortcut for hasAttribute
-  //  *
-  //  * @param {string} name attr name
-  //  * @returns {boolean} has attribute
-  //  */
-  // has (name) {
-  //   return this.element.hasAttribute(name)
-  // }
-
-  // /**
-  //  * 校验参数
-  //  */
-  // sanitize () {
-  //   if (this.has('pnName')) {
-  //     log.warn(this.element, '[Deprecated] pnName 属性不允许再使用，请使用 \'pn-name\' 代替')
-  //   }
-  // }
+  request (url) {
+    let { method, credentials, timeout } = this.props
+    return method === 'jsonp'
+      ? fetchJsonp(url, { timeout })
+      : Promise.race([
+        fetch(url, { credentials }),
+        timeoutReject(timeout)
+      ])
+  }
 
   /**
    * 构造元素，只会运行一次
@@ -213,26 +221,4 @@ export default class MIPList extends CustomElement {
     })
     this.container.appendChild(fragment)
   }
-}
-
-/**
- * getUrl 获取最后拼接好的数据请求 url
- *
- * @param {string} src 原始 url
- * @param {string} pnName 翻页字段名
- * @param {number} pn 页码
- * @returns {string} 拼接好的 url
- */
-function getUrl (src, pnName, pn) {
-  if (!pnName || !pn) {
-    return
-  }
-  let url = src
-  if (src.indexOf('?') > 0) {
-    url += src[src.length - 1] === '?' ? '' : '&'
-    url += pnName + '=' + pn
-  } else {
-    url += '?' + pnName + '=' + pn
-  }
-  return url
 }
