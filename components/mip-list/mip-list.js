@@ -9,35 +9,95 @@ const { fetchJsonp } = window
 const log = util.log('mip-list')
 
 export default class MIPList extends CustomElement {
-  connectedCallback () {
-    this.sanitize()
+  static props = {
+    'src': {
+      type: String,
+      default: ''
+    },
+    'method': {
+      type: String,
+      default: 'jsonp'
+    },
+    'credentials': {
+      type: String,
+      default: 'include'
+    },
+    'timeout': {
+      type: Number,
+      default: 5000
+    },
 
-    this.pnName = this.element.getAttribute('pn-name') ||
-      this.element.getAttribute('pnName') ||
-      'pn'
-    this.pn = this.element.getAttribute('pn') || 1
-    this.timeout = this.element.getAttribute('timeout') || 5000
-    this.src = this.element.getAttribute('src') || ''
-  }
+    'items': {
+      type: String,
+      default: 'items'
+    },
 
-  /**
-   * shortcut for hasAttribute
-   *
-   * @param {string} name attr name
-   * @returns {boolean} has attribute
-   */
-  has (name) {
-    return this.element.hasAttribute(name)
-  }
-
-  /**
-   * 校验参数
-   */
-  sanitize () {
-    if (this.has('pnName')) {
-      log.warn(this.element, '[Deprecated] pnName 属性不允许再使用，请使用 \'pn-name\' 代替')
+    'pn-name': {
+      type: String,
+      default: ''
+    },
+    'pnName': {
+      type: String,
+      default: 'pn'
+    },
+    'pn': {
+      type: Number,
+      default: 1
+    },
+    'has-more': {
+      type: Boolean,
+      default: false
+    },
+    'load-more': {
+      type: String
+      // default: ''
+    },
+    'preload': {
+      type: Boolean,
+      default: false
+    },
+    'binding': {
+      type: String,
+      default: 'always'
+    },
+    'synchronous-data': {
+      type: Array
     }
+
+    // 'reset-on-refresh': {
+    //   type: ''
+    // }
   }
+
+  // connectedCallback () {
+  //   this.sanitize()
+
+  //   this.pnName = this.element.getAttribute('pn-name') ||
+  //     this.element.getAttribute('pnName') ||
+  //     'pn'
+  //   this.pn = this.element.getAttribute('pn') || 1
+  //   this.timeout = this.element.getAttribute('timeout') || 5000
+  //   this.src = this.element.getAttribute('src') || ''
+  // }
+
+  // /**
+  //  * shortcut for hasAttribute
+  //  *
+  //  * @param {string} name attr name
+  //  * @returns {boolean} has attribute
+  //  */
+  // has (name) {
+  //   return this.element.hasAttribute(name)
+  // }
+
+  // /**
+  //  * 校验参数
+  //  */
+  // sanitize () {
+  //   if (this.has('pnName')) {
+  //     log.warn(this.element, '[Deprecated] pnName 属性不允许再使用，请使用 \'pn-name\' 代替')
+  //   }
+  // }
 
   /**
    * 构造元素，只会运行一次
