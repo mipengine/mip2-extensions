@@ -27,9 +27,8 @@ export default function render (el) {
  * @param  {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
  */
 function setConditions (el) {
-  let dep = el.getAttribute('data-setdep')
-  let dis = el.getAttribute('data-setdis')
-  let askdis = el.getAttribute('data-setaskdis')
+  let dep = el.getAttribute('data-dep')
+  let dis = el.getAttribute('data-dis')
 
   if (dep) {
     dep = dep.split(',')
@@ -38,10 +37,6 @@ function setConditions (el) {
 
   if (dis) {
     window.CUSTOMER.setDis(dis)
-  }
-
-  if (askdis) {
-    window.CUSTOMER.setAskDis(askdis)
   }
 
   loadSubScript(el)
