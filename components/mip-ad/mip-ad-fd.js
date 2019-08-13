@@ -12,13 +12,39 @@ export default function render (el) {
   el.classList.add('__customer_place')
 
   if (window.CUSTOMER) {
-    loadSubScript(el)
+    setConditions(el)
   } else {
     window.require(['https://img.familydoctor.com.cn/component/common/scripts/gg_main.min'], function (CUSTOMER) {
       window.CUSTOMER = CUSTOMER
-      loadSubScript(el)
+      setConditions(el)
     })
   }
+}
+
+/**
+ * 设置定向条件
+ *
+ * @param  {HTMLElement} el 当前 mip-ad 组件的 DOM 元素
+ */
+function setConditions (el) {
+  let dep = el.getAttribute('data-setdep')
+  let dis = el.getAttribute('data-setdis')
+  let askdis = el.getAttribute('data-setaskdis')
+
+  if (dep) {
+    dep = dep.split(',')
+    window.CUSTOMER.setDep(...dep)
+  }
+
+  if (dis) {
+    window.CUSTOMER.setDis(dis)
+  }
+
+  if (askdis) {
+    window.CUSTOMER.setAskDis(askdis)
+  }
+
+  loadSubScript(el)
 }
 
 /**
