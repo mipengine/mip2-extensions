@@ -1,4 +1,4 @@
-export default class MIPAutopush extends MIP.CustomElement {
+export default class MIPLinksubmitBaidu extends MIP.CustomElement {
   build () {
     const bp = document.createElement('script')
     const curProtocol = window.location.protocol.split(':')[0]
