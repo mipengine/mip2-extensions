@@ -25,6 +25,10 @@
       font-size: 14px;
       color: black;
     }
+    mip-form label{
+      display: inline-block;
+      padding: 10px;
+    }
     </style>
   </head>
   <body>
@@ -33,7 +37,7 @@
       <mip-form method="get" url="https://www.mipengine.org" target="_blank">
         <label>
           <span>搜索</span>
-          <input type="search" name="term" required>
+          <input type="search" name="term">
         </label>
         <input name="submit-button" type="submit" value="Search">
       </mip-form>
@@ -56,7 +60,8 @@
       <mip-form
         method="get"
         fetch-url="./mock.json">
-        <input type="text" name="name" placeholder="姓名">
+        <input type="text" name="name" placeholder="姓名" validatetarget="name" required>
+        <div target="name">输入不能为空</div>
         <input type="submit" value="提交">
         <div submitting>
           <template type="mip-mustache">
@@ -74,6 +79,31 @@
         <div submit-error>
           <template type="mip-mustache">
             Sorry {{name}}, 发生了一点错误
+          </template>
+        </div>
+      </mip-form>
+    </div>
+
+    <div class="mip-form-example">
+      <p class="mip-example-title"> 异步提交 checkbox/radio </p>
+      <mip-form method="GET" fetch-url="./mock.json">
+        <input type="checkbox" id="animal1" name="animal1" value="Cats">
+        <label for="animal1">I like cats</label>
+        <input type="checkbox" id="animal2" name="animal2" value="Dogs">
+        <label for="animal2"> I like dogs </label>
+        <input type="radio" id="cat" name="animal" value="cat" checked>
+        <label for="cat">Cat</label>
+        <input type="radio" id="dog" name="animal" value="dog">
+        <label for="dog">Dog</label>
+        <input type="submit" value="确定">
+        <div class="mip-example-submit-results" submit-success>
+          <template type="mip-mustache">
+            <p>提交成功!</p>
+          </template>
+        </div>
+        <div submit-error>
+          <template type="mip-mustache">
+            Sorry, 发生了一点错误
           </template>
         </div>
       </mip-form>

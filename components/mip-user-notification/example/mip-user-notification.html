@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+  <link rel="canonical" href="">
+  <title>mip-user-notification</title>
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+</head>
+<body>
+  <!-- 不使用定位和服务端询问 -->
+  <mip-user-notification
+  id="myUserNotification" 
+  layout="nodisplay"
+  class="mip-hidden"
+  >
+  <div style="border: 1px solid green">
+    不使用定位和服务端询问：请尽快从 mip1 更新到 mip2 ~
+    <button style="float: right;background-color: lightblue" on="tap:myUserNotification.dismiss">接受</button>
+  </div>
+  </mip-user-notification>
+
+  <!-- data-persist-dismissal="false" -->
+  <mip-user-notification
+  id="myUserNotification1" 
+  layout="nodisplay"
+  class="mip-hidden"
+  data-persist-dismissal="false"
+  >
+  <div style="border: 1px solid yellow">
+    data-persist-dismissal="false"，刷新永远显示
+    <button style="float: right;background-color: lightblue" on="tap:myUserNotification1.dismiss">接受</button>
+  </div>
+  </mip-user-notification>
+
+  <!-- 根据位置显示 -->
+  <mip-map on="getPositionFailed:myUserNotification2.getLocationComplete getPositionComplete:myUserNotification2.getLocationComplete" id="myMap">
+      <script type="application/json">
+        {
+          "ak": "hKhuzfFBrcL6zGm4s6b371NDxaUrhFPl",
+          "hideMap": true
+        }
+      </script>
+  </mip-map>
+
+  <mip-user-notification
+    id="myUserNotification2" 
+    layout="nodisplay"
+    class="mip-hidden"
+    data-show-if-geo="true"
+    on="notificationLoaded:myMap.getLocal"
+    >
+    <script type="application/json">
+      {
+        "notShowIn": [ "北京", "新疆", "西藏"],
+        "showIn": [ "山东", "上海"]
+      }
+    </script>
+    <div style="border: 1px solid red">
+      根据位置显示：mip2 有更多好用功能 ~
+      <button style="float: right;background-color: lightblue" on="tap:myUserNotification2.dismiss">接受</button>
+    </div>
+  </mip-user-notification>
+
+  <!-- 根据 data-show-if-href 返回显示 -->
+  <mip-user-notification
+  id="myUserNotification3" 
+  layout="nodisplay"
+  class="mip-hidden"
+  data-show-if-href="./data.json"
+  >
+  <div style="border: 1px solid blue">
+    根据 data-show-if-href 返回显示：快快更新吧~
+    <button style="float: right;background-color: lightblue" on="tap:myUserNotification3.dismiss">接受</button>
+  </div>
+  </mip-user-notification>
+
+  <!-- enctype测试 -->
+  <mip-user-notification
+  id="myUserNotification4" 
+  layout="nodisplay"
+  class="mip-hidden"
+  enctype="application/x-www-form-urlencoded"
+  data-dismiss-href="./data.json"
+  >
+  <div style="border: 1px solid orange">
+    post方法的content-type为"application/x-www-form-urlencoded"
+    <button style="float: right;background-color: lightblue" on="tap:myUserNotification4.dismiss">接受</button>
+  </div>
+  </mip-user-notification>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-user-notification/mip-user-notification.js"></script>
+  <script src="/mip-map/mip-map.js"></script>
+</body>
+</html>

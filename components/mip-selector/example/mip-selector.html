@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    mip-selector {
+      margin: 20px
+    }
+
+    h2{
+      margin: 20px 10px;
+    }
+
+    p {
+      margin-left: 28px;
+    }
+
+    button {
+      background: #0055a0;
+      color: #fff;
+      padding: 5px 20px;
+      margin-left: 20px;
+      margin-bottom: 5px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h2>单选</h2>
+  <mip-selector class="sample-selector" layout="container">
+    <mip-img src="./imgs/img1.png" width="60" height="60" option="1"></mip-img>
+    <mip-img src="./imgs/img2.png" width="60" height="60" option="2"></mip-img>
+    <mip-img src="./imgs/img3.png" width="60" height="60" option="3"></mip-img>
+    <mip-img src="./imgs/img4.png" width="60" height="60" option="4"></mip-img>
+  </mip-selector>
+
+  <h2>多选</h2>
+  <mip-selector class="sample-selector" layout="container" multiple>
+    <mip-img src="./imgs/img1.png" width="60" height="60" option="1"></mip-img>
+    <mip-img src="./imgs/img2.png" width="60" height="60" option="2"></mip-img>
+    <mip-img src="./imgs/img3.png" width="60" height="60" option="3"></mip-img>
+    <mip-img src="./imgs/img4.png" width="60" height="60" option="4"></mip-img>
+  </mip-selector>
+
+  <h2>指定某些选项不可选</h2>
+  <mip-selector class="sample-selector" layout="container">
+    <mip-img src="./imgs/img1.png" width="60" height="60" option="1"></mip-img>
+    <mip-img src="./imgs/img2.png" width="60" height="60" option="2"></mip-img>
+    <mip-img src="./imgs/img3.png" width="60" height="60" option="3" disabled></mip-img>
+    <mip-img src="./imgs/img4.png" width="60" height="60" option="4"></mip-img>
+  </mip-selector>
+
+  <h2>整个选项都不可选</h2>
+  <mip-selector class="sample-selector" layout="container" disabled>
+    <mip-img src="./imgs/img1.png" width="60" height="60" option="1"></mip-img>
+    <mip-img src="./imgs/img2.png" width="60" height="60" option="2"></mip-img>
+    <mip-img src="./imgs/img3.png" width="60" height="60" option="3"></mip-img>
+    <mip-img src="./imgs/img4.png" width="60" height="60" option="4"></mip-img>
+  </mip-selector>
+
+  <h2>对外暴露的动作（Actions）</h2>
+  <mip-selector class="sample-selector" layout="container" id="actionsSample">
+    <mip-img src="./imgs/img1.png" width="60" height="60" option="1"></mip-img>
+    <mip-img src="./imgs/img2.png" width="60" height="60" option="2"></mip-img>
+    <mip-img src="./imgs/img3.png" width="60" height="60" option="3"></mip-img>
+    <mip-img src="./imgs/img4.png" width="60" height="60" option="4"></mip-img>
+    <mip-img src="./imgs/img1.png" width="60" height="60" option="5"></mip-img>
+    <mip-img src="./imgs/img2.png" width="60" height="60" option="6"></mip-img>
+  </mip-selector>
+
+  <button on="tap:actionsSample.clear">清空选项 clear()</button>
+  <button on="tap:actionsSample.selectUp">选择前 1 个 selectUp()</button>
+  <button on="tap:actionsSample.selectUp({step: 2})">选择前 2 个 selectUp({step:2})</button>
+  <button on="tap:actionsSample.selectDown">选择后 1 个 selectDown()</button>
+  <button on="tap:actionsSample.selectDown({step: 2})">选择后 2 个 selectDown({step:2})</button>
+  <button on="tap:actionsSample.toggle({index:1})">反向选择第一个 toggle({index:1})</button>
+  <button on="tap:actionsSample.toggle({index: 2, status: true})">反向选择第一个 toggle({index:2, status: true})</button>
+
+  <h2>响应的事件（Events）</h2>
+  <mip-selector multiple layout="container" radioStyle
+    on="select: MIP.setData({
+      selectedOption: event.targetOption,
+      allSelectedOptions: event.selectedOptions
+    })"
+  >
+    <div option="a" selected>Option A</div>
+    <div option="b">Option B</div>
+    <div option="c">Option C</div>
+    <div option="d">Option D</div>
+  </mip-selector>
+
+  <!-- 预先定义一下需要接受的参数 -->
+  <mip-data>
+    <script type="application/json">
+      {
+        "selectedOption": "a",
+        "allSelectedOptions": ["a"]
+      }
+    </script>
+  </mip-data>
+  <p>最后的选项: <code m-text="selectedOption">a</code></p>
+  <p>所有的选项: <code m-text="allSelectedOptions.join(', ')">a</code></p>
+
+  <h2>结合 Form 表单</h2>
+  <mip-form action="#" method="get" target="_top">
+    <mip-selector radioStyle layout="container" name="my-selector">
+      <div option="a">Option A</div>
+      <div option="b">Option B</div>
+      <div option="c">Option C</div>
+    </mip-selector>
+    <button>提交</button>
+  </mip-form>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="/mip-selector/mip-selector.js"></script>
+</body>
+</html>

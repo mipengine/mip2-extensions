@@ -12,11 +12,23 @@
       white-space: pre-line;
       line-height: 2;
     }
+    button {
+      background-color: #008CB0;
+      border: none;
+      color: white;
+      padding: 5px 15px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 10px;
+      border-radius: 5px;
+      margin: 5px 0 5px 0;
+    }
     </style>
   </head>
   <body>
     <div>
-      <h2>使用mip-bind组件</h2>
+      <h2>使用 mip-bind 组件</h2>
       <mip-data>
         <script type="application/json">
           {
@@ -31,7 +43,8 @@
         城市拼音：<span m-text="pinyin" class="selected-text"></span>，
         城市中文：<span m-text="city" class="selected-text"></span>
       </p>
-      <mip-group-selection class="mip-hidden">
+      <button on="tap:select.show">显示选择</button>
+      <mip-group-selection id="select">
         <!-- 在 application/json 中配置全部城市 -->
         <script type="application/json">
           {
@@ -94,28 +107,26 @@
             }]
           }
         </script>
-        <!-- 城市选择组件依赖的 DOM 结构，不建议自行删除结构 -->
-        <div class="mip-group-selection-wrapper">
-          <template type="mip-mustache">
-            <div class="mip-group-selection-content">
+        <!-- 选择组件依赖的 DOM 结构，不建议自行删除结构 -->
+        <template type="mip-mustache">
+          <div class="mip-group-selection-content">
+            {{#list}}
+              <div class="mip-group-selection-group">
+                <div class="mip-group-selection-title" data-anchor="{{key}}">{{key}}</div>
+                {{#cities}}
+                  <p class="mip-group-selection-item" data-code="{{code}}" data-pinyin="{{pinyin}}" data-city="{{city}}">{{city}}</p>
+                {{/cities}}
+              </div>
+            {{/list}}
+          </div>
+          <mip-fixed still class="mip-group-selection-sidebar-wrapper" type="right" top="10px">
+            <div class="mip-group-selection-sidebar">
               {{#list}}
-                <div class="mip-group-selection-group mip-group-selection-part-letter">
-                  <div class="mip-group-selection-title" data-anchor="{{key}}">{{key}}</div>
-                  {{#cities}}
-                    <p class="mip-group-selection-item" data-code="{{code}}" data-pinyin="{{pinyin}}" data-city="{{city}}">{{city}}</p>
-                  {{/cities}}
-                </div>
+                <div class="mip-group-selection-link" data-target-anchor="{{key}}">{{key}}</div>
               {{/list}}
             </div>
-            <mip-fixed class="mip-group-selection-sidebar-wrapper" type="right" top="10px">
-              <div class="mip-group-selection-sidebar">
-                {{#list}}
-                  <div class="mip-group-selection-link" data-target-anchor="{{key}}">{{key}}</div>
-                {{/list}}
-              </div>
-            </mip-fixed>
-          </template>
-        </div>
+          </mip-fixed>
+        </template>
       </mip-group-selection>
     </div>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>

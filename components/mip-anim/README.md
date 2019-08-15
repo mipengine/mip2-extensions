@@ -12,7 +12,7 @@
 
 ```html
 <mip-anim width=400 height=300 src="my-gif.gif">
-  <mip-img placeholder width=400 height=300 src="my-gif-screencap.jpg">
+  <mip-img placeholder width=400 height=300 src="https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg">
   </mip-img>
 </mip-anim>
 ```
@@ -24,22 +24,22 @@
 ### 带 `placeholder` 的加载方式
 
 ```html
-<mip-anim layout="fixed" width=210 height=210 src="http://boscdn.bpc.baidu.com/v1/assets/mipengine/sample.gif" alt="an animation">
-   <mip-img placeholder class="background" layout="fixed-height" width=210 height=210 src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
+<mip-anim layout="fixed" width=210 height=210 src="https://boscdn.baidu.com/v1/assets/mipengine/sample.gif" alt="an animation">
+   <mip-img placeholder class="background" layout="fixed-height" width=210 height=210 src="https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
 </mip-anim>
 ```
 
 ### 只有 GIF 图
 
 ```html
-<mip-anim layout="fixed" width=210 height=210 src="http://boscdn.baidu.com/v1/assets/mipengine/sample.gif" alt="an animation"></mip-anim>
+<mip-anim layout="fixed" width=210 height=210 src="https://boscdn.baidu.com/v1/assets/mipengine/sample.gif" alt="an animation"></mip-anim>
 ```
 
 ### 不指定 URL
 
 ```html
 <mip-anim layout="fixed" width=210 height=210  alt="an animation">
-   <mip-img placeholder class="background" layout="fixed-height" width=210 height=210 src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
+   <mip-img placeholder class="background" layout="fixed-height" width=210 height=210 src="https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
 </mip-anim>
 ```
 

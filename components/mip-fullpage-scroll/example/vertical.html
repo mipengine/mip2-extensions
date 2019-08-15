@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+      body {
+        overflow: hidden;
+      }
+      mip-fullpage-scroll [mip-fullpage-scroll-wrapper] {
+        transition: all .2s ease-in-out
+      }
+      #test-nav {
+        bottom: 30%;
+        left: 10px;
+        display: block !important;
+      }
+
+      #test-nav button {
+        padding: 5px 10px;
+        background: #005af0;
+        color: #fff;
+        display: block;
+        outline: none;
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <mip-fullpage-scroll
+        navigateable
+        id="test"
+        direction="vertical"
+        on="change:MIP.setData({currentPage: event.index})"
+      >
+        <section>这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容这是第一个屏幕内容</section>
+        <section>这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容这是第二个屏幕内容</section>
+        <section>这是第三个屏幕内容这是第三个屏幕内容这是第三个屏幕内容这是第三个屏幕内容这是第三个屏幕内容这是第三个屏幕内容这是第三个屏幕内容这是第三个屏幕内容这是第三个屏幕内容这是第三个屏幕内容</section>
+        <section>这是第四个屏幕内容这是第四个屏幕内容这是第四个屏幕内容这是第四个屏幕内容这是第四个屏幕内容这是第四个屏幕内容</section>
+      </mip-fullpage-scroll>
+      <mip-data>
+        <script type="application/json">
+          {
+            "currentPage": 2
+          }
+        </script>
+      </mip-data>
+      <mip-fixed still id="test-nav">
+        <p><span>当前页：</span><span m-text="currentPage">2</span></p>
+        <button on = "tap:test.back">上一页</button>
+        <button on = "tap:test.goTo(2)">跳转到第二页</button>
+        <button on = "tap:test.next">下一页</button>
+      </mip-fixed>
+    </div>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-fullpage-scroll/mip-fullpage-scroll.js"></script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    .mip-button {
+      appearance: button;
+      height: 32px;
+      padding: 0 15px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
+      outline: 0;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 1.499;
+      color: rgba(0, 0, 0, .65);
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      background-color: #fff;
+      background-image: none;
+      user-select: none;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+
+    .mip-button-primary {
+      border-color: #108ee9;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
+      color: #fff;
+      background-color: #108ee9;
+    }
+  </style>
+  <script async src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script async src="https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js"></script>
+  <script async src="/mip-mustache/mip-mustache.js"></script>
+  <script async src="/mip-dialog/mip-dialog.js"></script>
+  <script async src="/mip-modal/mip-modal.js"></script>
+</head>
+<body>
+  <mip-data>
+    <script type="application/json">
+      {"visible": false}
+    </script>
+  </mip-data>
+  <mip-modal
+    title='"MIP" 想给您发送推送通知'
+    m-bind:visible="visible"
+    mask-closable="false"
+    ok-text="好"
+    cancel-text="不允许"
+    on="ok:MIP.setData({visible: false}) cancel:MIP.setData({visible: false})"
+  >
+    <template slot="body">
+      <p>“通知”可能包括提醒、声音和图标。</p>
+      <p>这些可在“设置”中配置。</p>
+    </template>
+  </mip-modal>
+  <mip-fastclick>
+    <button
+      class="mip-button mip-button-primary"
+      on="tap:MIP.setData({visible: true})"
+    >
+      必选模态框
+    </button>
+  </mip-fastclick>
+</body>
+</html>

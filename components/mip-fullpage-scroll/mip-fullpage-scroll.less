@@ -1,0 +1,50 @@
+mip-fullpage-scroll {
+  overflow: hidden;
+
+  [mip-fullpage-scroll-wrapper] {
+    top: 0;
+    right: 0;
+    position: relative;
+    transition: all 0.5s linear;
+    overflow: hidden;
+  }
+
+  section {
+    position: relative;
+  }
+
+  &[direction="horizontal"] section {
+    float: left;
+    overflow: hidden;
+  }
+
+  [navigator] {
+    top: 50%;
+    right: 10px;
+    width: 10px;
+    height: auto;
+
+    [navigator-item] {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 8px;
+      background: #ccc;
+      margin: 5px;
+    }
+
+    span[current-item] {
+      background: #005af0;
+    }
+  }
+
+  &[direction="horizontal"] [navigator] {
+    bottom: 20px;
+    text-align: center;
+    left: 50%;
+    top: auto;
+    right: auto;
+    height: 10px;
+    width: auto;
+  }
+}

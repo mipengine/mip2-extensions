@@ -29,7 +29,7 @@ export default class Form {
     this.successEle = element.querySelector('[submit-success]')
     this.errorEle = element.querySelector('[submit-error]')
     this.submittingEle = element.querySelector('[submitting]')
-    this.requestUrl = (element.getAttribute('fetch-url') || '').trim()
+    this.xhrUrl = (element.getAttribute('fetch-url') || '').trim()
     this.validator = getValidatorFromForm(element)
 
     let form = document.createElement('form')
@@ -52,17 +52,13 @@ export default class Form {
     // 表单提交
     let curEles = this.element.querySelectorAll('form')
     for (let item of curEles) {
-      item.addEventListener('submit', event => {
-        event.preventDefault()
-        this.onSubmit()
-      })
+      item.addEventListener('submit', event => this.onSubmit(event))
     }
+    this.element.customElement.addEventAction('submit', () => this.onSubmit())
     // 部分浏览器回车不触发submit
     this.element.addEventListener('keydown', event => {
       if (event.keyCode === 13) {
-        // 为了使余下浏览器不多次触发submit, 使用prevent
-        event.preventDefault()
-        this.onSubmit()
+        this.onSubmit(event)
       }
     })
 
@@ -90,9 +86,11 @@ export default class Form {
   /**
    * 点击提交按钮事件处理函数
    *
-   * @param {HTMLElement} element form节点
+   * @param {Event} event 对象
    */
-  onSubmit (element) {
+  onSubmit (event) {
+    event && event.preventDefault()
+
     const isHttp = this.url.toLowerCase().match('http://')
     const isGetMethod = this.method === 'GET'
     this.triggerCustomEvent(FORM_EVENT.SUBMIT, {})
@@ -108,12 +106,13 @@ export default class Form {
     // 在SF环境下使用 mibm-jumplink，跳转显示原链接。 http-GET请求交给外层跳转
     if (!MIP.standalone && isHttp && isGetMethod) {
       const jumpUrlParams = this.getFormAsParamsString(this.element)
-      const jumpUrl = this.getJumpUrl(jumpUrlParams)
+      const jumpUrl = this.addParamsToUrl(this.url, jumpUrlParams)
       viewer.sendMessage('mibm-jumplink', {
         url: jumpUrl
       })
-    } else if (this.requestUrl) {
-      this.fetchUrl(this.requestUrl)
+    } else if (this.xhrUrl) {
+      // 异步请求提交表单
+      this.fetchUrl(this.xhrUrl)
     } else {
       // https请求 或 post请求 或 非SF环境下直接提交
       this.element.getElementsByTagName('form')[0].submit()
@@ -121,45 +120,44 @@ export default class Form {
   }
 
   /**
-   * 获取 Form 取值作为跳转 URL 参数
+   * 获取 Form 取值作为参数
    *
    * @param {*} form 表单
    */
   getFormAsParamsString (form) {
     const data = []
     const inputs = form.querySelectorAll('input, textarea, select')
+    const checkableType = /^(?:checkbox|radio)$/i
     for (let input of inputs) {
-      let inputValue = input.value
-      if (input.type === 'submit') {
+      if (input.type === 'submit' || (checkableType.test(input.type) && !input.checked)) {
         continue
       }
-
-      if (input.type === 'checkbox' || input.type === 'radio') {
-        inputValue = input.checked ? inputValue : ''
-      }
-      data.push(input.name + '=' + inputValue)
+      data.push(encodeURIComponent(input.name) + '=' + encodeURIComponent(input.value))
     }
     const result = data.join('&')
     return result
   }
 
   /**
-   * 获取 SF 环境 http 跳转 URL
+   * 添加参数至 URL
    *
+   * @param {string} url URL 地址
    * @param {string} urlParams URL 参数
    * @returns {string} jumpUrl
    */
-  getJumpUrl (urlParams) {
-    let jumpUrl = ''
-    if (this.url.match('\\?')) {
-      // eg. getUrl == 'http://www.mipengine.org?we=123'
-      jumpUrl = this.url + urlParams
-    } else {
-      // eg. getUrl == 'http://www.mipengine.org'
-      urlParams = urlParams.substring(1)
-      jumpUrl = this.url + '?' + urlParams
+  addParamsToUrl (url, urlParams) {
+    if (!urlParams) {
+      return url
     }
-    return jumpUrl
+    let newUrl = url
+    if (url.match('\\?')) {
+      // eg. url == 'http://www.mipengine.org?we=123'
+      newUrl += '&' + urlParams
+    } else {
+      // eg. url == 'http://www.mipengine.org'
+      newUrl += '?' + urlParams
+    }
+    return newUrl
   }
 
   /**
@@ -182,20 +180,24 @@ export default class Form {
     this.renderTpl(this.submittingEle, {})
     util.css([this.successEle, this.errorEle], {display: 'none'})
 
+    const isGetRequest = this.method === 'GET'
+    const formDom = this.element.querySelector('form')
+    let xhrUrl = url
     let fetchData = {
       method: this.method,
       credentials: 'include'
     }
-    if (this.method === 'POST') {
-      const formD = this.element.querySelector('form')
-      if (formD) {
-        fetchData = util.fn.extend({}, fetchData, {
-          body: new FormData(formD)
-        })
-      }
+
+    if (isGetRequest) {
+      const params = this.getFormAsParamsString(formDom)
+      xhrUrl = this.addParamsToUrl(url, params)
+    } else {
+      fetchData = util.fn.extend({}, fetchData, {
+        body: new FormData(formDom)
+      })
     }
 
-    fetch(url, fetchData).then((res) => {
+    fetch(xhrUrl, fetchData).then((res) => {
       if (res.ok) {
         res.json().then((data) => {
           this.triggerCustomEvent(FORM_EVENT.SUBMIT_SUCCESS, {

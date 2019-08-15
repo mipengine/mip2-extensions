@@ -110,7 +110,12 @@ const WHITELISTED_ATTRS = [
   'fallback',
   'href',
   'on',
-  'placeholder'
+  'placeholder',
+  'width',
+  'height',
+  'layout',
+  'ref',
+  'srcset'
 ]
 
 function isValidAttr (tagName, attrName, attrValue) {

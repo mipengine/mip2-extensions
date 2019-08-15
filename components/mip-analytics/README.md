@@ -104,8 +104,26 @@ MIP 提供了性能数据以帮助开发者了解自己当前自己的 MIP 页�
     }
   </script>
 </mip-analytics>
-
 ```
+
+### 指定封装好的统计工具
+
+以 Alexa Metrics 为例，直接通过指定 type 和变量配置的方式就可以进行页面展示的统计
+
+```html
+<mip-analytics type="alexametrics">
+  <script type="application/json">
+    {
+      "vars": {
+        "atrk_acct": "xxxx",
+        "domain": "xxx.oo"
+      }
+    }
+  </script>
+</mip-analytics>
+```
+
+> todo: 可以扩展更多的统计工具
 
 ## 配置参数
 
@@ -167,6 +185,13 @@ MIP 提供了性能数据以帮助开发者了解自己当前自己的 MIP 页�
 * `"${MIPPageShow}"`
 * `"${MIPDomContentLoaded}"`
 * `"${MIPFirstScreen}"`
+* ...
+
+除上述示例描述之外，mip-analytics 还提供详细的页面数据和性能数据以供在 queryString 中使用，如下所示：
+
+```js
+"navigationStart","unloadEventStart","unloadEventEnd", "redirectStart", "redirectEnd", "fetchStart", "domainLookupStart", "domainLookupEnd", "connectStart", "connectEnd", "secureConnectionStart", "requestStart", "responseStart", "responseEnd", "domLoading", "domInteractive", "domContentLoadedEventStart", "domContentLoadedEventEnd", "domComplete", "loadEventStart", "loadEventEnd", "MIPStart", "MIPPageShow", "MIPDomContentLoaded", "MIPFirstScreen", "browserLanguage", "canonicalHost", "canonicalHostname", "canonicalPath", "canonicalUrl", "documentReferrer", "documentCharset", "isIframe", "isShow", "mipVersion", "mipdocHost", "mipdocHostname", "mipdocPath", "mipdocUrl", "pageId", "queryParam", "random", "screenColorDepth", "screenWidth", "screenHeight", "scrollTop", "scrollHeight", "scrollLeft", "scrollWidth", "sourceHost", "sourceHostname", "sourcePath", "sourceUrl", "isStandalone", "timestamp", "timezone", "timezonCode", "title", "userAgent", "viewportWidth", "viewportHeight"
+  ```
 
 必选项：否
 

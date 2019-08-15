@@ -3,6 +3,9 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
+import dataCollection from './data-collection'
+import vendors from './vendors'
+
 /* global MIP, Image */
 
 const { util, performance } = MIP
@@ -84,7 +87,7 @@ export default class MIPAnalytics extends MIP.CustomElement {
           if (!this.isSendDisp && isDomReady(data)) {
             this.mipSpeedInfo = data
             this.isSendDisp = true
-            triggers.forEach(el => this.sendLog(el))
+            triggers.forEach(cfg => this.sendLog(cfg))
           }
         })
       },
@@ -92,8 +95,8 @@ export default class MIPAnalytics extends MIP.CustomElement {
       scroll () {},
 
       timer (triggers) {
-        triggers.forEach(el => this.timers.push(
-          setInterval(() => this.sendLog(el), el.option.interval || 4000)
+        triggers.forEach(cfg => this.timers.push(
+          setInterval(() => this.sendLog(cfg), cfg.option.interval || 4000)
         ))
       }
     }
@@ -103,9 +106,16 @@ export default class MIPAnalytics extends MIP.CustomElement {
    * 构造元素，只会运行一次
    */
   build () {
-    // 获取config
+    // 获取 config
     let script = this.element.querySelector('script[type="application/json"]')
-    let cfg = this.cfg = util.jsonParse(script.textContent.toString())
+    let scriptCfg = this.cfg = util.jsonParse(script.textContent.toString())
+    let type = this.element.getAttribute('type')
+    let cfg = scriptCfg
+
+    if (type && vendors[type]) {
+      cfg = vendors[type]
+      this.type = type
+    }
 
     if (!cfg.setting || !cfg.hosts) {
       return
@@ -114,9 +124,15 @@ export default class MIPAnalytics extends MIP.CustomElement {
     // 全局代理事件
     for (let prop in cfg.setting) {
       if (cfg.setting.hasOwnProperty(prop)) {
-        // 替换host变量
+        // 替换 host 变量
         let events = cfg.setting[prop]
-        events.forEach(el => (el.host = cfg.hosts[el.host]))
+        events.forEach(item => {
+          item.host = cfg.hosts[item.host]
+          if (this.type) {
+            // 将用户自定义的 var 变量注入到常规配置中
+            item.vars = Object.assign(item.vars, scriptCfg.vars)
+          }
+        })
         this.triggers[prop] && this.triggers[prop].call(this, events)
       }
     }
@@ -210,15 +226,15 @@ export default class MIPAnalytics extends MIP.CustomElement {
    */
   valReplace (str, vars) {
     vars = vars || {}
-    util.fn.extend(vars, this.mipSpeedInfo)
+    util.fn.extend(vars, this.mipSpeedInfo, dataCollection())
 
-    return str.replace(/(\${.*})/g, $1 => {
+    return str.replace(/(\${[\w\d_]+})/g, $1 => {
       let key = $1.substring(2, $1.length - 1).trim()
       if (typeof vars[key] === 'object') {
         return ''
       }
 
-      return vars[key] || $1
+      return vars[key] || ''
     })
   }
 
@@ -238,6 +254,7 @@ export default class MIPAnalytics extends MIP.CustomElement {
         cfg.queryString.ext = undefined
       }
     }
+
     let queryString = this.serialize(cfg.queryString, cfg.vars) + '&t=' + Date.now()
     let url = this.valReplace(cfg.host, cfg.vars) + queryString
     this.imgSendLog(url)
