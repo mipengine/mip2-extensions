@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    body {
+      padding: 20px 20px
+    }
+    h4 {
+      margin: 20px 0 10px
+    }
+    p {
+      margin: 8px 0
+    }
+    button {
+      margin: 5px 0 0 0
+    }
+
+    .color-button {
+      display: inline-block;
+      background: #dcdcdc;
+      padding: 5px;
+    }
+
+    .block {
+      border: 1px solid #000;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <mip-data-watch
+    layout="ondisplay"
+    watch="aList"
+    on="change:MIP.setData({
+      aList:
+        !event.newValue &&
+        aList ||
+        (
+          (
+            event.oldValue &&
+            event.newValue.length === event.oldValue.length &&
+            event.newValue.every((item, i) => event.oldValue[i] === item)
+          )
+          ? aList
+          : event.newValue.map((item, i) => assign(item, { index: i }))
+        )
+    })"
+  ></mip-data-watch>
+  <h4>同步数据</h4>
+  <p>使用内置的数据渲染 mip-list</p>
+  <mip-list
+    id="aList"
+    scoped
+  >
+    <script type="application/json">
+      {
+        "items": [{
+          "name": "lee",
+          "alias": "xialong"
+        }, {
+          "name": "ruige",
+          "alias": "ruimm"
+        }, {
+          "name": "langbo",
+          "alias": "bobo"
+        }]
+      }
+    </script>
+    <template type="mip-mustache">
+      {{#index}}
+      <div class="block">
+        <div>
+          <span
+            class="color-button"
+            on="tap:MIP.setData({
+              aList: aList.splice(
+                {{index}},
+                1,
+                assign(
+                  aList[{{index}}],
+                  { color: 'red' }
+                )
+              )
+            })"
+          >red</span>
+          <span
+            class="color-button"
+            on="tap:MIP.setData({
+              aList: aList.splice(
+                {{index}},
+                1,
+                assign(
+                  aList[{{index}}],
+                  { color: 'green' }
+                )
+              )
+            })"
+          >green</span>
+          <span
+            class="color-button"
+            on="tap:MIP.setData({
+              aList: aList.splice(
+                {{index}},
+                1,
+                assign(
+                  aList[{{index}}],
+                  { color: 'yellow' }
+                )
+              )
+            })"
+          >yellow</span>
+        </div>
+        <div
+          m-bind:style="{ color: alist.items[{{index}}] }"
+        >{{ name }} . {{ alias }}</div>
+      </div>
+      {{/index}}
+    </template>
+  </mip-list>
+
+
+  <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
+  <script src="http://localhost:8080/dist/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
+  <script src="/mip-list/mip-list.js"></script>
+</body>
+</html>
