@@ -52,10 +52,10 @@ export default class MIPList extends CustomElement {
       type: String,
       default: ''
     },
-    'scoped': {
-      type: Boolean,
-      default: false
-    },
+    // 'scoped': {
+    //   type: Boolean,
+    //   default: false
+    // },
     'src': {
       type: String,
       default: ''
@@ -123,8 +123,8 @@ export default class MIPList extends CustomElement {
   }
 
   build () {
-    let { scoped, id, src } = this.props
-    this.dataScope = scoped && id || getRandomId()
+    let { id, src } = this.props
+    this.dataScope = id || getRandomId()
     this.src = src
     this.loadMore = this.props['load-more'] ||
        this.props['has-more'] &&
@@ -271,10 +271,6 @@ export default class MIPList extends CustomElement {
       return
     }
 
-    console.log('--- patch ---')
-    console.log(patches)
-    console.log('-------------')
-
     let addPatches = patches.filter(isAddPatch)
     let removedPatches = patches.filter(isRemovedPatch)
 
@@ -294,15 +290,9 @@ export default class MIPList extends CustomElement {
       createElement: this.createElement
     })
 
-    console.log('--- this.oldArr ---')
-    console.log(this.oldArr)
-    console.log('~~~~~~~~~~~~~~~~~~~')
-
     util.customEmit(document, 'dom-change', {
-      changed: {
-        add: addPatches.map(patch => patch.node.element),
-        removed: removedPatches.map(patch => patch.node.element)
-      }
+      add: addPatches,
+      removed: removedPatches.map(patch => patch.node.element)
     })
   }
 

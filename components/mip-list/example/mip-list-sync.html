@@ -57,7 +57,6 @@
   <p>使用内置的数据渲染 mip-list</p>
   <mip-list
     id="aList"
-    scoped
   >
     <script type="application/json">
       {
@@ -74,7 +73,6 @@
       }
     </script>
     <template type="mip-mustache">
-      {{#index}}
       <div class="block">
         <div>
           <span
@@ -103,32 +101,18 @@
               )
             })"
           >green</span>
-          <span
-            class="color-button"
-            on="tap:MIP.setData({
-              aList: aList.splice(
-                {{index}},
-                1,
-                assign(
-                  aList[{{index}}],
-                  { color: 'yellow' }
-                )
-              )
-            })"
-          >yellow</span>
         </div>
         <div
-          m-bind:style="{ color: alist.items[{{index}}] }"
+          m-bind:style="{ color: aList[{{index}}].color }"
         >{{ name }} . {{ alias }}</div>
       </div>
-      {{/index}}
     </template>
   </mip-list>
 
 
   <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
   <script src="http://localhost:8080/dist/mip.js"></script>
-  <script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
+  <script src="/mip-mustache/mip-mustache.js"></script>
   <script src="/mip-list/mip-list.js"></script>
 </body>
 </html>
