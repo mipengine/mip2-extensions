@@ -144,7 +144,7 @@ export default class MIPList extends CustomElement {
         this.asyncData(false)
       }
     } else {
-      this.syncData()
+      this.syncData(false)
     }
 
     this.addEventAction('refresh', () => {
@@ -176,8 +176,15 @@ export default class MIPList extends CustomElement {
       try {
         let data = await this.request(this.src)
         this.setState(data)
-        this.setData(data && data.data.items, shouldAppend)
-        this.setPendingState('done')
+        if (!data || !data.data) {
+          throw 'data error'
+        }
+        this.setData(data.data.items, shouldAppend)
+        if (data.data.isEnd) {
+          this.setPendingState('done')
+        } else {
+          this.setPendingState('more')
+        }
       } catch (e) {
         logger.error(e)
         this.setPendingState('error')

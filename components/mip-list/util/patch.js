@@ -55,7 +55,7 @@ function addNode ({
   let element = createElement(patch.node.text)
   patch.node.element = element
   insert(parent, patch.newIndex, element)
-  oldArr.splice(index, 0, patch.node)
+  oldArr.splice(patch.newIndex, 0, patch.node)
 
   for (let j = index + 1; j < patches.length; j++) {
     let p = patches[j]
@@ -119,15 +119,6 @@ function moveNode ({
       p.oldIndex += flag
     }
   }
-
-  // console.log('--- on move ---')
-  // console.log(oldArr.map(item => item.data))
-  // console.log(patches.slice(index + 1).map(item => ({
-  //   node: {data: item.node.data},
-  //   oldIndex: item.oldIndex,
-  //   newIndex: item.newIndex
-  // })))
-  // console.log('***************')
 }
 
 function insert (parent, index, element, isMove) {

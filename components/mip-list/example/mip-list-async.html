@@ -57,7 +57,28 @@
   <mip-data>
     <script type="application/json">
         {
-           "url": "http://localhost:3000/list1"
+           "url": "http://172.18.16.85:8888/list1",
+           "aList": [{
+              "name": "a1",
+              "alias": "aa",
+              "key": "a"
+            }, {
+              "name": "b1",
+              "alias": "bb",
+              "key": "b"
+            }, {
+              "name": "c1",
+              "alias": "cc",
+              "key": "c"
+            },{
+              "name": "d1",
+              "alias": "dd",
+              "key": "d"
+            },{
+              "name": "e1",
+              "alias": "ee",
+              "key": "e"
+            }]
         }
     </script>
   </mip-data>
@@ -67,10 +88,34 @@
   <mip-list
     id="aList"
     scope
-    m-bind:src="url"
     method="fetch"
     preload
   >
+  <script type="application/json">
+    {
+      "items": [{
+        "name": "a",
+        "alias": "aa",
+        "key": "a"
+      }, {
+        "name": "b",
+        "alias": "bb",
+        "key": "b"
+      }, {
+        "name": "c",
+        "alias": "cc",
+        "key": "c"
+      },{
+        "name": "d",
+        "alias": "dd",
+        "key": "d"
+      },{
+        "name": "e",
+        "alias": "ee",
+        "key": "e"
+      }]
+    }
+  </script>
     <template type="mip-mustache">
       <div class="block">
         <div>
@@ -108,8 +153,26 @@
     </template>
   </mip-list>
 
-  <button on="tap:MIP.setData({url: 'http://localhost:3000/list2'})">数据源2</button>
-  <button on="tap:MIP.setData({url: 'http://localhost:3000/list1'})">数据源1</button>
+  <button on="tap:MIP.setData({url: 'http://172.18.16.85:8888/list2'})">数据源2</button>
+  <button on="tap:MIP.setData({url: 'http://172.18.16.85:8888/list1'})">数据源1</button>
+  <button on="tap:MIP.setData({aList: [
+    {
+      'name': '1',
+      'alias': '1',
+      'key': '1'
+    },
+    {
+      'name': '2',
+      'alias': '2',
+      'key': '2'
+    },
+    {
+      'name': '3',
+      'alias': '3',
+      'key': '3'
+    }
+  ]})">修改本地数据</button>
+  <button on="tap:aList.refresh">refresh</button>
 
 
   <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
