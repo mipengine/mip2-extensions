@@ -24,38 +24,16 @@ const { fetchJsonp, fetch } = window
 
 const log = util.log('mip-list')
 
-/**
- * getUrl 获取最后拼接好的数据请求 url
- *
- * @param {string} src 原始 url
- * @param {string} pnName 翻页字段名
- * @param {number} pn 页码
- * @returns {string} 拼接好的 url
- */
-// function getUrl (src, pnName, pn) {
-//   if (!pnName || !pn) {
-//     return
-//   }
-//   let url = src
-//   if (src.indexOf('?') > 0) {
-//     url += src[src.length - 1] === '?' ? '' : '&'
-//     url += pnName + '=' + pn
-//   } else {
-//     url += '?' + pnName + '=' + pn
-//   }
-//   return url
-// }
-
 export default class MIPList extends CustomElement {
   static props = {
     'id': {
       type: String,
       default: ''
     },
-    // 'scoped': {
-    //   type: Boolean,
-    //   default: false
-    // },
+    'scope': {
+      type: Boolean,
+      default: false
+    },
     'src': {
       type: String,
       default: ''
@@ -72,10 +50,6 @@ export default class MIPList extends CustomElement {
       type: Number,
       default: 5000
     },
-    // 'items': {
-    //   type: String,
-    //   default: 'items'
-    // },
     'pn-name': {
       type: String,
       default: ''
@@ -99,19 +73,7 @@ export default class MIPList extends CustomElement {
     'preload': {
       type: Boolean,
       default: false
-    },
-    // 'binding': {
-    //   type: String,
-    //   default: 'always'
-    // },
-    // 'synchronous-data': {
-    //   type: Boolean,
-    //   default: false
-    // }
-
-    // 'reset-on-refresh': {
-    //   type: ''
-    // }
+    }
   }
 
   static get observerdAttributes () {
@@ -119,17 +81,13 @@ export default class MIPList extends CustomElement {
   }
 
   attributeChangedCallback () {
-    this.refresh()
+    this._built && this.refresh()
   }
 
   build () {
-    let { id, src } = this.props
-    this.dataScope = id || getRandomId()
-    this.src = src
-    this.loadMore = this.props['load-more'] ||
-       this.props['has-more'] &&
-      'manual' ||
-      false
+    this.dataScope = this.props.scope && this.props.id || getRandomId()
+    this.pnName = this.props['pn-name'] || this.props.pnName
+    this.initState()
 
     this.oldArr = []
     this.createElement = this._createElement.bind(this)
@@ -138,7 +96,7 @@ export default class MIPList extends CustomElement {
     let waitingOldVal
     let waitingFlag = false
 
-    const fn = async (newVal, oldVal) => {
+    const render = async (newVal, oldVal) => {
       waitingFlag = true
       await this.render(newVal, oldVal)
       while (waitingNewVal !== undefined && waitingOldVal !== undefined) {
@@ -160,7 +118,7 @@ export default class MIPList extends CustomElement {
         return
       }
 
-      fn(newVal, oldVal)
+      render(newVal, oldVal)
     })
   }
 
@@ -193,61 +151,102 @@ export default class MIPList extends CustomElement {
     })
 
     if (this.loadMore === 'manual') {
-      this.addEventAction('more', () => {
+      this.addEventAction('more', e => {
         this.asyncData(true)
       })
     }
   }
 
   refresh () {
-    this.src = this.props.src
+    this.initState()
+    this.setState()
     this.asyncData(false)
   }
 
   syncData (shouldAppend) {
     let script = this.element.querySelector('script[type="application/json"]')
     let data = script ? util.jsonParse(script.textContent.toString()) : null
-    this.setData(data, shouldAppend)
+    this.setData(data && data.items, shouldAppend)
   }
 
   async asyncData (shouldAppend) {
-    let url = this.getUrl()
-    let data = await this.request(url)
-    this.setData(data, shouldAppend)
-  }
-
-  setData (val, shouldAppend = true) {
-    let items = this.getItems(val)
-
-    if (!items) {
-      return
+    if (this.loadMore && this.pending !== 'pending') {
+      this.setPendingState('pending')
+      try {
+        let data = await this.request(this.src)
+        this.setState(data)
+        this.setData(data && data.data.items, shouldAppend)
+      } catch (e) {
+        logger.error(e)
+        this.setPendingState('error')
+      }
     }
-
-    MIP.setData({
-      [this.dataScope]: shouldAppend
-        ? append(MIP.getData(this.dataScope), items)
-        : items
-    })
   }
 
-  getItems (data) {
-    if (!data) {
-      return
+  setData (items, shouldAppend = true) {
+    if (items && items.length > 0) {
+      MIP.setData({
+        [this.dataScope]: shouldAppend
+          ? append(MIP.getData(this.dataScope), items)
+          : items
+      })
     }
-    return data.items
-    // console.log(this.props.items)
-    // let keys = this.props.items.split('.')
-    // for (let key of keys) {
-    //   data = data[key]
-    //   if (!data) {
-    //     return
-    //   }
-    // }
-    // return data
   }
 
-  getUrl () {
+  initState () {
+    this.pn = this.props.pn
+    // 有 src 才能够进一步去加载新数据
+    this.loadMore = this.props.src &&
+      (
+        this.props['load-more'] ||
+        this.props['has-more'] &&
+        'manual'
+      ) ||
+      false
+  }
 
+  setState (data) {
+    this.setSrc()
+    if (data) {
+      this.loadMore = data.data && !data.data.isEnd && this.loadMore || false
+    }
+  }
+
+  setPendingState (state) {
+    this.pending = state
+    if (this.button) {
+      let text
+      switch (state) {
+        case 'pending':
+          text = '加载中...'
+          break
+        case 'error':
+          text = '加载失败'
+          break
+        case 'more':
+          text = '点击查看更多'
+          break
+        case 'done':
+          text = '已经已经完毕'
+          break
+      }
+      this.button.innerHTML = text
+    }
+  }
+
+  setSrc () {
+    let src = this.props.src
+    if (src) {
+      let pnName = this.pnName
+      let pn = this.pn++
+      let params = `?${pnName}=${pn}&`
+
+      if (src.indexOf('?') > 0) {
+        this.src = src.replace('?', params)
+      } else {
+        this.src = src + params
+      }
+    }
   }
 
   request (url) {
@@ -291,7 +290,7 @@ export default class MIPList extends CustomElement {
     })
 
     util.customEmit(document, 'dom-change', {
-      add: addPatches,
+      add: addPatches.map(patch => patch.node.element),
       removed: removedPatches.map(patch => patch.node.element)
     })
   }
