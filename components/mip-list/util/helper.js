@@ -46,7 +46,10 @@ export function createFindIndex (key) {
     if (index != null) {
       map.delete(node[key])
     }
+    // else {
+    //   console.log(map)
+    //   console.log(node)
+    // }
     return index
   }
 }
-// export function create

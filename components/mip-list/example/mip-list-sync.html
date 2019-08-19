@@ -26,33 +26,40 @@
       background: #dcdcdc;
       padding: 5px;
     }
+    .del-button {
+      display: inline-block;
+      background: #f00;
+      padding: 5px;
+    }
 
     .block {
       border: 1px solid #000;
       margin-bottom: 5px;
     }
+    .wrapper {
+      border: 1px solid #dcdcdc;
+      padding: 0 5px;
+      margin-bottom: 5px;
+    }
+    .input-wrapper {
+      border: 1px solid #000;
+      display: block;
+      margin-bottom: 5px;
+      width: 120px;
+      padding: 5px;
+    }
+    .simple-button {
+      border-radius: 3px;
+      border: 1px solid #dcdcdc;
+      width: 120px;
+      margin: 5px 5px 10px 0;
+      padding: 5px;
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
-  <mip-data-watch
-    layout="ondisplay"
-    watch="aList"
-    on="change:MIP.setData({
-      aList:
-        !event.newValue &&
-        aList ||
-        (
-          (
-            event.oldValue &&
-            event.newValue.length === event.oldValue.length &&
-            event.newValue.every((item, i) => event.oldValue[i] === item)
-          )
-          ? aList
-          : event.newValue.map((item, i) => assign(item, { index: i }))
-        )
-    })"
-  ></mip-data-watch>
   <h4>同步数据</h4>
   <p>使用内置的数据渲染 mip-list</p>
   <mip-list
@@ -63,13 +70,16 @@
       {
         "items": [{
           "name": "lee",
-          "alias": "xialong"
+          "alias": "xialong",
+          "key": "a"
         }, {
           "name": "ruige",
-          "alias": "ruimm"
+          "alias": "ruimm",
+          "key": "b"
         }, {
           "name": "langbo",
-          "alias": "bobo"
+          "alias": "bobo",
+          "key": "c"
         }]
       }
     </script>
@@ -79,37 +89,68 @@
           <span
             class="color-button"
             on="tap:MIP.setData({
-              aList: aList.splice(
-                {{index}},
-                1,
-                assign(
-                  aList[{{index}}],
-                  { color: 'red' }
-                )
-              )
+              aListColor{{key}}: 'red'
             })"
           >red</span>
           <span
             class="color-button"
             on="tap:MIP.setData({
-              aList: aList.splice(
-                {{index}},
-                1,
-                assign(
-                  aList[{{index}}],
-                  { color: 'green' }
-                )
-              )
+              aListColor{{key}}: 'green'
             })"
           >green</span>
+          <span
+            class="del-button"
+            on="tap:MIP.setData({
+              aList: aList.filter(item => item.key !== '{{key}}')
+            })"
+          >删除</span>
         </div>
         <div
-          m-bind:style="{ color: aList[{{index}}].color }"
+          m-bind:style="{ color: aListColor{{key}} }"
         >{{ name }} . {{ alias }}</div>
       </div>
     </template>
   </mip-list>
-
+  <div class="wrapper">
+    <h4>新增列表</h4>
+    <input m-bind:value="tmpName" class="input-wrapper" type="text"
+    placeholder="请输入 name">
+    <input m-bind:value="tmpAlias" class="input-wrapper" type="text"
+    placeholder="请输入 alias">
+    <input m-bind:value="tmpKey" class="input-wrapper" type="text"
+    placeholder="请输入 key">
+    <div
+      class="simple-button"
+      on="tap:
+        MIP.setData({
+          aList: (aList || []).concat({
+            name: tmpName,
+            alias: tmpAlias,
+            key: tmpKey
+          })
+        }),
+        MIP.setData({
+          tmpName: '',
+          tmpAlias: '',
+          tmpKey: ''
+        })
+    ">新增一行</div>
+  </div>
+  <div class="wrapper">
+    <h4>乱序测试</h4>
+    <p>点击按钮触发列表随机排序</p>
+    <div class="simple-button"
+      on="tap:MIP.setData({
+        aList: (aList || []).sort((a, b) => Math.random() - 0.5)
+      })"
+    >点击排序</div>
+  </div>
+        <!--   , -->
+        <!-- MIP.setData({ -->
+        <!--   tmpName: '', -->
+        <!--   tmpAlias: '', -->
+        <!--   tmpKey: '' -->
+        <!-- }) -->
 
   <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
   <script src="http://localhost:8080/dist/mip.js"></script>

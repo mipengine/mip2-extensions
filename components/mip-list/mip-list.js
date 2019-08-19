@@ -140,7 +140,7 @@ export default class MIPList extends CustomElement {
 
     if (this.props.src) {
       if (this.loadMore === 'manual' && this.props.preload) {
-        this.asyncData()
+        this.asyncData(false)
       }
     } else {
       this.syncData()
