@@ -21,10 +21,15 @@ export function diff ({
   let newStartNode = newArr[0]
   let newEndNode = newArr[newEndIndex]
 
+  let oldIndexFound = {}
   let patches = []
 
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
-    if (compare(oldStartNode, newStartNode)) {
+    if (oldIndexFound[oldStartIndex]) {
+      oldStartNode = oldArr[++oldStartIndex]
+    } else if (oldIndexFound[oldEndIndex]) {
+      oldEndNode = oldArr[--oldEndIndex]
+    } else if (compare(oldStartNode, newStartNode)) {
       patches.push({
         node: oldStartNode,
         type: 'move',
@@ -82,6 +87,7 @@ export function diff ({
           oldIndex: oldIndex,
           newIndex: newStartIndex
         })
+        oldIndexFound[oldIndex] = true
       }
       newStartNode = newArr[++newStartIndex]
     }

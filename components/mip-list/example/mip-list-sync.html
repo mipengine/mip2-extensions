@@ -70,23 +70,23 @@
       {
         "items": [{
           "name": "a",
-          "alias": "xialong",
+          "alias": "aa",
           "key": "a"
         }, {
           "name": "b",
-          "alias": "ruimm",
+          "alias": "bb",
           "key": "b"
         }, {
           "name": "c",
-          "alias": "bobo",
+          "alias": "cc",
           "key": "c"
         },{
           "name": "d",
-          "alias": "d",
+          "alias": "dd",
           "key": "d"
         },{
             "name": "e",
-            "alias": "e",
+            "alias": "ee",
             "key": "e"
         }]
       }
@@ -148,13 +148,13 @@
   <div class="wrapper">
     <h4>乱序测试</h4>
     <p>点击按钮触发列表随机排序</p>
+    <p m-text="aList.map(item => item.name + '.' + item.alias).join(' ')"></p>
     <div class="simple-button"
       on="tap:MIP.setData({
         aList: (aList || []).sort((a, b) => Math.random() - 0.5)
       })"
     >点击排序</div>
   </div>
-  <p m-text="aList.map(item => item.name + '.' + item.alias).join(' ')"></p>
         <!--   , -->
         <!-- MIP.setData({ -->
         <!--   tmpName: '', -->
