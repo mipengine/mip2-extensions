@@ -100,7 +100,7 @@ function moveNode ({
   }
 
   parent.removeChild(patch.node.element)
-  insert(parent, patch.newIndex, patch.node.element)
+  insert(parent, patch.newIndex, patch.node.element, true)
   oldArr.splice(patch.oldIndex, 1)
   oldArr.splice(patch.newIndex, 0, patch.node)
 
@@ -135,8 +135,8 @@ function moveNode ({
   // console.log('***************')
 }
 
-function insert (parent, index, element) {
-  let len = parent.childNodes.length
+function insert (parent, index, element, isMove) {
+  let len = parent.childNodes.length + (isMove ? 1 : 0)
 
   if (index === len - 1) {
     parent.appendChild(element)

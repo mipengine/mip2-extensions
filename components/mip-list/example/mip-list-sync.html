@@ -69,17 +69,25 @@
     <script type="application/json">
       {
         "items": [{
-          "name": "lee",
+          "name": "a",
           "alias": "xialong",
           "key": "a"
         }, {
-          "name": "ruige",
+          "name": "b",
           "alias": "ruimm",
           "key": "b"
         }, {
-          "name": "langbo",
+          "name": "c",
           "alias": "bobo",
           "key": "c"
+        },{
+          "name": "d",
+          "alias": "d",
+          "key": "d"
+        },{
+            "name": "e",
+            "alias": "e",
+            "key": "e"
         }]
       }
     </script>
@@ -146,6 +154,7 @@
       })"
     >点击排序</div>
   </div>
+  <p m-text="aList.map(item => item.name + '.' + item.alias).join(' ')"></p>
         <!--   , -->
         <!-- MIP.setData({ -->
         <!--   tmpName: '', -->
