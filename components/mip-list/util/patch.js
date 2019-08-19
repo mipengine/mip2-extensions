@@ -16,7 +16,27 @@ export function update ({
   createElement
 }) {
   let len = patches.length
+  patches.sort((a, b) => {
+    if (a.type === 'remove' && b.type === 'remove') {
+      return a.oldIndex - b.oldInde
+    }
 
+    if (a.type === 'remove') {
+      return 1
+    }
+
+    if (b.type === 'remove') {
+      return -1
+    }
+
+    return a.newIndex - b.newIndex
+  })
+  console.log('--- sorted patch ---')
+  console.log(patches.map(item => ({
+    type: item.type,
+    oldIndex: item.oldIndex,
+    newIndex: item.newIndex
+  })))
   for (let i = 0; i < len; i++) {
     map[patches[i].type]({
       patch: patches[i],
@@ -75,6 +95,10 @@ function moveNode ({
   parent,
   oldArr
 }) {
+  if (patch.oldIndex === patch.newIndex) {
+    return
+  }
+
   parent.removeChild(patch.node.element)
   insert(parent, patch.newIndex, patch.node.element)
   oldArr.splice(patch.oldIndex, 1)
@@ -95,10 +119,20 @@ function moveNode ({
   }
 
   for (let j = index + 1; j < patches.length; j++) {
-    if (patch.oldIndex >= min && patch.oldIndex <= max) {
-      patch.oldIndex += flag
+    let p = patches[j]
+    if (p.oldIndex != null && p.oldIndex >= min && p.oldIndex <= max) {
+      p.oldIndex += flag
     }
   }
+
+  // console.log('--- on move ---')
+  // console.log(oldArr.map(item => item.data))
+  // console.log(patches.slice(index + 1).map(item => ({
+  //   node: {data: item.node.data},
+  //   oldIndex: item.oldIndex,
+  //   newIndex: item.newIndex
+  // })))
+  // console.log('***************')
 }
 
 function insert (parent, index, element) {
