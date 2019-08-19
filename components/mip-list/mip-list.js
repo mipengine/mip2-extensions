@@ -176,7 +176,7 @@ export default class MIPList extends CustomElement {
       try {
         let data = await this.request(this.src)
         this.setState(data)
-        if (!data || !data.data) {
+        if (!data || data.status || !data.data) {
           throw 'data error'
         }
         this.setData(data.data.items, shouldAppend)
