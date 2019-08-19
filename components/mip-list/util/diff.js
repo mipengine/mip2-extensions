@@ -25,9 +25,21 @@ export function diff ({
 
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
     if (compare(oldStartNode, newStartNode)) {
+      patches.push({
+        node: oldStartNode,
+        type: 'move',
+        oldIndex: oldStartIndex,
+        newIndex: newStartIndex
+      })
       oldStartNode = oldArr[++oldStartIndex]
       newStartNode = newArr[++newStartIndex]
     } else if (compare(oldEndNode, newEndNode)) {
+      patches.push({
+        node: oldEndNode,
+        type: 'move',
+        oldIndex: oldEndIndex,
+        newIndex: newEndIndex
+      })
       oldEndNode = oldArr[--oldEndIndex]
       newEndNode = newArr[--newEndIndex]
     } else if (compare(oldStartNode, newEndNode)) {

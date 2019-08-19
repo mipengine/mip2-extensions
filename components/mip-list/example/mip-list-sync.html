@@ -101,7 +101,8 @@
           <span
             class="del-button"
             on="tap:MIP.setData({
-              aList: aList.filter(item => item.key !== '{{key}}')
+              aList: aList.filter(item => item.key !== '{{key}}'),
+              aListColor{{key}}: undefined
             })"
           >删除</span>
         </div>
