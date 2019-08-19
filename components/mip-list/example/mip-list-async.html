@@ -53,26 +53,24 @@
         )
     })"
   ></mip-data-watch>
-  <h4>同步数据</h4>
-  <p>使用内置的数据渲染 mip-list</p>
+
+  <mip-data>
+    <script type="application/json">
+        {
+           "url": "http://localhost:3000/list1"
+        }
+    </script>
+  </mip-data>
+  
+  <h4>异步数据</h4>
+  <p>使用远程数据渲染 mip-list</p>
   <mip-list
     id="aList"
     scope
+    m-bind:src="url"
+    method="fetch"
+    preload
   >
-    <script type="application/json">
-      {
-        "items": [{
-          "name": "lee",
-          "alias": "xialong"
-        }, {
-          "name": "ruige",
-          "alias": "ruimm"
-        }, {
-          "name": "langbo",
-          "alias": "bobo"
-        }]
-      }
-    </script>
     <template type="mip-mustache">
       <div class="block">
         <div>
@@ -109,6 +107,9 @@
       </div>
     </template>
   </mip-list>
+
+  <button on="tap:MIP.setData({url: 'http://localhost:3000/list2'})">数据源2</button>
+  <button on="tap:MIP.setData({url: 'http://localhost:3000/list1'})">数据源1</button>
 
 
   <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->

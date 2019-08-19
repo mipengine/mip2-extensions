@@ -22,7 +22,7 @@ import {
 const { CustomElement, templates, util } = MIP
 const { fetchJsonp, fetch } = window
 
-const log = util.log('mip-list')
+const logger = util.log('mip-list')
 
 export default class MIPList extends CustomElement {
   static props = {
@@ -76,12 +76,12 @@ export default class MIPList extends CustomElement {
     }
   }
 
-  static get observerdAttributes () {
+  static get observedAttributes () {
     return ['src']
   }
 
   attributeChangedCallback () {
-    this._built && this.refresh()
+    this.element.isBuilt() && this.refresh()
   }
 
   build () {
@@ -139,7 +139,8 @@ export default class MIPList extends CustomElement {
     }
 
     if (this.props.src) {
-      if (this.loadMore === 'manual' && this.props.preload) {
+      if (this.props.preload) {
+        this.setState()
         this.asyncData()
       }
     } else {
@@ -176,6 +177,7 @@ export default class MIPList extends CustomElement {
         let data = await this.request(this.src)
         this.setState(data)
         this.setData(data && data.data.items, shouldAppend)
+        this.setPendingState('done')
       } catch (e) {
         logger.error(e)
         this.setPendingState('error')
@@ -253,7 +255,7 @@ export default class MIPList extends CustomElement {
     let { method, credentials, timeout: time } = this.props
     return method === 'jsonp'
       ? fetchJsonp(url, { timeout })
-      : Promise.race([fetch(url, { credentials }), timeout(time)])
+      : Promise.race([fetch(url, { credentials }), timeout(time)]).then(res => res.json())
   }
 
   async render (arr) {
