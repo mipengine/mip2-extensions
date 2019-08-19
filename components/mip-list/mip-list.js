@@ -261,7 +261,7 @@ export default class MIPList extends CustomElement {
   async render (arr) {
     let newArr = arr.map(data => ({ data }))
 
-    let oldArrClone = this.oldArr.map(item => item.data)
+    // let oldArrClone = this.oldArr.map(item => item.data)
 
     let patches = diff({
       newArr,
@@ -274,16 +274,16 @@ export default class MIPList extends CustomElement {
       return
     }
 
-    let patchesClone = patches.map(patch => {
-      return {
-        type: patch.type,
-        oldIndex: patch.oldIndex,
-        newIndex: patch.newIndex,
-        node: {
-          data: patch.node.data
-        }
-      }
-    })
+    // let patchesClone = patches.map(patch => {
+    //   return {
+    //     type: patch.type,
+    //     oldIndex: patch.oldIndex,
+    //     newIndex: patch.newIndex,
+    //     node: {
+    //       data: patch.node.data
+    //     }
+    //   }
+    // })
 
     let addPatches = patches.filter(isAddPatch)
     let removedPatches = patches.filter(isRemovedPatch)
