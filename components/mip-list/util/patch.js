@@ -31,12 +31,7 @@ export function update ({
 
     return a.newIndex - b.newIndex
   })
-  console.log('--- sorted patch ---')
-  console.log(patches.map(item => ({
-    type: item.type,
-    oldIndex: item.oldIndex,
-    newIndex: item.newIndex
-  })))
+
   for (let i = 0; i < len; i++) {
     map[patches[i].type]({
       patch: patches[i],
@@ -64,7 +59,7 @@ function addNode ({
 
   for (let j = index + 1; j < patches.length; j++) {
     let p = patches[j]
-    if (p.oldIndex != null && p.oldIndex >= p.newIndex) {
+    if (p.oldIndex != null && p.oldIndex >= patch.newIndex) {
       p.oldIndex += 1
     }
   }
@@ -78,11 +73,11 @@ function removeNode ({
   oldArr
 }) {
   parent.removeChild(patch.node.element)
-  oldArr.splice(patch.newIndex, 1)
+  oldArr.splice(patch.oldIndex, 1)
 
   for (let j = index + 1; j < patches.length; j++) {
     let p = patches[j]
-    if (p.oldIndex != null && p.oldIndex >= p.newIndex) {
+    if (p.oldIndex != null && p.oldIndex >= patch.oldIndex) {
       p.oldIndex -= 1
     }
   }
