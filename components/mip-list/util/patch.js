@@ -18,7 +18,7 @@ export function update ({
   let len = patches.length
   patches.sort((a, b) => {
     if (a.type === 'remove' && b.type === 'remove') {
-      return a.oldIndex - b.oldInde
+      return a.oldIndex - b.oldIndex
     }
 
     if (a.type === 'remove') {
