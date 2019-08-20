@@ -281,6 +281,10 @@ export default class InfiniteScroll {
     domNewPage = dom.create(domNewPage)
     this.options.$result.appendChild(domNewPage)
 
+    util.customEmit(document, 'dom-change', {
+      add: domNewPage
+    })
+
     // 更新变量
     this.currentLoadPage = pn
     this.scrollerHeight = this._getScrollerHeight()

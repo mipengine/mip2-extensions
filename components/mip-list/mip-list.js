@@ -166,8 +166,16 @@ export default class MIPList extends CustomElement {
 
   syncData (shouldAppend) {
     let script = this.element.querySelector('script[type="application/json"]')
-    let data = script ? util.jsonParse(script.textContent.toString()) : null
-    this.setData(data && data.items, shouldAppend)
+    let data
+    if (script) {
+      data = util.jsonParse(script.textContent.toString())
+      data = data && data.items
+    } else {
+      // data from mip-data
+      data = MIP.getData(this.dataScope)
+      data = data && data.slice && data.slice()
+    }
+    this.setData(data, shouldAppend)
   }
 
   async asyncData (shouldAppend) {
