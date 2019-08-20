@@ -17,15 +17,15 @@ export function update ({
 }) {
   let len = patches.length
   patches.sort((a, b) => {
-    if (a.type === 'remove' && b.type === 'remove') {
+    if (a.type === 'removed' && b.type === 'removed') {
       return a.oldIndex - b.oldIndex
     }
 
-    if (a.type === 'remove') {
+    if (a.type === 'removed') {
       return 1
     }
 
-    if (b.type === 'remove') {
+    if (b.type === 'removed') {
       return -1
     }
 

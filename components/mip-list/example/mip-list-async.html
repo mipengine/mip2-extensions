@@ -35,25 +35,6 @@
 </head>
 
 <body>
-  <mip-data-watch
-    layout="nodisplay"
-    watch="aList"
-    on="change:MIP.setData({
-      aList:
-        !event.newValue &&
-        aList ||
-        (
-          (
-            event.oldValue &&
-            event.newValue.length === event.oldValue.length &&
-            event.newValue.every((item, i) => event.oldValue[i] === item)
-          )
-          ? aList
-          : event.newValue.map((item, i) => assign(item, { index: i }))
-        )
-    })"
-  ></mip-data-watch>
-
   <mip-data>
     <script type="application/json">
         {
@@ -87,6 +68,7 @@
   <p>使用远程数据渲染 mip-list</p>
   <mip-list
     id="aList"
+    m-bind:src="url"
     scope
     method="fetch"
     preload
@@ -122,32 +104,18 @@
           <span
             class="color-button"
             on="tap:MIP.setData({
-              aList: aList.splice(
-                {{index}},
-                1,
-                assign(
-                  aList[{{index}}],
-                  { color: 'red' }
-                )
-              )
+              aListColor{{key}}: 'red'
             })"
           >red</span>
           <span
             class="color-button"
             on="tap:MIP.setData({
-              aList: aList.splice(
-                {{index}},
-                1,
-                assign(
-                  aList[{{index}}],
-                  { color: 'green' }
-                )
-              )
+              aListColor{{key}}: 'green'
             })"
           >green</span>
         </div>
         <div
-          m-bind:style="{ color: aList[{{index}}].color }"
+          m-bind:style="{ color: aListColor{{key}} }"
         >{{ name }} . {{ alias }}</div>
       </div>
     </template>
