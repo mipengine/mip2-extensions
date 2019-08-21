@@ -124,7 +124,7 @@ function moveNode ({
 function insert (parent, index, element, isMove) {
   let len = parent.childNodes.length + (isMove ? 1 : 0)
 
-  if (index === len - 1) {
+  if (index === len) {
     parent.appendChild(element)
   } else {
     parent.insertBefore(element, parent.childNodes[index])

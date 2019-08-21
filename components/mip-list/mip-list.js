@@ -87,6 +87,8 @@ export default class MIPList extends CustomElement {
   build () {
     this.dataScope = this.props.scope && this.props.id || getRandomId()
     this.pnName = this.props['pn-name'] || this.props.pnName
+
+    this.container = document.createElement('div')
     this.initState()
 
     this.oldArr = []
@@ -128,7 +130,6 @@ export default class MIPList extends CustomElement {
    * @override
    */
   firstInviewCallback () {
-    this.container = document.createElement('div')
     let { element, container } = this
 
     // this.applyFillContent(container)
