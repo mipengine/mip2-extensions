@@ -6,11 +6,9 @@ os:
   - linux
 install:
   - travis_retry npm install
-  - gem install percy-cli
 script:
   - npm run lint
   - npm run site
-  - percy snapshot ./dist/examples/ --enable_javascript
 
 branches:
   only:
