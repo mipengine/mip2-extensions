@@ -87,6 +87,7 @@ export default class MIPList extends CustomElement {
   build () {
     this.dataScope = this.props.scope && this.props.id || getRandomId()
     this.pnName = this.props['pn-name'] || this.props.pnName
+    this.script = this.element.querySelector('script[type="application/json"]')
 
     this.container = document.createElement('div')
     this.initState()
@@ -95,32 +96,26 @@ export default class MIPList extends CustomElement {
     this.createElement = this._createElement.bind(this)
 
     let waitingNewVal
-    let waitingOldVal
     let waitingFlag = false
 
-    const render = async (newVal, oldVal) => {
+    const render = async (newVal) => {
       waitingFlag = true
-      await this.render(newVal, oldVal)
-      while (waitingNewVal !== undefined && waitingOldVal !== undefined) {
+      await this.render(newVal)
+      while (waitingNewVal !== undefined) {
         let tmpNewVal = waitingNewVal
-        let tmpOldVal = waitingOldVal
         waitingNewVal = undefined
-        waitingOldVal = undefined
-        await this.render(tmpNewVal, tmpOldVal)
+        await this.render(tmpNewVal)
       }
       waitingFlag = false
     }
 
-    MIP.watch(this.dataScope, (newVal = [], oldVal = []) => {
+    MIP.watch(this.dataScope, (newVal = []) => {
       if (waitingFlag) {
         waitingNewVal = newVal
-        if (waitingOldVal === undefined) {
-          waitingOldVal = oldVal
-        }
         return
       }
 
-      render(newVal, oldVal)
+      render(newVal)
     })
   }
 
@@ -144,8 +139,11 @@ export default class MIPList extends CustomElement {
         this.setState()
         this.asyncData(false)
       }
-    } else {
+    } else if (this.script) {
       this.syncData(false)
+    } else {
+      let data = MIP.getData(this.dataScope)
+      data && this.render(data)
     }
 
     this.addEventAction('refresh', () => {
@@ -166,17 +164,8 @@ export default class MIPList extends CustomElement {
   }
 
   syncData (shouldAppend) {
-    let script = this.element.querySelector('script[type="application/json"]')
-    let data
-    if (script) {
-      data = util.jsonParse(script.textContent.toString())
-      data = data && data.items
-    } else {
-      // data from mip-data
-      data = MIP.getData(this.dataScope)
-      data = data && data.slice && data.slice()
-    }
-    this.setData(data, shouldAppend)
+    let data = util.jsonParse(script.textContent.toString())
+    this.setData(data && data.items, shouldAppend)
   }
 
   async asyncData (shouldAppend) {
