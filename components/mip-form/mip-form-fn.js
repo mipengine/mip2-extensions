@@ -55,6 +55,7 @@ export default class Form {
       item.addEventListener('submit', event => this.onSubmit(event))
     }
     this.element.customElement.addEventAction('submit', () => this.onSubmit())
+    this.element.customElement.addEventAction('clear', () => this.clearAll())
     // 部分浏览器回车不触发submit
     this.element.addEventListener('keydown', event => {
       if (event.keyCode === 13) {
@@ -343,5 +344,10 @@ export default class Form {
     let inputSelect = this.parentNode.querySelector('input[name="' + name + '"]')
     inputSelect.value = ''
     util.css(this, {display: 'none'})
+  }
+
+  clearAll () {
+    const form = this.element.querySelector('form')
+    form.reset()
   }
 }

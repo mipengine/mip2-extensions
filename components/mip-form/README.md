@@ -169,6 +169,15 @@
 `valid`| form 输入校验合法 ||
 `invalid`| form 输入校验不合法 ||
 
+## 行为
+
+`mip-form` 支持以下 action
+
+行为| 描述
+----| ---
+`submit`| 提交表单
+`clear` | 清空表单
+
 ## 属性
 
 ### target
