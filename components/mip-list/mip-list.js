@@ -260,7 +260,7 @@ export default class MIPList extends CustomElement {
   request (url) {
     let { method, credentials, timeout: time } = this.props
     return method === 'jsonp'
-      ? fetchJsonp(url, { timeout })
+      ? fetchJsonp(url, { timeout: time })
       : Promise.race([fetch(url, { credentials }), timeout(time)]).then(res => res.json())
   }
 
