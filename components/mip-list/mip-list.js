@@ -164,7 +164,7 @@ export default class MIPList extends CustomElement {
   }
 
   syncData (shouldAppend) {
-    let data = util.jsonParse(script.textContent.toString())
+    let data = util.jsonParse(this.script.textContent.toString())
     this.setData(data && data.items, shouldAppend)
   }
 
@@ -266,8 +266,6 @@ export default class MIPList extends CustomElement {
   async render (arr) {
     let newArr = arr.map(data => ({ data }))
 
-    // let oldArrClone = this.oldArr.map(item => item.data)
-
     let patches = diff({
       newArr,
       oldArr: this.oldArr,
@@ -278,17 +276,6 @@ export default class MIPList extends CustomElement {
     if (!patches.length) {
       return
     }
-
-    // let patchesClone = patches.map(patch => {
-    //   return {
-    //     type: patch.type,
-    //     oldIndex: patch.oldIndex,
-    //     newIndex: patch.newIndex,
-    //     node: {
-    //       data: patch.node.data
-    //     }
-    //   }
-    // })
 
     let addPatches = patches.filter(isAddPatch)
     let removedPatches = patches.filter(isRemovedPatch)
@@ -307,11 +294,6 @@ export default class MIPList extends CustomElement {
       oldArr: this.oldArr,
       createElement: this.createElement
     })
-    // console.log('---- console ---')
-    // console.log(patchesClone)
-    // console.log(oldArrClone)
-    // console.log(arr)
-    // console.log(this.oldArr.map(item => item.data))
 
     util.customEmit(document, 'dom-change', {
       add: addPatches.map(patch => patch.node.element),

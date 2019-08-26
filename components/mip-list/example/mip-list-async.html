@@ -38,7 +38,7 @@
   <mip-data>
     <script type="application/json">
         {
-           "url": "http://172.18.16.85:8888/list1",
+           "url": "https://api.myjson.com/bins/9o1nv",
            "aList": [{
               "name": "a1",
               "alias": "aa",
@@ -72,6 +72,7 @@
     scope
     method="fetch"
     preload
+    credentials="omit"
   >
   <script type="application/json">
     {
@@ -121,8 +122,8 @@
     </template>
   </mip-list>
 
-  <button on="tap:MIP.setData({url: 'http://172.18.16.85:8888/list2'})">数据源2</button>
-  <button on="tap:MIP.setData({url: 'http://172.18.16.85:8888/list1'})">数据源1</button>
+  <button on="tap:MIP.setData({url: 'https://api.myjson.com/bins/174luz'})">数据源2</button>
+  <button on="tap:MIP.setData({url: 'https://api.myjson.com/bins/9o1nv'})">数据源1</button>
   <button on="tap:MIP.setData({aList: [
     {
       'name': '1',
