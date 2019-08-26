@@ -19,7 +19,7 @@ import {
   createFindIndex
 } from './util/helper'
 
-const { CustomElement, templates, util } = MIP
+const { CustomElement, templates, util, viewer } = MIP
 const { fetchJsonp, fetch } = window
 
 const logger = util.log('mip-list')
@@ -186,6 +186,7 @@ export default class MIPList extends CustomElement {
       } catch (e) {
         logger.error(e)
         this.setPendingState('error')
+        viewer.eventAction.execute('fetch-error', this.element, e)
       }
     }
   }
