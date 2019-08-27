@@ -155,8 +155,7 @@ const get = (el, poi) => {
     }
   }
 
-  // 非mip-shell增加noshell参数
-  // 非百度域且不是mip cache链接打开，增加这个参数，目前小说有用
+  // 非mip-shell增加noshell参数，目前医疗小说表现一致，都是用这个参数来处理跨域，并且第三方源站也能展示广告
   if (MIP.standalone) {
     url += '&from=noshell'
   }
