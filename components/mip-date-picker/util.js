@@ -200,6 +200,24 @@ export function format (fmt, date) {
   return fmt
 }
 
+/**
+ * merge 对象，浅拷贝 o2 到 o1
+ * args[0] 目的对象，其他参数为源对象
+ *
+ * @returns {Object} 合并后的对象
+ */
+export function cp () {
+  let args = arguments
+  let o1 = args[0]
+  for (let i = 1; i < args.length; ++i) {
+    let o2 = args[i] || {}
+    for (let key in o2) {
+      o1[key] = o2[key]
+    }
+  }
+  return o1
+}
+
 export default {
   KEY,
   parseToDate,
@@ -214,5 +232,6 @@ export default {
   bufferFn,
   setYear,
   setMonth,
-  format
+  format,
+  cp
 }

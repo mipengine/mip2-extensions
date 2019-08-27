@@ -1,178 +1,188 @@
 /**
- * @file mip-date-picker.js 日期选择器
+ * @file single-date-picker.js 时间选择器
  * @author miya
  *
  */
-
-import { CALENDAR } from './constants'
+import BasePicker from './base-picker'
 import dateUtil from './util'
 
-export default class DatePicker {
-  constructor () {
-    this.onClick = {
-      'dp-day': this.selectDay,
-      'dp-next': this.gotoNextMonth,
-      'dp-prev': this.gotoPrevMonth,
-      'dp-today': this.selectToday,
-      'dp-clear': this.clear,
-      'dp-close': this.close,
-      'dp-cal-month': this.showMonthPicker,
-      'dp-cal-year': this.showYearPicker
+export default class DatePicker extends BasePicker {
+  constructor (element, options) {
+    super(element, options)
+    this.element = element
+    this.state = options
+
+    this.generateWrapper = this.generateWrapper.bind(this)
+    this.attachContainerEvents = this.attachContainerEvents.bind(this)
+    this.attachInputEvents = this.attachInputEvents.bind(this)
+    this.setState = this.setState.bind(this)
+    this.hasFocus = this.hasFocus.bind(this)
+    this.updateDateStyle = this.updateDateStyle.bind(this)
+    this.updateDateByInput = this.updateDateByInput.bind(this)
+    this.updateInput = this.updateInput.bind(this)
+
+    this.generateWrapper()
+    this.attachContainerEvents()
+    this.attachInputEvents()
+  }
+
+  generateWrapper () {
+    // mip-form
+    const form = document.createElement('mip-form')
+    const label = document.createElement('label')
+    label.classList.add('dp-label')
+    this.input = document.createElement('input')
+    this.input.classList.add('dp-input')
+
+    // date-picker-wrapper
+    this.pickerWrapper = document.createElement('section')
+    let modeClass = this.state.mode === 'range-picker' ? 'dp-permanent' : 'dp-below'
+    this.pickerWrapper.classList.add(modeClass)
+    let pickerElement = document.createElement('section')
+    pickerElement.classList.add('dp')
+    this.pickerWrapper.appendChild(pickerElement)
+
+    label.appendChild(this.input)
+    label.appendChild(this.pickerWrapper)
+    form.appendChild(label)
+
+    this.element.appendChild(form)
+  }
+
+  setState (state) {
+    let needRender
+    // let stateChanged
+    for (let key in state) {
+      this.state[key] = state[key]
+      if (key === 'needRender' || key === 'view') {
+        needRender = true
+      }
+      if (key === 'isClear') {
+        this.state.selectedDate = null
+        this.updateInput(null)
+        this.updateDateStyle(null)
+      }
+      if (key === 'selectedDate') {
+        this.state.hilightedDate = state[key]
+        this.updateInput(state[key])
+        if (this.state.view === 'date') {
+          this.updateDateStyle(state[key])
+        }
+        // this.element.dispatchEvent(new CustomEvent('select', {
+        //   detail: this,
+        //   bubbles: true
+        // }))
+      }
+    }
+    if (needRender) {
+      this.render()
     }
 
-    this.render = this.render.bind(this)
-    this.mapDays = this.mapDays.bind(this)
-    this.inRange = this.inRange.bind(this)
-    this.onKeyDown = this.onKeyDown.bind(this)
+    // emit('statechange')
   }
 
-  render (opts) {
-    const dayNames = CALENDAR.days
-    const selectedDate = opts.selectedDate
-    const hilightedDate = opts.hilightedDate
-    const hilightedMonth = hilightedDate && hilightedDate.getMonth()
-    const dayOffset = opts.dayOffset
-    const minDate = opts.minDate
-    const maxDate = opts.maxDate
-    const today = dateUtil.pureDate().getTime()
-
-    return (
-      '<section class="dp-cal">' +
-        '<header class="dp-cal-header">' +
-          '<button tabindex="-1" type="button" class="dp-prev">Prev</button>' +
-          '<button tabindex="-1" type="button" class="dp-cal-month">' +
-            CALENDAR.months[hilightedMonth] +
-          '</button>' +
-          '<button tabindex="-1" type="button" class="dp-cal-year">' +
-            hilightedDate.getFullYear() +
-          '</button>' +
-          '<button tabindex="-1" type="button" class="dp-next">Next</button>' +
-        '</header>' +
-        '<section class="dp-days">' +
-          dayNames.map((name, index) => {
-            return (
-              '<span class="dp-col-header">' + dayNames[(index + dayOffset) % dayNames.length] + '</span>'
-            )
-          }).join('') +
-          this.mapDays(hilightedDate, dayOffset, date => {
-            const isNotInMonth = date.getMonth() !== hilightedMonth
-            const isDisabled = !this.inRange(date, minDate, maxDate)
-            const pureDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-            const isToday = pureDate.getTime() === today
-            let className = 'dp-day'
-            className += (isNotInMonth ? ' dp-edge-day' : '')
-            className += (dateUtil.datesEq(date, hilightedDate) ? ' dp-current' : '')
-            className += (dateUtil.datesEq(date, selectedDate) ? ' dp-selected' : '')
-            className += (isDisabled ? ' dp-day-disabled' : '')
-            className += (isToday ? ' dp-day-today' : '')
-
-            return (
-              '<button tabindex="-1" type="button" class="' + className + '" data-date="' + date.getTime() + '">' +
-                date.getDate() +
-              '</button>'
-            )
-          }) +
-        '</section>' +
-        '<footer class="dp-cal-footer">' +
-          '<button tabindex="-1" type="button" class="dp-today">' + CALENDAR.today + '</button>' +
-          '<button tabindex="-1" type="button" class="dp-clear">' + CALENDAR.clear + '</button>' +
-          '<button tabindex="-1" type="button" class="dp-close">' + CALENDAR.close + '</button>' +
-        '</footer>' +
-      '</section>'
-    )
+  updateInput (value) {
+    this.input.value = value
+      ? dateUtil.format(this.state.format, value)
+      : ''
   }
 
-  mapDays (currentDate, dayOffset, cb) {
-    let result = ''
-    let iter = new Date(currentDate)
-    // 根据当前月份的 1 号是周几确定日历的第一个日期是几号
-    iter.setDate(1)
-    iter.setDate(1 - iter.getDay() + dayOffset)
-
-    // 当把周一设置为日历的第一天时：
-    // 若果当前月份的周一是 2 号，也就是当前月的 1 号是周日，在现在的计算方式下 1 号会被顶"上去"无法显示
-    // 这里再向前偏移一周，使得上述情况 1 号可以位于日历中
-    if (dayOffset && iter.getDate() === dayOffset + 1) {
-      iter.setDate(dayOffset - 6)
-    }
-
-    // 为美观，每页日历显示 6 周
-    for (let day = 0; day < (6 * 7); ++day) {
-      result += cb(iter)
-      iter.setDate(iter.getDate() + 1)
-    }
-
-    return result
-  }
-
-  inRange (date, minDate, maxDate) {
-    return minDate.getTime() <= date.getTime() && maxDate.getTime() >= date.getTime()
-  }
-
-  selectDay (event, operations) {
-    operations.setState({
-      selectedDate: new Date(parseInt(event.target.getAttribute('data-date')))
+  updateDateStyle (selectedDate) {
+    Array.from(this.pickerWrapper.querySelector('.dp-days').children).forEach(element => {
+      const elementDate = new Date(element.getAttribute('data-date') - 0).getTime()
+      element.classList.contains('dp-selected') && element.classList.remove('dp-selected')
+      element.classList.contains('dp-current') && element.classList.remove('dp-current')
+      if (selectedDate && (elementDate === selectedDate.getTime())) {
+        element.classList.add('dp-selected')
+        element.classList.add('dp-current')
+      }
     })
   }
 
-  onKeyDown (e, operations, state) {
-    let key = e.keyCode
-    let shiftBy = (key === dateUtil.KEY.left) ? -1
-      : (key === dateUtil.KEY.right) ? 1
-        : (key === dateUtil.KEY.up) ? -7
-          : (key === dateUtil.KEY.down) ? 7
-            : 0
+  attachContainerEvents () {
+    const wrapper = this.pickerWrapper
+    const calEl = wrapper.querySelector('.dp')
+    // 使 iOS 显示 active 的 css 样式
+    wrapper.ontouchstart = dateUtil.noop
+    // 每次重绘都会触发 blur，只有在没有焦点时才关闭
+    dateUtil.on('blur', calEl, dateUtil.bufferFn(150, () => {
+      if (!this.hasFocus()) {
+        this.close()
+      }
+    }))
 
-    if (key === dateUtil.KEY.esc) {
-      operations.close()
-    } else if (shiftBy) {
-      e.preventDefault()
-      operations.setState({
-        hilightedDate: dateUtil.shiftDay(state.hilightedDate, shiftBy)
+    dateUtil.on('keydown', wrapper, event => {
+      if (event.keyCode === dateUtil.KEY.enter) {
+        event.preventDefault()
+        event.stopPropagation()
+        this.onClick(event)
+      } else {
+        const operations = {
+          setState: this.setState
+        }
+        this.picker.onKeyDown(event, operations, this.state)
+      }
+    })
+
+    // 当用户点击日历的不可聚焦的区域时，不要关闭日历
+    dateUtil.on('mousedown', calEl, event => {
+      event.target.focus && event.target.focus()
+      if (document.activeElement !== event.target) {
+        event.preventDefault()
+        this.focusCurrent(this.picker)
+      }
+    })
+
+    dateUtil.on('click', wrapper, this.onClick)
+  }
+
+  attachInputEvents () {
+    const bufferShow = dateUtil.bufferFn(5, () => {
+      if (!this.isVisible()) {
+        this.render()
+      }
+    })
+
+    dateUtil.on('blur', this.input, dateUtil.bufferFn(150, () => {
+      if (!this.hasFocus() && this.state.mode !== 'range-picker') {
+        this.close()
+      }
+    }))
+
+    dateUtil.on('mousedown', this.input, () => {
+      if (this.input === document.activeElement) {
+        bufferShow()
+      }
+    })
+
+    dateUtil.on('focus', this.input, bufferShow)
+
+    dateUtil.on('input', this.input, (e) => {
+      this.updateDateByInput(e)
+    })
+  }
+
+  updateDateByInput (e) {
+    const {isvalid, year, month, date} = this.getInputValidDate(e.target.value)
+    if (isvalid) {
+      this.setState({
+        needRender: true,
+        selectedDate: new Date(year, month, date)
       })
     }
   }
 
-  selectToday (e, operations) {
-    operations.setState({
-      needRender: true,
-      selectedDate: new Date()
-    })
+  focusInput () {
+    this.input.focus()
   }
 
-  clear (e, operations) {
-    operations.setState({
-      selectedDate: null
-    })
+  blurInput () {
+    this.input.blur()
   }
 
-  close (e, operations) {
-    operations.close()
-  }
-
-  showMonthPicker (e, operations) {
-    operations.setState({
-      view: 'month'
-    })
-  }
-
-  showYearPicker (e, operations) {
-    operations.setState({
-      view: 'year'
-    })
-  }
-
-  gotoNextMonth (e, operations, state) {
-    let hilightedDate = state.hilightedDate
-    operations.setState({
-      hilightedDate: dateUtil.shiftMonth(hilightedDate, 1)
-    })
-  }
-
-  gotoPrevMonth (e, operations, state) {
-    let hilightedDate = state.hilightedDate
-    operations.setState({
-      hilightedDate: dateUtil.shiftMonth(hilightedDate, -1)
-    })
+  hasFocus () {
+    const focused = document.activeElement
+    return (this.pickerWrapper &&
+      this.pickerWrapper.contains(focused)) || focused === this.input
   }
 }

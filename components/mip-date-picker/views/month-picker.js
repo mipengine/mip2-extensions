@@ -1,11 +1,11 @@
 /**
- * @file mip-date-picker.js 月份选择器
+ * @file month-picker.js 月份选择器
  * @author miya
  *
  */
 
-import { CALENDAR } from './constants'
-import dateUtil from './util'
+import { CALENDAR } from '../constants'
+import dateUtil from '../util'
 
 export default class MonthPicker {
   constructor () {
@@ -27,7 +27,7 @@ export default class MonthPicker {
       '<section class="dp-months">' +
         months.map(function (month, i) {
           let className = 'dp-month'
-          className += (currentMonth === i ? ' dp-current' : '')
+          className += (currentMonth === i ? ' dp-current dp-selected' : '')
 
           return (
             '<button tabindex="-1" type="button" class="' + className + '" data-month="' + i + '">' +
@@ -41,6 +41,7 @@ export default class MonthPicker {
 
   onChooseMonth (e, operations, state) {
     operations.setState({
+      needRender: true,
       hilightedDate: dateUtil.setMonth(state.hilightedDate, parseInt(e.target.getAttribute('data-month'))),
       view: 'date'
     })
@@ -56,11 +57,13 @@ export default class MonthPicker {
 
     if (key === dateUtil.KEY.esc) {
       operations.setState({
+        needRender: true,
         view: 'date'
       })
     } else if (shiftBy) {
       e.preventDefault()
       operations.setState({
+        needRender: true,
         hilightedDate: dateUtil.shiftMonth(state.hilightedDate, shiftBy, true)
       })
     }

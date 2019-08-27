@@ -3,8 +3,10 @@
  * @author miya
  *
  */
-import SingleDatePicker from './single-date-picker'
+import DatePicker from './date-picker'
+// import RangePicker from './date-range-picker'
 import dateUtil from './util'
+import RangePicker from './range-picker'
 
 const { CustomElement, util } = MIP
 const { error } = util.log('mip-date-display')
@@ -20,7 +22,9 @@ export default class MIPDatePicker extends CustomElement {
       hilightedDate: null,
       dayOffset: null,
       minDate: null,
-      maxDate: null
+      maxDate: null,
+      start: null,
+      end: null
     }
 
     this.getAttributes = this.getAttributes.bind(this)
@@ -31,9 +35,9 @@ export default class MIPDatePicker extends CustomElement {
     this.getAttributes()
 
     if (this.state.mode === 'date-picker') {
-      this.picker = new SingleDatePicker(this.element, this.state)
+      this.picker = new DatePicker(this.element, this.state)
     } else if (this.state.mode === 'range-picker') {
-      // this.picker = new RangePicker(this.element, this.state)
+      this.picker = new RangePicker(this.element, this.state)
     }
   }
 
@@ -61,6 +65,9 @@ export default class MIPDatePicker extends CustomElement {
       ? dateUtil.constrainDate(defaultDate, this.state.minDate, this.state.maxDate)
       : ''
     this.state.hilightedDate = defaultDate || new Date()
+    // mode = range-picker 时的默认选中起止日期
+    this.state.start = this.element.getAttribute('start')
+    this.state.end = this.element.getAttribute('end')
   }
 
   examFormat () {

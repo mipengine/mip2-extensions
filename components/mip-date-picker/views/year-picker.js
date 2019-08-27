@@ -1,10 +1,10 @@
 /**
- * @file mip-date-picker.js 年份选择器
+ * @file year-picker.js 年份选择器
  * @author miya
  *
  */
 
-import dateUtil from './util'
+import dateUtil from '../util'
 
 export default class YearPicker {
   constructor () {
@@ -46,6 +46,7 @@ export default class YearPicker {
 
     if (key === dateUtil.KEY.esc) {
       operations.setState({
+        needRender: true,
         view: 'date'
       })
     } else if (shiftBy) {
@@ -53,6 +54,7 @@ export default class YearPicker {
       const shiftedYear = dateUtil.shiftYear(state.hilightedDate, shiftBy)
 
       operations.setState({
+        needRender: true,
         hilightedDate: dateUtil.constrainDate(shiftedYear, state.minDate, state.maxDate)
       })
     }
@@ -60,6 +62,7 @@ export default class YearPicker {
 
   onChooseYear (e, operations, state) {
     operations.setState({
+      needRender: true,
       hilightedDate: dateUtil.setYear(state.hilightedDate, parseInt(e.target.getAttribute('data-year'))),
       view: 'date'
     })
