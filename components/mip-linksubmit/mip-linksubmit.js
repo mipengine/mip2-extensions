@@ -1,4 +1,8 @@
 export default class MIPLinksubmit extends MIP.CustomElement {
+  prerenderAllowed () {
+    return true
+  }
+
   build () {
     const type = this.element.getAttribute('type') || ''
     const bp = document.createElement('script')
