@@ -259,9 +259,16 @@ export default class MIPList extends CustomElement {
 
   request (url) {
     let { method, credentials, timeout: time } = this.props
-    return method === 'jsonp'
-      ? fetchJsonp(url, { timeout })
-      : Promise.race([fetch(url, { credentials }), timeout(time)]).then(res => res.json())
+    return (
+      method === 'jsonp'
+      ? fetchJsonp(url, { timeout: time })
+      : Promise.race([fetch(url, { credentials }), timeout(time)])
+    ).then(res => {
+      if (!res.ok) {
+        throw Error(`Fetch request failed: ${url}`)
+      }
+      return res.json()
+    })
   }
 
   async render (arr) {
