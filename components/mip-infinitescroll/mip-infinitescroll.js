@@ -13,7 +13,10 @@ export default class MipInfiniteScroll extends CustomElement {
     super(...args)
     this.infiniteScroll = null
     this.src = ''
-    this.initHTML = this.element.innerHTML
+    this.resultWrapper = this.element.querySelector('.mip-infinitescroll-results')
+    this.loadingWrapper = this.element.querySelector('.mip-infinitescroll-loading')
+    this.resultInitHTML = this.resultWrapper && this.resultWrapper.innerHTML
+    this.loadingInitHTML = this.loadingWrapper && this.loadingWrapper.innerHTML
   }
 
   /**
@@ -29,6 +32,7 @@ export default class MipInfiniteScroll extends CustomElement {
 
   attributeChangedCallback () {
     if (this.element.isBuilt()) {
+      this.resetDOM()
       this.refresh()
     }
   }
@@ -40,19 +44,18 @@ export default class MipInfiniteScroll extends CustomElement {
     this.refresh()
 
     this.addEventAction('refresh', () => {
+      this.resetDOM()
       this.refresh()
     })
   }
 
   refresh () {
-    this.resetDOM()
-
     let element = this.element
 
     this.src = element.getAttribute('data-src') || ''
     // 如果没有写data-src, 则报错提示
     if (!this.src) {
-      console.error('未填写data- src字段，不能获取数据')
+      console.error('data-src 为空，不能获取数据')
       element.remove()
       return
     }
@@ -143,9 +146,8 @@ export default class MipInfiniteScroll extends CustomElement {
   resetDOM () {
     // this.resultWrapper && (this.resultWrapper.innerHTML = '')
     // this.loadingWrapper && (this.loadingWrapper.innerHTML = '')
-    this.element.innerHTML = this.initHTML
-    this.resultWrapper = this.element.querySelector('.mip-infinitescroll-results')
-    this.loadingWrapper = this.element.querySelector('.mip-infinitescroll-loading')
+    this.resultWrapper && (this.resultWrapper.innerHTML = this.resultInitHTML)
+    this.loadingWrapper && (this.loadingWrapper.innerHTML = this.loadingInitHTML)
   }
 
   disconnectedCallback () {
