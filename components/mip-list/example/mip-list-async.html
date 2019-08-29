@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    body {
+      padding: 20px 20px
+    }
+    h4 {
+      margin: 20px 0 10px
+    }
+    p {
+      margin: 8px 0
+    }
+    button {
+      margin: 5px 0 0 0
+    }
+
+    .color-button {
+      display: inline-block;
+      background: #dcdcdc;
+      padding: 5px;
+    }
+
+    .block {
+      border: 1px solid #000;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <mip-data>
+    <script type="application/json">
+        {
+           "url": "https://api.myjson.com/bins/9o1nv",
+           "aList": [{
+              "name": "a1",
+              "alias": "aa",
+              "key": "a"
+            }, {
+              "name": "b1",
+              "alias": "bb",
+              "key": "b"
+            }, {
+              "name": "c1",
+              "alias": "cc",
+              "key": "c"
+            },{
+              "name": "d1",
+              "alias": "dd",
+              "key": "d"
+            },{
+              "name": "e1",
+              "alias": "ee",
+              "key": "e"
+            }]
+        }
+    </script>
+  </mip-data>
+  
+  <h4>异步数据</h4>
+  <p>使用远程数据渲染 mip-list</p>
+  <mip-list
+    id="aList"
+    m-bind:src="url"
+    scope
+    method="fetch"
+    preload
+    credentials="omit"
+  >
+  <script type="application/json">
+    {
+      "items": [{
+        "name": "a",
+        "alias": "aa",
+        "key": "a"
+      }, {
+        "name": "b",
+        "alias": "bb",
+        "key": "b"
+      }, {
+        "name": "c",
+        "alias": "cc",
+        "key": "c"
+      },{
+        "name": "d",
+        "alias": "dd",
+        "key": "d"
+      },{
+        "name": "e",
+        "alias": "ee",
+        "key": "e"
+      }]
+    }
+  </script>
+    <template type="mip-mustache">
+      <div class="block">
+        <div>
+          <span
+            class="color-button"
+            on="tap:MIP.setData({
+              aListColor{{key}}: 'red'
+            })"
+          >red</span>
+          <span
+            class="color-button"
+            on="tap:MIP.setData({
+              aListColor{{key}}: 'green'
+            })"
+          >green</span>
+        </div>
+        <div
+          m-bind:style="{ color: aListColor{{key}} }"
+        >{{ name }} . {{ alias }}</div>
+      </div>
+    </template>
+  </mip-list>
+
+  <button on="tap:MIP.setData({url: 'https://api.myjson.com/bins/174luz'})">数据源2</button>
+  <button on="tap:MIP.setData({url: 'https://api.myjson.com/bins/9o1nv'})">数据源1</button>
+  <button on="tap:MIP.setData({aList: [
+    {
+      'name': '1',
+      'alias': '1',
+      'key': '1'
+    },
+    {
+      'name': '2',
+      'alias': '2',
+      'key': '2'
+    },
+    {
+      'name': '3',
+      'alias': '3',
+      'key': '3'
+    }
+  ]})">修改本地数据</button>
+  <button on="tap:aList.refresh">refresh</button>
+
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <!-- <script src="http://localhost:8080/dist/mip.js"></script> -->
+  <script src="/mip-mustache/mip-mustache.js"></script>
+  <script src="/mip-list/mip-list.js"></script>
+</body>
+</html>

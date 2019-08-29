@@ -12,6 +12,19 @@ export default class MipInfiniteScroll extends CustomElement {
     // 继承父类属性、方法
     super(...args)
     this.infiniteScroll = null
+    this.src = ''
+    this.resultWrapper = this.element.querySelector('.mip-infinitescroll-results')
+    this.loadingWrapper = this.element.querySelector('.mip-infinitescroll-loading')
+
+    if (this.resultWrapper) {
+      this.resultInitChildNodes = Array.from(this.resultWrapper.childNodes)
+    }
+
+    if (this.loadingWrapper) {
+      this.loadingInitHTML = this.loadingWrapper.innerHTML
+    }
+    // this.resultInitHTML = this.resultWrapper && this.resultWrapper.innerHTML
+    // this.loadingInitHTML = this.loadingWrapper && this.loadingWrapper.innerHTML
   }
 
   /**
@@ -21,16 +34,36 @@ export default class MipInfiniteScroll extends CustomElement {
     return true
   }
 
+  static get observedAttributes () {
+    return ['data-src']
+  }
+
+  attributeChangedCallback () {
+    if (this.element.isBuilt()) {
+      this.resetDOM()
+      this.refresh()
+    }
+  }
+
   /**
    * 挂载到DOM上之后，首次出现在视口内时执行
    */
   firstInviewCallback () {
-    let element = this.element
-    let src = element.getAttribute('data-src') || ''
+    this.refresh()
 
+    this.addEventAction('refresh', () => {
+      this.resetDOM()
+      this.refresh()
+    })
+  }
+
+  refresh () {
+    let element = this.element
+
+    this.src = element.getAttribute('data-src') || ''
     // 如果没有写data-src, 则报错提示
-    if (!src) {
-      console.error('未填写src字段，不能获取数据')
+    if (!this.src) {
+      console.error('data-src 为空，不能获取数据')
       element.remove()
       return
     }
@@ -65,8 +98,6 @@ export default class MipInfiniteScroll extends CustomElement {
       return
     }
 
-    this.url = this.getUrl(src)
-
     // 异步请求返回后，解析数据，使用mustache 渲染插入页面
     this.pushResult = async (rn, status) => {
       // 异步获取数据示例
@@ -92,21 +123,26 @@ export default class MipInfiniteScroll extends CustomElement {
 
         let htmls
         try {
-          htmls = await templates.render(this.element, data.data.items)
+          htmls = await templates.render(element, data.data.items)
         } catch (e) {
           throw new Error(this.params.renderTplFailHtml)
         }
 
         this.params.pn++
-        this.url = this.getUrl(src)
+        this.url = this.getUrl(this.src)
         return htmls
       }
       return 'NULL'
     }
+    this.url = this.getUrl(this.src)
+
+    if (this.infiniteScroll) {
+      this.infiniteScroll.destroy()
+    }
 
     this.infiniteScroll = new InfiniteScroll({
-      $result: element.querySelector('.mip-infinitescroll-results'),
-      $loading: element.querySelector('.mip-infinitescroll-loading'),
+      $result: this.resultWrapper,
+      $loading: this.loadingWrapper,
       loadingHtml: this.params.loadingHtml,
       loadFailHtml: this.params.loadFailHtml,
       loadOverHtml: this.params.loadOverHtml,
@@ -117,6 +153,24 @@ export default class MipInfiniteScroll extends CustomElement {
       firstResult: [],
       pushResult: this.pushResult
     })
+  }
+
+  resetDOM () {
+    if (this.resultWrapper) {
+      if (this.resultInitChildNodes && this.resultInitChildNodes.length) {
+        for (let node of Array.from(this.resultWrapper.childNodes)) {
+          if (this.resultInitChildNodes.indexOf(node) < 0) {
+            this.resultWrapper.removeChild(node)
+          }
+        }
+      } else {
+        this.resultWrapper.innerHTML = ''
+      }
+    }
+
+    if (this.loadingWrapper) {
+      this.loadingWrapper.innerHTML = this.loadingInitHTML
+    }
   }
 
   disconnectedCallback () {
