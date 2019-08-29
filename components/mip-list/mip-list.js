@@ -66,10 +66,10 @@ export default class MIPList extends CustomElement {
       type: Boolean,
       default: false
     },
-    'load-more': {
-      type: String,
-      default: 'auto'
-    },
+    // 'load-more': {
+    //   type: String,
+    //   default: 'auto'
+    // },
     'preload': {
       type: Boolean,
       default: false
@@ -152,6 +152,7 @@ export default class MIPList extends CustomElement {
 
     if (this.loadMore === 'manual') {
       this.addEventAction('more', e => {
+        this.button = e.target
         this.asyncData(true)
       })
     }
@@ -169,7 +170,15 @@ export default class MIPList extends CustomElement {
   }
 
   async asyncData (shouldAppend) {
-    if (this.loadMore && this.pending !== 'pending') {
+    if (
+      (shouldAppend && !this.loadMore) ||
+      this.pending === 'pending' ||
+      this.pending === 'done'
+    ) {
+      return
+    }
+
+    if (this.pending !== 'pending') {
       this.setPendingState('pending')
       try {
         let data = await this.request(this.src)
@@ -203,12 +212,12 @@ export default class MIPList extends CustomElement {
 
   initState () {
     this.pn = this.props.pn
+    this.pending = 'init'
     // 有 src 才能够进一步去加载新数据
     this.loadMore = this.props.src &&
       (
-        this.props['load-more'] ||
-        this.props['has-more'] &&
-        'manual'
+        // this.props['load-more'] ||
+        (this.props['has-more'] && 'manual')
       ) ||
       false
   }
