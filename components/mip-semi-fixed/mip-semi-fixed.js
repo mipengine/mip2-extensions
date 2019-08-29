@@ -96,7 +96,7 @@ export default class MipSemiFixed extends CustomElement {
      * 关闭点击事件
      */
     this.addEventAction('close', event => {
-      event.preventDefault()
+      event && event.preventDefault && event.preventDefault()
       util.css(element, {
         display: 'none'
       })

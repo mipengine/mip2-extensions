@@ -77,7 +77,7 @@ export default class MipLightbox extends CustomElement {
       return
     }
     fixedElement.hideFixedLayer(fixedElement._fixedLayer)
-    event.preventDefault()
+    event && event.preventDefault && event.preventDefault()
     if (!this.scroll) {
       /* eslint-disable no-new */
       new Gesture(this.element, {
@@ -109,9 +109,7 @@ export default class MipLightbox extends CustomElement {
       return
     }
     fixedElement.showFixedLayer(fixedElement._fixedLayer)
-    if (event) {
-      event.preventDefault()
-    }
+    event && event.preventDefault && event.preventDefault()
     this.open = false
     this.closeMask()
     util.css(this.element, {

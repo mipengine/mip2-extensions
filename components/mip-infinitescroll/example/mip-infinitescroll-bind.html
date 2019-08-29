@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    li {
+      margin:10px;
+      border: 1px solid #ccc;
+    }
+    p {
+      text-align: left;
+      font-size: 18px;
+      margin-top: 20px;
+      color: green;
+    }
+    button {
+      appearance: button;
+      height: 32px;
+      padding: 0 15px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
+      outline: 0;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 1.499;
+      color: rgba(0, 0, 0, .65);
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      background-color: #fff;
+      background-image: none;
+      user-select: none;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<p>根据数据源渲染</p>
+
+<mip-data>
+    <script type="application/json">
+        {
+            "url": "data-2.js"
+        }
+    </script>
+</mip-data>
+
+<button on="tap:MIP.setData({url: 'data.js'})">data.js</button>
+<button on="tap:MIP.setData({url: 'data-2.js'})">data-2.js</button>
+<button on="tap:MIP.setData({url: 'data-3.js'})">data-3.js</button>
+<button on="tap:target.refresh">refresh</button>
+
+<mip-infinitescroll m-bind:data-src="url" id="target">
+  <script type="application/json">
+    {
+        "rn": 40,
+        "pn": 1,
+        "prn": 6,
+        "pnName": "pn",
+        "bufferHeightPx": 40,
+        "timeout": 5000,
+        "loadingHtml": "更多数据正在路上",
+        "loadFailHtml": "数据加载失败啦",
+        "loadOverHtml": "没有数据了哦"
+    }
+  </script>
+  <template type="mip-mustache">
+    <li>
+      <p>{{title}}</p>
+    </li>
+  </template>
+  <div class="mip-infinitescroll-results"></div>
+  <div class="bg">
+    <div class="mip-infinitescroll-loading"></div>
+  </div>
+</mip-infinitescroll>
+
+<!-- <script src="http://localhost:8080/dist/mip.js"></script> -->
+<script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+<script src="/mip-infinitescroll/mip-infinitescroll.js"></script>
+<script src="/mip-mustache/mip-mustache.js"></script>
+</body>
+</html>

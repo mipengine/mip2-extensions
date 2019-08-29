@@ -69,7 +69,7 @@ const BLACKLISTED_TAGS = {
 /**
  * attr 的合法前缀
  */
-const WHITELISTED_ATTR_PREFIX_REGEX = /^data-/i
+const WHITELISTED_ATTR_PREFIX_REGEX = /^(data-|m-bind:)/i
 
 /**
  * 不合法的 attr ，以下几个 BLACKLISTED 都是不合法的内容，不可使用
@@ -115,7 +115,9 @@ const WHITELISTED_ATTRS = [
   'height',
   'layout',
   'ref',
-  'srcset'
+  'srcset',
+  'm-text',
+  'm-value'
 ]
 
 function isValidAttr (tagName, attrName, attrValue) {
