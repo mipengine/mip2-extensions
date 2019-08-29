@@ -15,8 +15,16 @@ export default class MipInfiniteScroll extends CustomElement {
     this.src = ''
     this.resultWrapper = this.element.querySelector('.mip-infinitescroll-results')
     this.loadingWrapper = this.element.querySelector('.mip-infinitescroll-loading')
-    this.resultInitHTML = this.resultWrapper && this.resultWrapper.innerHTML
-    this.loadingInitHTML = this.loadingWrapper && this.loadingWrapper.innerHTML
+
+    if (this.resultWrapper) {
+      this.resultInitChildNodes = Array.from(this.resultWrapper.childNodes)
+    }
+
+    if (this.loadingWrapper) {
+      this.loadingInitHTML = this.loadingWrapper.innerHTML
+    }
+    // this.resultInitHTML = this.resultWrapper && this.resultWrapper.innerHTML
+    // this.loadingInitHTML = this.loadingWrapper && this.loadingWrapper.innerHTML
   }
 
   /**
@@ -128,6 +136,10 @@ export default class MipInfiniteScroll extends CustomElement {
     }
     this.url = this.getUrl(this.src)
 
+    if (this.infiniteScroll) {
+      this.infiniteScroll.destroy()
+    }
+
     this.infiniteScroll = new InfiniteScroll({
       $result: this.resultWrapper,
       $loading: this.loadingWrapper,
@@ -144,10 +156,21 @@ export default class MipInfiniteScroll extends CustomElement {
   }
 
   resetDOM () {
-    // this.resultWrapper && (this.resultWrapper.innerHTML = '')
-    // this.loadingWrapper && (this.loadingWrapper.innerHTML = '')
-    this.resultWrapper && (this.resultWrapper.innerHTML = this.resultInitHTML)
-    this.loadingWrapper && (this.loadingWrapper.innerHTML = this.loadingInitHTML)
+    if (this.resultWrapper) {
+      if (this.resultInitChildNodes && this.resultInitChildNodes.length) {
+        for (let node of Array.from(this.resultWrapper.childNodes)) {
+          if (this.resultInitChildNodes.indexOf(node) < 0) {
+            this.resultWrapper.removeChild(node)
+          }
+        }
+      } else {
+        this.resultWrapper.innerHTML = ''
+      }
+    }
+
+    if (this.loadingWrapper) {
+      this.loadingWrapper.innerHTML = this.loadingInitHTML
+    }
   }
 
   disconnectedCallback () {
