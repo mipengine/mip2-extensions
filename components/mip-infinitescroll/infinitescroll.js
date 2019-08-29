@@ -109,8 +109,9 @@ export default class InfiniteScroll {
     // 注销resize事件
     let eventSpace = this.eventSpace
     window.removeEventListener('resize' + eventSpace, this.refresh)
+    viewport.off('scroll', this.scrollListener)
     // 注销loading上的点击事件
-    this.options.$loading.removeEventListener('click' + eventSpace)
+    this.loadingClickListener && this.options.$loading.removeEventListener('click' + eventSpace, this.loadingClickListener)
     // 删除cache数据
     this.scrollPageCache = null
   }
@@ -172,7 +173,7 @@ export default class InfiniteScroll {
   }
 
   _bindScroll () {
-    viewport.on('scroll', () => {
+    this.scrollListener = () => {
       // 若为暂停状态,什么也不做
       if (this.state === 'pause') {
         return
@@ -208,7 +209,8 @@ export default class InfiniteScroll {
           this._cycleScrollElement(currentShowPage)
         }
       }
-    })
+    }
+    viewport.on('scroll', this.scrollListener)
 
     // 若初始即不满一屏,trigger scroll事件触发加载
     if (this.currentScrollTop >= this._getScrollerHeight() - this.wrapperHeight - this.options.bufferHeightPx) {
@@ -259,13 +261,15 @@ export default class InfiniteScroll {
           // 标记数据状态为请求失败
           self.dataStatus = STATUS_REQUESTFAILURE
           self.options.$loading.innerHTML = self.options.loadFailHtml
-          self.once(self.options.$loading, 'click' + self.eventSpace, function () {
+          self.loadingClickListener = function () {
+            self.loadingClickListener = null
             // 标记数据状态为默认
             self.dataStatus = STATUS_DEFAULT
             self.options.$loading.innerHTML = self.options.loadingHtml
             // trigger scroll事件,重新触发数据加载
             viewport.trigger('scroll')
-          })
+          }
+          self.once(self.options.$loading, 'click' + self.eventSpace, self.loadingClickListener)
         }
       )
     }
