@@ -160,7 +160,6 @@ export default class MIPList extends CustomElement {
 
   refresh () {
     this.initState()
-    this.setState()
     this.asyncData(false)
   }
 
@@ -220,6 +219,7 @@ export default class MIPList extends CustomElement {
         (this.props['has-more'] && 'manual')
       ) ||
       false
+    this.setState()
   }
 
   setState (data) {
