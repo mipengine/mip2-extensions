@@ -6,6 +6,9 @@
 import BasePicker from './base-picker'
 import dateUtil from './util'
 
+const {util, viewer} = MIP
+const { error } = util.log('mip-date-picker')
+
 export default class DatePicker extends BasePicker {
   constructor (element, options) {
     super(element, options)
@@ -20,65 +23,84 @@ export default class DatePicker extends BasePicker {
     this.updateDateStyle = this.updateDateStyle.bind(this)
     this.updateDateByInput = this.updateDateByInput.bind(this)
     this.updateInput = this.updateInput.bind(this)
+    this.clearInput = this.clearInput.bind(this)
+    this.setDate = this.setDate.bind(this)
+    this.selectToday = this.selectToday.bind(this)
 
     this.generateWrapper()
     this.attachContainerEvents()
     this.attachInputEvents()
+
+    // 静态模式下始终显示日历，不需要等到 input 聚焦时再显示
+    if (this.state.display === 'static') {
+      this.render()
+      this.emitActivateEvent()
+    }
   }
 
   generateWrapper () {
-    // mip-form
-    const form = document.createElement('mip-form')
-    const label = document.createElement('label')
-    label.classList.add('dp-label')
-    this.input = document.createElement('input')
-    this.input.classList.add('dp-input')
+    const inputs = document.querySelectorAll(this.state.inputSelector)
+    if (inputs.length === 1) {
+      this.input = inputs[0]
+    } else {
+      error('有多个重名 input 框!')
+      return
+    }
 
     // date-picker-wrapper
     this.pickerWrapper = document.createElement('section')
-    let modeClass = this.state.mode === 'range-picker' ? 'dp-permanent' : 'dp-below'
+    this.pickerWrapper.classList.add('dp-wrapper')
+    this.pickerWrapper.tabIndex = 1
+    let modeClass = this.state.display === 'overlay' ? 'dp-below' : 'dp-permanent'
     this.pickerWrapper.classList.add(modeClass)
     let pickerElement = document.createElement('section')
     pickerElement.classList.add('dp')
     this.pickerWrapper.appendChild(pickerElement)
 
-    label.appendChild(this.input)
-    label.appendChild(this.pickerWrapper)
-    form.appendChild(label)
-
-    this.element.appendChild(form)
+    this.input.parentNode.appendChild(this.pickerWrapper)
   }
 
   setState (state) {
     let needRender
-    // let stateChanged
+    let isClear
     for (let key in state) {
+      if (key === 'selectedDate') {
+        this.state.hilightedDate = state[key]
+        this.updateInput(state[key])
+        this.emitSelectEvent({
+          date: state[key]
+        })
+        if (this.state.openAfterSelect) {
+          if ((this.state.selectedDate && this.state.selectedDate.getMonth()) !== state[key].getMonth()) {
+            needRender = true
+          }
+          if (this.state.view === 'date') {
+            this.updateDateStyle(state[key])
+          }
+        } else {
+          this.close()
+        }
+      }
+
       this.state[key] = state[key]
+
       if (key === 'needRender' || key === 'view') {
         needRender = true
       }
       if (key === 'isClear') {
-        this.state.selectedDate = null
         this.updateInput(null)
-        this.updateDateStyle(null)
-      }
-      if (key === 'selectedDate') {
-        this.state.hilightedDate = state[key]
-        this.updateInput(state[key])
-        if (this.state.view === 'date') {
-          this.updateDateStyle(state[key])
+        this.state.selectedDate = null
+        isClear = true
+        if (this.state.openAfterclear) {
+          this.updateDateStyle(null)
+        } else {
+          this.close()
         }
-        // this.element.dispatchEvent(new CustomEvent('select', {
-        //   detail: this,
-        //   bubbles: true
-        // }))
       }
     }
-    if (needRender) {
+    if (needRender && !isClear) {
       this.render()
     }
-
-    // emit('statechange')
   }
 
   updateInput (value) {
@@ -105,24 +127,11 @@ export default class DatePicker extends BasePicker {
     // 使 iOS 显示 active 的 css 样式
     wrapper.ontouchstart = dateUtil.noop
     // 每次重绘都会触发 blur，只有在没有焦点时才关闭
-    dateUtil.on('blur', calEl, dateUtil.bufferFn(150, () => {
+    dateUtil.on('blur', wrapper, dateUtil.bufferFn(5, () => {
       if (!this.hasFocus()) {
         this.close()
       }
     }))
-
-    dateUtil.on('keydown', wrapper, event => {
-      if (event.keyCode === dateUtil.KEY.enter) {
-        event.preventDefault()
-        event.stopPropagation()
-        this.onClick(event)
-      } else {
-        const operations = {
-          setState: this.setState
-        }
-        this.picker.onKeyDown(event, operations, this.state)
-      }
-    })
 
     // 当用户点击日历的不可聚焦的区域时，不要关闭日历
     dateUtil.on('mousedown', calEl, event => {
@@ -140,11 +149,12 @@ export default class DatePicker extends BasePicker {
     const bufferShow = dateUtil.bufferFn(5, () => {
       if (!this.isVisible()) {
         this.render()
+        this.emitActivateEvent()
       }
     })
 
-    dateUtil.on('blur', this.input, dateUtil.bufferFn(150, () => {
-      if (!this.hasFocus() && this.state.mode !== 'range-picker') {
+    dateUtil.on('blur', this.input, dateUtil.bufferFn(5, () => {
+      if (!this.hasFocus()) {
         this.close()
       }
     }))
@@ -155,7 +165,10 @@ export default class DatePicker extends BasePicker {
       }
     })
 
-    dateUtil.on('focus', this.input, bufferShow)
+    dateUtil.on('focus', this.input, () => {
+      bufferShow()
+      this.input.focus()
+    })
 
     dateUtil.on('input', this.input, (e) => {
       this.updateDateByInput(e)
@@ -163,7 +176,7 @@ export default class DatePicker extends BasePicker {
   }
 
   updateDateByInput (e) {
-    const {isvalid, year, month, date} = this.getInputValidDate(e.target.value)
+    const { isvalid, year, month, date } = this.getInputValidDate(e.target.value)
     if (isvalid) {
       this.setState({
         needRender: true,
@@ -184,5 +197,31 @@ export default class DatePicker extends BasePicker {
     const focused = document.activeElement
     return (this.pickerWrapper &&
       this.pickerWrapper.contains(focused)) || focused === this.input
+  }
+
+  emitSelectEvent (event) {
+    viewer.eventAction.execute('select', this.element, event)
+  }
+
+  clearInput () {
+    this.setState({
+      needRender: true,
+      isClear: true
+    })
+  }
+
+  setDate (date) {
+    this.setState({
+      selectedDate: dateUtil.parseToDate(date)
+    })
+  }
+
+  selectToday () {
+    const selectedDate = new Date(this.state.selectedDate)
+    const now = new Date()
+    selectedDate.setFullYear(now.getFullYear(), now.getMonth(), now.getDate())
+    this.setState({
+      selectedDate: selectedDate
+    })
   }
 }

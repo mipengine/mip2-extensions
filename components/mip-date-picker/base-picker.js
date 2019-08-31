@@ -8,6 +8,8 @@ import DayPicker from './views/day-picker'
 import MonthPicker from './views/month-picker'
 import YearPicker from './views/year-picker'
 
+const {viewer} = MIP
+
 export default class BasePicker {
   constructor (element, options) {
     this.element = element
@@ -30,6 +32,8 @@ export default class BasePicker {
     this.updateDateStyle = this.updateDateStyle.bind(this)
     this.getInputValidDate = this.getInputValidDate.bind(this)
     this.updateInput = this.updateInput.bind(this)
+    this.emitActivateEvent = this.emitActivateEvent.bind(this)
+    this.emitDeactivateEvent = this.emitDeactivateEvent.bind(this)
 
     this.picker = new DayPicker()
   }
@@ -41,10 +45,7 @@ export default class BasePicker {
     this.pickerWrapper.firstChild.innerHTML = picker
     const input = this.state.mode === 'range-picker' ? this.startInput : this.input
     this.adjustPosition(input)
-    if (this.hasFocus() || this.shouldFocusOnRender()) {
-      this.focusCurrent()
-    }
-    // emit('open')
+    this.focusCurrent()
   }
 
   shouldFocusOnRender () {
@@ -56,7 +57,7 @@ export default class BasePicker {
   }
 
   close () {
-    if (this.state.mode === 'permanent') {
+    if (this.state.display === 'static') {
       return
     }
     const dpElement = this.pickerWrapper.firstChild
@@ -71,12 +72,7 @@ export default class BasePicker {
     }
 
     document.body.focus()
-    // if (isFromCloseBtn) {
-    //   this.startInput && this.startInput.blur()
-    //   this.input && this.input.blur()
-    // }
-
-    // emit('close')
+    this.emitDeactivateEvent()
   }
 
   changeView (view) {
@@ -95,13 +91,13 @@ export default class BasePicker {
     let month = null
     let date = null
     let matchs = null
-    if (this.state.format === 'yyyy-MM-dd') {
+    if (this.state.format === 'yyyy-MM-dd' || this.state.format === 'yyyy/MM/dd') {
       matchs = value.match(/(\d{4})[-|/](\d{2})[-|/](\d{2})/)
       matchs && ([, year, month, date] = matchs)
-    } else if (this.state.format === 'MM-dd-yyyy') {
+    } else if (this.state.format === 'MM-dd-yyyy' || this.state.format === 'MM/dd/yyyy') {
       matchs = value.match(/(\d{2})[-|/](\d{2})[-|/](\d{4})/)
       matchs && ([, month, date, year] = matchs)
-    } else if (this.state.format === 'dd-MM-yyyy') {
+    } else if (this.state.format === 'dd-MM-yyyy' || this.state.format === 'dd/MM/yyyy') {
       matchs = value.match(/(\d{2})[-|/](\d{2})[-|/](\d{4})/)
       matchs && ([, date, month, year] = matchs)
     }
@@ -110,7 +106,7 @@ export default class BasePicker {
     date = date && (date - 0)
     return {
       isvalid: year && month > -1 && month < 12 &&
-      date > -1 && date < 32,
+        date > -1 && date < 32,
       year,
       month,
       date
@@ -152,6 +148,14 @@ export default class BasePicker {
 
     this.pickerWrapper.style.visibility = ''
   }
+
+  emitActivateEvent () {
+    viewer.eventAction.execute('activate', this.element, {})
+  }
+
+  emitDeactivateEvent () {
+    viewer.eventAction.execute('deactivate', this.element, {})
+  }
 }
 
 function adjustCalX (wrapper, inputPos, win) {
@@ -170,8 +174,8 @@ function adjustCalY (wrapper, inputPos, win) {
   const scrollTop = win.pageYOffset
   const inputTop = scrollTop + inputPos.top
   const calHeight = wrapper.offsetHeight
-  const belowTop = inputPos.height + 8
-  const aboveTop = inputTop - calHeight - 8
+  const belowTop = inputPos.height + 2
+  const aboveTop = inputTop - calHeight - 2
   const isAbove = (aboveTop > 0 && belowTop + calHeight > scrollTop + win.innerHeight)
   const top = isAbove ? aboveTop : belowTop
 

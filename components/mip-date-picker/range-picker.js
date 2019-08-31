@@ -91,8 +91,6 @@ export default class RangePicker extends BasePicker {
     if (this.state.view === 'date') {
       this.updateDateStyle()
     }
-
-    // emit('statechange')
   }
 
   updateInput () {
@@ -127,11 +125,11 @@ export default class RangePicker extends BasePicker {
     }
     Array.from(days.children).forEach(element => {
       const elementDate = new Date(element.getAttribute('data-date') - 0)
-      const {start, end, hoverDate} = this.state
+      const { start, end, hoverDate } = this.state
       element.classList.contains('dp-selected') && element.classList.remove('dp-selected')
       if ((end || hoverDate) &&
         start &&
-        inRange(elementDate, end || hoverDate, start)) {
+        dateUtil.inRange(elementDate, end || hoverDate, start)) {
         element.classList.add('dr-in-range')
       } else {
         element.classList.contains('dr-in-range') && element.classList.remove('dr-in-range')
@@ -233,7 +231,7 @@ export default class RangePicker extends BasePicker {
   }
 
   updateDateByInput (e) {
-    const {isvalid, year, month, date} = this.getInputValidDate(e.target.value)
+    const { isvalid, year, month, date } = this.getInputValidDate(e.target.value)
     if (isvalid) {
       if (e.target === this.startInput) {
         this.setState({
@@ -256,8 +254,4 @@ export default class RangePicker extends BasePicker {
       focused === this.startInput ||
       focused === this.endInput
   }
-}
-
-function inRange (dt, start, end) {
-  return (dt < end && dt >= start) || (dt <= start && dt > end)
 }

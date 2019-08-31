@@ -23,7 +23,6 @@ export default class DayPicker {
     this.render = this.render.bind(this)
     this.mapDays = this.mapDays.bind(this)
     this.inRange = this.inRange.bind(this)
-    this.onKeyDown = this.onKeyDown.bind(this)
   }
 
   render (opts) {
@@ -34,50 +33,53 @@ export default class DayPicker {
     const dayOffset = opts.dayOffset
     const minDate = opts.minDate
     const maxDate = opts.maxDate
+    const isStatic = opts.display === 'static'
     const today = dateUtil.pureDate().getTime()
 
     return (
       '<section class="dp-cal">' +
-        '<header class="dp-cal-header">' +
-          '<button tabindex="-1" type="button" class="dp-prev">Prev</button>' +
-          '<button tabindex="-1" type="button" class="dp-cal-month">' +
-            CALENDAR.months[hilightedMonth] +
-          '</button>' +
-          '<button tabindex="-1" type="button" class="dp-cal-year">' +
-            hilightedDate.getFullYear() +
-          '</button>' +
-          '<button tabindex="-1" type="button" class="dp-next">Next</button>' +
-        '</header>' +
-        '<section class="dp-days">' +
-          dayNames.map((name, index) => {
-            return (
-              '<span class="dp-col-header">' + dayNames[(index + dayOffset) % dayNames.length] + '</span>'
-            )
-          }).join('') +
-          this.mapDays(hilightedDate, dayOffset, date => {
-            const isNotInMonth = date.getMonth() !== hilightedMonth
-            const isDisabled = !this.inRange(date, minDate, maxDate)
-            const pureDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-            const isToday = pureDate.getTime() === today
-            let className = 'dp-day'
-            className += (isNotInMonth ? ' dp-edge-day' : '')
-            className += (dateUtil.datesEq(date, hilightedDate) ? ' dp-current' : '')
-            className += (dateUtil.datesEq(date, selectedDate) ? ' dp-selected' : '')
-            className += (isDisabled ? ' dp-day-disabled' : '')
-            className += (isToday ? ' dp-day-today' : '')
+      '<header class="dp-cal-header">' +
+      '<button tabindex="-1" type="button" class="dp-prev">Prev</button>' +
+      '<button tabindex="-1" type="button" class="dp-cal-month">' +
+      CALENDAR.months[hilightedMonth] +
+      '</button>' +
+      '<button tabindex="-1" type="button" class="dp-cal-year">' +
+      hilightedDate.getFullYear() +
+      '</button>' +
+      '<button tabindex="-1" type="button" class="dp-next">Next</button>' +
+      '</header>' +
+      '<section class="dp-days">' +
+      dayNames.map((name, index) => {
+        return (
+          '<span class="dp-col-header">' + dayNames[(index + dayOffset) % dayNames.length] + '</span>'
+        )
+      }).join('') +
+      this.mapDays(hilightedDate, dayOffset, date => {
+        const isNotInMonth = date.getMonth() !== hilightedMonth
+        const isDisabled = !this.inRange(date, minDate, maxDate)
+        const pureDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+        const isToday = pureDate.getTime() === today
+        let className = 'dp-day'
+        className += (isNotInMonth ? ' dp-edge-day' : '')
+        className += (dateUtil.datesEq(date, hilightedDate) ? ' dp-current' : '')
+        className += (dateUtil.datesEq(date, selectedDate) ? ' dp-selected' : '')
+        className += (isDisabled ? ' dp-day-disabled' : '')
+        className += (isToday ? ' dp-day-today' : '')
 
-            return (
-              '<button tabindex="-1" type="button" class="' + className + '" data-date="' + date.getTime() + '">' +
-                date.getDate() +
-              '</button>'
-            )
-          }) +
-        '</section>' +
-        '<footer class="dp-cal-footer">' +
-          '<button tabindex="-1" type="button" class="dp-today">' + CALENDAR.today + '</button>' +
-          '<button tabindex="-1" type="button" class="dp-clear">' + CALENDAR.clear + '</button>' +
-          '<button tabindex="-1" type="button" class="dp-close">' + CALENDAR.close + '</button>' +
-        '</footer>' +
+        return (
+          '<button tabindex="-1" type="button" class="' + className +
+            '" data-date="' + date.getTime() + '"' +
+            (isDisabled ? ' disabled' : '') + '>' +
+            date.getDate() +
+          '</button>'
+        )
+      }) +
+      '</section>' +
+      '<footer class="dp-cal-footer">' +
+      '<button tabindex="-1" type="button" class="dp-today">' + CALENDAR.today + '</button>' +
+      '<button tabindex="-1" type="button" class="dp-clear">' + CALENDAR.clear + '</button>' +
+      (!isStatic ? '<button tabindex="-1" type="button" class="dp-close">' + CALENDAR.close + '</button>' : '') +
+      '</footer>' +
       '</section>'
     )
   }
@@ -115,36 +117,19 @@ export default class DayPicker {
     })
   }
 
-  onKeyDown (e, operations, state) {
-    let key = e.keyCode
-    let shiftBy = (key === dateUtil.KEY.left) ? -1
-      : (key === dateUtil.KEY.right) ? 1
-        : (key === dateUtil.KEY.up) ? -7
-          : (key === dateUtil.KEY.down) ? 7
-            : 0
-
-    if (key === dateUtil.KEY.esc) {
-      operations.close()
-    } else if (shiftBy) {
-      e.preventDefault()
-      operations.setState({
-        needRender: true,
-        hilightedDate: dateUtil.shiftDay(state.hilightedDate, shiftBy)
-      })
-    }
-  }
-
   selectToday (e, operations, state) {
     const selectedDate = new Date(state.selectedDate)
     const now = new Date()
     selectedDate.setFullYear(now.getFullYear(), now.getMonth(), now.getDate())
     operations.setState({
+      needRender: true,
       selectedDate: selectedDate
     })
   }
 
   clear (e, operations) {
     operations.setState({
+      needRender: true,
       isClear: true
     })
   }

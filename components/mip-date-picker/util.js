@@ -201,21 +201,15 @@ export function format (fmt, date) {
 }
 
 /**
- * merge 对象，浅拷贝 o2 到 o1
- * args[0] 目的对象，其他参数为源对象
+ * 判断时间是否在最大最小日期范围内
  *
- * @returns {Object} 合并后的对象
+ * @param {Date} dt 输入的对象
+ * @param {Date} min 最小可选时间
+ * @param {Date} max 最大可选时间
+ * @returns {boolean} 是否在范围内
  */
-export function cp () {
-  let args = arguments
-  let o1 = args[0]
-  for (let i = 1; i < args.length; ++i) {
-    let o2 = args[i] || {}
-    for (let key in o2) {
-      o1[key] = o2[key]
-    }
-  }
-  return o1
+export function inRange (dt, min, max) {
+  return (dt < max && dt >= min)
 }
 
 export default {
@@ -233,5 +227,5 @@ export default {
   setYear,
   setMonth,
   format,
-  cp
+  inRange
 }
