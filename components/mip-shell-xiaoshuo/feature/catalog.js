@@ -7,12 +7,12 @@
  */
 
 import state from '../common/state'
-import {getCurrentWindow} from '../common/util'
+import {getCurrentWindow, getParamFromString} from '../common/util'
 import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 const currentWindow = getCurrentWindow()
 const {currentPage} = state(currentWindow)
-const CHAPTER_LIST_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/mip/chapterlist?' // online
-const CHAPTER_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/mip/chapterinfo?' // online
+const CHAPTER_LIST_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/reading/mip/chapterlist?' // online
+const CHAPTER_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/reading/mip/chapterinfo?' // online
 // const CHAPTER_LIST_URL = 'http://cp01-zhangjunxing.epc.baidu.com:8600/mip/chapterlist?' // online
 const originUrl = MIP.util.getOriginalUrl()
 // const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=685640121&crid=288&fr=bdgfh&mip=1&pg=3'
@@ -295,6 +295,13 @@ class Catalog {
       cid = this.bookid + '|' + this.categoryList[this.categoryList.length - 1].cid
     } else if (type === 'middle') {
       id = currentPage.chapter
+      const search = location.search
+      // 首次查询，可以根据阿拉丁卡片传递的 bid 和 cid 来加快查询速度
+      const mipBid = getParamFromString(search, 'mip_book_id_once')
+      const mipCid = getParamFromString(search, 'mip_chapter_id_once')
+      if (mipBid && mipCid) {
+        cid = mipBid + '|' + mipCid
+      }
       // asc / desc 是固定的最新的100章或最后的100章 不用穿 id cid
     }
     let params = [
