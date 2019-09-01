@@ -7,6 +7,9 @@ import './range-picker.less'
 import BasePicker from './base-picker'
 import dateUtil from './util'
 
+const {util, viewer} = MIP
+const { error } = util.log('mip-date-picker')
+
 export default class RangePicker extends BasePicker {
   constructor (element, options) {
     super(element, options)
@@ -26,68 +29,99 @@ export default class RangePicker extends BasePicker {
     this.updateInput = this.updateInput.bind(this)
     this.watchHoverDate = this.watchHoverDate.bind(this)
     this.updateRange = this.updateRange.bind(this)
+    this.clearInput = this.clearInput.bind(this)
+    this.setDates = this.setDates.bind(this)
 
     this.generateWrapper()
     this.attachContainerEvents()
     this.attachInputEvents()
     this.watchHoverDate()
+
+    // 静态模式下始终显示日历，不需要等到 input 聚焦时再显示
+    if (this.state.display === 'static') {
+      this.render()
+      this.emitActivateEvent()
+    }
   }
 
   generateWrapper () {
-    // mip-form
-    const form = document.createElement('mip-form')
-    const label = document.createElement('label')
-    label.classList.add('dp-label')
-    this.startInput = document.createElement('input')
-    this.startInput.classList.add('dp-start-input')
-    const separator = document.createElement('p')
-    separator.innerText = '~'
-    this.endInput = document.createElement('input')
-    this.endInput.classList.add('dp-start-input')
+    const startInputs = document.querySelectorAll(this.state.startInputSelector)
+    if (startInputs.length === 1) {
+      this.startInput = startInputs[0]
+    } else {
+      error('有多个重名 startInput 框!')
+      return
+    }
+
+    const endInputs = document.querySelectorAll(this.state.endInputSelector)
+    if (endInputs.length === 1) {
+      this.endInput = endInputs[0]
+    } else {
+      error('有多个重名 endInputs 框!')
+      return
+    }
 
     // date-picker-wrapper
     this.pickerWrapper = document.createElement('section')
-    let modeClass = this.state.mode === 'range-picker' ? 'dp-permanent' : 'dp-below'
+    let modeClass = this.state.display === 'overlay' ? 'dp-below' : 'dp-permanent'
+    this.pickerWrapper.tabIndex = 1
     this.pickerWrapper.classList.add(modeClass)
     this.pickerWrapper.classList.add('dr-cal')
     let pickerElement = document.createElement('section')
     pickerElement.classList.add('dp')
     this.pickerWrapper.appendChild(pickerElement)
 
-    label.appendChild(this.startInput)
-    label.appendChild(separator)
-    label.appendChild(this.endInput)
-    label.appendChild(this.pickerWrapper)
-    form.appendChild(label)
-
-    this.element.appendChild(form)
+    this.startInput.parentNode.appendChild(this.pickerWrapper)
   }
 
   setState (state) {
     let needRender
+    let isClear
     for (let key in state) {
       this.state[key] = state[key]
-      if (key === 'isClear') {
-        needRender = true
-        this.state.selectedDate = null
-        this.state.start = null
-        this.state.end = null
-        this.updateInput()
-      }
+
       // 切换 view 默认重绘，强制重绘通过 needRender 控制
       if (key === 'needRender' || key === 'view') {
         needRender = true
       }
+      if (key === 'isClear') {
+        needRender = true
+        isClear = true
+        this.state.selectedDate = null
+        this.state.start = null
+        this.state.end = null
+        this.updateInput()
+        if (this.state.openAfterclear) {
+          this.updateDateStyle()
+        } else {
+          this.close()
+        }
+      }
       // selectedDate 当前选中的日期，无法区分是 start 还是 end
       if (key === 'selectedDate') {
+        this.state.hilightedDate = state[key]
         this.focusCurrent()
         this.updateRange(state[key])
+
+        const isBothSelected = this.state.start && this.state.end
+        if (isBothSelected) {
+          this.emitSelectEvent({
+            selectedDate: state[key],
+            start: this.state.start,
+            end: this.state.end
+          })
+        }
+        if (!this.state.openAfterSelect && isBothSelected && this.state.display !== 'static') {
+          this.close()
+        }
       }
     }
 
-    if (needRender) {
+    // overlay 显示下，用户点今天不应该重新 render，清空也不应再 render
+    if (this.isVisible() && needRender && !isClear) {
       this.render()
     }
+
     if (this.state.view === 'date') {
       this.updateDateStyle()
     }
@@ -129,7 +163,7 @@ export default class RangePicker extends BasePicker {
       element.classList.contains('dp-selected') && element.classList.remove('dp-selected')
       if ((end || hoverDate) &&
         start &&
-        dateUtil.inRange(elementDate, end || hoverDate, start)) {
+        dateUtil.inRange(elementDate, start, end || hoverDate)) {
         element.classList.add('dr-in-range')
       } else {
         element.classList.contains('dr-in-range') && element.classList.remove('dr-in-range')
@@ -167,7 +201,7 @@ export default class RangePicker extends BasePicker {
     // 使 iOS 显示 active 的 css 样式
     wrapper.ontouchstart = dateUtil.noop
     // 每次重绘都会触发 blur，只有在没有焦点时才关闭
-    dateUtil.on('blur', calEl, dateUtil.bufferFn(150, () => {
+    dateUtil.on('blur', wrapper, dateUtil.bufferFn(5, () => {
       if (!this.hasFocus()) {
         this.close()
       }
@@ -190,6 +224,7 @@ export default class RangePicker extends BasePicker {
       if (!this.isVisible()) {
         this.render()
         this.updateDateStyle()
+        this.emitActivateEvent()
       }
     })
     const bufferClose = dateUtil.bufferFn(5, () => {
@@ -253,5 +288,29 @@ export default class RangePicker extends BasePicker {
       this.pickerWrapper.contains(focused)) ||
       focused === this.startInput ||
       focused === this.endInput
+  }
+
+  emitSelectEvent (event) {
+    viewer.eventAction.execute('select', this.element, event)
+  }
+
+  clearInput () {
+    this.setState({
+      needRender: true,
+      isClear: true
+    })
+  }
+
+  setDates (date) {
+    // 先清空再设置，根据 updateRange 的逻辑防止用户选了 start 之后更新的全是 end
+    this.setState({
+      isClear: true
+    })
+    this.setState({
+      selectedDate: dateUtil.parseToDate(date.start)
+    })
+    this.setState({
+      selectedDate: dateUtil.parseToDate(date.end)
+    })
   }
 }

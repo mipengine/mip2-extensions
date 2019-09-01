@@ -7,7 +7,9 @@ import DatePicker from './date-picker'
 import dateUtil from './util'
 import RangePicker from './range-picker'
 
-const { CustomElement, util: {error, jsonParse} } = MIP
+const {CustomElement, util} = MIP
+const {jsonParse} = util
+const { error } = util.log('mip-date-picker')
 
 export default class MIPDatePicker extends CustomElement {
   constructor (element) {
@@ -64,7 +66,7 @@ export default class MIPDatePicker extends CustomElement {
           error('非 range-picker 模式下不允许 setDates，请使用 setDate')
           return
         }
-        const date = jsonParse(arg).date
+        const date = jsonParse(arg)
         this.picker.setDates(date)
       }
     )
@@ -128,11 +130,11 @@ export default class MIPDatePicker extends CustomElement {
       this.state.startInputSelector = this.element.getAttribute('start-input-selector')
       this.state.endInputSelector = this.element.getAttribute('end-input-selector')
       if (!this.state.startInputSelector) {
-        error('mode = date-picker 模式下必须通过 start-input-selector 属性指定起始日期的 input 框')
+        error('mode = range-picker 模式下必须通过 start-input-selector 属性指定起始日期的 input 框')
         return
       }
       if (!this.state.endInputSelector) {
-        error('mode = date-picker 模式下必须通过 end-input-selector 属性指定结束日期的 input 框')
+        error('mode = range-picker 模式下必须通过 end-input-selector 属性指定结束日期的 input 框')
         return
       }
     }
@@ -161,8 +163,8 @@ export default class MIPDatePicker extends CustomElement {
       (specifyMinDate && !isTodayInrange && this.state.minDate) ||
       new Date()
     // mode = range-picker 时的默认选中起止日期
-    this.state.start = this.element.getAttribute('start')
-    this.state.end = this.element.getAttribute('end')
+    this.state.start = dateUtil.parseToDate(this.element.getAttribute('start'))
+    this.state.end = dateUtil.parseToDate(this.element.getAttribute('end'))
 
     this.state.openAfterSelect = this.element.hasAttribute('open-after-select')
     this.state.openAfterclear = this.element.hasAttribute('open-after-clear')

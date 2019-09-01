@@ -13,28 +13,46 @@
 date-picker: 仅选择日期模式
 
 ```html
-  <p>date-pick: 下拉模式</p>
-  <mip-form>
-    <mip-date-picker mode="date-picker"
-      id="date-picker"
-      input-selector="[name=date-picker-overlay]"
-      on="activate:MIP.setData({activate: '触发 activate 事件'}) deactivate:MIP.setData({deactivate: '触发 deactivate 事件'}) select:MIP.setData({selectedDate: event.date})">
-      <input type="text" name="date-picker-overlay">
-    </mip-date-picker>
-  </mip-form>
-  <p>activate 事件:<span m-text="activate"></span></p>
-  <p>deactivate 事件:<span m-text="deactivate"></span></p>
-  <p>select 事件:<span m-text="selectedDate"></span></p>
-  <button on="tap:date-picker.clear">清空日期</button>
-  <button on="tap:date-picker.setDate({date: '2019-10-15'})">设置日期</button>
-  <button on="tap:date-picker.today">选择今天</button>
-
+<p>date-pick: 下拉模式</p>
+<mip-form>
+  <mip-date-picker mode="date-picker"
+    id="date-picker"
+    input-selector="[name=date-picker-overlay]"
+    on="activate:MIP.setData({activate: '触发 activate 事件'}) deactivate:MIP.setData({deactivate: '触发 deactivate 事件'}) select:MIP.setData({selectedDate: event.date})">
+    <input type="text" name="date-picker-overlay">
+  </mip-date-picker>
+</mip-form>
+<p>activate 事件:<span m-text="activate"></span></p>
+<p>deactivate 事件:<span m-text="deactivate"></span></p>
+<p>select 事件:<span m-text="selectedDate"></span></p>
+<button on="tap:date-picker.clear">清空日期</button>
+<button on="tap:date-picker.setDate({date: '2019-10-15'})">设置日期</button>
+<button on="tap:date-picker.today">选择今天</button>
 ```
 
 range-picker: 选择日期范围模式
 
 ```html
-// TODO:
+<p>range-pick: 下拉模式</p>
+<mip-form>
+  <mip-date-picker mode="range-picker"
+    id="range-picker"
+    start-input-selector="[name=range-picker-overlay-start]"
+    end-input-selector="[name=range-picker-overlay-end]"
+    on="activate:MIP.setData({activate: '触发 range-picker activate 事件'}) deactivate:MIP.setData({deactivate: '触发 range-picker deactivate 事件'}) select:MIP.setData({start: event.start, end: event.end})">
+    <input type="text" name="range-picker-overlay-start">
+    <input type="text" name="range-picker-overlay-end">
+  </mip-date-picker>
+</mip-form>
+<p>activate 事件:<span m-text="activate"></span></p>
+<p>deactivate 事件:<span m-text="deactivate"></span></p>
+<p>select 事件:
+  <p>起始日期：<span m-text="start"></span></p>
+  <p>起始日期：<span m-text="end"></span></p>
+</p>
+<button on="tap:range-picker.clear">清空日期</button>
+<p>设置日期: {start: '2019-10-15', end: '2019-10-23'}</p>
+<button on="tap:range-picker.setDates({start: '2019-10-15', end: '2019-10-23'})">设置日期</button>
 ```
 
 ## 属性
@@ -169,8 +187,11 @@ range-picker: 选择日期范围模式
 ```
 ### mode = range-picker 模式下
 
+>注意：日期范围选择器允许用户选择起始日期和结束日期为同一天
+
 ```json
 {
+  "selectedDate": "selectedDate", // 类型为 Date 对象
   "start": "startDate", // 类型为 Date 对象
   "end": "endDate" // 类型为 Date 对象
 }
@@ -226,24 +247,8 @@ range-picker: 选择日期范围模式
 
 ### today
 
-选中今天，input 目标以 id 表示，使用如下：
+在 date-picker 中，选中今天，在 range-picker 中不可用。input 目标以 id 表示，使用如下：
 
 ```html
 <button on="tap:date-picker.today">选择今天</button>
-```
-
-### setStart
-
-选中今天，input 目标以 id 表示，使用如下：
-
-```html
-<button on="tap:range-picker.setStart">选择今天</button>
-```
-
-### setEnd
-
-选中今天，input 目标以 id 表示，使用如下：
-
-```html
-<button on="tap:range-picker.setEnd">选择今天</button>
 ```

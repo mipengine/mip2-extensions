@@ -70,15 +70,15 @@ export default class DatePicker extends BasePicker {
         this.emitSelectEvent({
           date: state[key]
         })
-        if (this.state.openAfterSelect) {
+        if (this.state.openAfterSelect || this.state.display === 'static') {
           if ((this.state.selectedDate && this.state.selectedDate.getMonth()) !== state[key].getMonth()) {
             needRender = true
           }
-          if (this.state.view === 'date') {
-            this.updateDateStyle(state[key])
-          }
         } else {
           this.close()
+        }
+        if (this.state.view === 'date') {
+          this.updateDateStyle(state[key])
         }
       }
 
@@ -88,17 +88,19 @@ export default class DatePicker extends BasePicker {
         needRender = true
       }
       if (key === 'isClear') {
-        this.updateInput(null)
-        this.state.selectedDate = null
         isClear = true
+        this.state.selectedDate = null
+        this.updateInput(null)
         if (this.state.openAfterclear) {
           this.updateDateStyle(null)
         } else {
           this.close()
+          return
         }
       }
     }
-    if (needRender && !isClear) {
+    // overlay 显示下，用户点今天不应该重新 render，清空也不应再 render
+    if (this.isVisible() && needRender && !isClear) {
       this.render()
     }
   }
@@ -110,7 +112,11 @@ export default class DatePicker extends BasePicker {
   }
 
   updateDateStyle (selectedDate) {
-    Array.from(this.pickerWrapper.querySelector('.dp-days').children).forEach(element => {
+    const days = this.pickerWrapper.querySelector('.dp-days')
+    if (!days) {
+      return
+    }
+    Array.from(days.children).forEach(element => {
       const elementDate = new Date(element.getAttribute('data-date') - 0).getTime()
       element.classList.contains('dp-selected') && element.classList.remove('dp-selected')
       element.classList.contains('dp-current') && element.classList.remove('dp-current')
@@ -183,14 +189,6 @@ export default class DatePicker extends BasePicker {
         selectedDate: new Date(year, month, date)
       })
     }
-  }
-
-  focusInput () {
-    this.input.focus()
-  }
-
-  blurInput () {
-    this.input.blur()
   }
 
   hasFocus () {
