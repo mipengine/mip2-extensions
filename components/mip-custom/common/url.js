@@ -123,37 +123,7 @@ const getSourceId = () => {
   }
   return sourceIdArr.join(',')
 }
-/**
- * 当前域名为百度或者 referrer 是百度
- *
- * @returns {boolean} 返回布尔值
- */
-const isFromBaidu = () => {
-  return matchDomain(window.location.href, '.baidu.com') ||
-    matchDomain(document.referrer, '.baidu.com')
-}
-/**
- * 当前链接为 mip cache 链接
- *
- * @returns {boolean} 返回布尔值
- */
-const isCacheUrl = () => {
-  return window.MIP.util.isCacheUrl(location.href)
-}
-/**
- * 判断链接是否是某个域名
- *
- * @param {string} url 链接
- * @param {string} domain 某个域名
- * @returns {boolean} 返回布尔值
- */
-const matchDomain = (url, domain) => {
-  // 提取 https://(xxx.baidu.com)/ 中的括号里的部分进行判断
-  let match = url.match(/:\/\/([^/]+)/i)
-  if (match) {
-    return match[1].indexOf(domain) !== -1
-  }
-}
+
 /**
  * [get url 拼接函数]
  *
@@ -185,9 +155,8 @@ const get = (el, poi) => {
     }
   }
 
-  // 非mip-shell增加noshell参数
-  // 非百度域且不是mip cache链接打开，增加这个参数，目前小说有用
-  if (!isFromBaidu() && !isCacheUrl()) {
+  // 非mip-shell增加noshell参数，目前医疗小说表现一致，都是用这个参数来处理跨域，并且第三方源站也能展示广告
+  if (MIP.standalone && !MIP.util.isCacheUrl(location.href)) {
     url += '&from=noshell'
   }
   return url

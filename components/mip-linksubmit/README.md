@@ -5,7 +5,7 @@
 标题|内容
 ----|----
 类型|通用
-支持布局|N/S
+支持布局|nodisplay
 所需脚本| [https://c.mipcdn.com/static/v2/mip-linksubmit/mip-linksubmit.js](https://c.mipcdn.com/static/v2/mip-linksubmit/mip-linksubmit.js)
 
 ## 说明
@@ -15,7 +15,7 @@
 ## 示例
 
 ```html
-<mip-linksubmit type="baidu"></mip-linksubmit>
+<mip-linksubmit type="baidu" layout="nodisplay"></mip-linksubmit>
 ```
 
 ## 属性
