@@ -360,6 +360,7 @@ mip-list 需要配置 `has-more` 属性，才会激活 mip-list 的分页加载�
 |src |必选项：否<br>类型：字符串<br>取值范围：必须是 HTTPS 并且包含 hostname 的完整 URL<br>单位：无<br>默认值：无<br>|异步请求的数据接口|
 |method |必选项：是<br>类型：字符串<br>取值范围：'fetch' 或 'jsonp'<br>单位：无<br>默认值：'jsonp'|指定数据请求的方式为 fetch 还是 fetchJsonp，目前为了兼容老逻辑，因此默认采用了 fetchJsonp 发送请求，但 fetchJsonp 本身并不安全，因此**强烈建议**将 method 配置为 'fetch'。|
 |timeout|必选项：否<br>类型：整数<br>取值范围：无<br>单位：ms<br>默认值：5000|请求的超时时间|
+|credentials|必选项：否<br>类型：字符串<br>取值范围：`include` 或 `omit`<br>单位：无<br>默认值：无|当使用 fetch 发送请求时，可以配置 credentials 决定发送请求时是否带上 cookie<br>其中 `credentials="include"` 时请求会带上 cookie，`credentials="omit"` 则不会。|
 
 ### 分页请求相关属性
 
