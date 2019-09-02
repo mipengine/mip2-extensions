@@ -47,10 +47,10 @@ mip-list 使用 mip-mustache 来定义列表项的渲染模板，可使用具名
 <mip-list>
   <script type="application/json">
     {
-      "items": [{name: '李雷'}, {name: '韩梅梅'}]
+      "items": [{"name": "李雷"}, {"name": "韩梅梅"}]
     }
   </script>
-  <template type="mip-list">
+  <template type="mip-mustache">
     <div>您好，{{name}}</div>
   </template>
 </mip-list>
@@ -63,10 +63,10 @@ mip-list 使用 mip-mustache 来定义列表项的渲染模板，可使用具名
   <!-- ...(script 和 template) -->
   <div role="list">
     <div role="listitem">
-      <div>您哈，李雷</div>
+      <div>您好，李雷</div>
     </div>
     <div role="listitem">
-      <div>您哈，韩梅梅</div>
+      <div>您好，韩梅梅</div>
     </div>
   </div>
 </mip-list>
@@ -90,7 +90,7 @@ mip-list 的数据有 3 种加载方式：
 <mip-list>
   <script application/json>
   {
-    "items": [{ name: '李雷' }, { name: '韩梅梅' }]
+    "items": [{ "name": "李雷" }, { "name": "韩梅梅" }]
   }
   </script>
   <!-- ... -->
@@ -103,7 +103,7 @@ items 的每一项不一定要求为 Object，根据 mustache 模板语法，使
 <mip-list>
   <script type="application/json">
     {
-      "items": ['李雷', '韩梅梅']
+      "items": ["李雷", "韩梅梅"]
     }
   </script>
   <template type="mip-mustache">
@@ -269,12 +269,12 @@ mip-list 需要配置 `has-more` 属性，才会激活 mip-list 的分页加载�
   </mip-form>
   <button class="example-button"
     on="tap:MIP.setData({
-      list: list.filter(item => item.name === delName)
+      list: list.filter(item => item.name !== delName)
     })">点击删除</button>
 </div>
 <div>
   <mip-form url="https://www.mipengine.org/api">
-    <input m-bind:vaue="targetName" type="text" placeholder="请输入原名字" class="example-input">
+    <input m-bind:value="targetName" type="text" placeholder="请输入原名字" class="example-input">
     <input m-bind:value="modifyName" type="text" placeholder="请输入新名字" class="example-input">
   </mip-form>
   <button class="example-button"
@@ -283,6 +283,63 @@ mip-list 需要配置 `has-more` 属性，才会激活 mip-list 的分页加载�
     })">点击修改</button>
 </div>
 ```
+
+在进行列表项数据修改的时候需要注意，MIP 数据驱动机制采用了与 React 的 setState 类似的 diff 算法，只有当 **数组** 和 **列表项** 都发生变化的情况下，才会触发对应节点的重新渲染，因此下面的数据操作都不会触发 mip-list 的重新渲染：
+
+```xml
+<mip-script>
+  var list = MIP.getData('list')
+  list.splice(0, 1, { name: '张三' })
+  MIP.setData({
+    list: list
+  })
+</mip-script>
+
+<button on="tap:MIP.setData({
+  list: list.map((item, i) => i === 0 ? assign(item, { name: '张三'}) : item)
+})"></button>
+```
+
+在这两个例子中，`<mip-script>` 里面的操作并没有更改 list 的地址，即数组地址并未发生改变，因此不会触发 mip-list 视图更新；而 `<button>` 中的 `on` 表达式，虽然经过 `.map` 运算生成了新的数组，但是由于 `assign(item, {})` 并没有改变数组项的地址，因此同样不会触发 mip-list 的视图更新。
+
+正确的写法应该如下所示：
+
+```xml
+<mip-script>
+  var list = MIP.getData('list')
+  list.splice(0, 1, { name: '张三' })
+  MIP.setData({
+    list: list.slice(0)
+  })
+</mip-script>
+
+<button on="tap:MIP.setData({
+  list: list.map((item, i) => i === 0 ? assign({}, item, { name: '张三'}) : item)
+})"></button>
+```
+
+同时借助数组地址变化但列表项地址不变化不会触发视图更新的特点，还可以利用 `m-bind` 表达式来实现渲染优化：
+
+```html
+<mip-list id="example" scope>
+  <script type="application/json">
+  {
+    "items": [{ "name": "李雷", "key": "a"}, { "name": "韩梅梅", "key": "b"}]
+  }
+  </script>
+  <template type="mip-mustache">
+    <div m-text="'你好，' + example.find(item => item.key === '{{key}}').name"></div>
+  </template>
+</mip-list>
+
+<button on="tap:MIP.setData({
+  example: example.map(
+    item => item.key === 'a' ? assign(item, {name: '张三'}) : item
+  )
+})">将李雷修改为张三</button>
+```
+
+在上面的例子当中，点击按钮更新 mip-list 列表项的操作完全走的 MIP 数据绑定的逻辑，并不会重新触发 mip-list 列表项的重新渲染，这样就能够大大优化 mip-list 的性能。
 
 更多有关 mip-list 与 mip-data 联动的内容，请参考[数据驱动与模板渲染](https://www/mipengine.org/docs/interactive-mip/data-driven-and-dom-render.html)
 
