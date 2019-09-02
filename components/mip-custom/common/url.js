@@ -6,7 +6,7 @@
 // import modules
 import data from './data'
 import dom from './dom'
-import getCookie from './util'
+import {getCookie} from './util'
 // import tools
 const {util} = MIP
 
@@ -201,7 +201,7 @@ const get = (el, poi) => {
   }
 
   // 小流量实验H_WISE_SIDS
-  const sids = getCookie('').split('_')
+  const sids = getCookie('H_WISE_SIDS').split('_')
   if (sids.includes('135764')) {
     return stanaloneUrl(url)
   }
