@@ -15,7 +15,14 @@ const spiderFilter = elem => {
   }
   return elem.querySelector('script[type="application/json"]')
 }
-
+export function getCookie (name) {
+  const arr = document.cookie.match(new RegExp('(^| )' + name + '=([^;]*)(;|$)'))
+  if (arr != null) {
+    return unescape(arr[2])
+  } else {
+    return ''
+  }
+}
 export default {
   spiderFilter
 }
