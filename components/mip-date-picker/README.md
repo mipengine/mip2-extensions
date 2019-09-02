@@ -65,7 +65,7 @@ range-picker: 选择日期范围模式
 
 类型 ：字符串
 
-默认值：date-picker
+默认值：无
 
 ### display
 
@@ -89,7 +89,7 @@ range-picker: 选择日期范围模式
 
 ### minDate
 
-说明：提供日期可选范围设置，minDate 是日期可选范围的最小值，可以只提供最小值，此时最大值为当前年份加 100 年
+说明：选择器提供日期可选范围设置，minDate 是日期可选范围的最小值，可以只提供最小值，此时最大值为当前年份减 100 年
 
 必选项：否
 
@@ -99,7 +99,7 @@ range-picker: 选择日期范围模式
 
 ### maxDate
 
-说明：提供日期可选范围设置，maxDate 是日期可选范围的最大值，可以只提供最大值，此时最大值为当前年份减 100 年
+说明：选择器提供日期可选范围设置，maxDate 是日期可选范围的最大值，可以只提供最大值，此时最大值为当前年份加 100 年
 
 必选项：否
 
@@ -115,7 +115,7 @@ range-picker: 选择日期范围模式
 
 类型 ：字符串，可以转化为 Date 对象的合法格式，比如：2019-08-30 或者 2019/08/30 等
 
-默认值：date-picker
+默认值：无
 
 ### dayOffset
 
@@ -216,14 +216,13 @@ range-picker: 选择日期范围模式
     <input type="text" name="date-picker-overlay">
   </mip-date-picker>
 </mip-form>
-
 ```
 
 ## 行为
 
 ### clear
 
-清空 date-picker 或者 range-picker 中的数据，清空目标以 id 表示，[参考文档](https://www.mipengine.org/v2/docs/interactive-mip/event-and-action.html)，使用如下：
+清空 date-picker 或者 range-picker 中的数据，清空的 input 框以 id 标识，[参考文档](https://www.mipengine.org/v2/docs/interactive-mip/event-and-action.html)，使用如下：
 
 ```html
 <button on="tap:date-picker.clear">清空日期</button>
@@ -231,7 +230,7 @@ range-picker: 选择日期范围模式
 
 ### setDate
 
-设置 date-picker 中的数据，input 目标以 id 表示，使用如下：
+设置 date-picker 中的数据，数据格式为可以转化成 Date 对象的合法格式即可，input 框以 id 标识，使用如下：
 
 ```html
 <button on="tap:date-picker.setDate({date: '2019-10-15'})">设置日期</button>
@@ -239,7 +238,7 @@ range-picker: 选择日期范围模式
 
 ### setDates
 
-设置 range-picker 中的数据，input 目标以 id 表示，使用如下：
+设置 range-picker 中的数据，数据格式为可以转化成 Date 对象的合法格式即可，input 框以 id 标识，使用如下：
 
 ```html
 <button on="tap:range-picker.setDates({start: '2019-10-15', end: '2019-10-23'})">设置日期</button>
@@ -247,8 +246,8 @@ range-picker: 选择日期范围模式
 
 ### today
 
-在 date-picker 中，选中今天，在 range-picker 中不可用。input 目标以 id 表示，使用如下：
+在 date-picker 中，选中今天，在 range-picker 中不可用。input 框以 id 标识，使用如下：
 
 ```html
 <button on="tap:date-picker.today">选择今天</button>
-```
+``` 

@@ -1,5 +1,5 @@
 /**
- * @file single-date-picker.js 时间选择器
+ * @file range-picker.js 时间选择器
  * @author miya
  *
  */
@@ -117,7 +117,6 @@ export default class RangePicker extends BasePicker {
       }
     }
 
-    // overlay 显示下，用户点今天不应该重新 render，清空也不应再 render
     if (this.isVisible() && needRender && !isClear) {
       this.render()
     }

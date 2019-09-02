@@ -60,13 +60,13 @@ export default class BasePicker {
     if (this.state.display === 'static') {
       return
     }
-    const dpElement = this.pickerWrapper.firstChild
-    const calElement = dpElement.firstChild
 
     if (!this.isVisible()) {
       return
     }
 
+    const dpElement = this.pickerWrapper.firstChild
+    const calElement = dpElement.firstChild
     if (calElement) {
       dpElement && dpElement.removeChild(calElement)
     }

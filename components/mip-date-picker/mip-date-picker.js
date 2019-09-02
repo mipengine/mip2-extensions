@@ -51,7 +51,7 @@ export default class MIPDatePicker extends CustomElement {
       'setDate',
       (event, arg) => {
         if (this.state.mode !== 'date-picker') {
-          error('非 date-picker 模式下不允许 setDate，请使用 setDates')
+          error('非 date-picker 模式下不允许使用 setDate，请使用 setDates')
           return
         }
         const date = jsonParse(arg).date
@@ -63,7 +63,7 @@ export default class MIPDatePicker extends CustomElement {
       'setDates',
       (event, arg) => {
         if (this.state.mode !== 'range-picker') {
-          error('非 range-picker 模式下不允许 setDates，请使用 setDate')
+          error('非 range-picker 模式下不允许使用 setDates，请使用 setDate')
           return
         }
         const date = jsonParse(arg)
@@ -75,7 +75,7 @@ export default class MIPDatePicker extends CustomElement {
       'today',
       (event, arg) => {
         if (this.state.mode !== 'date-picker') {
-          error('非 date-picker 模式下不允许 today')
+          error('非 date-picker 模式下不允许使用 today')
           return
         }
         this.picker.selectToday()
@@ -86,7 +86,7 @@ export default class MIPDatePicker extends CustomElement {
       'setStart',
       (event, arg) => {
         if (this.state.mode !== 'range-picker') {
-          error('非 range-picker 模式下不允许 setStart')
+          error('非 range-picker 模式下不允许使用 setStart')
           return
         }
         this.picker.setStart()
@@ -97,7 +97,7 @@ export default class MIPDatePicker extends CustomElement {
       'setEnd',
       (event, arg) => {
         if (this.state.mode !== 'range-picker') {
-          error('非 range-picker 模式下不允许 setEnd')
+          error('非 range-picker 模式下不允许使用 setEnd')
           return
         }
         this.picker.setEnd()
