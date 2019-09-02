@@ -244,7 +244,7 @@ export default class MIPList extends CustomElement {
           text = '点击查看更多'
           break
         case 'done':
-          text = '已经已经完毕'
+          text = '已经加载完毕'
           break
       }
       this.button.innerHTML = text
@@ -296,7 +296,6 @@ export default class MIPList extends CustomElement {
 
     let addPatches = patches.filter(isAddPatch)
     let removedPatches = patches.filter(isRemovedPatch)
-
     if (addPatches.length) {
       await Promise.all(
         addPatches.map(async patch => {
