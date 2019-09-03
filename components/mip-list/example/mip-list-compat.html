@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    body {
+      padding: 20px 20px
+    }
+    h4 {
+      margin: 20px 0 10px
+    }
+    p {
+      margin: 8px 0
+    }
+    button {
+      margin: 5px 0 0 0
+    }
+  </style>
+</head>
+
+<body>
+  <h4>默认配置为 pn</h4>
+  <mip-list
+    template="mip-template-id2"
+    src="./data-has-more.js"
+    id="mip-list-0"
+    has-more
+    pn="2"
+    timeout="3000"
+    preload
+  >
+    <template type="mip-mustache" id="mip-template-id2">
+      <div>
+        <li>name: {{ name }}</li>
+      </div>
+    </template>
+  </mip-list>
+  <button on="tap:mip-list-0.more">点击查看更多</button>
+
+
+  <h4>推荐配置,使用 pn-name="pageNumber1"</h4>
+  <mip-list
+    template="mip-template-id2"
+    src="./data-has-more.js"
+    id="mip-list-1"
+    has-more
+    pn-name="pageNumber1"
+    pn="2"
+    timeout="3000"
+    preload
+  >
+    <template type="mip-mustache" id="mip-template-id2">
+      <div>
+        <li>name: {{ name }}</li>
+      </div>
+    </template>
+  </mip-list>
+  <button on="tap:mip-list-1.more">点击查看更多</button>
+
+  <h4>不推荐但兼容的配置：pnName="pageNumber2"</h4>
+  <mip-list
+    template="mip-template-id2"
+    src="./data-has-more.js"
+    id="mip-list-2"
+    has-more
+    pnName="pageNumber2"
+    pn="2"
+    timeout="3000"
+    preload
+  >
+    <template type="mip-mustache" id="mip-template-id2">
+      <div>
+        <li>name: {{ name }}</li>
+      </div>
+    </template>
+  </mip-list>
+  <button on="tap:mip-list-2.more">点击查看更多</button>
+
+  <h4>不配置 preload 的情况，需手动触发首屏数据： pnName="pageNumber3"</h4>
+  <mip-list
+    template="mip-template-id2"
+    src="./data-has-more.js"
+    id="mip-list-3"
+    has-more
+    pnName="pageNumber3"
+    pn="2"
+    timeout="3000"
+  >
+    <template type="mip-mustache" id="mip-template-id2">
+      <div>
+        <li>name: {{ name }}</li>
+      </div>
+    </template>
+  </mip-list>
+  <button on="tap:mip-list-3.more">点击查看更多</button>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
+  <script src="/mip-list/mip-list.js"></script>
+</body>
+</html>

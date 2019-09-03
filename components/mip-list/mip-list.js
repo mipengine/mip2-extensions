@@ -54,7 +54,7 @@ export default class MIPList extends CustomElement {
       type: String,
       default: ''
     },
-    'pnName': {
+    'pnname': {
       type: String,
       default: 'pn'
     },
@@ -86,7 +86,7 @@ export default class MIPList extends CustomElement {
 
   build () {
     this.dataScope = this.props.scope && this.props.id || getRandomId()
-    this.pnName = this.props['pn-name'] || this.props.pnName
+    this.pnName = this.props['pn-name'] || this.props.pnname
     this.script = this.element.querySelector('script[type="application/json"]')
 
     this.container = document.createElement('div')
@@ -136,7 +136,6 @@ export default class MIPList extends CustomElement {
 
     if (this.props.src) {
       if (this.props.preload) {
-        this.setState()
         this.asyncData(false)
       }
     } else if (this.script) {
