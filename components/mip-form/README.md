@@ -181,13 +181,13 @@
 
 `mip-form` 支持以下 event，对应说明如下表所示：
 
-事件| 描述| 数据
-----|:---|----
-`submit`| form 表单被提交时触发||
-`valid`| form 输入校验合法 ||
-`invalid`| form 输入校验不合法 ||
-`submitSuccess`| form 提交完成并且响应成功时触发| `event.response` 响应 JSON 数据
-`submitError`| form 提交完成并且响应失败时触发| `event.response` 响应 JSON 数据
+事件| 描述| 数据|
+----|:---|----|
+`submit`| form 表单被提交时触发| |
+`valid`| form 输入校验合法 | |
+`invalid`| form 输入校验不合法 | |
+`submitSuccess`| form 提交完成并且响应成功时触发| `event.response` 响应 JSON 数据 |
+`submitError`| form 提交完成并且响应失败时触发| `event.response` 响应 JSON 数据 |
 
 下面举例说明各事件的使用方法：
 

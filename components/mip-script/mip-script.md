@@ -23,7 +23,7 @@
 ### 内嵌脚本
 用法上如同开发者熟悉的 `script` 标签一样，只需要在 `<mip-script></mip-script>` 内正常书写 JS 代码即可。如：
 
-```html
+```xml
 <mip-script>
   console.log('mip-script executed')
 </mip-script>
@@ -36,7 +36,7 @@
 
 如果需要使用异步脚本，则需指定 `src` 地址，如：
 
-```html
+```xml
 <mip-script src="https://www.example.org/script.js"></mip-script>
 ```
 
@@ -116,7 +116,6 @@ MIP.watch('a.b.c', function (newVal, oldVal) {
 同时，mip-script 开放了 fetch API 的使用权限，因此可以在 mip-script 当中自行发送数据请求，或者是将数据提交发送到后端。
 
 ```js
-
 MIP.watch('a.b.c', function (newVal, oldVal) {
   fetch('https://www.mipengine.org?abc=' + newVal)
     .then(function (res) {
