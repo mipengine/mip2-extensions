@@ -204,7 +204,7 @@
 
 <mip-form
   method="get"
-  fetch-url="https://www.mipengine.org"
+  fetch-url="https://path/to/404/api"
   on="
     submit:MIP.setData({
       submit: true,
