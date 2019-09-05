@@ -62,7 +62,7 @@ mip-mustache 定义好模板之后可能会有疑问，如何给模板传入数�
 
 以 mip-list 为例，可以在其组件内部定义列表项的渲染模板：
 
-```html
+```xml
 <mip-list>
   <script type="application/json">
   {
@@ -81,3 +81,46 @@ mip-mustache 定义好模板之后可能会有疑问，如何给模板传入数�
   </template>
 </mip-list>
 ```
+
+## 常见问题
+
+（1）需要注意数据当中存在引号的情况
+
+mip-mustache 并不关心数据当中是否存在单引号 `'` 或者是双引号 `"`，只会将数据和模板进行拼接，假如数据中存在引号，拼接出来的字符串可能会的到错误的结果：
+
+```xml
+<template type="mip-mustache">
+  <input value="{{value}}" type="text">
+</template>
+```
+
+假设 value 的值为 `'"hello"'`，那么经过 mustache 渲染得到的节点则是:
+
+```xml
+<input value=""hello"">
+```
+
+会造成浏览器 HTML 解析属性失败。因此需要对双引号做转义：
+
+```
+<!-- value 的值为 '&lt;hello&gt;' -->
+<input value="&lt;hello&gt;">
+```
+
+（2）模板字符串当中出现双括号的问题
+
+有的模板当中可能会出现双括号而被识别为 mustache 的模板语法导致解析失败：
+
+```xml
+<div on="tap:MIP.setData({a: {b: 1}})"></div>
+```
+
+比如上面的例子当中出现了 `}}` 会被认为是 mustache 模板语法，从而解析失败。避免的办法就是在这些双括号的位置加空格、换行符之类给规避掉即可。
+
+```xml
+<div on="tap.MIP.setData({ a: { b: 1 } })">
+```
+
+
+
+

@@ -21,7 +21,12 @@
 两种方式的规范和限制各不相同，请开发者仔细阅读。
 
 ### 内嵌脚本
-用法上如同开发者熟悉的 `script` 标签一样，只需要在 `<mip-script></mip-script>` 内正常书写 JS 代码即可。如：
+
+用法上如同开发者熟悉的 `script` 标签一样，只需要在 `<mip-script></mip-script>` 内书写 JS 代码即可。
+
+mip-script 允许写受限制的 JS 代码，通过沙盒机制屏蔽了一部分 API 的使用、读写权限等等，可阅读 [mip-script 代码隔离原理](#mipscript-代码隔离原理) 进行了解。
+
+一个简单的内嵌脚本如下所示：
 
 ```xml
 <mip-script>
@@ -29,10 +34,10 @@
 </mip-script>
 ```
 
-[notice] 内容大小不能超过 2KB，否则无法运行
+[info] 一个 mip-script 内容大小不能超过 2KB，否则无法运行。
 
 ### 异步脚本
-[notice] 异步脚本稍微放宽了大小限制，为 10KB，同时也更方便开发者将代码拆分模块并复用。
+[info] 异步脚本稍微放宽了大小限制，为 10KB，同时也更方便开发者将代码拆分模块并复用。
 
 如果需要使用异步脚本，则需指定 `src` 地址，如：
 
@@ -43,7 +48,7 @@
 如果使用了 `src` 属性，那 `mip-script` 将自动忽略标签中的内容。
 
 
-[notice] `src` 需要是 `https` 或 `//` 协议开头，否则在 HTTPS 环境下会无法正常加载
+[notice] `src` 需要是 `https` 协议开头，否则在[MIP Cache 页面](https://www.mipengine.org/v2/docs/mip-standard/mip-cache-spec.html)的 HTTPS 环境下会无法正常加载。
 
 当使用异步脚本方式加载自定义 JS 代码时，请注意：**需要开发者服务端配置  CORS 跨站访问**，具体步骤如下：
 
@@ -136,6 +141,10 @@ MIP.watch('a.b.c', function (newVal, oldVal) {
 
 ## 要求
 
+### mip-script 存在大小限制
+
+mip-script 的定位是辅助扩展数据驱动机制的计算能力，不希望承担过重的业务逻辑能力实现。可通过直接使用现成 MIP 官方组件来覆盖一部分业务逻辑，从而减小 mip-script 体积。
+
 ### mip-script 彼此隔离
 
 每个 mip-script 都是彼此隔离的，因此无法在其中一个 mip-script 当中定义变量或者函数，然后在另一个 mip-script 里面执行。
@@ -143,6 +152,24 @@ MIP.watch('a.b.c', function (newVal, oldVal) {
 ### mip-script 应该使用 ES5 语法书写 JS
 
 mip-script 本身不会对 JS 的 ES6 语法做任何编译工作，因此在不同的浏览器当中运行可能会遇到兼容性问题，因此请直接使用 ES5 语法书写 JS。
+
+```xml
+<!-- 建议 -->
+<mip-script>
+var a = 0
+function b (a, b) {
+  console.log(a, b)
+}
+</mip-script>
+
+<!-- 不推荐，会存在兼容性问题 -->
+<mip-script>
+const a = 0
+const b = (a, b) => {
+  console.log(a, b)
+}
+</mip-script>
+```
 
 ### 全局变量限制使用
 在 `mip-script` 中，只允许进行数据相关的操作，不允许直接操作 DOM 。
@@ -187,9 +214,10 @@ mip-script 通过对 JS 文本进行编译改写，采用白名单机制，将�
 
 ## 示例
 
-通过 `mip-script` 编写 JS 代码，观察 price 的数据变化，从而触发 title 的更新。同时利用 fetch API 异步获取数据，更新页面：
+下面的例子演示了 mip-script 配合数据驱动机制实现定时加载数据的功能，利用 MIP.watch 和数据绑定实现一些有趣的交互：
 
 ```html
+
 <mip-data>
   <script type="application/json">
     {
@@ -197,15 +225,16 @@ mip-script 通过对 JS 文本进行编译改写，采用白名单机制，将�
       "ratio": 2,
       "like": 0,
       "title": "绝句",
-      "poetry": []
+      "poetry": [],
+      "countdown": 5
     }
   </script>
 </mip-data>
 
-
 <h3 m-text="'题目：' + title"></h3>
 <br>
-<p class="header">以下是异步获取的一首小诗：</p>
+<p class="header">以下是花了 5s 吟出来的小诗：</p>
+<p m-text="'倒计时：' + countdown" m-bind:hidden="countdown <= 0"></p>
 <br>
 <ul>
   <li m-text="poetry[0]"></li>
@@ -216,7 +245,7 @@ mip-script 通过对 JS 文本进行编译改写，采用白名单机制，将�
 <br>
 <p m-text="'已收获 ' + like + ' 个赞'"></p>
 <br>
-<p>[<button class="example-button" on="tap:MIP.setData({ count: count + 1 })" m-text="'请老铁双击 666：+' + count"></button>]</p>
+<p><button class="example-button" on="tap:MIP.setData({ count: count + 1 })" m-text="'请老铁双击 666：+' + count"></button></p>
 
 <mip-script>
   console.log('mip-script executed')
@@ -227,18 +256,28 @@ mip-script 通过对 JS 文本进行编译改写，采用白名单机制，将�
     })
   })
 
-  fetch('https://api.myjson.com/bins/vkwyv')
-    .then(function (data) {
-      return data.json()
+  var timer = setInterval(function () {
+    var countdown = MIP.getData('countdown')
+    MIP.setData({
+      countdown: countdown - 1
     })
-    .then(function (data) {
-      MIP.setData({
-        poetry: data.poetry
-      })
-    })
-    .catch(function (e) {
-      console.error(e.message);
-    })
+
+    if (countdown <= 1) {
+      clearTimeout(timer)
+    }
+  }, 1000)
+
+  setTimeout(function () {
+    MIP.setData({
+      poetry: [
+        '两个黄鹂鸣翠柳',
+        '一行白鹭上青天',
+        '窗含西岭千秋雪',
+        '门泊东吴万里船'
+      ]
+  })
+
+  }, 5000)
 </mip-script>
 ```
 
@@ -248,5 +287,5 @@ mip-script 通过对 JS 文本进行编译改写，采用白名单机制，将�
 
 说明：script 文件地址<br>
 必选项：否<br>
-格式：字符串<br>
+格式：完整 URL，同时要求上线时 URL 对应的服务端支持 HTTPS 和 CORS<br>
 默认值：无
