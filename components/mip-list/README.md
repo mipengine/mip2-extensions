@@ -74,6 +74,8 @@ mip-list 使用 mip-mustache 来定义列表项的渲染模板，可使用具名
 
 可以看到，mip-list 首先会生成 `<div role="list">` 节点作为放置所有列表项的容器，然后每个列表项均会被一个个 `<div rol="listitem">` 节点将模板渲染得到的 HTML 包裹起来。
 
+[notice] 在使用 `<mip-list>` 进行前端模板渲染时可能会存在渲染结果的节点消失、或者属性消失等问题，这可能是模板没有满足`mip-mustache` HTML 规范所致，可以阅读 [mip-mustache](https://www.mipengine.org/v2/components/dynamic-content/mip-mustache.html) 的相关文档学习相关规范和目前存在的问题的解决办法。
+
 ## 数据定义
 
 mip-list 的数据有 3 种加载方式：
