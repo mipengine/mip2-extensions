@@ -26,9 +26,6 @@ export default class MIPDatePicker extends CustomElement {
       start: null,
       end: null
     }
-
-    this.getAttributes = this.getAttributes.bind(this)
-    this.examFormat = this.examFormat.bind(this)
   }
 
   build () {

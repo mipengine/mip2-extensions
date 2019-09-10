@@ -1,34 +1,40 @@
-mip-form mip-date-picker input {
-  display: inline-block;
-  width: 150px;
+mip-date-picker {
+  .range-picker-input {
+    display: inline-block;
+    width: 150px;
+  }
+
+  .dr-cal:focus {
+    outline: none;
+  }
+
+  .dr-cal .dp-edge-day {
+    visibility: hidden;
+  }
+
+  .dr-cal .dp-day-disabled,
+  .dr-cal .dp-day-disabled:focus {
+    color: #ddd;
+  }
+
+  .dr-cal .dp-current:hover,
+  .dr-cal .dr-in-range,
+  .dr-cal .dr-in-range:hover,
+  .dr-cal .dr-in-range:focus {
+    background: #75bcfc;
+    color: white;
+    border-radius: 0;
+  }
+
+  .dr-cal .dr-selected,
+  .dr-cal .dr-selected:hover,
+  .dr-cal .dr-selected:focus {
+    background: #3b99fc;
+    color: white;
+    border-radius: 0;
+  }
 }
 
-.dr-cal:focus {
-  outline: none;
-}
-
-.dr-cal .dp-edge-day {
-  visibility: hidden;
-}
-
-.dr-cal .dp-day-disabled,
-.dr-cal .dp-day-disabled:focus {
-  color: #ddd;
-}
-
-.dr-cal .dp-current:hover,
-.dr-cal .dr-in-range,
-.dr-cal .dr-in-range:hover,
-.dr-cal .dr-in-range:focus {
-  background: #75bcfc;
-  color: white;
-  border-radius: 0;
-}
-
-.dr-cal .dr-selected,
-.dr-cal .dr-selected:hover,
-.dr-cal .dr-selected:focus {
-  background: #3b99fc;
-  color: white;
-  border-radius: 0;
+.mip-date-picker-btn {
+  border: 1px solid #d8d7d7;
 }

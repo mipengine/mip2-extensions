@@ -19,23 +19,14 @@ export default class RangePicker extends BasePicker {
       hoverDate: null
     }
 
-    this.generateWrapper = this.generateWrapper.bind(this)
-    this.attachContainerEvents = this.attachContainerEvents.bind(this)
-    this.attachInputEvents = this.attachInputEvents.bind(this)
     this.setState = this.setState.bind(this)
-    this.hasFocus = this.hasFocus.bind(this)
-    this.updateDateStyle = this.updateDateStyle.bind(this)
-    this.updateDateByInput = this.updateDateByInput.bind(this)
-    this.updateInput = this.updateInput.bind(this)
-    this.watchHoverDate = this.watchHoverDate.bind(this)
-    this.updateRange = this.updateRange.bind(this)
-    this.clearInput = this.clearInput.bind(this)
-    this.setDates = this.setDates.bind(this)
+    this.updateBlurStatus = this.updateBlurStatus.bind(this)
 
     this.generateWrapper()
     this.attachContainerEvents()
     this.attachInputEvents()
     this.watchHoverDate()
+    this.updateBlurStatus()
 
     // 静态模式下始终显示日历，不需要等到 input 聚焦时再显示
     if (this.state.display === 'static') {
@@ -194,6 +185,18 @@ export default class RangePicker extends BasePicker {
     }
   }
 
+  // iOS 下点击选择器外围不会触发 blur 事件，这里更新 activeElement
+  updateBlurStatus () {
+    document.addEventListener('touchstart', (e) => {
+      if (this.pickerWrapper &&
+        !this.pickerWrapper.contains(e.target) &&
+        e.target !== this.startInput &&
+        e.target !== this.endInput) {
+        this.pickerWrapper.blur()
+      }
+    })
+  }
+
   attachContainerEvents () {
     const wrapper = this.pickerWrapper
     const calEl = wrapper.querySelector('.dp')
@@ -211,7 +214,7 @@ export default class RangePicker extends BasePicker {
       event.target.focus && event.target.focus()
       if (document.activeElement !== event.target) {
         event.preventDefault()
-        this.focusCurrent(this.picker)
+        this.focusCurrent()
       }
     })
 
@@ -270,11 +273,13 @@ export default class RangePicker extends BasePicker {
       if (e.target === this.startInput) {
         this.setState({
           needRender: true,
+          selectedDate: new Date(year, month, date),
           start: new Date(year, month, date)
         })
       } else if (e.target === this.endInput) {
         this.setState({
           needRender: true,
+          selectedDate: new Date(year, month, date),
           end: new Date(year, month, date)
         })
       }

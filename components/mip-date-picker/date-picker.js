@@ -15,21 +15,13 @@ export default class DatePicker extends BasePicker {
     this.element = element
     this.state = options
 
-    this.generateWrapper = this.generateWrapper.bind(this)
-    this.attachContainerEvents = this.attachContainerEvents.bind(this)
-    this.attachInputEvents = this.attachInputEvents.bind(this)
     this.setState = this.setState.bind(this)
-    this.hasFocus = this.hasFocus.bind(this)
-    this.updateDateStyle = this.updateDateStyle.bind(this)
-    this.updateDateByInput = this.updateDateByInput.bind(this)
-    this.updateInput = this.updateInput.bind(this)
-    this.clearInput = this.clearInput.bind(this)
-    this.setDate = this.setDate.bind(this)
-    this.selectToday = this.selectToday.bind(this)
+    this.updateBlurStatus = this.updateBlurStatus.bind(this)
 
     this.generateWrapper()
     this.attachContainerEvents()
     this.attachInputEvents()
+    this.updateBlurStatus()
 
     // 静态模式下始终显示日历，不需要等到 input 聚焦时再显示
     if (this.state.display === 'static') {
@@ -144,7 +136,7 @@ export default class DatePicker extends BasePicker {
       event.target.focus && event.target.focus()
       if (document.activeElement !== event.target) {
         event.preventDefault()
-        this.focusCurrent(this.picker)
+        this.focusCurrent()
       }
     })
 
@@ -195,6 +187,16 @@ export default class DatePicker extends BasePicker {
     const focused = document.activeElement
     return (this.pickerWrapper &&
       this.pickerWrapper.contains(focused)) || focused === this.input
+  }
+
+  // iOS 下点击选择器外围不会触发 blur 事件，这里更新 activeElement
+  updateBlurStatus () {
+    document.addEventListener('touchstart', (e) => {
+      if (!this.pickerWrapper.contains(e.target) &&
+        e.target !== this.input) {
+        this.pickerWrapper.blur()
+      }
+    })
   }
 
   emitSelectEvent (event) {

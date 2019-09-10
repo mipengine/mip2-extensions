@@ -43,9 +43,9 @@
   <p>activate 事件:<span m-text="activate"></span></p>
   <p>deactivate 事件:<span m-text="deactivate"></span></p>
   <p>select 事件:<span m-text="selectedDate"></span></p>
-  <button on="tap:date-picker.clear">清空日期</button>
-  <button on="tap:date-picker.setDate({date: '2019-10-15'})">设置日期</button>
-  <button on="tap:date-picker.today">选择今天</button>
+  <button on="tap:date-picker.clear" class="mip-date-picker-btn">清空日期</button>
+  <button on="tap:date-picker.setDate({date: '2019-10-15'})" class="mip-date-picker-btn">设置日期</button>
+  <button on="tap:date-picker.today" class="mip-date-picker-btn">选择今天</button>
 
   <p>date-pick: 默认选择日期后关闭选择器，通过指定 open-after-select 可以选择后不关闭</p>
   <mip-form>
@@ -109,8 +109,8 @@
       start-input-selector="[name=range-picker-overlay-start]"
       end-input-selector="[name=range-picker-overlay-end]"
       on="activate:MIP.setData({activate: '触发 range-picker activate 事件'}) deactivate:MIP.setData({deactivate: '触发 range-picker deactivate 事件'}) select:MIP.setData({start: event.start, end: event.end})">
-      <input type="text" name="range-picker-overlay-start">
-      <input type="text" name="range-picker-overlay-end">
+      <input type="text" name="range-picker-overlay-start" class="range-picker-input">
+      <input type="text" name="range-picker-overlay-end" class="range-picker-input">
     </mip-date-picker>
   </mip-form>
   <p>activate 事件:<span m-text="activate"></span></p>
@@ -119,9 +119,9 @@
     <p>起始日期：<span m-text="start"></span></p>
     <p>起始日期：<span m-text="end"></span></p>
   </p>
-  <button on="tap:range-picker.clear">清空日期</button>
+  <button on="tap:range-picker.clear" class="mip-date-picker-btn">清空日期</button>
   <p>设置日期: {start: '2019-10-15', end: '2019-10-23'}</p>
-  <button on="tap:range-picker.setDates({start: '2019-10-15', end: '2019-10-23'})">设置日期</button>
+  <button on="tap:range-picker.setDates({start: '2019-10-15', end: '2019-10-23'})"  class="mip-date-picker-btn">设置日期</button>
 
   <p>range-pick: 默认起始日期和结束日期都选择后关闭选择器，通过指定 open-after-select 可以选择后不关闭</p>
   <mip-form>
@@ -129,8 +129,8 @@
       open-after-select
       start-input-selector="[name=range-picker-open-after-select-start]"
       end-input-selector="[name=range-picker-open-after-select-end]">
-      <input type="text" name="range-picker-open-after-select-start">
-      <input type="text" name="range-picker-open-after-select-end">
+      <input type="text" name="range-picker-open-after-select-start" class="range-picker-input">
+      <input type="text" name="range-picker-open-after-select-end" class="range-picker-input">
     </mip-date-picker>
   </mip-form>
 
@@ -141,8 +141,8 @@
       open-after-clear
       start-input-selector="[name=range-picker-open-after-clear-start]"
       end-input-selector="[name=range-picker-open-after-clear-end]">
-      <input type="text" name="range-picker-open-after-clear-start">
-      <input type="text" name="range-picker-open-after-clear-end">
+      <input type="text" name="range-picker-open-after-clear-start" class="range-picker-input">
+      <input type="text" name="range-picker-open-after-clear-end" class="range-picker-input">
     </mip-date-picker>
   </mip-form>
 
@@ -151,8 +151,8 @@
     <mip-date-picker mode="range-picker" format="yyyy/MM/dd"
       start-input-selector="[name=range-picker-format-start]"
       end-input-selector="[name=range-picker-format-end]">
-      <input type="text" name="range-picker-format-start">
-      <input type="text" name="range-picker-format-end">
+      <input type="text" name="range-picker-format-start" class="range-picker-input">
+      <input type="text" name="range-picker-format-end" class="range-picker-input">
     </mip-date-picker>
   </mip-form>
 
@@ -161,8 +161,8 @@
     <mip-date-picker mode="range-picker" min-date="2018-12-02" max-date="2019-10-26"
       start-input-selector="[name=range-picker-specify-range-start]"
       end-input-selector="[name=range-picker-specify-range-end]">
-      <input type="text" name="range-picker-specify-range-start">
-      <input type="text" name="range-picker-specify-range-end">
+      <input type="text" name="range-picker-specify-range-start" class="range-picker-input">
+      <input type="text" name="range-picker-specify-range-end" class="range-picker-input">
     </mip-date-picker>
   </mip-form>
 
@@ -172,8 +172,8 @@
       day-offset="1"
       start-input-selector="[name=range-picker-dayOffset-start]"
       end-input-selector="[name=range-picker-dayOffset-end]">
-      <input type="text" name="range-picker-dayOffset-start">
-      <input type="text" name="range-picker-dayOffset-end">
+      <input type="text" name="range-picker-dayOffset-start" class="range-picker-input">
+      <input type="text" name="range-picker-dayOffset-end" class="range-picker-input">
     </mip-date-picker>
   </mip-form>
 
@@ -184,8 +184,8 @@
       end="2019-10-15"
       start-input-selector="[name=range-picker-selectedDate-start]"
       end-input-selector="[name=range-picker-selectedDate-end]">
-      <input type="text" name="range-picker-selectedDate-start">
-      <input type="text" name="range-picker-selectedDate-end">
+      <input type="text" name="range-picker-selectedDate-start" class="range-picker-input">
+      <input type="text" name="range-picker-selectedDate-end" class="range-picker-input">
     </mip-date-picker>
   </mip-form>
 
@@ -195,8 +195,8 @@
       display="static"
       start-input-selector="[name=range-picker-static-start]"
       end-input-selector="[name=range-picker-static-end]">
-      <input type="text" name="range-picker-static-start">
-      <input type="text" name="range-picker-static-end">
+      <input type="text" name="range-picker-static-start" class="range-picker-input">
+      <input type="text" name="range-picker-static-end" class="range-picker-input">
     </mip-date-picker>
   </mip-form>
 

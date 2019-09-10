@@ -20,20 +20,8 @@ export default class BasePicker {
       year: null
     }
 
-    this.setState = this.setState.bind(this)
-    this.render = this.render.bind(this)
-    this.isVisible = this.isVisible.bind(this)
-    this.focusCurrent = this.focusCurrent.bind(this)
     this.onClick = this.onClick.bind(this)
     this.close = this.close.bind(this)
-    this.changeView = this.changeView.bind(this)
-    this.adjustPosition = this.adjustPosition.bind(this)
-    this.shouldFocusOnRender = this.shouldFocusOnRender.bind(this)
-    this.updateDateStyle = this.updateDateStyle.bind(this)
-    this.getInputValidDate = this.getInputValidDate.bind(this)
-    this.updateInput = this.updateInput.bind(this)
-    this.emitActivateEvent = this.emitActivateEvent.bind(this)
-    this.emitDeactivateEvent = this.emitDeactivateEvent.bind(this)
 
     this.picker = new DayPicker()
   }
@@ -134,7 +122,7 @@ export default class BasePicker {
     if (this.state.view === 'year' || this.state.view === 'month') {
       const current = this.pickerWrapper.querySelector('.dp-current')
       current && current.focus()
-    } else {
+    } else if (this.state.display !== 'static') {
       this.pickerWrapper.focus()
     }
   }
