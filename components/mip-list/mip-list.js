@@ -54,7 +54,7 @@ export default class MIPList extends CustomElement {
       type: String,
       default: ''
     },
-    'pnName': {
+    'pnname': {
       type: String,
       default: 'pn'
     },
@@ -86,7 +86,7 @@ export default class MIPList extends CustomElement {
 
   build () {
     this.dataScope = this.props.scope && this.props.id || getRandomId()
-    this.pnName = this.props['pn-name'] || this.props.pnName
+    this.pnName = this.props['pn-name'] || this.props.pnname
     this.script = this.element.querySelector('script[type="application/json"]')
 
     this.container = document.createElement('div')
@@ -136,7 +136,6 @@ export default class MIPList extends CustomElement {
 
     if (this.props.src) {
       if (this.props.preload) {
-        this.setState()
         this.asyncData(false)
       }
     } else if (this.script) {
@@ -244,7 +243,7 @@ export default class MIPList extends CustomElement {
           text = '点击查看更多'
           break
         case 'done':
-          text = '已经已经完毕'
+          text = '已经加载完毕'
           break
       }
       this.button.innerHTML = text
@@ -296,7 +295,6 @@ export default class MIPList extends CustomElement {
 
     let addPatches = patches.filter(isAddPatch)
     let removedPatches = patches.filter(isRemovedPatch)
-
     if (addPatches.length) {
       await Promise.all(
         addPatches.map(async patch => {

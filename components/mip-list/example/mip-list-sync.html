@@ -157,6 +157,28 @@
       })"
     >点击排序</div>
   </div>
+
+  <div class="wrapper">
+    <h4>测试点击修改图片</h4>
+    <mip-list id="example2" scope>
+      <script type="application/json">
+      {
+        "items": [{ "src": "https://www.mipengine.org/static/img/sample_01.jpg" }]
+      }
+      </script>
+      <template>
+        <mip-img 
+          on="tap:MIP.setData({
+            example2: exmaple2.map(
+            item => item.src === '{{src}}'
+            ? assign({}, item, {src: 'https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg' })
+              : item
+            )
+          })"
+          src="{{src}}"></mip-img>
+      </template>
+    </mip-list>
+  </div>
         <!--   , -->
         <!-- MIP.setData({ -->
         <!--   tmpName: '', -->
