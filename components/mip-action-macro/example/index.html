@@ -52,7 +52,7 @@
         id="action-without-condition"
         on="execute:MIP.navigateTo(url='https://www.baidu.com?a=' + a, target='_blank')"
       ></mip-action-macro>
-      <button on="tap:action-without-condition.execute">点击跳转至百度首页</button>
+      <button on="tap:action-without-condition.execute">点击后在新页面打开百度首页</button>
     </div>
     <div class="wrapper">
       <h2>测试增加 condition 的情况</h2>
@@ -75,7 +75,7 @@
         on="execute:MIP.navigateTo(url='https://www.baidu.com?a=' + a + '&b=' + event.b, target='_blank');
               mismatch:MIP.navigateTo(url='https://www.baidu.com?a=' + a, target='_top')"
       ></mip-action-macro>
-      <button on="tap:action-with-args.execute(b=123)">打开百度首页 并带上参数 b</button>
+      <button on="tap:action-with-args.execute(b=123)">在新页面打开百度首页 并带上参数 b</button>
     </div>
 
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
