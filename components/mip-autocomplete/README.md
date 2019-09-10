@@ -99,6 +99,8 @@
 
 ### 结合 `mip-mustache` 组件的 `template` 模板渲染组件使用
 
+>注意：由于 `mip-form` 不支持在其内部写 `div` 元素，所以 `mip-form` 子节点的 `div` 需要使用 `section`、`menu` 等可用元素替代。同时需要在替代元素上指定 `id="template-element"`。
+
 ```html
 <p>使用 filter-value 属性进行筛选，同时使用 template 模板渲染</p>
 <mip-form url="https://path/to/your/api">
@@ -127,7 +129,7 @@
     </script>
     <template type="mip-mustache"
       id="mip-template-custom">
-      <section class="city-item"
+      <section class="city-item" id="template-element"
         data-value="{{city}}, {{province}}">
         <section>{{city}}, {{province}}</section>
         <section class="custom-population">点赞数: {{population}}</section>

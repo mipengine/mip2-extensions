@@ -409,7 +409,7 @@ export default class MIPAutocomplete extends CustomElement {
         renderedChildren.map((child: any) => {
           const parserEle = document.createElement('div')
           parserEle.innerHTML = child
-          const childEle = parserEle.querySelector('section')
+          const childEle = parserEle.querySelector('#template-element')
           if (!childEle) {
             return
           }
