@@ -6,7 +6,7 @@
 const {
   util: { parse, log },
   CustomElement,
-  viewer: { eventAction }
+  viewer
 } = MIP
 
 const EXECUTE_EVENT = 'execute'
@@ -36,21 +36,33 @@ export default class MIPActionMacro extends CustomElement {
     this.addEventAction(EXECUTE_EVENT, this.execution.bind(this))
   }
 
-  execute (e, params) {
-    let event = EXECUTE_EVENT
+  execution (e, params) {
+    params = params.trim()
+
+    let eventObj
+    if (params !== '') {
+      try {
+        eventObj = JSON.parse(params)
+      } catch (e) {}
+    }
+
+    if (!eventObj) {
+      eventObj = {}
+    }
+
+    let eventName = EXECUTE_EVENT
 
     if (this.fn) {
       let result = this.fn({
-        event: params,
+        event: eventObj,
         // eventName: EXECUTE_EVENT,
         target: this.element
       })
       if (!result) {
-        event = MISMATCH_EVENT
+        eventName = MISMATCH_EVENT
       }
     }
-
-    eventAction.execute(event, this.element, params)
+    viewer.eventAction.execute(eventName, this.element, eventObj)
   }
 
   prerenderAllowed () {
