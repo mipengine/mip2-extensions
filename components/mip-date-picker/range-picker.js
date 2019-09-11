@@ -81,6 +81,7 @@ export default class RangePicker extends BasePicker {
         this.state.selectedDate = null
         this.state.start = null
         this.state.end = null
+        this.state.hoverDate = null
         this.updateInput()
         if (this.state.openAfterclear) {
           this.updateDateStyle()
@@ -91,6 +92,7 @@ export default class RangePicker extends BasePicker {
       // selectedDate 当前选中的日期，无法区分是 start 还是 end
       if (key === 'selectedDate') {
         this.state.hilightedDate = state[key]
+        this.state.hoverDate = null
         this.focusCurrent()
         this.updateRange(state[key])
 
