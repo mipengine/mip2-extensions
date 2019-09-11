@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=no">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+    <style mip-custom>
+    /* 自定义样式 */
+    button {
+      border: 1px solid #000;
+      padding: 2px 4px;
+    }
+    .description {
+      margin-bottom: 20px;
+      margin-left: 15px;
+      padding: 15px 5px 5px 5px;
+    }
+    .description ul {
+      list-style-type: circle;
+    }
+
+    .wrapper {
+      margin: 5px;
+      border: 1px solid #000;
+      padding: 5px;
+    }
+    </style>
+  </head>
+  <body>
+    <mip-data>
+      <script type="application/json">
+      {
+        "a": 1,
+        "target": "_blank"
+      }
+      </script>
+    </mip-data>
+    <div>
+      <div class="description">
+        <p>mip-action-macro 是 MIP 交互机制的补充组件，其作用主要包括：</p>
+        <ul>
+          <li>增加行为表达式的可复用性。开发者可以通过 mip-action-macro 将一些通用的行为进行封装，这样就可以通过 [id].execute 的方式去复用这些行为</li>
+          <li>增加行为执行前的分支判断能力。mip-action-macro 提供了 condition 配置项，在执行方法前，会首先判断 condition 的执行条件是否为 truly，对应触发 execute 或 mismatch 事件，这样监听不同的事件就能够起到分支判断的效果。</li>
+        </ul>
+      </div>
+    <div class="wrapper">
+      <h2>测试正常的 action macro</h2>
+      <p>此时 action macro 未定义 condition，默认触发 execute 行为</p>
+      <mip-action-macro
+        id="action-without-condition"
+        on="execute:MIP.navigateTo(url='https://www.baidu.com?a=' + a, target='_blank')"
+      ></mip-action-macro>
+      <button on="tap:action-without-condition.execute">点击后在新页面打开百度首页</button>
+    </div>
+    <div class="wrapper">
+      <h2>测试增加 condition 的情况</h2>
+      <p>通过点击切换 target，在执行 action-with-conditon.execute 时会依次进入不同的事件当中</p>
+      <mip-action-macro
+        id="action-with-condition"
+        condition="target === '_blank'"
+        on="execute:MIP.navigateTo(url='https://www.baidu.com?a=' + a, target='_blank');
+              mismatch:MIP.navigateTo(url='https://www.baidu.com?a=' + a, target='_top')"
+      ></mip-action-macro>
+      <button on="tap:action-with-condition.execute" m-text="'打开百度首页 target：' + target"></button>
+      <button on="tap:MIP.setData({ target: target === '_blank' ? '_top' : '_blank' })">点击切换 target</button>
+    </div>
+    <div class="wrapper">
+      <h2>测试传参</h2>
+      <p>在执行 mip-action-macro 的 execute 事件时，允许传入参数，并在 condition 和 on 表达式里面通过 event.xxx 访问。这里要求参数必须满足 key=value 的参数定义形式。</p>
+      <mip-action-macro
+        id="action-with-args"
+        condition="event.b === 123"
+        on="execute:MIP.navigateTo(url='https://www.baidu.com?a=' + a + '&b=' + event.b, target='_blank');
+              mismatch:MIP.navigateTo(url='https://www.baidu.com?a=' + a, target='_top')"
+      ></mip-action-macro>
+      <button on="tap:action-with-args.execute(b=123)">在新页面打开百度首页 并带上参数 b</button>
+    </div>
+
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="/mip-action-macro/mip-action-macro.js"></script>
+  </body>
+</html>
