@@ -99,6 +99,8 @@
 
 ### 结合 `mip-mustache` 组件的 `template` 模板渲染组件使用
 
+>注意：由于 `mip-form` 下的 `div` 元素默认不显示，所以 `mip-form` 的 `div` 需要开发者手动进行 `mip-form div` 样式覆盖或者使用 `section`等可用元素替代。同时在 `template` 下的元素都会被模板渲染，注意不要添加无关元素。
+
 ```html
 <p>使用 filter-value 属性进行筛选，同时使用 template 模板渲染</p>
 <mip-form url="https://path/to/your/api">
