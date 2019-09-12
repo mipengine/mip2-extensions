@@ -14,6 +14,7 @@ App 下载，可区分 Android 和 iOS。
 
 ```html
 <mip-appdl
+  tpl="imageText"
   src="http://boscdn.baidu.com/v1/assets/mipengine/app_logo.png"
   texttip= "['搜索+资讯（有图版）','下载百度App','下载百度App']"
   downbtntext="立即使用"
@@ -30,6 +31,7 @@ App 下载，可区分 Android 和 iOS。
 ```html
 <mip-fixed type="bottom">
   <mip-appdl
+    tpl="imageText"
     src="http://boscdn.baidu.com/v1/assets/mipengine/app_logo.png"
     texttip= "['搜索+资讯（有图版）','下载百度App','下载百度App']"
     downbtntext="立即使用"
@@ -42,6 +44,16 @@ App 下载，可区分 Android 和 iOS。
 
 
 ## 属性
+
+### tpl
+
+说明：展示类型
+
+必填：是
+
+格式：字符串
+
+取值：`imageText`
 
 ### src
 
