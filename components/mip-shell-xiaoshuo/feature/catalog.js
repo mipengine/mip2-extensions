@@ -7,15 +7,15 @@
  */
 
 import state from '../common/state'
-import {getCurrentWindow, getParamFromString} from '../common/util'
+import {getCurrentWindow, getParamFromString, deleteUrlParams} from '../common/util'
 import {sendWebbLog, sendTCLog} from '../common/log' // 日志
 const currentWindow = getCurrentWindow()
 const {currentPage} = state(currentWindow)
-const CHAPTER_LIST_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/reading/mip/chapterlist?' // online
-const CHAPTER_URL = 'https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/novelsearch.pae.baidu.com/reading/mip/chapterinfo?' // online
-// const CHAPTER_LIST_URL = 'http://cp01-zhangjunxing.epc.baidu.com:8600/mip/chapterlist?' // online
-const originUrl = MIP.util.getOriginalUrl()
-// const originUrl = 'http://www.xmkanshu.com/book/mip/read?bkid=685640121&crid=288&fr=bdgfh&mip=1&pg=3'
+const CHAPTER_LIST_URL = 'https://novelapi.baidu.com/novelopenapi/mip/chapterlist?' // online
+const CHAPTER_URL = 'https://novelapi.baidu.com/novelopenapi/mip/chapterinfo?' // online
+
+let originUrl = MIP.util.getOriginalUrl()
+originUrl = deleteUrlParams(originUrl)
 let util = MIP.util
 let event = util.event
 
