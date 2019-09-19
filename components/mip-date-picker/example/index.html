@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <link rel="canonical" href="">
+  <title>mip-date-picker</title>
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    /* 自定义样式 */
+    table th {
+      text-align: left;
+    }
+    p {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <mip-data>
+    <script type="application/json">
+      {
+        "selectedDate": "null",
+        "start": "null",
+        "end": "null",
+        "activate": "未发生",
+        "deactivate": "未发生"
+      }
+    </script>
+  </mip-data>
+
+  <p>date-pick: 下拉模式</p>
+  <mip-form>
+    <mip-date-picker mode="date-picker"
+      id="date-picker"
+      input-selector="[name=date-picker-overlay]"
+      on="activate:MIP.setData({activate: '触发 activate 事件'}) deactivate:MIP.setData({deactivate: '触发 deactivate 事件'}) select:MIP.setData({selectedDate: event.date})">
+      <input type="text" name="date-picker-overlay">
+    </mip-date-picker>
+  </mip-form>
+  <p>activate 事件:<span m-text="activate"></span></p>
+  <p>deactivate 事件:<span m-text="deactivate"></span></p>
+  <p>select 事件:<span m-text="selectedDate"></span></p>
+  <button on="tap:date-picker.clear" class="mip-date-picker-btn">清空日期</button>
+  <button on="tap:date-picker.setDate({date: '2019-10-15'})" class="mip-date-picker-btn">设置日期</button>
+  <button on="tap:date-picker.today" class="mip-date-picker-btn">选择今天</button>
+
+  <p>date-pick: 默认选择日期后关闭选择器，通过指定 open-after-select 可以选择后不关闭</p>
+  <mip-form>
+    <mip-date-picker mode="date-picker"
+      open-after-select
+      input-selector="[name=date-picker-open-after-select]">
+      <input type="text" name="date-picker-open-after-select">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>date-pick: 默认清空日期后关闭选择器，通过指定 open-after-clear 可以选择后不关闭</p>
+  <mip-form>
+    <mip-date-picker mode="date-picker"
+      open-after-select
+      open-after-clear
+      input-selector="[name=date-picker-open-after-clear]">
+      <input type="text" name="date-picker-open-after-clear">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>date-pick: 指定 input 框的日期显示格式</p>
+  <mip-form>
+    <mip-date-picker mode="date-picker" format="yyyy/MM/dd" input-selector="[name=date-picker-format]">
+      <input type="text" name="date-picker-format">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>date-pick: 指定可选范围: min-date="2018-12-02" max-date="2019-10-26"，此时可选年份只有范围内的</p>
+  <mip-form>
+    <mip-date-picker mode="date-picker" min-date="2018-12-02" max-date="2019-10-26"
+      input-selector="[name=date-picker-start-end]">
+      <input type="text" name="date-picker-start-end">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>date-pick: 日历以周几作为第一天：默认为周日，day-offset="1" 时周一为第一天 </p>
+  <mip-form>
+    <mip-date-picker mode="date-picker" input-selector="[name=date-picker-dayOffset]" day-offset="1">
+      <input type="text" name="date-picker-dayOffset">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>date-pick: 指定默认选中日期：2019-10-01</p>
+  <mip-form>
+    <mip-date-picker mode="date-picker" selected-date="2019-10-01" input-selector="[name=date-picker-selectedDate]">
+      <input type="text" name="date-picker-selectedDate">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>date-pick: 静态模式</p>
+  <mip-form>
+    <mip-date-picker mode="date-picker" display="static" input-selector="[name=date-picker-static]">
+      <input type="text" name="date-picker-static">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>range-pick: 下拉模式</p>
+  <mip-form>
+    <mip-date-picker mode="range-picker"
+      id="range-picker"
+      start-input-selector="[name=range-picker-overlay-start]"
+      end-input-selector="[name=range-picker-overlay-end]"
+      on="activate:MIP.setData({activate: '触发 range-picker activate 事件'}) deactivate:MIP.setData({deactivate: '触发 range-picker deactivate 事件'}) select:MIP.setData({start: event.start, end: event.end})">
+      <input type="text" name="range-picker-overlay-start" class="range-picker-input">
+      <input type="text" name="range-picker-overlay-end" class="range-picker-input">
+    </mip-date-picker>
+  </mip-form>
+  <p>activate 事件:<span m-text="activate"></span></p>
+  <p>deactivate 事件:<span m-text="deactivate"></span></p>
+  <p>select 事件:
+    <p>起始日期：<span m-text="start"></span></p>
+    <p>起始日期：<span m-text="end"></span></p>
+  </p>
+  <button on="tap:range-picker.clear" class="mip-date-picker-btn">清空日期</button>
+  <p>设置日期: {start: '2019-10-15', end: '2019-10-23'}</p>
+  <button on="tap:range-picker.setDates({start: '2019-10-15', end: '2019-10-23'})"  class="mip-date-picker-btn">设置日期</button>
+
+  <p>range-pick: 默认起始日期和结束日期都选择后关闭选择器，通过指定 open-after-select 可以选择后不关闭</p>
+  <mip-form>
+    <mip-date-picker mode="range-picker"
+      open-after-select
+      start-input-selector="[name=range-picker-open-after-select-start]"
+      end-input-selector="[name=range-picker-open-after-select-end]">
+      <input type="text" name="range-picker-open-after-select-start" class="range-picker-input">
+      <input type="text" name="range-picker-open-after-select-end" class="range-picker-input">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>range-pick: 默认清空日期后关闭选择器，通过指定 open-after-clear 可以选择后不关闭</p>
+  <mip-form>
+    <mip-date-picker mode="range-picker"
+      open-after-select
+      open-after-clear
+      start-input-selector="[name=range-picker-open-after-clear-start]"
+      end-input-selector="[name=range-picker-open-after-clear-end]">
+      <input type="text" name="range-picker-open-after-clear-start" class="range-picker-input">
+      <input type="text" name="range-picker-open-after-clear-end" class="range-picker-input">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>range-pick: 指定 input 框的日期显示格式</p>
+  <mip-form>
+    <mip-date-picker mode="range-picker" format="yyyy/MM/dd"
+      start-input-selector="[name=range-picker-format-start]"
+      end-input-selector="[name=range-picker-format-end]">
+      <input type="text" name="range-picker-format-start" class="range-picker-input">
+      <input type="text" name="range-picker-format-end" class="range-picker-input">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>range-pick: 指定可选范围: min-date="2018-12-02" max-date="2019-10-26"，此时可选年份只有范围内的</p>
+  <mip-form>
+    <mip-date-picker mode="range-picker" min-date="2018-12-02" max-date="2019-10-26"
+      start-input-selector="[name=range-picker-specify-range-start]"
+      end-input-selector="[name=range-picker-specify-range-end]">
+      <input type="text" name="range-picker-specify-range-start" class="range-picker-input">
+      <input type="text" name="range-picker-specify-range-end" class="range-picker-input">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>range-pick: 日历以周几作为第一天：默认为周日，day-offset="1" 时周一为第一天 </p>
+  <mip-form>
+    <mip-date-picker mode="range-picker"
+      day-offset="1"
+      start-input-selector="[name=range-picker-dayOffset-start]"
+      end-input-selector="[name=range-picker-dayOffset-end]">
+      <input type="text" name="range-picker-dayOffset-start" class="range-picker-input">
+      <input type="text" name="range-picker-dayOffset-end" class="range-picker-input">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>range-pick: 指定默认选中日期：start: 2019-09-01, end: 2019-10-15</p>
+  <mip-form>
+    <mip-date-picker mode="range-picker"
+      start="2019-09-01"
+      end="2019-10-15"
+      start-input-selector="[name=range-picker-selectedDate-start]"
+      end-input-selector="[name=range-picker-selectedDate-end]">
+      <input type="text" name="range-picker-selectedDate-start" class="range-picker-input">
+      <input type="text" name="range-picker-selectedDate-end" class="range-picker-input">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>range-pick: 静态模式</p>
+  <mip-form>
+    <mip-date-picker mode="range-picker"
+      display="static"
+      start-input-selector="[name=range-picker-static-start]"
+      end-input-selector="[name=range-picker-static-end]">
+      <input type="text" name="range-picker-static-start" class="range-picker-input">
+      <input type="text" name="range-picker-static-end" class="range-picker-input">
+    </mip-date-picker>
+  </mip-form>
+
+  <p>这是一段为了确认日历弹出后位置是否正确的文字</p>
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-form/mip-form.js"></script>
+  <script src="/mip-date-picker/mip-date-picker.js"></script>
+</body>
+
+</html>

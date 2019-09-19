@@ -8,6 +8,85 @@
 支持布局|responsive, fixed-height, fill, container, fixed
 所需脚本|https://c.mipcdn.com/static/v2/mip-accordion/mip-accordion.js
 
+## 使用说明
+
+mip-accordion 是一个折叠隐藏节点的 MIP 组件，可以对满足特定结构的节点提供隐藏显示的能力。一个简单的 mip-accordin 组件的使用结构如下所示：
+
+```xml
+<mip-accordion sessions-key="simple_key">
+  <section>
+    <div>标题</div>
+    <div>内容</div>
+  </section>
+</mip-accordion>
+```
+
+`<mip-accordion>` 内部会将 `<section>` 标签识别为可折叠的块，同时要求 `<section>` 里面必须包含两个子节点，第一个节点将被自动识别为 `title`，在折叠的时候这个 `title` 节点将一直显示，点击 title 将会展开或折叠 `content` 块；第二个节点被识别为 `content`，这个内容块就是能够被展开折叠的块。
+
+[notice] section 块必须存在两个子节点，不然会报错。
+
+[info] title 和 content 块可以是任何形式的内容，包括文本，图片、其他节点
+
+```xml
+<mip-accordion sessions-key="key-1">
+  <section>
+    <div>
+      <div>标题1 第一行</div>
+      <div>标题1 第二行</div>
+    </div>
+    <div>
+      <div>内容1 第一行</div>
+      <div>内容1 第二行</div>
+    </div>
+  </section>
+</mip-accordion>
+```
+
+[info] `<mip-accordion>` 会遍历节点内部的所有 `<section>` 块，因此不要求 `section` 必须为 `<mip-accordion>` 的直接子节点，但不建议将 section 嵌套在其他节点内，以避免可能存在的问题。
+
+[info] 如果需要实现嵌套的展开折叠功能，建议通过嵌套 `<mip-accordion>` 实现，而不要直接通过嵌套 `<section>` 实现：
+
+建议：
+
+```xml
+<mip-accordion sessions-key="key-1">
+  <section>
+    <div>标题</div>
+    <div>
+      <p>内容</p>
+      <mip-accordion sessions-key="key-1">
+        <section>
+          <div>子标题</div>
+          <div>
+            <p>子内容</p>
+          </div>
+        </section>
+      </mip-accordion>
+    </div>
+  </section>
+</mip-accordion>
+```
+
+避免：
+
+```xml
+<mip-accordion sessions-key="key-1">
+  <section>
+    <div>标题</div>
+    <div>
+      <p>内容</p>
+      <section>
+        <div>子标题</div>
+        <div>
+          <p>子内容</p>
+        </div>
+      </section>
+    </div>
+  </section>
+</mip-accordion>
+
+```
+
 ## 示例
 
 ### 标题加内容形式

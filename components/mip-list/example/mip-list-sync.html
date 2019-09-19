@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+    body {
+      padding: 20px 20px
+    }
+    h4 {
+      margin: 20px 0 10px
+    }
+    p {
+      margin: 8px 0
+    }
+    button {
+      margin: 5px 0 0 0
+    }
+
+    .color-button {
+      display: inline-block;
+      background: #dcdcdc;
+      padding: 5px;
+    }
+    .del-button {
+      display: inline-block;
+      background: #f00;
+      padding: 5px;
+    }
+
+    .block {
+      border: 1px solid #000;
+      margin-bottom: 5px;
+    }
+    .wrapper {
+      border: 1px solid #dcdcdc;
+      padding: 0 5px;
+      margin-bottom: 5px;
+    }
+    .input-wrapper {
+      border: 1px solid #000;
+      display: block;
+      margin-bottom: 5px;
+      width: 120px;
+      padding: 5px;
+    }
+    .simple-button {
+      border-radius: 3px;
+      border: 1px solid #dcdcdc;
+      width: 120px;
+      margin: 5px 5px 10px 0;
+      padding: 5px;
+      text-align: center;
+      user-select: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h4>同步数据</h4>
+  <p>使用内置的数据渲染 mip-list</p>
+  <mip-list
+    id="aList"
+    scope
+  >
+    <script type="application/json">
+      {
+        "items": [{
+          "name": "a",
+          "alias": "aa",
+          "key": "a"
+        }, {
+          "name": "b",
+          "alias": "bb",
+          "key": "b"
+        }, {
+          "name": "c",
+          "alias": "cc",
+          "key": "c"
+        },{
+          "name": "d",
+          "alias": "dd",
+          "key": "d"
+        },{
+          "name": "e",
+          "alias": "ee",
+          "key": "e"
+        }]
+      }
+    </script>
+    <template type="mip-mustache">
+      <div class="block">
+        <div>
+          <span
+            class="color-button"
+            on="tap:MIP.setData({
+              aListColor{{key}}: 'red'
+            })"
+          >red</span>
+          <span
+            class="color-button"
+            on="tap:MIP.setData({
+              aListColor{{key}}: 'green'
+            })"
+          >green</span>
+          <span
+            class="del-button"
+            on="tap:MIP.setData({
+              aList: aList.filter(item => item.key !== '{{key}}'),
+              aListColor{{key}}: undefined
+            })"
+          >删除</span>
+        </div>
+        <div
+          m-bind:style="{ color: aListColor{{key}} }"
+        >{{ name }} . {{ alias }}</div>
+      </div>
+    </template>
+  </mip-list>
+  <div class="wrapper">
+    <h4>新增列表</h4>
+    <input m-bind:value="tmpName" class="input-wrapper" type="text"
+    placeholder="请输入 name">
+    <input m-bind:value="tmpAlias" class="input-wrapper" type="text"
+    placeholder="请输入 alias">
+    <input m-bind:value="tmpKey" class="input-wrapper" type="text"
+    placeholder="请输入 key">
+    <div
+      class="simple-button"
+      on="tap:
+        MIP.setData({
+          aList: (aList || []).concat({
+            name: tmpName,
+            alias: tmpAlias,
+            key: tmpKey
+          })
+        }),
+        MIP.setData({
+          tmpName: '',
+          tmpAlias: '',
+          tmpKey: ''
+        })
+    ">新增一行</div>
+  </div>
+  <div class="wrapper">
+    <h4>乱序测试</h4>
+    <p>点击按钮触发列表随机排序</p>
+    <p m-text="aList.map(item => item.name + '.' + item.alias).join(' ')"></p>
+    <div class="simple-button"
+      on="tap:MIP.setData({
+        aList: (aList || []).sort((a, b) => Math.random() - 0.5)
+      })"
+    >点击排序</div>
+  </div>
+
+  <div class="wrapper">
+    <h4>测试点击修改图片</h4>
+    <mip-list id="example2" scope>
+      <script type="application/json">
+      {
+        "items": [{ "src": "https://www.mipengine.org/static/img/sample_01.jpg" }]
+      }
+      </script>
+      <template>
+        <mip-img 
+          on="tap:MIP.setData({
+            example2: exmaple2.map(
+            item => item.src === '{{src}}'
+            ? assign({}, item, {src: 'https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg' })
+              : item
+            )
+          })"
+          src="{{src}}"></mip-img>
+      </template>
+    </mip-list>
+  </div>
+        <!--   , -->
+        <!-- MIP.setData({ -->
+        <!--   tmpName: '', -->
+        <!--   tmpAlias: '', -->
+        <!--   tmpKey: '' -->
+        <!-- }) -->
+
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <!-- <script src="http://localhost:8080/dist/mip.js"></script> -->
+  <script src="/mip-mustache/mip-mustache.js"></script>
+  <script src="/mip-list/mip-list.js"></script>
+</body>
+</html>

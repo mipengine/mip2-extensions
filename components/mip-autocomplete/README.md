@@ -6,7 +6,7 @@
 ----|----
 类型|通用
 支持布局|container
-所需脚本| https://c.mipcdn.com/static/v2/mip-autocomplete/mip-autocomplete.js
+所需脚本| https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js<br>https://c.mipcdn.com/static/v2/mip-form/mip-form.js<br>https://c.mipcdn.com/static/v2/mip-autocomplete/mip-autocomplete.js
 
 ## 示例
 
@@ -18,7 +18,7 @@
 
 数据设置在浏览器端：
 
-```html
+```xml
 <mip-form>
   <mip-autocomplete filter="substring">
     <input type="text">
@@ -33,7 +33,7 @@
 
 数据来自服务器端：
 
-```html
+```xml
 <mip-form>
   <mip-autocomplete filter="substring"
     src="https://example.tips">
@@ -68,8 +68,8 @@
 像如上数据所示，组件默认按照 `value` 属性进行筛选，也支持按照指定属性筛选，如下 `city`:
 
 ```html
-<h2>使用 filter-value 属性进行筛选</h2>
-<mip-form>
+<p>使用 filter-value 属性进行筛选</p>
+<mip-form url="https://path/to/your/api">
   <mip-autocomplete filter="substring"
     filter-value="city">
     <input type="text">
@@ -99,9 +99,11 @@
 
 ### 结合 `mip-mustache` 组件的 `template` 模板渲染组件使用
 
+>注意：由于 `mip-form` 下的 `div` 元素默认不显示，所以 `mip-form` 的 `div` 需要开发者手动进行 `mip-form div` 样式覆盖或者使用 `section`等可用元素替代。同时在 `template` 下的元素都会被模板渲染，注意不要添加无关元素。
+
 ```html
-<h2>使用 filter-value 属性进行筛选，同时使用 template 模板渲染</h2>
-<mip-form>
+<p>使用 filter-value 属性进行筛选，同时使用 template 模板渲染</p>
+<mip-form url="https://path/to/your/api">
   <mip-autocomplete filter="substring"
     filter-value="city">
     <input type="text">
@@ -127,11 +129,11 @@
     </script>
     <template type="mip-mustache"
       id="mip-template-custom">
-      <div class="city-item"
+      <section class="city-item"
         data-value="{{city}}, {{province}}">
-        <div>{{city}}, {{province}}</div>
-        <div class="custom-population">点赞数: {{population}}</div>
-      </div>
+        <section>{{city}}, {{province}}</section>
+        <section class="custom-population">点赞数: {{population}}</section>
+      </section>
     </template>
   </mip-autocomplete>
 </mip-form>
@@ -194,8 +196,8 @@
 `mip-form` 会将 `input` 的 `name` 属性作为参数名，将填的值作为参数进行提交，若发现无参数提交，请检查 `input` 的 `name` 属性是否设置，参考如下：
 
 ```js
-<h2>更多功能 -- submit-on-enter="true"</h2>
-<mip-form method="GET" fetch-url="./mock.json">
+<p>更多功能 -- submit-on-enter="true"</p>
+<mip-form method="GET" fetch-url="https://path/to/api">
   <mip-autocomplete filter="substring" submit-on-enter="true">
     <input name="name">
     <script type="application/json">
@@ -253,7 +255,7 @@ app.get('/data', function (req, res) {
 
 ```html
 <h2>更多功能 -- select 事件</h2>
-<mip-form method="GET" fetch-url="./mockSubmit.json" on="select:toast1.show(event.value)">
+<mip-form method="GET" fetch-url="https://path/to/mockSubmit.json" on="select:toast1.show(event.value)">
   <mip-autocomplete filter="substring" submit-on-enter="true">
     <input name="name">
     <script type="application/json">
@@ -269,26 +271,3 @@ app.get('/data', function (req, res) {
 </mip-toast>
 ```
 
-## 示例
-
-```html
-<h2>基本使用 -- 浏览器端设置提示数据，filter="substring"</h2>
-<mip-form>
-  <mip-autocomplete filter="substring">
-    <input>
-    <script type="application/json">
-      {
-        "items": ["apple", "orange", "banana"]
-      }
-    </script>
-  </mip-autocomplete>
-</mip-form>
-
-<h2>基本使用 -- 服务器端获取提示数据，filter="substring"</h2>
-<mip-form>
-  <mip-autocomplete filter="substring"
-    src="./mockGet.json">
-    <input>
-  </mip-autocomplete>
-</mip-form>
-```
