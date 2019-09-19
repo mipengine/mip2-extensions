@@ -1,6 +1,6 @@
 # mip-action-macro MIP 交互行为拓展
 
-为 MIP on 表达式拓展 1）方法复用 2）方法执行前置判断 等功能。
+为 MIP on 表达式拓展 1）行为封装 2）方法执行前置判断 3）有限运算能力 等功能。
 
 标题|内容
 ----|----
@@ -72,6 +72,35 @@ mip-action-macro 能够将 MIP on 表达式当中的行为部分封装起来，�
 
 在这个例子当中，我们设置了条件 `event.url === simpleData.mipengine`，因此点击跳转百度首页时会不执行，只有当点击跳转 MIP 官网首页时才会执行。
 
+### 有限运算能力
+
+`<mip-action-macro>` 支持在 on 事件回调当中进行有限的运算，除了原先就支持的 `MIP.setData` 内部支持 MIP 表达式进行运算之外，目前还开放了 [全局元素方法](https://www.mipengine.org/v2/docs/interactive-mip/event-and-action.html#%E5%85%A8%E5%B1%80%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95) 和 [全部特殊对象方法](https://www.mipengine.org/v2/docs/interactive-mip/event-and-action.html#%E7%89%B9%E6%AE%8A%E5%AF%B9%E8%B1%A1%E6%96%B9%E6%B3%95) 的运算能力。
+
+以 `MIP.navigateTo` 为例，我们可以在 `<mip-action-macro>` 当中进行一些简单的运算：
+
+```html
+<mip-data id="simpleData" scope>
+  <script type="application/json">
+  {
+    "protocol": "https://",
+    "baidu": "www.baidu.com"
+  }
+  </script>
+</mip-data>
+<mip-action-macro
+  id="simple-macro-id"
+  on="execute:
+    MIP.navigateTo(
+      url=simpleData.protocol + event.url,
+      target='_blank'
+    )"
+></mip-action-macro>
+
+<button on="tap:simple-macro-id.execute(url=simpleData.baidu)">点击跳转百度首页</button>
+
+```
+
+可以看到，`MIP.navigateTo` 的 `url` 参数由 `simpleData.protocol + event.url` 字符串拼接而成，点击按钮仍然能正常跳转到百度首页，由此可见有限的计算能力得到了支持。事实上，只要计算表达式满足 [MIP 表达式](https://www.mipengine.org/v2/docs/interactive-mip/expression.html)的要求，同时计算的结果满足方法的参数数据要求时，就可以正常工作了。
 
 ## 属性
 
