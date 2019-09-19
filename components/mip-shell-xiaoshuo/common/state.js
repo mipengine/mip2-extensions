@@ -2,7 +2,7 @@
  * @file 小说中的各种状态
  * @author JennyL, LiuJing
  */
-import {getJsonld, getRootWindow} from './util'
+import {getJsonld, getRootWindow, deleteUrlParams} from './util'
 
 export default (currentWindow) => {
   const jsonld = getJsonld(currentWindow)
@@ -18,7 +18,7 @@ export default (currentWindow) => {
       *
       * @type {string} 当前页面的原始URL
       */
-    originalUrl: currentWindow.MIP.util.getOriginalUrl(),
+    originalUrl: deleteUrlParams(currentWindow.MIP.util.getOriginalUrl()),
     /**
       * 返回当前页面状态
       *
