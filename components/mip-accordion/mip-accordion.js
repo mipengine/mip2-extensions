@@ -179,10 +179,22 @@ function getSections (element) {
   return validSections
 }
 
+/**
+ * 生成 session key
+ *
+ * @param {string} sessionId sessionId
+ * @return {string} session key
+ */
 function getSessionKey (sessionId) {
   return `MIP-${sessionId}-${location.href}`
 }
 
+/**
+ * 处理动画时间
+ *
+ * @param {string} aniTimeAttr 动画时间配置属性
+ * @return {number} 动画时间秒数
+ */
 function getAniTime (aniTimeAttr) {
   return isNaN(aniTimeAttr) ? 0.24 : Math.min(parseFloat(aniTimeAttr, 10), 1)
 }
