@@ -73,6 +73,14 @@ export default class MIPList extends CustomElement {
     'preload': {
       type: Boolean,
       default: false
+    },
+    'items-desc': {
+      type: String,
+      default: 'data.items'
+    },
+    'end-desc': {
+      type: String,
+      default: 'data.isEnd'
     }
   }
 
@@ -85,6 +93,9 @@ export default class MIPList extends CustomElement {
   }
 
   build () {
+    this.itemsDescKeys = this.props['items-desc'].split('.')
+    this.isEndDescKeys = this.props['end-desc'].split('.')
+
     this.dataScope = this.props.scope && this.props.id || getRandomId()
     this.pnName = this.props['pn-name'] || this.props.pnname
     this.script = this.element.querySelector('script[type="application/json"]')
@@ -181,11 +192,11 @@ export default class MIPList extends CustomElement {
       try {
         let data = await this.request(this.src)
         this.setState(data)
-        if (!data || data.status || !data.data) {
-          throw 'data error'
-        }
-        this.setData(data.data.items, shouldAppend)
-        if (data.data.isEnd) {
+        let items = this.getItems(data, this.itemsDescKeys)
+        this.setData(items, shouldAppend)
+        let isEnd = this.getItems(data, this.isEndDescKeys)
+
+        if (isEnd) {
           this.setPendingState('done')
         } else {
           this.setPendingState('more')
@@ -196,6 +207,16 @@ export default class MIPList extends CustomElement {
         viewer.eventAction.execute('fetch-error', this.element, e)
       }
     }
+  }
+
+  getItems (data, keys) {
+    let length = keys.length
+
+    let items = data
+    for (let i = 0; i < length; i++) {
+      items = items[keys[i]]
+    }
+    return items
   }
 
   setData (items, shouldAppend = true) {
@@ -223,8 +244,14 @@ export default class MIPList extends CustomElement {
 
   setState (data) {
     this.setSrc()
-    if (data) {
-      this.loadMore = data.data && !data.data.isEnd && this.loadMore || false
+    if (data && this.loadMore) {
+      let isEnd = false
+
+      try {
+        isEnd = this.getItems(data, this.isEndDescKeys)
+      } catch (e) {}
+
+      this.loadMore = !isEnd
     }
   }
 
@@ -303,6 +330,7 @@ export default class MIPList extends CustomElement {
         })
       )
     }
+
     update({
       patches,
       parent: this.container,
