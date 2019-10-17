@@ -15,7 +15,7 @@ App 下载，可区分 Android 和 iOS。
 ```html
 <mip-appdl
   tpl="imageText"
-  src="http://boscdn.baidu.com/v1/assets/mipengine/app_logo.png"
+  src="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/app_logo.png"
   texttip= "['搜索+资讯（有图版）','下载百度App','下载百度App']"
   downbtntext="立即使用"
   other-downsrc="https://downapp.baidu.com/baidusearch/AndroidPhone/11.3.0.13/1/757b/20190108123357/baidusearch_AndroidPhone_11-3-0-13_757b.apk"
@@ -32,7 +32,7 @@ App 下载，可区分 Android 和 iOS。
 <mip-fixed type="bottom">
   <mip-appdl
     tpl="imageText"
-    src="http://boscdn.baidu.com/v1/assets/mipengine/app_logo.png"
+    src="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/app_logo.png"
     texttip= "['搜索+资讯（有图版）','下载百度App','下载百度App']"
     downbtntext="立即使用"
     other-downsrc="https://downapp.baidu.com/baidusearch/AndroidPhone/11.3.0.13/1/757b/20190108123357/baidusearch_AndroidPhone_11-3-0-13_757b.apk"
