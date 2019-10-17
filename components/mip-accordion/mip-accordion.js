@@ -157,7 +157,7 @@ function heightAni (opt) {
  * 获取组件 slot 下面的所有 <section>，并且过滤掉嵌套 MIP 组件下面的 section，以免 MIP 组件嵌套造成相互影响
  *
  * @param {HTMLElement} element 组件根节点
- * @return {Array.<HTMLElement>} selection 列表
+ * @returns {Array.<HTMLElement>} selection 列表
  */
 function getSections (element) {
   const sections = element.querySelectorAll('section')
@@ -183,7 +183,7 @@ function getSections (element) {
  * 生成 session key
  *
  * @param {string} sessionId sessionId
- * @return {string} session key
+ * @returns {string} session key
  */
 function getSessionKey (sessionId) {
   return `MIP-${sessionId}-${location.href}`
@@ -193,7 +193,7 @@ function getSessionKey (sessionId) {
  * 处理动画时间
  *
  * @param {string} aniTimeAttr 动画时间配置属性
- * @return {number} 动画时间秒数
+ * @returns {number} 动画时间秒数
  */
 function getAniTime (aniTimeAttr) {
   return isNaN(aniTimeAttr) ? 0.24 : Math.min(parseFloat(aniTimeAttr, 10), 1)
@@ -329,7 +329,7 @@ export default class MIPAccordion extends CustomElement {
    * 通过节点容器获取 header
    *
    * @param {HTMLElement} section 节点容器
-   * @return {HTMLElement} header
+   * @returns {HTMLElement} header
    */
   getHeader (section) {
     return section.children.item(0)
@@ -339,7 +339,7 @@ export default class MIPAccordion extends CustomElement {
    * 通过节点容器获取 content
    *
    * @param {HTMLElement} section 节点容器
-   * @return {HTMLElement} content
+   * @returns {HTMLElement} content
    */
   getContent (section) {
     return section.children.item(1)
@@ -349,7 +349,7 @@ export default class MIPAccordion extends CustomElement {
    * 展开节点
    *
    * @param {string=} targetId content 的节点 id
-   * @param {HTMLElement} content 节点容器
+   * @param {HTMLElement} section 节点容器
    * @param {boolean} animate 展开过程是否出动画
    */
   unfold ({
@@ -392,7 +392,7 @@ export default class MIPAccordion extends CustomElement {
    * 折叠节点
    *
    * @param {string=} targetId content 的节点 id
-   * @param {HTMLElement} content 节点容器
+   * @param {HTMLElement} section 节点容器
    * @param {boolean} animate 展开过程是否出动画
    */
   fold ({
