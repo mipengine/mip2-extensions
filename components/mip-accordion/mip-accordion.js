@@ -196,7 +196,8 @@ function getSessionKey (sessionId) {
  * @returns {number} 动画时间秒数
  */
 function getAniTime (aniTimeAttr) {
-  return isNaN(aniTimeAttr) ? 0.24 : Math.min(parseFloat(aniTimeAttr, 10), 1)
+  let time = parseFloat(aniTimeAttr, 10)
+  return isNaN(time) ? 0.24 : Math.min(time, 1)
 }
 
 export default class MIPAccordion extends CustomElement {
