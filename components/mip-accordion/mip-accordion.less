@@ -2,25 +2,35 @@ mip-accordion {
   .mip-accordion-content {
     display: none !important;
     overflow: hidden;
+
+    &[aria-expanded=open] {
+      display: block !important;
+    }
   }
 
-  section .show-more {
-    display: block;
-  }
+  section {
+    .show-more {
+      display: block;
+    }
 
-  section[expanded=open] .show-more {
-    display: none !important;
-  }
+    .show-less {
+      display: none;
+    }
 
-  .mip-accordion-content[aria-expanded="open"] {
-    display: block !important;
-  }
+    &[expanded=open] {
+      > :first-child {
+        .show-more {
+          display: none !important;
+        }
 
-  section .show-less {
-    display: none;
-  }
+        .show-less {
+          display: block !important;
+        }
+      }
 
-  section[expanded=open] .show-less {
-    display: block;
+      > :nth-child(2) {
+        display: block !important;
+      }
+    }
   }
 }
