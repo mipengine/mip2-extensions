@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <title>toast 组件</title>
+  <title>MIP page</title>
   <link rel="canonical" href="对应的原页面地址">
   <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <style mip-custom>
@@ -22,12 +22,18 @@
 </head>
 <body>
   <div>
-    <button on="tap:demo.showToast">打开 toast</button>
+    <button on="tap:demo.showToast({
+        station: 'bottom',
+        infoText: 'new info text',
+        closeTime: 3,
+        infoIconSrc: 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg'
+    })">打开 toast</button>
     <mip-toast
       id="demo"
-      info-text="默认提示框"
-      station="center"
-      auto-close="false"
+      info-icon-src="https://www.mipengine.org/static/img/sample_mip_logo.png"
+      info-text="默认提示框文字Top+图片"
+      station="top"
+      close-time="1"
     >
     </mip-toast>
   </div>

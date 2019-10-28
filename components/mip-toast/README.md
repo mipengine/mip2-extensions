@@ -17,7 +17,7 @@
 1、弹出框 只弹出文字（不传 info-icon-src）
 
 ```html
-<button on="tap:demo.show">打开 toast</button>
+<button on="tap:demo.showToast">打开 toast</button>
 <mip-toast
   id= "demo"
   info-text="默认提示框"
@@ -29,7 +29,7 @@
 2、弹出框 弹出带图和文字
 
 ```html
-<button on="tap:demo.show">打开 toast</button>
+<button on="tap:demo.showToast">打开 toast</button>
 <mip-toast
   id= "demo"
   info-icon-src="https://www.mipengine.org/static/img/sample_mip_logo.png"
@@ -93,12 +93,27 @@
 
 默认值：3
 
-## 接收事件
+## 暴露方法
 
-### show/hidden
+### showToast/hidden
 
-每次其他组件触发抛出事件后，触发 `mip-toast` 的 `show` 事件，并传当前状态是显示
+可以通过 showToast/hidden 方法来显示/隐藏 mip-toast，其中 showToast 的参数接受字段 `infoText`、`infoIconSrc`、`station`、`closeTime`，用来覆盖实际显示的 toast 属性，如果某字段缺失，则使用 mip-toast 的属性。使用示例如下：
 
-注意，每次其他组件触发抛出事件后，也可以触发 `mip-toast` 的 `hidden` 事件，并传当前状态是隐藏
+```html
+<button on="tap:demo.showToast({
+    station: 'bottom',
+    infoText: 'new info text',
+    closeTime: 3,
+    infoIconSrc: 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg'
+})">打开 toast</button>
+<mip-toast
+    id="demo"
+    info-icon-src="https://www.mipengine.org/static/img/sample_mip_logo.png"
+    info-text="默认提示框文字Top+图片"
+    station="top"
+    close-time="1"
+>
+</mip-toast>
+```
 
-组件间通信请看文档 https://www.mipengine.org/doc/3-widget/6-help/3-mip-normal.html
+组件间通信请看文档 https://www.mipengine.org/v2/docs/interactive-mip/introduction.html

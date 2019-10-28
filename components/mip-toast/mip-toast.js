@@ -7,7 +7,8 @@ import './mip-toast.less'
 
 /* global MIP */
 
-const {CustomElement} = MIP
+const {CustomElement, util} = MIP
+const {parse} = util
 
 export default class MIPToast extends CustomElement {
   constructor (element) {
@@ -18,21 +19,25 @@ export default class MIPToast extends CustomElement {
     this.isBlock = false
     this.hasPic = false
     this.showToastText = ''
-    this.showTime = 2500
     this.handleShow = this.handleShow.bind(this)
+    this.handleShowToast = this.handleShowToast.bind(this)
     this.handleHide = this.handleHide.bind(this)
   }
 
   build () {
     this.render()
+    // deprecated
     this.addEventAction('show', this.handleShow)
+
+    this.addEventAction('showToast', this.handleShowToast)
     this.addEventAction('hidden', this.handleHide)
   }
 
-  update () {
-    const {closeTime, infoIconSrc} = this.props
+  update (config) {
+    const closeTime = (config && config.closeTime) || this.props.closeTime
+    const infoIconSrc = (config && config.infoIconSrc) || this.props.infoIconSrc
 
-    this.showTime = closeTime * 1000
+    const showTime = closeTime * 1000
 
     if (!infoIconSrc) {
       this.show = false
@@ -42,10 +47,10 @@ export default class MIPToast extends CustomElement {
     }
     setTimeout(() => {
       this.close = false
-      this.render()
-    }, this.showTime)
+      this.render(config)
+    }, showTime)
 
-    this.render()
+    this.render(config)
   }
 
   handleShow (info) {
@@ -59,13 +64,27 @@ export default class MIPToast extends CustomElement {
     this.update()
   }
 
+  handleShowToast (e, str) {
+    this.close = true
+    let config = {}
+    let infoText = ''
+    if (str) {
+      config = parse(str, 'ObjectLiteral')()
+      infoText = config && config.infoText
+    }
+    this.showToastText = infoText || this.props.infoText
+    this.update(config)
+  }
+
   handleHide () {
     this.close = false
     this.render()
   }
 
-  render () {
-    const {station, infoIconSrc} = this.props
+  render (config) {
+    const station = (config && config.station) || this.props.station
+    const infoIconSrc = (config && config.infoIconSrc) || this.props.infoIconSrc
+
     const wrapper = document.createElement('div')
     const fixed = document.createElement('mip-fixed')
     const toastWrapper = document.createElement('div')
