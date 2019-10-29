@@ -65,6 +65,14 @@ export default class MIPStickyAd extends MIP.CustomElement {
     setTimeout(() => {
       viewport.on('scroll', this.show)
     })
+
+    this.handleHidePage = this.handleHidePage.bind(this)
+    // 切换页面时要还原 body bottom，这里直接关闭组件
+    window.addEventListener('hide-page', this.handleHidePage)
+  }
+
+  handleHidePage () {
+    this.close()
   }
 
   close () {
@@ -115,6 +123,7 @@ export default class MIPStickyAd extends MIP.CustomElement {
 
   disconnectedCallback () {
     viewport.off('scroll', this.show)
+    window.removeEventListener(this.handleHidePage)
     updatePaddingBottom(0)
   }
 }
