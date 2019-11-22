@@ -4,31 +4,11 @@
  *
  */
 
+import {getCurrentWindow, getRootWindow} from './util'
 const {util} = MIP
 let globalCustomElementInstance
 let initElement
 
-/**
- * 获取当前定制化页面的 window
- *
- * @returns {window} 当前 iframe 的 window
- */
-function getCurrentWindow () {
-  let pageId = window.MIP.viewer.page.currentPageId || ''
-  let pageInfo = window.MIP.viewer.page.getPageById(pageId)
-  return pageInfo.targetWindow
-}
-/**
- * 获取当前定制化页面的 root window
- *
- * @returns {window} 当前 iframe 的 root window
- */
-function getRootWindow () {
-  let win = getCurrentWindow()
-  return win.MIP.viewer.page.isRootPage
-    ? win
-    : win.parent
-}
 /**
  * 根据当前 window 获取小说实例
  *
