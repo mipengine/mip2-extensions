@@ -199,8 +199,10 @@ export default class Form {
     }
 
     fetch(xhrUrl, fetchData).then((res) => {
+      let resData = null
       if (res.ok) {
         res.json().then((data) => {
+          resData = data
           this.triggerCustomEvent(FORM_EVENT.SUBMIT_SUCCESS, {
             response: data
           })
@@ -211,7 +213,9 @@ export default class Form {
           this.fetchReject(err)
         })
       } else {
-        this.triggerCustomEvent(FORM_EVENT.SUBMIT_ERROR, {})
+        this.triggerCustomEvent(FORM_EVENT.SUBMIT_ERROR, {
+          response: resData
+        })
         this.fetchReject({})
       }
     }).catch((err) => {
