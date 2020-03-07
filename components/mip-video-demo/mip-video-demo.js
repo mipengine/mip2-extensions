@@ -1,5 +1,5 @@
 /**
- * @file mip-accordion
+ * @file mip-video-demo
  * @author nxl(2779523120@qq.com)
  */
 const {
