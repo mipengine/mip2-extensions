@@ -9,13 +9,12 @@
 ## 说明
 
 组件功能说明
-<mip-node node-type="ababab" node-dom="ccc" node-value="xxxx" node-oth="xzxzzxz"></mip-node>
 ## 示例
 
 示例说明
 
 通过mip-node添加带有特殊属性的节点。
-
+&gt;mip-node node-type="ababab" node-dom="ccc" node-value="xxxx" node-oth="xzxzzxz"&gl;&gt;/mip-node&gl;
 ## 属性
 node-type | node-dom | node-value | node-oth
 
