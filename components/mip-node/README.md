@@ -14,8 +14,7 @@
 
 示例说明
 
-通过mip-node添加带有特殊属性的节点。
-<mip-node node-type="ababab" node-dom="ccc" node-value="xxxx" node-oth="xzxzzxz"></mip-node>
+通过mip-node添加带有特殊属性的节点。<mip-node node-type="ababab" node-dom="ccc" node-value="xxxx" node-oth="xzxzzxz"></mip-node>
 
 ## 属性
 node-type | node-dom | node-value | node-oth
