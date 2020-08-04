@@ -1,28 +1,50 @@
 <style mip-custom>
-  .mip-modal-dialog-buttons {
-    display: -webkit-box;
-    display: -ms-flexbos;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: reverse;
-    -ms-flex-direction: row-reverse;
-    flex-direction: row-reverse;
-  }
-
-  .mip-modal-dialog-button {
-    margin-left: 8px;
+  .mip-button {
+    appearance: button;
+    height: 32px;
+    padding: 0 15px;
+    border: 1px solid #d9d9d9;
     border-radius: 4px;
     box-shadow: 0 2px 0 rgba(0, 0, 0, .015);
-    line-height: 1.499;
+    outline: 0;
     font-weight: 400;
     font-size: 14px;
+    line-height: 1.499;
     color: rgba(0, 0, 0, .65);
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: #fff;
+    background-image: none;
+    user-select: none;
+    touch-action: manipulation;
+    cursor: pointer;
   }
 
-  .mip-modal-dialog-button-primary {
-    border-color: #1890ff;
+  .mip-button-primary {
+    border-color: #108ee9;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
     color: #fff;
-    background-color: #1890ff;
+    background-color: #108ee9;
+  }
+    .mip-modal-form-hint {
+    margin-bottom: 10px;
+  }
+
+  .mip-input {
+    width: 100%;
+    height: 32px;
+    margin: -1px 0;
+    padding: 4px 11px;
+    border: 1px solid #d9d9d9;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, .65);
+    background-color: #fff;
+    transition: border-color .3s;
+  }
+
+  .mip-input:focus {
+    outline: 0;
   }
 </style>

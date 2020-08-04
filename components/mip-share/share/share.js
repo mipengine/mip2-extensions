@@ -424,6 +424,7 @@ export default class Share {
         title: this.opt.title,
         content: this.opt.content,
         iconUrl: this.opt.iconUrl,
+        debug: this.opt.debug,
         linkUrl: this.opt.linkUrl || window.location.href,
         wx: {
           api: this.opt.wechatAPI,

@@ -12,7 +12,6 @@
 
 `mip-form` 可在 MIP 页面创建 `<form>` 标签用于表单提交。在 `<mip-form>` 内部，通常需要配合其他相关的元素使用，包括 `<textarea>`, `<select>`, `<option>`, `<fieldset>`, `<label>`, `<input type=text>`, `<input type=submit>` 等。
 
-
 `mip-form` 通过必选项 `method` 设置提交方法，`url` 设置表单提交地址。同时可选项 `validatetarget` 和 `validatetype` 支持对表单中 `input` 进行校验。
 
 ```html
@@ -24,6 +23,28 @@
   <input type="submit" value="提交">
 </mip-form>
 ```
+### 非输入型参数
+
+非输入型参数，比如某些常量、环境变量、当前的某些状态数据等等，可以在 mip-form 内部添加隐藏 `<input>` 标签，然后将数据直接写入 value，或者通过 MIP 数据绑定语法 `m-bind:value` 将数据自动写入：
+
+```xml
+<mip-data>
+  <script type="application/json">
+  {
+    "state": 12345
+  }
+  </script>
+</mip-data>
+
+<mip-form url="https://path/to/api">
+  <input type="text" placeholder="请输入姓名" name="name">
+  <!-- 隐藏表单 1 直接写入 value -->
+  <input hidden type="text" value="abcdefg" name="id">
+  <!-- 隐藏表单 2 通过数据绑定语法写入 -->
+  <input hidden type="text" m-bind:value="state" name="state">
+</mip-form>
+```
+
 ### 表单校验
 
 `mip-from` 提供多种默认校验类型支持前端输入校验，例如设置 `validatetype=“email”`  可以校验输入是否为 email 地址，同时也支持自定义正则校验。支持在校验失败时，设置不同策略反馈校验结果展示给用户。
@@ -156,18 +177,109 @@
   <input type="submit" value="提交">
 </mip-form>
 ```
-
 ## 事件
 
-`mip-form` 支持以下 event
+`mip-form` 支持以下 event，对应说明如下表所示：
 
-事件| 描述| 数据
-----|:---|----
-`submit`| form 表单被提交时触发||              
-`submitSuccess`| form 提交完成并且响应成功时触发| `event.response` 响应 JSON 数据
-`submitError`| form 提交完成并且响应失败时触发| `event.response` 响应 JSON 数据
-`valid`| form 输入校验合法 ||
-`invalid`| form 输入校验不合法 ||
+|事件| 描述| 数据|
+|----|:---|----|
+|`submit`| form 表单被提交时触发||
+|`valid`| form 输入校验合法||
+|`invalid`| form 输入校验不合法 ||
+|`submitSuccess`| form 提交完成并且响应成功时触发| `event.response` 响应 JSON 数据|
+|`submitError`| form 提交完成并且响应失败时触发| `event.response` 响应 JSON 数据|
+
+下面举例说明各事件的使用方法：
+
+```html
+<mip-data>
+  <script type="application/json">
+  {
+    "valid": null,
+    "status": null,
+    "submit": null
+  }
+  </script>
+</mip-data>
+
+<mip-form
+  method="get"
+  fetch-url="https://path/to/404/api"
+  on="
+    submit:MIP.setData({
+      submit: true,
+      status: null,
+      valid: null
+    });
+    valid:MIP.setData({
+      valid: true,
+      status: null
+    });
+    invalid:MIP.setData({
+      valid: false,
+      status: null
+    });
+    submitSuccess:MIP.setData({ status: 'success' });
+    submitError:MIP.setData({ status: 'fail' });
+  "
+>
+  <input type="text" name="num" validatetype="custom" validatereg="^[0-9]{5}$" placeholder="请输入 5 个数字">
+  <input type="submit" value="提交">
+</mip-form>
+
+<br>
+<p>当前数据提交的阶段：</p>
+<br>
+<ul>
+  <li m-bind:style="{
+    color: submit == null ? '#666' : 'green'
+  }">提交</li>
+  <li m-bind:style="{
+    color: valid == null
+      ? '#666'
+      : valid === true
+        ? 'green' : 'red'
+  }">校验</li>
+  <li m-bind:style="{
+    color: status === null
+      ? '#666'
+      : status === 'success' ? 'green' : 'red'
+  }">结束</li>
+</ul>
+```
+
+## 行为
+
+`mip-form` 支持以下 action
+
+行为| 描述
+----| ---
+`submit`| 提交表单
+`clear` | 清空表单，如果表单元素上写有默认 value，则恢复为默认 value
+
+下面举例说明 submit 方法的使用：
+
+```xml
+<mip-form id="a-simple-form" xxxxx >
+  <!-- 表单内容 -->
+</mip-form>
+
+<button on="tap:a-simple-form.submit">点击提交表单</button>
+```
+
+点击清空表单：
+
+```html
+<mip-form method="get" id="a-simple-form" url="https://www.mipengine.org">
+  <input name="name" value="李雷" type="text">
+  <input name="nickname"  type="text">
+</mip-form>
+
+<button on="tap:a-simple-form.clear">[点击清空表单]</button>
+```
+
+可以看到点击下方清空表单之后，第一个输入框恢复为 `李雷`，而第二个输入框则直接清空。
+
 
 ## 属性
 
@@ -218,7 +330,7 @@
 
 ### validatereg
 
-说明: 自定义验证，补充站长个性化的验证规则。如果 `validatetype` 为 `custom` 时需填写相应验证规则
+说明: 自定义验证，补充站长个性化的验证规则。如果 `validatetype` 为 `custom` 时需填写相应验证规则。这个 validatereg 的值会通过 `new RegExp(validatereg)` 生成正则。
 
 必选项：否
 

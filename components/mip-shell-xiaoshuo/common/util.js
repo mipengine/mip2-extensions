@@ -164,7 +164,7 @@ export const getCacheUrl = (url) => {
  */
 export const getPrerenderJsonld = () => {
   let url = getCacheUrl(location.href)
-  let pageId = MIP.util.getOriginalUrl(url)
+  let pageId = deleteUrlParams(MIP.util.getOriginalUrl(url))
   pageId = getCacheUrl(pageId)
   let pageInfo = window.MIP.viewer.page.getPageById(pageId)
   return getJsonld(pageInfo.targetWindow)
@@ -184,4 +184,23 @@ export const getParamFromString = (str, param) => {
     return decodeURIComponent(result[1])
   }
   return ''
+}
+/**
+ * 去除 originalUrl 上，从卡片带过来的自定义参数，卡片里这两参数务必加在最后
+ *
+ * @param {string} url originalUrl
+ */
+export const deleteUrlParams = (url) => {
+  url = deleteUrlParamsHelper(url, 'mip_book_id_once')
+  url = deleteUrlParamsHelper(url, 'mip_chapter_id_once')
+  return url
+}
+
+export const deleteUrlParamsHelper = (url, str) => {
+  let regex = new RegExp('&' + str + '=([^&]*)')
+  let result = regex.exec(url)
+  if (result) {
+    return url.replace(result[0], '')
+  }
+  return url
 }

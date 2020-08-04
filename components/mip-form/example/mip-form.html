@@ -25,9 +25,19 @@
       font-size: 14px;
       color: black;
     }
-    mip-form label{
+    mip-form label {
       display: inline-block;
       padding: 10px;
+    }
+
+    button {
+      border: 1px solid #f1f1f1;
+      border-radius: 5px;
+      color: #333;
+      background-color: #d8d7d7;
+      padding: 6px;
+      font-size: 16px;
+      margin-bottom: 5px;
     }
     </style>
   </head>
@@ -210,8 +220,21 @@
       </mip-form>
     </div>
 
+    <div class="mip-form-example">
+      <p class="mip-example-title">触发行为 submit、clear</p>
+      <button on="tap:form.submit">submit</button>
+      <button on="tap:form.clear">clear</button>
+      <mip-form id="form" method="get" url="https://www.mipengine.org" clear>
+        <input type="text" name="username2" validatetarget="username2" validatetype="must" placeholder="姓名">
+        <div target="username2">姓名不能为空</div>
+        <input type="number" name="age2" validatetarget="age2" validatetype="must" placeholder="年龄">
+        <div target="age2">年龄不能为空</div>
+        <input type="submit" value="提交">
+      </mip-form>
+    </div>
+    
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-    <script src="https://c.mipcdn.com/static/v1/mip-mustache/mip-mustache.js"></script>
+    <script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
     <script src="/mip-form/mip-form.js"></script>
   </body>
 </html>

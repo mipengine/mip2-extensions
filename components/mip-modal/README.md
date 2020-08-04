@@ -6,8 +6,7 @@
 ----|----
 类型|通用
 支持布局|-
-所需脚本|<https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js></br><https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js></br><https://c.mipcdn.com/static/v2/mip-dialog/mip-dialog.js></br>
-<https://c.mipcdn.com/static/v2/mip-modal/mip-modal.js>
+所需脚本|<https://c.mipcdn.com/static/v2/mip-fastclick/mip-fastclick.js></br><https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js></br><https://c.mipcdn.com/static/v2/mip-dialog/mip-dialog.js></br><https://c.mipcdn.com/static/v2/mip-modal/mip-modal.js>
 
 ## 示例
 

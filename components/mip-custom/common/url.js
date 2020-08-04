@@ -155,8 +155,8 @@ const get = (el, poi) => {
     }
   }
 
-  // 非mip-shell增加noshell参数
-  if (MIP.standalone) {
+  // 非mip-shell增加noshell参数，目前医疗小说表现一致，都是用这个参数来处理跨域，并且第三方源站也能展示广告
+  if (MIP.standalone && !MIP.util.isCacheUrl(location.href)) {
     url += '&from=noshell'
   }
   return url
